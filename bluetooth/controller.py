@@ -192,7 +192,7 @@ class BTController:
         print(f"Received data size: {packet_size}")
 
         # Check for battery data
-        if self._protocol.is_battery_packet(packet_size):
+        if self._protocol.is_battery_packet(data):
             status = self._protocol.parse_battery(data)
             if status:
                 self._notify_battery(status.left, status.right, status.case)
