@@ -11,7 +11,7 @@ from ui import (
     WindowManager, SystemTray
 )
 from ui.components import (
-    AppTitle, DeviceImage, BatteryPanel, SettingsCard, StatusBar, Spacer
+    AppTitle, DeviceImage, BatteryPanel, SettingsCard, StatusBar, Spacer, Footer
 )
 
 
@@ -24,11 +24,20 @@ def main(page: ft.Page):
     page.title = APP_TITLE
     page.bgcolor = COLOR_BG
     page.padding = 20
-    page.window_width = WINDOW_WIDTH
-    page.window_height = WINDOW_HEIGHT
-    page.window_resizable = False
-    page.window_maximizable = False
+    
+    # Newer Flet API properties
+    page.window.width = WINDOW_WIDTH
+    page.window.height = WINDOW_HEIGHT
+    page.window.min_width = WINDOW_WIDTH
+    page.window.min_height = WINDOW_HEIGHT
+    page.window.max_width = WINDOW_WIDTH
+    page.window.max_height = WINDOW_HEIGHT
+    page.window.resizable = False
+    page.window.maximizable = False
+    
+    page.scroll = "auto"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.update()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Managers
@@ -141,12 +150,14 @@ def main(page: ft.Page):
         title,
         Spacer(height=20),
         device_image,
+        status_bar,
         Spacer(height=20),
         battery_panel,
         Spacer(height=20),
         settings_card,
-        Spacer(expand=True),
-        status_bar
+        Spacer(height=5),
+        Footer("v0.1.0", "https://github.com/CesurPolat/MiBudsClient"),
+        Spacer(height=10)
     )
 
     # ─────────────────────────────────────────────────────────────────────────

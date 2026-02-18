@@ -194,3 +194,29 @@ class Spacer(ft.Container):
     
     def __init__(self, height: int = 20, expand: bool = False):
         super().__init__(height=height, expand=expand)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Footer
+# ─────────────────────────────────────────────────────────────────────────────
+class Footer(ft.Column):
+    """Footer containing version and GitHub link."""
+    
+    def __init__(self, version: str, github_url: str):
+        super().__init__(
+            controls=[
+                ft.Text(f"version {version}", color=COLOR_DISABLED, size=10),
+                ft.TextButton(
+                    content=ft.Text(
+                        github_url.replace("https://", ""), 
+                        color=COLOR_DISABLED, 
+                        size=10,
+                        italic=True
+                    ),
+                    url=github_url,
+                    style=ft.ButtonStyle(padding=0)
+                )
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=0
+        )

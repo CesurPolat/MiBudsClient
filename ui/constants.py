@@ -4,8 +4,8 @@
 # App Configuration
 # ─────────────────────────────────────────────────────────────────────────────
 APP_TITLE = "Redmi Buds 6 Play"
-WINDOW_WIDTH = 400
-WINDOW_HEIGHT = 700
+WINDOW_WIDTH = 550
+WINDOW_HEIGHT = 775
 TRAY_ICON_PATH = "MiBuds6Play.jpg"
 TRAY_ICON_SIZE = (64, 64)
 
