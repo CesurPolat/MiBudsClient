@@ -155,11 +155,7 @@ class BTController:
     def on_connect_setup(self):
             """Send a sequence of packets on connection."""
             packets = [
-                "fedcbac40200050bffffffffef4f",
-                "fedcbac4500012000167c6697351ff4aec29cdbaabf2fbe346ef",
-                "fedcba04500013000201111430f0d8777a5f68bace0ed764cd10",
-                "fedcba04510003000301ef",
-                "fedcbac4f2000804060028699265b9"
+                "fedcba04510003000301ef"
             ]
             for packet_hex in packets:
                 test_bytes = bytes.fromhex(packet_hex)
