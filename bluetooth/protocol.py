@@ -10,6 +10,7 @@ from .constants import (
     COUNTER_VALUE,
     PACKET_SIZE_BATTERY_A,
     PACKET_SIZE_BATTERY_B,
+    PACKET_SIZE_BATTERY_C,
     PACKET_SIZE_MODE_ACK
 )
 
@@ -77,7 +78,11 @@ class BudsProtocol:
     @staticmethod
     def is_battery_packet(packet_size: int) -> bool:
         """Check if packet size indicates a battery status packet."""
-        return packet_size in (PACKET_SIZE_BATTERY_A, PACKET_SIZE_BATTERY_B)
+        return packet_size in (
+            PACKET_SIZE_BATTERY_A, 
+            PACKET_SIZE_BATTERY_B, 
+            PACKET_SIZE_BATTERY_C
+        )
     
     @staticmethod
     def is_mode_ack_packet(packet_size: int) -> bool:

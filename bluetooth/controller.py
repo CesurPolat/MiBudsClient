@@ -85,7 +85,7 @@ class BTController:
         try:
             self._connection.connect(self._bd_addr)
             self._update_status("Connected", "blue")
-            self._trigger_battery_check()
+            self.on_connect_setup()
             return True
         except Exception as e:
             self._connection.connected = False
@@ -129,9 +129,45 @@ class BTController:
             self._connection.connected = False
             return False, f"Request error: {e}"
     
+    def send_raw(self, data: bytes) -> tuple[bool, str]:
+        """Send raw bytes to device.
+        
+        Args:
+            data: Raw bytes to send
+            
+        Returns:
+            (success, message) tuple
+        """
+        if not self._ensure_connected():
+            return False, "Could not connect to device."
+        
+        try:
+            self._connection.send(data)
+            return True, f"Raw data sent: {data.hex()}"
+        except Exception as e:
+            self._connection.connected = False
+            return False, f"Send error: {e}"
+    
     def _ensure_connected(self) -> bool:
         """Ensure connected, attempting to connect if not."""
         return self._connection.connected or self.connect()
+    
+    def on_connect_setup(self):
+            """Send a sequence of packets on connection."""
+            packets = [
+                "fedcbac40200050bffffffffef4f",
+                "fedcbac4500012000167c6697351ff4aec29cdbaabf2fbe346ef",
+                "fedcba04500013000201111430f0d8777a5f68bace0ed764cd10",
+                "fedcba04510003000301ef",
+                "fedcbac4f2000804060028699265b9"
+            ]
+            for packet_hex in packets:
+                test_bytes = bytes.fromhex(packet_hex)
+                print(self.send_raw(test_bytes))
+                time.sleep(0.1)
+            # Also request battery after sending packets
+            time.sleep(1)
+            self.request_battery()
     
     # ─────────────────────────────────────────────────────────────────────────
     # Listener
@@ -158,7 +194,7 @@ class BTController:
         data = self._connection.receive()
         packet_size = len(data)
         print(f"Received data size: {packet_size}")
-        
+
         # Check for battery data
         if self._protocol.is_battery_packet(packet_size):
             status = self._protocol.parse_battery(data)
