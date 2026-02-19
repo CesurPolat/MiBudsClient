@@ -6,7 +6,7 @@ import time
 import os
 
 from bluetooth import BTController
-from updater import check_for_updates
+from utils import check_for_updates
 from ui import (
     APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, 
     BATTERY_UNKNOWN, WindowManager, SystemTray
