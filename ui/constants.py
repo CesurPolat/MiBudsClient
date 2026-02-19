@@ -4,6 +4,8 @@
 # App Configuration
 # ─────────────────────────────────────────────────────────────────────────────
 APP_TITLE = "Redmi Buds 6 Play"
+APP_VERSION = "v0.1.0"
+GITHUB_URL = "https://github.com/CesurPolat/MiBudsClient"
 WINDOW_WIDTH = 550
 WINDOW_HEIGHT = 775
 TRAY_ICON_PATH = "MiBuds6Play.jpg"

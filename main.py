@@ -6,9 +6,10 @@ import time
 import os
 
 from bluetooth import BTController
+from updater import check_for_updates
 from ui import (
-    APP_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, BATTERY_UNKNOWN,
-    WindowManager, SystemTray
+    APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, 
+    BATTERY_UNKNOWN, WindowManager, SystemTray
 )
 from ui.components import (
     AppTitle, DeviceImage, BatteryPanel, SettingsCard, StatusBar, Spacer, Footer
@@ -156,9 +157,34 @@ def main(page: ft.Page):
         Spacer(height=20),
         settings_card,
         Spacer(height=5),
-        Footer("v0.1.0", "https://github.com/CesurPolat/MiBudsClient"),
+        Footer(APP_VERSION, GITHUB_URL),
         Spacer(height=10)
     )
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Update Checker
+    # ─────────────────────────────────────────────────────────────────────────
+    def perform_update_check():
+        """Check for updates and notify if available."""
+        # Wait a bit for the UI to be fully ready
+        time.sleep(3)
+        has_update, latest_ver = check_for_updates()
+        if has_update:
+            def on_update_click(e):
+                page.launch_url(GITHUB_URL)
+                page.snack_bar.open = False
+                page.update()
+
+            page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"New version available: {latest_ver}"),
+                action="Download",
+                on_action=on_update_click,
+                duration=10000,
+            )
+            page.snack_bar.open = True
+            page.update()
+
+    threading.Thread(target=perform_update_check, daemon=True).start()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Start Bluetooth Listener
@@ -167,4 +193,4 @@ def main(page: ft.Page):
 
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    ft.run(main)
