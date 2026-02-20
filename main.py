@@ -5,7 +5,13 @@ import threading
 import time
 
 from bluetooth import BTController
-from utils import set_startup, is_startup_enabled, check_for_updates
+from utils import (
+    set_startup, 
+    is_startup_enabled, 
+    check_for_updates,
+    check_for_existing_instance,
+    start_instance_listener
+)
 from ui import (
     APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, 
     BATTERY_UNKNOWN, WindowManager, SystemTray
@@ -232,6 +238,12 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     threading.Thread(target=controller.listen, daemon=True).start()
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Start Single Instance Listener
+    # ─────────────────────────────────────────────────────────────────────────
+    start_instance_listener(window_mgr)
+
 
 if __name__ == "__main__":
+    check_for_existing_instance()
     ft.app(target=main, assets_dir="assets")
