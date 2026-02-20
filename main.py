@@ -46,13 +46,20 @@ def main(page: ft.Page):
     window_mgr = WindowManager(page)
     
     # Controller will be set after initialization
-    controller_ref = {"instance": None}
+    controller_ref = {"instance": None, "low_latency": False}
     
+    def toggle_latency_from_tray(new_state):
+        controller_ref["low_latency"] = new_state
+        if controller_ref["instance"]:
+            mode = "low" if new_state else "std"
+            controller_ref["instance"].send_command(mode)
+        page.pubsub.send_all({"type": "latency", "enabled": new_state})
+
     tray = SystemTray(
         on_show=window_mgr.show,
         on_exit=window_mgr.close,
-        on_low_latency=lambda: controller_ref["instance"] and controller_ref["instance"].send_command("low"),
-        on_standard=lambda: controller_ref["instance"] and controller_ref["instance"].send_command("std")
+        on_latency_toggle=toggle_latency_from_tray,
+        get_latency_state=lambda: controller_ref["low_latency"]
     )
     threading.Thread(target=tray.run, daemon=True).start()
 
@@ -95,6 +102,15 @@ def main(page: ft.Page):
                 window_mgr.apply_show()
             elif action == "hide":
                 window_mgr.apply_hide()
+        
+        elif msg_type == "latency":
+            enabled = message.get("enabled")
+            settings_card.latency_switch.value = enabled
+            update_status(
+                f"{'Low Latency' if enabled else 'Standard'} mode set", 
+                "blue" if enabled else "white"
+            )
+            page.update()
 
     page.pubsub.subscribe(on_pubsub_message)
 
@@ -152,6 +168,7 @@ def main(page: ft.Page):
 
     def on_latency_toggle(e):
         enabled = e.control.value
+        controller_ref["low_latency"] = enabled
         if controller:
             mode = "low" if enabled else "std"
             controller.send_command(mode)

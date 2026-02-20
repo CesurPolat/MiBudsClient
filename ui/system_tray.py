@@ -14,13 +14,13 @@ class SystemTray:
         self, 
         on_show: Callable, 
         on_exit: Callable,
-        on_low_latency: Optional[Callable] = None,
-        on_standard: Optional[Callable] = None
+        on_latency_toggle: Optional[Callable[[bool], None]] = None,
+        get_latency_state: Optional[Callable[[], bool]] = None
     ):
         self.on_show = on_show
         self.on_exit = on_exit
-        self.on_low_latency = on_low_latency
-        self.on_standard = on_standard
+        self.on_latency_toggle = on_latency_toggle
+        self.get_latency_state = get_latency_state
         self.icon = None
     
     def run(self) -> None:
@@ -32,8 +32,11 @@ class SystemTray:
             menu = pystray.Menu(
                 pystray.MenuItem("Open", lambda icon, item: self.on_show(), default=True),
                 pystray.Menu.SEPARATOR,
-                pystray.MenuItem("Low Latency Mode", lambda icon, item: self._on_low_latency()),
-                pystray.MenuItem("Standard Mode", lambda icon, item: self._on_standard()),
+                pystray.MenuItem(
+                    "Low Latency Mode", 
+                    self._on_toggle,
+                    checked=lambda item: self._get_state()
+                ),
                 pystray.Menu.SEPARATOR,
                 pystray.MenuItem("Quit", lambda icon, item: self._exit())
             )
@@ -43,15 +46,17 @@ class SystemTray:
         except Exception as e:
             print(f"Tray error: {e}")
     
-    def _on_low_latency(self) -> None:
-        """Activate low latency mode."""
-        if self.on_low_latency:
-            self.on_low_latency()
-    
-    def _on_standard(self) -> None:
-        """Activate standard mode."""
-        if self.on_standard:
-            self.on_standard()
+    def _get_state(self) -> bool:
+        """Get current latency state."""
+        if self.get_latency_state:
+            return self.get_latency_state()
+        return False
+
+    def _on_toggle(self, icon, item) -> None:
+        """Toggle latency mode."""
+        if self.on_latency_toggle:
+            new_state = not self._get_state()
+            self.on_latency_toggle(new_state)
     
     def _exit(self) -> None:
         """Stop tray and exit application."""
