@@ -1,5 +1,6 @@
 """Window Management Module."""
 
+import os
 import flet as ft
 
 
@@ -14,21 +15,19 @@ class WindowManager:
     def _setup_window(self) -> None:
         """Configure window properties."""
         self.page.window.prevent_close = True
-        try:
-            self.page.window_prevent_close = True
-        except Exception:
-            pass
     
     def _setup_handlers(self) -> None:
         """Setup window event handlers."""
         self.page.window.on_event = self._on_window_event
-        self.page.on_close = lambda e: self.hide()
     
     def _on_window_event(self, e) -> None:
         """Handle window events."""
         event_type = getattr(e, "type", None)
         if event_type == ft.WindowEventType.CLOSE:
-            self.hide()
+            if self.page.window.prevent_close:
+                self.hide()
+            else:
+                self.page.window.destroy()
     
     def show(self) -> None:
         """Show and bring window to front via pubsub."""
@@ -37,6 +36,12 @@ class WindowManager:
     def hide(self) -> None:
         """Hide window to tray via pubsub."""
         self.page.pubsub.send_all({"type": "window", "action": "hide"})
+
+    def close(self) -> None:
+        """Properly close the window."""
+        self.page.window.prevent_close = False
+        os._exit(0)
+
     
     def apply_show(self) -> None:
         """Apply show state to window."""

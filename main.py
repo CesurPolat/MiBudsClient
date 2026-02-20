@@ -3,7 +3,6 @@
 import flet as ft
 import threading
 import time
-import os
 
 from bluetooth import BTController
 from utils import check_for_updates
@@ -51,7 +50,7 @@ def main(page: ft.Page):
     
     tray = SystemTray(
         on_show=window_mgr.show,
-        on_exit=lambda: os._exit(0),
+        on_exit=window_mgr.close,
         on_low_latency=lambda: controller_ref["instance"] and controller_ref["instance"].send_command("low"),
         on_standard=lambda: controller_ref["instance"] and controller_ref["instance"].send_command("std")
     )
