@@ -16,9 +16,12 @@ A lightweight Python and Flet-based desktop client for Redmi Buds 6 Play. This a
 
 ## Downloads
 
-![App Screenshot](MiBuds6Play.jpg)
-
-You can download the latest stable and pre-release (alpha/beta) versions from the [Releases](https://github.com/CesurPolat/MiBudsClient/releases) page.
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/f462a7ac-d6ca-4e10-a7a3-fa02cb1cab7c" width="400"></td>
+    <td><a href="https://github.com/CesurPolat/MiBudsClient/releases"><img src="https://github.com/user-attachments/assets/abf831bc-7329-435a-a398-b1f6c706ca0d" width="200"></a></td>
+  </tr>
+</table>
 
 ## Installation
 
