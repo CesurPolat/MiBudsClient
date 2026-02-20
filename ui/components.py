@@ -129,8 +129,21 @@ class ToggleSettingItem(ft.ListTile):
             ),
             title=ft.Text(title, color=COLOR_TEXT_PRIMARY, weight="medium"),
             trailing=self.switch,
-            on_click=lambda _: self.switch.toggle()
+            on_click=self._toggle_switch
         )
+
+    def _toggle_switch(self, e):
+        """Manually toggle the switch and trigger its on_change event."""
+        self.switch.value = not self.switch.value
+        self.switch.update()
+        if self.switch.on_change:
+            # Create a simple event-like object that only contains the control.
+            # This avoids dependency on 'uid' or complex ControlEvent construction.
+            class MockEvent:
+                def __init__(self, control):
+                    self.control = control
+            
+            self.switch.on_change(MockEvent(self.switch))
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -177,6 +190,16 @@ class SettingsCard(ft.Container):
             border_radius=CARD_BORDER_RADIUS,
             padding=10
         )
+
+    @property
+    def latency_switch(self) -> ft.Switch:
+        """Access the underlying switch for latency setting."""
+        return self.latency_item.switch
+
+    @property
+    def startup_switch(self) -> ft.Switch:
+        """Access the underlying switch for startup setting."""
+        return self.startup_item.switch
 
 
 # ─────────────────────────────────────────────────────────────────────────────
