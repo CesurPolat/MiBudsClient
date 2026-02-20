@@ -7,8 +7,18 @@ A lightweight Python and Flet-based desktop client for Redmi Buds 6 Play. This a
 - **Battery Tracking:** Real-time display of battery percentages for left earbud, right earbud, and charging case.
 - **Charging Status:** Indicators showing whether the earbuds or case are currently charging.
 - **Low Latency Mode:** Quick toggle for Game Mode (Low Latency).
+- **System Tray Support:** Minimize to tray and control features like Low Latency Mode directly from the tray menu.
 - **Auto-Connect:** Automatically detects compatible connected Bluetooth devices.
+- **Single Instance Protection:** Prevents multiple instances of the application from running simultaneously.
+- **Windows Startup Support:** Option to start the application automatically when Windows boots.
+- **Smart Updater:** Built-in update checker that supports semantic versioning, including pre-release tags like `alpha`, `beta`, and `rc`.
 - **Modern UI:** A sleek, dark-themed interface built with the Flet framework.
+
+## Downloads
+
+![App Screenshot](MiBuds6Play.jpg)
+
+You can download the latest stable and pre-release (alpha/beta) versions from the [Releases](https://github.com/CesurPolat/MiBudsClient/releases) page.
 
 ## Installation
 
