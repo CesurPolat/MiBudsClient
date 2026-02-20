@@ -68,12 +68,16 @@ class BluetoothDiscovery:
     @staticmethod
     def _run_discovery_script() -> str:
         """Execute PowerShell discovery script."""
+        # This flag prevents a console window from appearing on Windows.
+        creation_flags = subprocess.CREATE_NO_WINDOW
+        
         return subprocess.check_output(
             ["powershell", "-NoProfile", "-Command", POWERSHELL_DISCOVERY_SCRIPT],
             text=True,
             encoding="utf-8",
             errors="ignore",
-            timeout=5
+            timeout=5,
+            creationflags=creation_flags
         ).strip()
     
     @classmethod
