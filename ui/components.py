@@ -6,7 +6,7 @@ from typing import Callable, Optional
 from .constants import (
     COLOR_DISABLED, COLOR_CHARGING, COLOR_BATTERY, COLOR_CARD_BG,
     COLOR_TEXT_PRIMARY, COLOR_DIVIDER, BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET,
-    ICON_BUTTON_SIZE, DEVICE_IMAGE_SIZE, CARD_BORDER_RADIUS, ICON_BORDER_RADIUS,
+    ICON_BUTTON_SIZE, DEVICE_IMAGE_SIZE, CARD_BORDER_RADIUS, ICON_BORDER_RADIUS, DEVICE_IMAGE_PATH,
     TRAY_ICON_PATH
 )
 
@@ -162,7 +162,7 @@ class StatusBar(ft.Text):
 class DeviceImage(ft.Image):
     """Device image with fallback icon."""
     
-    def __init__(self, src: str = TRAY_ICON_PATH):
+    def __init__(self, src: str = DEVICE_IMAGE_PATH):
         super().__init__(
             src=src,
             width=DEVICE_IMAGE_SIZE,

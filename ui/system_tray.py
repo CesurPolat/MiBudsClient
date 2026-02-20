@@ -1,10 +1,9 @@
 """System Tray Module."""
 
-import os
 import pystray
-from PIL import Image
 from typing import Callable, Optional
 
+from utils.resource_manager import load_pil_image
 from .constants import TRAY_ICON_PATH, TRAY_ICON_SIZE
 
 
@@ -24,17 +23,12 @@ class SystemTray:
         self.on_standard = on_standard
         self.icon = None
     
-    def _load_icon_image(self) -> Image.Image:
-        """Load tray icon image or create a fallback."""
-        image_path = os.path.join(os.getcwd(), TRAY_ICON_PATH)
-        if os.path.exists(image_path):
-            return Image.open(image_path)
-        return Image.new('RGB', TRAY_ICON_SIZE, color=(0, 0, 0))
-    
     def run(self) -> None:
         """Start the system tray icon."""
         try:
-            image = self._load_icon_image()
+            # Tray uses default icon.png
+            tray_image = load_pil_image(TRAY_ICON_PATH, TRAY_ICON_SIZE)
+
             menu = pystray.Menu(
                 pystray.MenuItem("Open", lambda icon, item: self.on_show(), default=True),
                 pystray.Menu.SEPARATOR,
@@ -43,7 +37,8 @@ class SystemTray:
                 pystray.Menu.SEPARATOR,
                 pystray.MenuItem("Quit", lambda icon, item: self._exit())
             )
-            self.icon = pystray.Icon("MiBudsClient", image, "Mi Buds Client", menu)
+            
+            self.icon = pystray.Icon("MiBudsClient", tray_image, "Mi Buds Client", menu)
             self.icon.run()
         except Exception as e:
             print(f"Tray error: {e}")

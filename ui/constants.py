@@ -8,7 +8,7 @@ APP_VERSION = "v0.1.0"
 GITHUB_URL = "https://github.com/CesurPolat/MiBudsClient"
 WINDOW_WIDTH = 550
 WINDOW_HEIGHT = 775
-TRAY_ICON_PATH = "MiBuds6Play.jpg"
+TRAY_ICON_PATH = "assets/icon.png"
 TRAY_ICON_SIZE = (64, 64)
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -33,6 +33,7 @@ BATTERY_CHARGING_OFFSET = 128
 # UI Dimensions
 # ─────────────────────────────────────────────────────────────────────────────
 ICON_BUTTON_SIZE = 40
+DEVICE_IMAGE_PATH = "assets/images/MiBuds6Play.png"
 DEVICE_IMAGE_SIZE = 200
 CARD_BORDER_RADIUS = 20
 ICON_BORDER_RADIUS = 10

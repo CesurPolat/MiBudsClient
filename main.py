@@ -35,6 +35,7 @@ def main(page: ft.Page):
     page.window.max_height = WINDOW_HEIGHT
     page.window.resizable = False
     page.window.maximizable = False
+    page.window.icon = "icon.png"  # Path relative to assets_dir
     
     page.scroll = "auto"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -193,4 +194,4 @@ def main(page: ft.Page):
 
 
 if __name__ == "__main__":
-    ft.run(main)
+    ft.app(target=main, assets_dir="assets")
