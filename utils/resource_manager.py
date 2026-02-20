@@ -1,6 +1,7 @@
 """Resource management utility."""
 
 import os
+import sys
 from PIL import Image
 from typing import Tuple
 
@@ -14,15 +15,9 @@ def get_resource_path(relative_path: str) -> str:
     Returns:
         The absolute path to the resource.
     """
-    # Assuming this file is in utils/ and the root is one level up
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    path = os.path.join(base_dir, relative_path)
-    
-    # Fallback to current working directory if not found in relative base
-    if not os.path.exists(path):
-        path = os.path.join(os.getcwd(), relative_path)
-        
-    return path
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 def load_pil_image(relative_path: str, fallback_size: Tuple[int, int] = (64, 64)) -> Image.Image:
     """

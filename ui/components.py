@@ -3,6 +3,8 @@
 import flet as ft
 from typing import Callable, Optional
 
+from utils.resource_manager import get_resource_path
+
 from .constants import (
     COLOR_DISABLED, COLOR_CHARGING, COLOR_BATTERY, COLOR_CARD_BG,
     COLOR_TEXT_PRIMARY, COLOR_DIVIDER, BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET,
@@ -164,7 +166,7 @@ class DeviceImage(ft.Image):
     
     def __init__(self, src: str = DEVICE_IMAGE_PATH):
         super().__init__(
-            src=src,
+            src=get_resource_path(src),
             width=DEVICE_IMAGE_SIZE,
             height=DEVICE_IMAGE_SIZE,
             error_content=ft.Icon(ft.Icons.HEADSET, size=100, color="white10")

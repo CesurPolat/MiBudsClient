@@ -33,6 +33,14 @@ python main.py
 
 Upon launch, the app will automatically scan for your device and attempt to connect. Once connected, battery levels will be displayed on the screen.
 
+## Building the Executable
+
+To package the application into a standalone executable for Windows, run the following command:
+
+```bash
+flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBudsClient"
+```
+
 ## Supported Devices
 
 - Redmi Buds 6 Play
