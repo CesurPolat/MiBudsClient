@@ -5,7 +5,7 @@ import threading
 import time
 
 from bluetooth import BTController
-from utils import check_for_updates
+from utils import set_startup, is_startup_enabled, check_for_updates
 from ui import (
     APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, 
     BATTERY_UNKNOWN, WindowManager, SystemTray
@@ -138,10 +138,34 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Build Settings Card with Controller Actions
     # ─────────────────────────────────────────────────────────────────────────
+    def on_startup_change(e):
+        enabled = e.control.value
+        if set_startup(enabled):
+            update_status(
+                f"Startup {'enabled' if enabled else 'disabled'}", 
+                "green" if enabled else "white"
+            )
+        else:
+            update_status("Failed to change startup setting", "red")
+            e.control.value = not enabled
+            page.update()
+
+    def on_latency_toggle(e):
+        enabled = e.control.value
+        if controller:
+            mode = "low" if enabled else "std"
+            controller.send_command(mode)
+            update_status(
+                f"{'Low Latency' if enabled else 'Standard'} mode set", 
+                "blue" if enabled else "white"
+            )
+
     settings_card = SettingsCard(
-        on_low_latency=lambda _: controller.send_command("low"),
-        on_standard=lambda _: controller.send_command("std"),
-        on_check_battery=lambda _: controller.request_battery()
+        on_low_latency_toggle=on_latency_toggle,
+        on_check_battery=lambda _: controller.request_battery(),
+        on_startup_toggle=on_startup_change,
+        startup_enabled=is_startup_enabled(),
+        low_latency_enabled=False # Default to standard on start
     )
 
     # ─────────────────────────────────────────────────────────────────────────

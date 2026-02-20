@@ -102,6 +102,37 @@ class SettingItem(ft.ListTile):
         )
 
 
+class ToggleSettingItem(ft.ListTile):
+    """A settings menu item with a toggle switch."""
+    
+    def __init__(
+        self, 
+        icon: str, 
+        icon_bg_color: str, 
+        title: str, 
+        value: bool = False,
+        on_change: Optional[Callable] = None
+    ):
+        self.switch = ft.Switch(
+            value=value,
+            on_change=on_change,
+            active_color=COLOR_BATTERY
+        )
+        
+        super().__init__(
+            leading=ft.Container(
+                content=ft.Icon(icon, color=COLOR_TEXT_PRIMARY),
+                bgcolor=icon_bg_color,
+                border_radius=ICON_BORDER_RADIUS,
+                width=ICON_BUTTON_SIZE,
+                height=ICON_BUTTON_SIZE
+            ),
+            title=ft.Text(title, color=COLOR_TEXT_PRIMARY, weight="medium"),
+            trailing=self.switch,
+            on_click=lambda _: self.switch.toggle()
+        )
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Settings Card
 # ─────────────────────────────────────────────────────────────────────────────
@@ -110,26 +141,35 @@ class SettingsCard(ft.Container):
     
     def __init__(
         self,
-        on_low_latency: Optional[Callable] = None,
-        on_standard: Optional[Callable] = None,
-        on_check_battery: Optional[Callable] = None
+        on_low_latency_toggle: Optional[Callable] = None,
+        on_check_battery: Optional[Callable] = None,
+        on_startup_toggle: Optional[Callable] = None,
+        startup_enabled: bool = False,
+        low_latency_enabled: bool = False
     ):
+        self.latency_item = ToggleSettingItem(
+            ft.Icons.SPEED, "blue_700", "Low Latency Mode",
+            value=low_latency_enabled,
+            on_change=on_low_latency_toggle
+        )
+
+        self.startup_item = ToggleSettingItem(
+            ft.Icons.ROCKET_LAUNCH, "deep_orange_700", "Run at Startup",
+            value=startup_enabled,
+            on_change=on_startup_toggle
+        )
+
         items = ft.Column([
-            SettingItem(
-                ft.Icons.SPEED, "blue700", "Low Latency Mode (On)",
-                on_click=on_low_latency
-            ),
+            self.latency_item,
             ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-            SettingItem(
-                ft.Icons.TIMER, "blue800", "Standard Mode (Off)",
-                on_click=on_standard
-            ),
+            self.startup_item,
             ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
             SettingItem(
                 ft.Icons.REFRESH, "grey700", "Check Battery",
                 on_click=on_check_battery
             ),
         ], spacing=0)
+
         
         super().__init__(
             content=items,
