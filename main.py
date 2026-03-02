@@ -3,6 +3,7 @@
 import flet as ft
 import threading
 import time
+import webbrowser
 
 from bluetooth import BTController
 from utils import (
@@ -236,17 +237,21 @@ def main(page: ft.Page):
         has_update, latest_ver = check_for_updates()
         if has_update:
             def on_update_click(e):
-                page.launch_url(GITHUB_URL)
-                page.snack_bar.open = False
+                webbrowser.open(GITHUB_URL)
+                snack_bar.open = False
                 page.update()
 
-            page.snack_bar = ft.SnackBar(
-                content=ft.Text(f"New version available: {latest_ver}"),
+            snack_bar = ft.SnackBar(
+                content=ft.Text(f"New version available: {latest_ver}", color="white"),
                 action="Download",
                 on_action=on_update_click,
                 duration=10000,
+                bgcolor="#171717",
+                show_close_icon=True,
+                close_icon_color="white"
             )
-            page.snack_bar.open = True
+            page.overlay.append(snack_bar)
+            snack_bar.open = True
             page.update()
 
     threading.Thread(target=perform_update_check, daemon=True).start()
