@@ -96,11 +96,18 @@ def main(page: ft.Page):
             page.update()
         
         elif msg_type == "battery":
-            battery_panel.update_all(
-                message.get("left", BATTERY_UNKNOWN),
-                message.get("right", BATTERY_UNKNOWN),
-                message.get("case", BATTERY_UNKNOWN)
-            )
+            left = message.get("left", BATTERY_UNKNOWN)
+            right = message.get("right", BATTERY_UNKNOWN)
+            case = message.get("case", BATTERY_UNKNOWN)
+            transient = message.get("transient", False)
+
+            battery_panel.update_all(left, right, case)
+
+            if transient:
+                status_bar.update_status("Refreshing battery data...", "white")
+            else:
+                status_bar.update_status("Battery data updated", "green")
+
             page.update()
         
         elif msg_type == "window":
@@ -126,11 +133,22 @@ def main(page: ft.Page):
     # Controller Callbacks
     # ─────────────────────────────────────────────────────────────────────────
     def update_battery_ui(left, right, case):
+        # UX hint: briefly clear battery fields before showing the latest values,
+        # even when values are unchanged.
+        page.pubsub.send_all({
+            "type": "battery",
+            "left": BATTERY_UNKNOWN,
+            "right": BATTERY_UNKNOWN,
+            "case": BATTERY_UNKNOWN,
+            "transient": True
+        })
+        time.sleep(0.2)
         page.pubsub.send_all({
             "type": "battery", 
             "left": left, 
             "right": right, 
-            "case": case
+            "case": case,
+            "transient": False
         })
 
     def update_status(text, color="white"):
