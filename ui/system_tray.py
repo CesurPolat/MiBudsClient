@@ -57,6 +57,11 @@ class SystemTray:
         if self.on_latency_toggle:
             new_state = not self._get_state()
             self.on_latency_toggle(new_state)
+
+    def refresh_menu(self) -> None:
+        """Refresh tray menu to reflect updated checked states."""
+        if self.icon:
+            self.icon.update_menu()
     
     def _exit(self) -> None:
         """Stop tray and exit application."""

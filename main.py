@@ -59,6 +59,7 @@ def main(page: ft.Page):
         if controller_ref["instance"]:
             mode = "low" if new_state else "std"
             controller_ref["instance"].send_command(mode)
+        tray.refresh_menu()
         page.pubsub.send_all({"type": "latency", "enabled": new_state})
 
     tray = SystemTray(
@@ -111,6 +112,7 @@ def main(page: ft.Page):
         
         elif msg_type == "latency":
             enabled = message.get("enabled")
+            controller_ref["low_latency"] = bool(enabled)
             settings_card.latency_switch.value = enabled
             update_status(
                 f"{'Low Latency' if enabled else 'Standard'} mode set", 
@@ -178,10 +180,8 @@ def main(page: ft.Page):
         if controller:
             mode = "low" if enabled else "std"
             controller.send_command(mode)
-            update_status(
-                f"{'Low Latency' if enabled else 'Standard'} mode set", 
-                "blue" if enabled else "white"
-            )
+        tray.refresh_menu()
+        page.pubsub.send_all({"type": "latency", "enabled": enabled})
 
     settings_card = SettingsCard(
         on_low_latency_toggle=on_latency_toggle,
