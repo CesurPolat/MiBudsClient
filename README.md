@@ -1,6 +1,6 @@
-# MiBuds Client
+# MiBudsClient
 
-A lightweight Python and Flet-based desktop client for Redmi Buds 6 Play. This application allows you to monitor your earbuds' status and manage settings via Bluetooth.
+A Python & Flet-based desktop client for Redmi Buds 6 Play. Features real-time battery tracking and low-latency mode via Bluetooth.
 
 ## Features
 
