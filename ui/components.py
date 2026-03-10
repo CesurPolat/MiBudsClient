@@ -6,8 +6,9 @@ from typing import Callable, Optional
 from utils.resource_manager import get_resource_path
 
 from .constants import (
-    COLOR_DISABLED, COLOR_CHARGING, COLOR_BATTERY, COLOR_CARD_BG,
+    COLOR_DISABLED, COLOR_CHARGING, COLOR_BATTERY, COLOR_BATTERY_LOW, COLOR_CARD_BG,
     COLOR_TEXT_PRIMARY, COLOR_DIVIDER, BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET,
+    BATTERY_LOW_THRESHOLD,
     ICON_BUTTON_SIZE, DEVICE_IMAGE_SIZE, CARD_BORDER_RADIUS, ICON_BORDER_RADIUS, DEVICE_IMAGE_PATH,
     TRAY_ICON_PATH
 )
@@ -49,6 +50,10 @@ class BatteryIndicator(ft.Column):
         text = f"%{actual_val}"
         if is_charging:
             return f"⚡ {text}", COLOR_CHARGING
+        
+        if actual_val <= BATTERY_LOW_THRESHOLD:
+            return text, COLOR_BATTERY_LOW
+        
         return text, COLOR_BATTERY
 
 

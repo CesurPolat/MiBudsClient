@@ -18,6 +18,7 @@ COLOR_BG = "#000000"
 COLOR_CARD_BG = "#1A1A1A"
 COLOR_CHARGING = "#4CAF50"
 COLOR_BATTERY = "#2196F3"
+COLOR_BATTERY_LOW = "#F44336"
 COLOR_DISABLED = "grey"
 COLOR_TEXT_PRIMARY = "white"
 COLOR_TEXT_SECONDARY = "grey"
@@ -28,6 +29,7 @@ COLOR_DIVIDER = "white10"
 # ─────────────────────────────────────────────────────────────────────────────
 BATTERY_UNKNOWN = 0xFF
 BATTERY_CHARGING_OFFSET = 128
+BATTERY_LOW_THRESHOLD = 20
 
 # ─────────────────────────────────────────────────────────────────────────────
 # UI Dimensions
