@@ -53,7 +53,11 @@ def main(page: ft.Page):
     window_mgr = WindowManager(page)
     
     # Controller will be set after initialization
-    controller_ref = {"instance": None, "low_latency": False}
+    controller_ref = {
+        "instance": None,
+        "low_latency": False,
+        "reconnect_in_progress": False
+    }
     
     def toggle_latency_from_tray(new_state):
         controller_ref["low_latency"] = new_state
@@ -115,6 +119,7 @@ def main(page: ft.Page):
             action = message.get("action")
             if action == "show":
                 window_mgr.apply_show()
+                reconnect_if_disconnected_on_show()
             elif action == "hide":
                 window_mgr.apply_hide()
         
@@ -162,6 +167,20 @@ def main(page: ft.Page):
     def request_battery_delayed():
         time.sleep(1)
         controller.request_battery()
+
+    def reconnect_if_disconnected_on_show():
+        """When window is shown from tray, trigger an immediate reconnect attempt if disconnected."""
+        if not controller.connected and not controller_ref["reconnect_in_progress"]:
+            controller_ref["reconnect_in_progress"] = True
+
+            def _reconnect_worker():
+                try:
+                    update_status("Connection lost. Reconnecting...", "orange")
+                    controller.connect()
+                finally:
+                    controller_ref["reconnect_in_progress"] = False
+
+            threading.Thread(target=_reconnect_worker, daemon=True).start()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Bluetooth Controller

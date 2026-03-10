@@ -76,7 +76,10 @@ class BTController:
         if not self._bd_addr:
             device = BluetoothDiscovery.get_connected_device()
             if not device or not device.address:
-                self._update_status("No connected Bluetooth device found", "red")
+                self._update_status(
+                    f"No connected Bluetooth device found. Retrying in {RECONNECT_DELAY}s...",
+                    "red"
+                )
                 return False
             self._bd_addr = device.address
             self._update_status(f"MAC found: {self._bd_addr}", "blue")
@@ -174,8 +177,8 @@ class BTController:
         
         while self._running:
             if not self._connection.connected:
-                self.connect()
-                time.sleep(RECONNECT_DELAY)
+                if not self.connect():
+                    time.sleep(RECONNECT_DELAY)
                 continue
             
             try:
