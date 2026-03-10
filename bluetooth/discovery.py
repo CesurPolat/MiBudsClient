@@ -21,7 +21,7 @@ class BluetoothDevice:
 # Discovery Script
 # ─────────────────────────────────────────────────────────────────────────────
 POWERSHELL_DISCOVERY_SCRIPT = r"""
-$bt = Get-PnpDevice -Class Bluetooth | Where-Object { $_.Status -eq 'OK' }
+$bt = Get-PnpDevice -Class Bluetooth -Status OK
 $results = foreach ($d in $bt) {
     $isConn = (Get-PnpDeviceProperty -InstanceId $d.InstanceId -KeyName 'DEVPKEY_Device_IsConnected' -ErrorAction SilentlyContinue).Data
     if ($isConn -eq $true) {
