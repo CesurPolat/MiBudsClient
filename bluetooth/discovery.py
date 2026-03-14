@@ -47,7 +47,7 @@ class BluetoothDiscovery:
     @staticmethod
     def is_supported() -> bool:
         """Check if discovery is supported on current platform."""
-        return sys.platform == "win32"
+        return sys.platform in ["win32", "linux"]
     
     @classmethod
     def get_connected_device(cls) -> Optional[BluetoothDevice]:
@@ -60,16 +60,20 @@ class BluetoothDiscovery:
             return None
         
         try:
-            output = cls._run_discovery_script()
-            return cls._parse_output(output)
+            if sys.platform == "win32":
+                output = cls._run_discovery_script_win()
+                return cls._parse_output_win(output)
+            elif sys.platform == "linux":
+                return cls._get_connected_device_linux()
         except Exception:
             return None
+        return None
     
     @staticmethod
-    def _run_discovery_script() -> str:
+    def _run_discovery_script_win() -> str:
         """Execute PowerShell discovery script."""
         # This flag prevents a console window from appearing on Windows.
-        creation_flags = subprocess.CREATE_NO_WINDOW
+        creation_flags = 0x08000000  # subprocess.CREATE_NO_WINDOW
         
         return subprocess.check_output(
             ["powershell", "-NoProfile", "-Command", POWERSHELL_DISCOVERY_SCRIPT],
@@ -81,7 +85,7 @@ class BluetoothDiscovery:
         ).strip()
     
     @classmethod
-    def _parse_output(cls, output: str) -> Optional[BluetoothDevice]:
+    def _parse_output_win(cls, output: str) -> Optional[BluetoothDevice]:
         """Parse PowerShell JSON output to BluetoothDevice."""
         if not output:
             return None
@@ -102,6 +106,27 @@ class BluetoothDiscovery:
             name=data.get("Name", ""),
             address=cls._format_mac(data.get("Address", ""))
         )
+
+    @classmethod
+    def _get_connected_device_linux(cls) -> Optional[BluetoothDevice]:
+        """Get connected Bluetooth device using bluetoothctl on Linux."""
+        try:
+            # Get list of devices
+            devices_output = subprocess.check_output(["bluetoothctl", "devices"], text=True)
+            for line in devices_output.splitlines():
+                # Format: Device XX:XX:XX:XX:XX:XX Name
+                parts = line.split(" ", 2)
+                if len(parts) >= 3:
+                    mac = parts[1]
+                    name = parts[2]
+                    
+                    # Verify if connected
+                    info_output = subprocess.check_output(["bluetoothctl", "info", mac], text=True)
+                    if "Connected: yes" in info_output:
+                        return BluetoothDevice(name=name, address=cls._format_mac(mac))
+        except (subprocess.SubprocessError, FileNotFoundError):
+            pass
+        return None
     
     @staticmethod
     def _format_mac(addr: str) -> str:
