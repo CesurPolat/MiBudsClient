@@ -67,9 +67,12 @@ def main(page: ft.Page):
         tray.refresh_menu()
         page.pubsub.send_all({"type": "latency", "enabled": new_state})
 
+    def tray_exit_request() -> None:
+        page.pubsub.send_all({"type": "app", "action": "close"})
+
     tray = SystemTray(
         on_show=window_mgr.show,
-        on_exit=window_mgr.close,
+        on_exit=tray_exit_request,
         on_latency_toggle=toggle_latency_from_tray,
         get_latency_state=lambda: controller_ref["low_latency"]
     )
@@ -132,6 +135,9 @@ def main(page: ft.Page):
                 "blue" if enabled else "white"
             )
             page.update()
+
+        elif msg_type == "app" and message.get("action") == "close":
+            window_mgr.close()
 
     page.pubsub.subscribe(on_pubsub_message)
 
