@@ -39,7 +39,7 @@ def main(page: ft.Page):
     page.window.min_height = WINDOW_HEIGHT
     page.window.max_width = WINDOW_WIDTH
     page.window.max_height = WINDOW_HEIGHT
-    page.window.resizable = False
+    page.window.resizable = page.platform != ft.PagePlatform.WINDOWS
     page.window.maximizable = False
     page.window.icon = "icon.ico"  # Path relative to assets_dir
     
