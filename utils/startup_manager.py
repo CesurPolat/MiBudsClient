@@ -43,6 +43,10 @@ X-GNOME-Autostart-enabled=true
         else:
             if os.path.exists(desktop_file):
                 os.remove(desktop_file)
+        
+        print(f"Linux startup {'enabled' if enabled else 'disabled'} successfully.")
+        print(f"Desktop file path: {desktop_file}")
+
         return True
     except Exception as e:
         print(f"Linux startup error: {e}")
