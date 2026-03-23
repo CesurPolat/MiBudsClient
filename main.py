@@ -41,9 +41,9 @@ def main(page: ft.Page):
     page.window.min_height = WINDOW_HEIGHT
     page.window.max_width = WINDOW_WIDTH
     page.window.max_height = WINDOW_HEIGHT
-    page.window.resizable = False
+    page.window.resizable = page.platform != ft.PagePlatform.WINDOWS
     page.window.maximizable = False
-    page.window.icon = "icon.ico"  # Path relative to assets_dir
+    page.window.icon = "icon.ico" if page.platform == ft.PagePlatform.WINDOWS else "icon.png"  # Path relative to assets_dir
     
     page.scroll = "auto"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -69,9 +69,12 @@ def main(page: ft.Page):
         tray.refresh_menu()
         page.pubsub.send_all({"type": "latency", "enabled": new_state})
 
+    def tray_exit_request() -> None:
+        page.pubsub.send_all({"type": "app", "action": "close"})
+
     tray = SystemTray(
         on_show=window_mgr.show,
-        on_exit=window_mgr.close,
+        on_exit=tray_exit_request,
         on_latency_toggle=toggle_latency_from_tray,
         get_latency_state=lambda: controller_ref["low_latency"]
     )
@@ -202,6 +205,9 @@ def main(page: ft.Page):
             page.overlay.append(snack_bar)
             snack_bar.open = True
             page.update()
+
+        elif msg_type == "app" and message.get("action") == "close":
+            window_mgr.close()
 
     page.pubsub.subscribe(on_pubsub_message)
 

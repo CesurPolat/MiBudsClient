@@ -54,6 +54,14 @@ To package the application into a standalone executable for Windows, run the fol
 flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBudsClient"
 ```
 
+```bash
+flet pack main.py \
+  --icon assets/icon.ico \
+  --add-data "assets:assets" \
+  --name "MiBudsClient" \
+  --hidden-import optparse
+```
+
 ## Supported Devices
 
 - Redmi Buds 6 Play
