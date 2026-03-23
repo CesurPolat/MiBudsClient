@@ -2,3 +2,4 @@ from .startup_manager import set_startup, is_startup_enabled
 from .updater import check_for_updates
 from .resource_manager import get_resource_path, load_pil_image
 from .single_instance import check_for_existing_instance, start_instance_listener
+from .user_preferences import should_show_update_notification, suppress_update_notification
