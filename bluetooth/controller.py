@@ -23,6 +23,8 @@ CheckBatteryCallback = Callable[[], None]
 # ─────────────────────────────────────────────────────────────────────────────
 class BTController:
     """High-level controller for Mi Buds communication."""
+
+    _STALE_CONNECTION_TIMEOUT = 12
     
     def __init__(
         self,
@@ -154,6 +156,13 @@ class BTController:
     def _ensure_connected(self) -> bool:
         """Ensure connected, attempting to connect if not."""
         return self._connection.connected or self.connect()
+
+    def reconnect(self, force_rediscovery: bool = False) -> bool:
+        """Reconnect to the device, optionally forcing MAC rediscovery."""
+        self._connection.disconnect()
+        if force_rediscovery:
+            self._bd_addr = None
+        return self.connect()
     
     def on_connect_setup(self):
             """Send a sequence of packets on connection."""
@@ -174,16 +183,35 @@ class BTController:
     def listen(self) -> None:
         """Main listener loop for incoming data."""
         last_packet_size = 0
+        last_data_received_at = time.monotonic()
+        disconnected_since: Optional[float] = None
         
         while self._running:
             if not self._connection.connected:
-                if not self.connect():
+                if disconnected_since is None:
+                    disconnected_since = time.monotonic()
+
+                force_rediscovery = (
+                    time.monotonic() - disconnected_since >= self._STALE_CONNECTION_TIMEOUT
+                )
+                if force_rediscovery:
+                    self._update_status("Connection stale. Full reconnect...", "orange")
+
+                if not self.reconnect(force_rediscovery=force_rediscovery):
                     time.sleep(RECONNECT_DELAY)
+                else:
+                    disconnected_since = None
+                    last_data_received_at = time.monotonic()
                 continue
             
             try:
                 last_packet_size = self._process_data(last_packet_size)
+                last_data_received_at = time.monotonic()
+                disconnected_since = None
             except socket.timeout:
+                if time.monotonic() - last_data_received_at >= self._STALE_CONNECTION_TIMEOUT:
+                    self._update_status("No data received. Reconnecting...", "orange")
+                    self._handle_disconnect()
                 continue
             except Exception:
                 self._handle_disconnect()
@@ -191,6 +219,9 @@ class BTController:
     def _process_data(self, last_packet_size: int) -> int:
         """Process incoming data packet."""
         data = self._connection.receive()
+        if not data:
+            raise ConnectionError("Received zero bytes from RFCOMM socket")
+
         packet_size = len(data)
         print(f"Received data size: {packet_size}")
 

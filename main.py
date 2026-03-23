@@ -350,7 +350,16 @@ def main(page: ft.Page):
             def _reconnect_worker():
                 try:
                     update_status("Connection lost. Reconnecting...", "orange")
-                    controller.connect()
+                    deadline = time.monotonic() + 8
+
+                    while time.monotonic() < deadline and not controller.connected:
+                        if controller.connect():
+                            break
+                        time.sleep(1)
+
+                    if not controller.connected:
+                        update_status("Retry timed out. Starting full reconnect...", "orange")
+                        controller.reconnect(force_rediscovery=True)
                 finally:
                     controller_ref["reconnect_in_progress"] = False
 
