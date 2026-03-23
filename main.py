@@ -1,10 +1,18 @@
 """Mi Buds Client - Main Application Entry Point."""
 
 import flet as ft
+import os
+import shutil
+import subprocess
+import sys
 import threading
 import time
 import webbrowser
-import winsound
+
+try:
+    import winsound
+except ImportError:
+    winsound = None
 
 from bluetooth import BTController
 from utils import (
@@ -227,18 +235,60 @@ def main(page: ft.Page):
         return raw_value >= BATTERY_CHARGING_OFFSET
 
     def play_charge_transition_sound(started):
-        """Play distinct non-USB-like tone patterns for charge transitions."""
+        """Play distinct tone patterns for charge transitions on Windows/Linux."""
         start_pattern = [(880, 80), (1175, 90), (1568, 120)]
         stop_pattern = [(1568, 80), (1175, 90), (880, 120)]
         tones = start_pattern if started else stop_pattern
 
         def _play_tones():
-            try:
-                for frequency, duration in tones:
-                    winsound.Beep(frequency, duration)
-            except RuntimeError:
-                # Fallback in environments where Beep is not available.
-                winsound.MessageBeep(winsound.MB_OK)
+            if winsound and sys.platform.startswith("win"):
+                try:
+                    for frequency, duration in tones:
+                        winsound.Beep(frequency, duration)
+                    return
+                except RuntimeError:
+                    winsound.MessageBeep(winsound.MB_OK)
+                    return
+
+            if sys.platform.startswith("linux"):
+                play_bin = shutil.which("play")
+                beep_bin = shutil.which("beep")
+
+                if play_bin:
+                    for frequency, duration in tones:
+                        subprocess.run(
+                            [
+                                play_bin,
+                                "-nq",
+                                "synth",
+                                f"{duration / 1000:.3f}",
+                                "sine",
+                                str(frequency),
+                            ],
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                            check=False,
+                        )
+                    return
+
+                if beep_bin:
+                    for frequency, duration in tones:
+                        subprocess.run(
+                            [beep_bin, "-f", str(frequency), "-l", str(duration)],
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                            check=False,
+                        )
+                    return
+
+            # Last-resort fallback: terminal bell pattern.
+            for _, duration in tones:
+                try:
+                    sys.stdout.write("\a")
+                    sys.stdout.flush()
+                except Exception:
+                    pass
+                time.sleep(duration / 1000)
 
         threading.Thread(target=_play_tones, daemon=True).start()
 
