@@ -4,6 +4,7 @@ import flet as ft
 import threading
 import time
 import webbrowser
+import winsound
 
 from bluetooth import BTController
 from utils import (
@@ -17,7 +18,7 @@ from utils import (
 )
 from ui import (
     APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, 
-    BATTERY_UNKNOWN, WindowManager, SystemTray
+    BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET, WindowManager, SystemTray
 )
 from ui.components import (
     AppTitle, DeviceImage, BatteryPanel, SettingsCard, StatusBar, Spacer, Footer
@@ -214,7 +215,54 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Controller Callbacks
     # ─────────────────────────────────────────────────────────────────────────
+    previous_charging_state = {
+        "left": None,
+        "right": None,
+    }
+
+    def get_charging_state(raw_value):
+        """Return charging state for a raw battery value, or None if unknown."""
+        if raw_value == BATTERY_UNKNOWN:
+            return None
+        return raw_value >= BATTERY_CHARGING_OFFSET
+
+    def play_charge_transition_sound(started):
+        """Play distinct non-USB-like tone patterns for charge transitions."""
+        start_pattern = [(880, 80), (1175, 90), (1568, 120)]
+        stop_pattern = [(1568, 80), (1175, 90), (880, 120)]
+        tones = start_pattern if started else stop_pattern
+
+        def _play_tones():
+            try:
+                for frequency, duration in tones:
+                    winsound.Beep(frequency, duration)
+            except RuntimeError:
+                # Fallback in environments where Beep is not available.
+                winsound.MessageBeep(winsound.MB_OK)
+
+        threading.Thread(target=_play_tones, daemon=True).start()
+
     def update_battery_ui(left, right, case):
+        current_charging_state = {
+            "left": get_charging_state(left),
+            "right": get_charging_state(right),
+        }
+
+        for side in ("left", "right"):
+            previous_state = previous_charging_state[side]
+            current_state = current_charging_state[side]
+
+            if previous_state is None or current_state is None:
+                previous_charging_state[side] = current_state
+                continue
+
+            if not previous_state and current_state:
+                play_charge_transition_sound(started=True)
+            elif previous_state and not current_state:
+                play_charge_transition_sound(started=False)
+
+            previous_charging_state[side] = current_state
+
         # UX hint: briefly clear battery fields before showing the latest values,
         # even when values are unchanged.
         page.pubsub.send_all({
