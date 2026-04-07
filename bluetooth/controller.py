@@ -1,6 +1,7 @@
 """Main Bluetooth Controller for Mi Buds."""
 
 import socket
+import threading
 import time
 from typing import Callable, Optional
 
@@ -16,6 +17,7 @@ from .constants import RECONNECT_DELAY
 StatusCallback = Callable[[str, str], None]
 BatteryCallback = Callable[[int, int, int], None]
 CheckBatteryCallback = Callable[[], None]
+ConnectionEventCallback = Callable[[str], None]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -31,17 +33,25 @@ class BTController:
         status_callback: Optional[StatusCallback] = None,
         battery_callback: Optional[BatteryCallback] = None,
         check_battery_callback: Optional[CheckBatteryCallback] = None,
+        connection_event_callback: Optional[ConnectionEventCallback] = None,
         bd_addr: Optional[str] = None
     ):
         self._connection = BluetoothConnection()
         self._protocol = BudsProtocol()
         self._bd_addr = bd_addr
         self._running = True
+        self._connect_lock = threading.Lock()
+        self._state_lock = threading.Lock()
+        self._max_reconnect_attempts = 5
+        self._reconnect_attempts = 0
+        self._reconnect_paused = False
+        self._last_connection_event: Optional[str] = None
         
         # Callbacks
         self._status_callback = status_callback
         self._battery_callback = battery_callback
         self._check_battery_callback = check_battery_callback
+        self._connection_event_callback = connection_event_callback
     
     # ─────────────────────────────────────────────────────────────────────────
     # Properties
@@ -68,34 +78,65 @@ class BTController:
         """Notify UI of battery status."""
         if self._battery_callback:
             self._battery_callback(left, right, case)
+
+    def _notify_connection_event(self, event: str) -> None:
+        """Notify UI about connection event transitions."""
+        if event == self._last_connection_event:
+            return
+
+        self._last_connection_event = event
+        if self._connection_event_callback:
+            self._connection_event_callback(event)
+
+    def _reset_reconnect_state(self) -> None:
+        with self._state_lock:
+            self._reconnect_attempts = 0
+            self._reconnect_paused = False
+
+    def _record_reconnect_failure(self) -> tuple[int, bool]:
+        with self._state_lock:
+            self._reconnect_attempts += 1
+            if self._reconnect_attempts >= self._max_reconnect_attempts:
+                self._reconnect_paused = True
+            return self._reconnect_attempts, self._reconnect_paused
+
+    def resume_reconnect_attempts(self) -> None:
+        """Allow reconnect attempts again after user interaction."""
+        self._reset_reconnect_state()
     
     # ─────────────────────────────────────────────────────────────────────────
     # Connection
     # ─────────────────────────────────────────────────────────────────────────
     def connect(self) -> bool:
         """Connect to the Mi Buds device."""
-        # Discover device if address not set
-        if not self._bd_addr:
-            device = BluetoothDiscovery.get_connected_device()
-            if not device or not device.address:
-                self._update_status(
-                    f"No connected Bluetooth device found. Retrying in {RECONNECT_DELAY}s...",
-                    "red"
-                )
+        with self._connect_lock:
+            if self._connection.connected:
+                return True
+
+            # Discover device if address not set
+            if not self._bd_addr:
+                device = BluetoothDiscovery.get_connected_device()
+                if not device or not device.address:
+                    self._update_status(
+                        f"No connected Bluetooth device found. Retrying in {RECONNECT_DELAY}s...",
+                        "red"
+                    )
+                    return False
+                self._bd_addr = device.address
+                self._update_status(f"MAC found: {self._bd_addr}", "blue")
+
+            # Establish connection
+            try:
+                self._connection.connect(self._bd_addr)
+                self._update_status("Connected", "blue")
+                self._reset_reconnect_state()
+                self._notify_connection_event("connected")
+                self.on_connect_setup()
+                return True
+            except Exception as e:
+                self._connection.connected = False
+                self._update_status(f"Connection failed: {e}", "red")
                 return False
-            self._bd_addr = device.address
-            self._update_status(f"MAC found: {self._bd_addr}", "blue")
-        
-        # Establish connection
-        try:
-            self._connection.connect(self._bd_addr)
-            self._update_status("Connected", "blue")
-            self.on_connect_setup()
-            return True
-        except Exception as e:
-            self._connection.connected = False
-            self._update_status(f"Connection failed: {e}", "red")
-            return False
     
     # ─────────────────────────────────────────────────────────────────────────
     # Commands
@@ -121,8 +162,12 @@ class BTController:
             self._connection.connected = False
             return False, f"Send error: {e}"
     
-    def request_battery(self) -> tuple[bool, str]:
+    def request_battery(self, user_initiated: bool = True) -> tuple[bool, str]:
         """Request battery status from device."""
+        # User-invoked battery refresh should reopen reconnect attempts.
+        if user_initiated:
+            self.resume_reconnect_attempts()
+
         if not self._ensure_connected():
             return False, "Could not connect to device."
         
@@ -162,6 +207,7 @@ class BTController:
         self._connection.disconnect()
         if force_rediscovery:
             self._bd_addr = None
+        self._notify_connection_event("reconnecting")
         return self.connect()
     
     def on_connect_setup(self):
@@ -175,7 +221,7 @@ class BTController:
                 time.sleep(0.1)
             # Also request battery after sending packets
             time.sleep(1)
-            self.request_battery()
+            self.request_battery(user_initiated=False)
     
     # ─────────────────────────────────────────────────────────────────────────
     # Listener
@@ -188,6 +234,13 @@ class BTController:
         
         while self._running:
             if not self._connection.connected:
+                with self._state_lock:
+                    reconnect_paused = self._reconnect_paused
+
+                if reconnect_paused:
+                    time.sleep(RECONNECT_DELAY)
+                    continue
+
                 if disconnected_since is None:
                     disconnected_since = time.monotonic()
 
@@ -198,6 +251,15 @@ class BTController:
                     self._update_status("Connection stale. Full reconnect...", "orange")
 
                 if not self.reconnect(force_rediscovery=force_rediscovery):
+                    attempts, reached_limit = self._record_reconnect_failure()
+                    if reached_limit:
+                        self._update_status("Could not connect. Press Refresh Battery.", "red")
+                        self._notify_connection_event("reconnect_failed_limit")
+                    else:
+                        self._update_status(
+                            f"Reconnect failed ({attempts}/{self._max_reconnect_attempts}). Retrying in {RECONNECT_DELAY}s...",
+                            "orange"
+                        )
                     time.sleep(RECONNECT_DELAY)
                 else:
                     disconnected_since = None
@@ -209,9 +271,8 @@ class BTController:
                 last_data_received_at = time.monotonic()
                 disconnected_since = None
             except socket.timeout:
-                if time.monotonic() - last_data_received_at >= self._STALE_CONNECTION_TIMEOUT:
-                    self._update_status("No data received. Reconnecting...", "orange")
-                    self._handle_disconnect()
+                # Keep idle connections without forcing periodic battery probes.
+                # Reconnect is handled only on explicit send/receive failures.
                 continue
             except Exception:
                 self._handle_disconnect()
@@ -242,6 +303,7 @@ class BTController:
         """Handle connection loss."""
         self._connection.connected = False
         self._update_status("Connection lost", "red")
+        self._notify_connection_event("disconnected")
         time.sleep(2)
     
     # ─────────────────────────────────────────────────────────────────────────

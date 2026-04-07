@@ -21,6 +21,7 @@ from utils import (
     check_for_updates,
     should_show_update_notification,
     suppress_update_notification,
+    get_low_latency_exceptions,
     check_for_existing_instance,
     start_instance_listener
 )
@@ -31,10 +32,14 @@ from ui import (
 from ui.components import (
     AppTitle, DeviceImage, BatteryPanel, SettingsCard, StatusBar, Spacer, Footer
 )
+from utils.debug_console import DebugConsoleManager
+from utils.game_monitor import FullscreenGameMonitor
 
 
 def main(page: ft.Page):
     """Main application entry point."""
+    debug_console = DebugConsoleManager()
+    debug_console.install()
     
     # ─────────────────────────────────────────────────────────────────────────
     # Page Configuration
@@ -67,16 +72,50 @@ def main(page: ft.Page):
     controller_ref = {
         "instance": None,
         "low_latency": False,
-        "reconnect_in_progress": False
+        "reconnect_in_progress": False,
+        "manual_override_until": 0.0,
+        "auto_mode_active": False,
+        "game_monitor": None
     }
-    
-    def toggle_latency_from_tray(new_state):
+    low_latency_exceptions = set(get_low_latency_exceptions())
+
+    notification_state = {
+        "last_connection_event": None
+    }
+
+    tray_ref = {
+        "instance": None
+    }
+
+    debug_state = {
+        "last_toggle_at": 0.0
+    }
+
+    def set_latency_mode(new_state: bool, source: str = "manual"):
         controller_ref["low_latency"] = new_state
+
+        if source == "manual":
+            controller_ref["manual_override_until"] = time.monotonic() + 45
+            controller_ref["auto_mode_active"] = False
+        elif source == "auto_on":
+            controller_ref["auto_mode_active"] = True
+        elif source == "auto_off":
+            controller_ref["auto_mode_active"] = False
+
         if controller_ref["instance"]:
             mode = "low" if new_state else "std"
-            controller_ref["instance"].send_command(mode)
-        tray.refresh_menu()
+            success, message = controller_ref["instance"].send_command(mode)
+            if not success:
+                page.pubsub.send_all({"type": "status", "text": message, "color": "red"})
+
+        tray_inst = tray_ref["instance"]
+        if tray_inst:
+            tray_inst.refresh_menu()
+
         page.pubsub.send_all({"type": "latency", "enabled": new_state})
+    
+    def toggle_latency_from_tray(new_state):
+        set_latency_mode(bool(new_state), source="manual")
 
     def tray_exit_request() -> None:
         page.pubsub.send_all({"type": "app", "action": "close"})
@@ -87,6 +126,7 @@ def main(page: ft.Page):
         on_latency_toggle=toggle_latency_from_tray,
         get_latency_state=lambda: controller_ref["low_latency"]
     )
+    tray_ref["instance"] = tray
     threading.Thread(target=tray.run, daemon=True).start()
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -216,7 +256,58 @@ def main(page: ft.Page):
             page.update()
 
         elif msg_type == "app" and message.get("action") == "close":
+            game_monitor = controller_ref.get("game_monitor")
+            if game_monitor:
+                game_monitor.stop()
+            debug_console.stop_f12_hotkey_listener()
             window_mgr.close()
+
+        elif msg_type == "debug_console":
+            action = message.get("action")
+            if action != "toggle":
+                return
+
+            now = time.monotonic()
+            if now - debug_state["last_toggle_at"] < 0.35:
+                return
+            debug_state["last_toggle_at"] = now
+
+            result = debug_console.toggle_console()
+            if result == "opened":
+                status_bar.update_status("Debug console opened", "blue")
+            elif result == "closed":
+                status_bar.update_status("Debug console closed", "white")
+            else:
+                status_bar.update_status("Debug console could not be opened", "red")
+            page.update()
+
+        elif msg_type == "connection_event":
+            event = message.get("event")
+            if event == notification_state["last_connection_event"]:
+                return
+
+            notification_state["last_connection_event"] = event
+            if event == "connected":
+                tray.notify("Earbuds connected")
+            elif event == "disconnected":
+                tray.notify("Earbuds disconnected")
+
+        elif msg_type == "fullscreen_state":
+            is_fullscreen = bool(message.get("is_fullscreen", False))
+            app_id = str(message.get("app_id", "")).strip().lower()
+            if time.monotonic() < controller_ref["manual_override_until"]:
+                return
+
+            if is_fullscreen and app_id and app_id in low_latency_exceptions:
+                update_status(f"Auto low latency skipped for {app_id}", "orange")
+                return
+
+            if is_fullscreen and not controller_ref["low_latency"]:
+                set_latency_mode(True, source="auto_on")
+                update_status("Fullscreen detected. Low Latency enabled", "blue")
+            elif not is_fullscreen and controller_ref["auto_mode_active"]:
+                set_latency_mode(False, source="auto_off")
+                update_status("Fullscreen ended. Standard mode restored", "white")
 
     page.pubsub.subscribe(on_pubsub_message)
 
@@ -340,6 +431,7 @@ def main(page: ft.Page):
 
     def request_battery_delayed():
         time.sleep(1)
+        controller.resume_reconnect_attempts()
         controller.request_battery()
 
     def reconnect_if_disconnected_on_show():
@@ -349,21 +441,29 @@ def main(page: ft.Page):
 
             def _reconnect_worker():
                 try:
+                    controller.resume_reconnect_attempts()
                     update_status("Connection lost. Reconnecting...", "orange")
-                    deadline = time.monotonic() + 8
-
-                    while time.monotonic() < deadline and not controller.connected:
-                        if controller.connect():
-                            break
-                        time.sleep(1)
-
-                    if not controller.connected:
-                        update_status("Retry timed out. Starting full reconnect...", "orange")
-                        controller.reconnect(force_rediscovery=True)
+                    controller.reconnect(force_rediscovery=True)
                 finally:
                     controller_ref["reconnect_in_progress"] = False
 
             threading.Thread(target=_reconnect_worker, daemon=True).start()
+
+    def on_keyboard_event(e):
+        key_name = str(getattr(e, "key", "")).upper()
+        if key_name != "F12":
+            return
+
+        if not sys.platform.startswith("win"):
+            update_status("Debug console is currently supported on Windows", "orange")
+            return
+
+        page.pubsub.send_all({"type": "debug_console", "action": "toggle"})
+
+    page.on_keyboard_event = on_keyboard_event
+    debug_console.start_f12_hotkey_listener(
+        lambda: page.pubsub.send_all({"type": "debug_console", "action": "toggle"})
+    )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Bluetooth Controller
@@ -374,7 +474,10 @@ def main(page: ft.Page):
         check_battery_callback=lambda: threading.Thread(
             target=request_battery_delayed, 
             daemon=True
-        ).start()
+        ).start(),
+        connection_event_callback=lambda event: page.pubsub.send_all(
+            {"type": "connection_event", "event": event}
+        )
     )
     
     # Set controller reference for tray callbacks
@@ -396,13 +499,8 @@ def main(page: ft.Page):
             page.update()
 
     def on_latency_toggle(e):
-        enabled = e.control.value
-        controller_ref["low_latency"] = enabled
-        if controller:
-            mode = "low" if enabled else "std"
-            controller.send_command(mode)
-        tray.refresh_menu()
-        page.pubsub.send_all({"type": "latency", "enabled": enabled})
+        enabled = bool(e.control.value)
+        set_latency_mode(enabled, source="manual")
 
     settings_card = SettingsCard(
         on_low_latency_toggle=on_latency_toggle,
@@ -441,6 +539,18 @@ def main(page: ft.Page):
             page.pubsub.send_all({"type": "update_notification", "latest_ver": latest_ver})
 
     threading.Thread(target=perform_update_check, daemon=True).start()
+
+    def on_fullscreen_change(is_fullscreen: bool, app_id: str):
+        page.pubsub.send_all(
+            {"type": "fullscreen_state", "is_fullscreen": is_fullscreen, "app_id": app_id}
+        )
+
+    game_monitor = FullscreenGameMonitor(
+        on_fullscreen_change=on_fullscreen_change,
+        on_log=lambda msg: page.pubsub.send_all({"type": "status", "text": msg, "color": "orange"})
+    )
+    controller_ref["game_monitor"] = game_monitor
+    game_monitor.start()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Start Bluetooth Listener

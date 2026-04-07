@@ -118,6 +118,17 @@ class SystemTray:
         """Refresh tray menu to reflect updated checked states."""
         if self.icon and getattr(pystray.Icon, "HAS_MENU", False):
             self.icon.update_menu()
+
+    def notify(self, message: str, title: str = "Mi Buds Client") -> None:
+        """Show a system tray notification when supported by backend."""
+        if not self.icon:
+            return
+
+        try:
+            if hasattr(self.icon, "notify"):
+                self.icon.notify(message, title)
+        except Exception as e:
+            print(f"Tray notify error: {e}")
     
     def _exit(self) -> None:
         """Stop tray and exit application."""
