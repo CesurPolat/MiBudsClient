@@ -7,7 +7,7 @@ APP_TITLE = "Redmi Buds 6 Play"
 APP_VERSION = "v0.2.0"
 GITHUB_URL = "https://github.com/CesurPolat/MiBudsClient"
 WINDOW_WIDTH = 550
-WINDOW_HEIGHT = 800
+WINDOW_HEIGHT = 735
 TRAY_ICON_PATH = "assets/icon.png"
 TRAY_ICON_SIZE = (64, 64)
 
@@ -36,6 +36,6 @@ BATTERY_LOW_THRESHOLD = 20
 # ─────────────────────────────────────────────────────────────────────────────
 ICON_BUTTON_SIZE = 40
 DEVICE_IMAGE_PATH = "assets/images/MiBuds6Play.png"
-DEVICE_IMAGE_SIZE = 200
+DEVICE_IMAGE_SIZE = 108
 CARD_BORDER_RADIUS = 20
 ICON_BORDER_RADIUS = 10

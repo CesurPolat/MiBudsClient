@@ -33,7 +33,7 @@ from utils import (
     start_instance_listener
 )
 from ui import (
-    APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, 
+    APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, COLOR_CARD_BG,
     BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET, WindowManager, SystemTray
 )
 from ui.components import (
@@ -327,6 +327,27 @@ def main(page: ft.Page):
     device_image = DeviceImage()
     battery_panel = BatteryPanel()
     status_bar = StatusBar()
+    status_bar.size = 11
+    device_status_card = ft.Container(
+        content=ft.Row(
+            controls=[
+                device_image,
+                ft.Column(
+                    controls=[status_bar, battery_panel],
+                    spacing=6,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.START,
+                    expand=True,
+                ),
+            ],
+            spacing=12,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+        padding=ft.padding.symmetric(horizontal=12, vertical=10),
+        bgcolor=COLOR_CARD_BG,
+        border_radius=18,
+        border=ft.border.all(1, "#2B313C"),
+    )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Message Handlers
@@ -822,12 +843,9 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     page.add(
         title,
-        Spacer(height=20),
-        device_image,
-        status_bar,
-        Spacer(height=20),
-        battery_panel,
-        Spacer(height=20),
+        Spacer(height=8),
+        device_status_card,
+        Spacer(height=10),
         settings_card,
         Spacer(height=5),
         Footer(APP_VERSION, GITHUB_URL),

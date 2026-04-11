@@ -21,12 +21,14 @@ class BatteryIndicator(ft.Column):
     """Displays battery level for a single device (left/right/case)."""
     
     def __init__(self, label: str):
-        self._label_text = ft.Text(label, color=COLOR_DISABLED, size=12)
-        self._value_text = ft.Text("--", color=COLOR_TEXT_PRIMARY, size=16, weight="bold")
-        
+        self._label_text = ft.Text(label, color=COLOR_DISABLED, size=9, weight="w600")
+        self._value_text = ft.Text("--", color=COLOR_TEXT_PRIMARY, size=15, weight="bold")
+
         super().__init__(
             controls=[self._label_text, self._value_text],
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=2,
+            tight=True,
         )
     
     def update_value(self, raw_value: int) -> None:
@@ -60,7 +62,7 @@ class BatteryIndicator(ft.Column):
 # ─────────────────────────────────────────────────────────────────────────────
 # Battery Panel
 # ─────────────────────────────────────────────────────────────────────────────
-class BatteryPanel(ft.Row):
+class BatteryPanel(ft.Container):
     """Panel displaying all three battery indicators."""
     
     def __init__(self):
@@ -69,8 +71,23 @@ class BatteryPanel(ft.Row):
         self._case = BatteryIndicator("CASE")
         
         super().__init__(
-            controls=[self._left, self._right, self._case],
-            alignment=ft.MainAxisAlignment.SPACE_EVENLY
+            content=ft.Row(
+                controls=[
+                    ft.Container(content=self._left, expand=True, alignment=ft.Alignment.CENTER),
+                    ft.Container(width=1, height=30, bgcolor="#2A313C"),
+                    ft.Container(content=self._right, expand=True, alignment=ft.Alignment.CENTER),
+                    ft.Container(width=1, height=30, bgcolor="#2A313C"),
+                    ft.Container(content=self._case, expand=True, alignment=ft.Alignment.CENTER),
+                ],
+                alignment=ft.MainAxisAlignment.START,
+                spacing=6,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=ft.padding.symmetric(horizontal=10, vertical=8),
+            border_radius=16,
+            bgcolor="#111722",
+            border=ft.border.all(1, "#2D3542"),
+            expand=True,
         )
     
     def update_all(self, left: int, right: int, case: int) -> None:
@@ -798,15 +815,30 @@ class StatusBar(ft.Text):
 # ─────────────────────────────────────────────────────────────────────────────
 # Device Image
 # ─────────────────────────────────────────────────────────────────────────────
-class DeviceImage(ft.Image):
+class DeviceImage(ft.Container):
     """Device image with fallback icon."""
     
     def __init__(self, src: str = DEVICE_IMAGE_PATH):
         super().__init__(
-            src=get_resource_path(src),
-            width=DEVICE_IMAGE_SIZE,
-            height=DEVICE_IMAGE_SIZE,
-            error_content=ft.Icon(ft.Icons.HEADSET, size=100, color="white10")
+            content=ft.Container(
+                content=ft.Image(
+                    src=get_resource_path(src),
+                    width=DEVICE_IMAGE_SIZE,
+                    height=DEVICE_IMAGE_SIZE,
+                    fit="contain",
+                    error_content=ft.Icon(ft.Icons.HEADSET, size=58, color="white10"),
+                ),
+                alignment=ft.Alignment.CENTER,
+                border_radius=(DEVICE_IMAGE_SIZE + 4) // 2,
+                border=ft.border.all(1, "#313948"),
+            ),
+            width=DEVICE_IMAGE_SIZE + 12,
+            height=DEVICE_IMAGE_SIZE + 12,
+            alignment=ft.Alignment.CENTER,
+            padding=ft.padding.all(4),
+            border_radius=(DEVICE_IMAGE_SIZE + 12) // 2,
+            bgcolor="#10141C",
+            border=ft.border.all(1, "#252D38"),
         )
 
 
