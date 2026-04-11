@@ -6,7 +6,7 @@ A Python & Flet-based desktop client for Redmi Buds 6 Play. Features real-time b
 
 - **Battery Tracking:** Real-time display of battery percentages for left earbud, right earbud, and charging case.
 - **Charging Status:** Indicators showing whether the earbuds or case are currently charging.
-- **Low Latency Mode:** Quick toggle for Game Mode (Low Latency).
+- **Low Latency Mode:** Off, Auto, and On modes for controlling Game Mode (Low Latency). Auto mode uses a single app list with Exclude/Include behavior and supports keeping low latency active until the app closes.
 - **System Tray Support:** Minimize to tray and control features like Low Latency Mode directly from the tray menu.
 - **Auto-Connect:** Automatically detects compatible connected Bluetooth devices.
 - **Single Instance Protection:** Prevents multiple instances of the application from running simultaneously.

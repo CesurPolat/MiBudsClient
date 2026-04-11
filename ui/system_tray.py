@@ -60,13 +60,13 @@ class SystemTray:
         self, 
         on_show: Callable, 
         on_exit: Callable,
-        on_latency_toggle: Optional[Callable[[bool], None]] = None,
-        get_latency_state: Optional[Callable[[], bool]] = None
+        on_latency_mode_select: Optional[Callable[[str], None]] = None,
+        get_latency_mode: Optional[Callable[[], str]] = None,
     ):
         self.on_show = on_show
         self.on_exit = on_exit
-        self.on_latency_toggle = on_latency_toggle
-        self.get_latency_state = get_latency_state
+        self.on_latency_mode_select = on_latency_mode_select
+        self.get_latency_mode = get_latency_mode
         self.icon = None
     
     def run(self) -> None:
@@ -81,9 +81,19 @@ class SystemTray:
                     pystray.MenuItem("Open", lambda icon, item: self.on_show(), default=True),
                     pystray.Menu.SEPARATOR,
                     pystray.MenuItem(
-                        "Low Latency Mode",
-                        self._on_toggle,
-                        checked=lambda item: self._get_state()
+                        "Low Latency: Off",
+                        lambda icon, item: self._on_mode_select("off"),
+                        checked=lambda item: self._is_mode("off"),
+                    ),
+                    pystray.MenuItem(
+                        "Low Latency: Auto",
+                        lambda icon, item: self._on_mode_select("auto"),
+                        checked=lambda item: self._is_mode("auto"),
+                    ),
+                    pystray.MenuItem(
+                        "Low Latency: On",
+                        lambda icon, item: self._on_mode_select("on"),
+                        checked=lambda item: self._is_mode("on"),
                     ),
                     pystray.Menu.SEPARATOR,
                     pystray.MenuItem("Quit", lambda icon, item: self._exit())
@@ -102,17 +112,19 @@ class SystemTray:
         except Exception as e:
             print(f"Tray error: {e}")
     
-    def _get_state(self) -> bool:
-        """Get current latency state."""
-        if self.get_latency_state:
-            return self.get_latency_state()
-        return False
+    def _get_mode(self) -> str:
+        """Get current latency mode."""
+        if self.get_latency_mode:
+            return self.get_latency_mode() or "off"
+        return "off"
 
-    def _on_toggle(self, icon, item) -> None:
-        """Toggle latency mode."""
-        if self.on_latency_toggle:
-            new_state = not self._get_state()
-            self.on_latency_toggle(new_state)
+    def _is_mode(self, mode: str) -> bool:
+        return self._get_mode() == mode
+
+    def _on_mode_select(self, mode: str) -> None:
+        """Select latency mode from tray menu."""
+        if self.on_latency_mode_select:
+            self.on_latency_mode_select(mode)
 
     def refresh_menu(self) -> None:
         """Refresh tray menu to reflect updated checked states."""

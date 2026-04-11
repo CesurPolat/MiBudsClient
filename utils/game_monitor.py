@@ -1,4 +1,4 @@
-"""Cross-platform fullscreen detector for auto low-latency switching."""
+"""Cross-platform foreground detector for auto low-latency switching."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import Callable, Optional
 
 
 class FullscreenGameMonitor:
-    """Poll foreground fullscreen state and notify on stable transitions."""
+    """Poll foreground state and notify on stable transitions or app changes."""
 
     def __init__(
         self,
@@ -61,10 +61,13 @@ class FullscreenGameMonitor:
                 self._last_raw_state = raw_state
                 self._stable_count = 1
 
-            if self._stable_count >= self._stable_polls and raw_state != self._current_state:
-                self._current_state = raw_state
-                self._last_app_id = app_id
-                self._on_fullscreen_change(raw_state, app_id)
+            if self._stable_count >= self._stable_polls:
+                state_changed = raw_state != self._current_state
+                app_changed = app_id != self._last_app_id
+                if state_changed or app_changed:
+                    self._current_state = raw_state
+                    self._last_app_id = app_id
+                    self._on_fullscreen_change(raw_state, app_id)
 
             time.sleep(self._poll_interval)
 
