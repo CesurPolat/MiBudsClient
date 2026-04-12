@@ -6,7 +6,7 @@ from typing import Callable, Optional
 from utils.resource_manager import get_resource_path
 
 from .constants import (
-    COLOR_DISABLED, COLOR_CHARGING, COLOR_BATTERY, COLOR_BATTERY_LOW, COLOR_CARD_BG,
+    COLOR_DISABLED, COLOR_CHARGING, COLOR_BATTERY, COLOR_BATTERY_LOW, COLOR_BG, COLOR_CARD_BG,
     COLOR_TEXT_PRIMARY, COLOR_DIVIDER, BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET,
     BATTERY_LOW_THRESHOLD,
     ICON_BUTTON_SIZE, DEVICE_IMAGE_SIZE, CARD_BORDER_RADIUS, ICON_BORDER_RADIUS, DEVICE_IMAGE_PATH,
@@ -85,7 +85,7 @@ class BatteryPanel(ft.Container):
             ),
             padding=ft.padding.symmetric(horizontal=10, vertical=8),
             border_radius=16,
-            bgcolor="#111722",
+            bgcolor=COLOR_CARD_BG,
             border=ft.border.all(1, "#2D3542"),
             expand=True,
         )
@@ -830,15 +830,13 @@ class DeviceImage(ft.Container):
                 ),
                 alignment=ft.Alignment.CENTER,
                 border_radius=(DEVICE_IMAGE_SIZE + 4) // 2,
-                border=ft.border.all(1, "#313948"),
             ),
             width=DEVICE_IMAGE_SIZE + 12,
             height=DEVICE_IMAGE_SIZE + 12,
             alignment=ft.Alignment.CENTER,
             padding=ft.padding.all(4),
             border_radius=(DEVICE_IMAGE_SIZE + 12) // 2,
-            bgcolor="#10141C",
-            border=ft.border.all(1, "#252D38"),
+            bgcolor=None,
         )
 
 

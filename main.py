@@ -116,10 +116,21 @@ def main(page: ft.Page):
 
         try:
             if sys.platform.startswith("win"):
+                startupinfo = None
+                creationflags = 0
+                if hasattr(subprocess, "STARTUPINFO"):
+                    startupinfo = subprocess.STARTUPINFO()
+                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                    startupinfo.wShowWindow = subprocess.SW_HIDE
+                if hasattr(subprocess, "CREATE_NO_WINDOW"):
+                    creationflags |= subprocess.CREATE_NO_WINDOW
+
                 result = subprocess.run(
                     ["tasklist", "/FI", f"IMAGENAME eq {app_name}"],
                     capture_output=True,
                     text=True,
+                    startupinfo=startupinfo,
+                    creationflags=creationflags,
                     check=False,
                 )
                 output = (result.stdout or "").lower()
@@ -344,9 +355,8 @@ def main(page: ft.Page):
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
         ),
         padding=ft.padding.symmetric(horizontal=12, vertical=10),
-        bgcolor=COLOR_CARD_BG,
+        bgcolor=COLOR_BG,
         border_radius=18,
-        border=ft.border.all(1, "#2B313C"),
     )
 
     # ─────────────────────────────────────────────────────────────────────────
