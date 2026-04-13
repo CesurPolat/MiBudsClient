@@ -18,7 +18,9 @@ A Python & Flet-based desktop client for Redmi Buds 6 Play. Features real-time b
 
 <table>
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/f462a7ac-d6ca-4e10-a7a3-fa02cb1cab7c" width="400"></td>
+    <td><img src="https://github.com/user-attachments/assets/3767c651-d965-4450-b191-1369292c8383" width="400"></td>
+  </tr>
+  <tr>
     <td><a href="https://github.com/CesurPolat/MiBudsClient/releases"><img src="https://github.com/user-attachments/assets/abf831bc-7329-435a-a398-b1f6c706ca0d" width="200"></a></td>
   </tr>
 </table>
