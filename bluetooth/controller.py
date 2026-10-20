@@ -3,12 +3,22 @@
 import socket
 import threading
 import time
+from dataclasses import dataclass
 from typing import Callable, Optional
 
 from .connection import BluetoothConnection
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
 from .constants import RECONNECT_DELAY
+from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, parse_identity_fields
+
+
+@dataclass
+class _IdentityRequest:
+    counter: int
+    completed: bool = False
+    identity: Optional[DeviceIdentity] = None
+    error: str = ""
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -34,7 +44,8 @@ class BTController:
         battery_callback: Optional[BatteryCallback] = None,
         check_battery_callback: Optional[CheckBatteryCallback] = None,
         connection_event_callback: Optional[ConnectionEventCallback] = None,
-        bd_addr: Optional[str] = None
+        bd_addr: Optional[str] = None,
+        identity_callback: Optional[Callable[[DeviceIdentity], None]] = None,
     ):
         self._connection = BluetoothConnection()
         self._protocol = BudsProtocol()
@@ -42,6 +53,12 @@ class BTController:
         self._running = True
         self._connect_lock = threading.Lock()
         self._state_lock = threading.Lock()
+        self._identity_condition = threading.Condition()
+        self._identity_parser = RcspStreamParser()
+        self._identity_pending: Optional[_IdentityRequest] = None
+        self._identity_counter = 0x90
+        self._identity: Optional[DeviceIdentity] = None
+        self._identity_callback = identity_callback
         self._max_reconnect_attempts = 5
         self._reconnect_attempts = 0
         self._reconnect_paused = False
@@ -60,6 +77,11 @@ class BTController:
     def connected(self) -> bool:
         """Check if connected to device."""
         return self._connection.connected
+
+    @property
+    def device_identity(self) -> Optional[DeviceIdentity]:
+        with self._identity_condition:
+            return self._identity
     
     # ─────────────────────────────────────────────────────────────────────────
     # Status Updates
@@ -127,6 +149,7 @@ class BTController:
 
             # Establish connection
             try:
+                self._reset_identity_state("Connection changed during identity query.")
                 self._connection.connect(self._bd_addr)
                 self._update_status("Connected", "blue")
                 self._reset_reconnect_state()
@@ -179,6 +202,76 @@ class BTController:
             self._connection.connected = False
             return False, f"Request error: {e}"
     
+    def request_device_identity(self, timeout: float = 5.0) -> tuple[bool, str]:
+        """Query VID/PID; call off the UI/listener thread while listen() runs."""
+        if timeout <= 0:
+            raise ValueError("Identity timeout must be positive")
+        self.resume_reconnect_attempts()
+        if not self._ensure_connected():
+            return False, "Could not connect to device."
+
+        with self._identity_condition:
+            if self._identity_pending is not None:
+                return False, "A device identity query is already running."
+            request = _IdentityRequest(self._identity_counter)
+            self._identity_counter = (self._identity_counter + 1) & 0xFF
+            self._identity_pending = request
+            # Do not reuse an incomplete frame from an earlier, timed-out query.
+            self._identity_parser.reset()
+
+        try:
+            self._connection.send(build_identity_request(request.counter))
+            with self._identity_condition:
+                if not self._identity_condition.wait_for(lambda: request.completed, timeout):
+                    return False, "Device identity query timed out."
+                if request.error:
+                    return False, request.error
+                identity = request.identity
+                return True, identity.describe()
+        except Exception as exc:
+            self._connection.connected = False
+            return False, f"Device identity request failed: {exc}"
+        finally:
+            with self._identity_condition:
+                if self._identity_pending is request:
+                    self._identity_pending = None
+
+    def _process_identity_data(self, data: bytes) -> None:
+        identity = None
+        with self._identity_condition:
+            for packet in self._identity_parser.feed(data):
+                request = self._identity_pending
+                if request is None or request.completed:
+                    continue
+                if packet.opcode != 0x02 or len(packet.payload) < 2:
+                    continue
+                status, counter = packet.payload[:2]
+                if counter != request.counter:
+                    continue
+                if status != 0:
+                    request.error = f"Device identity query rejected (status 0x{status:02X})."
+                else:
+                    request.identity = parse_identity_fields(packet.payload[2:])
+                    if request.identity is None:
+                        request.error = "Device response has no valid VID/PID identity field."
+                    else:
+                        identity = request.identity
+                        self._identity = identity
+                request.completed = True
+                self._identity_condition.notify_all()
+        if identity is not None and self._identity_callback:
+            self._identity_callback(identity)
+
+    def _reset_identity_state(self, reason: str) -> None:
+        with self._identity_condition:
+            self._identity = None
+            self._identity_parser.reset()
+            request = self._identity_pending
+            if request is not None and not request.completed:
+                request.error = reason
+                request.completed = True
+                self._identity_condition.notify_all()
+
     def send_raw(self, data: bytes) -> tuple[bool, str]:
         """Send raw bytes to device.
         
@@ -204,6 +297,7 @@ class BTController:
 
     def reconnect(self, force_rediscovery: bool = False) -> bool:
         """Reconnect to the device, optionally forcing MAC rediscovery."""
+        self._reset_identity_state("Disconnected during identity query.")
         self._connection.disconnect()
         if force_rediscovery:
             self._bd_addr = None
@@ -285,6 +379,7 @@ class BTController:
 
         packet_size = len(data)
         print(f"Received data size: {packet_size}")
+        self._process_identity_data(data)
 
         # Check for battery data
         if self._protocol.is_battery_packet(data):
@@ -301,6 +396,7 @@ class BTController:
     
     def _handle_disconnect(self) -> None:
         """Handle connection loss."""
+        self._reset_identity_state("Disconnected during identity query.")
         self._connection.connected = False
         self._update_status("Connection lost", "red")
         self._notify_connection_event("disconnected")
@@ -312,4 +408,5 @@ class BTController:
     def stop(self) -> None:
         """Stop the controller."""
         self._running = False
+        self._reset_identity_state("Controller stopped during identity query.")
         self._connection.disconnect()

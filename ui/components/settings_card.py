@@ -7,6 +7,7 @@ from ..constants import (
     COLOR_CARD_BG,
     COLOR_DIVIDER,
     CARD_BORDER_RADIUS,
+    COLOR_DISABLED,
 )
 
 from .auto_mode import AutoModeSettingsAccordion
@@ -33,6 +34,7 @@ class SettingsCard(ft.Container):
         low_latency_exclusions_by_platform: Optional[dict[str, list[str]]] = None,
         low_latency_inclusions_by_platform: Optional[dict[str, list[str]]] = None,
         wait_until_app_close_enabled: bool = False,
+        on_check_device_identity: Optional[Callable] = None,
     ):
         self.latency_item = LowLatencyModeSettingItem(
             ft.Icons.SPEED, "blue_700", "Low Latency Mode",
@@ -58,6 +60,14 @@ class SettingsCard(ft.Container):
             on_change=on_startup_toggle
         )
 
+        self.identity_item = SettingItem(
+            ft.Icons.INFO_OUTLINE, "blue_grey_700", "Check Device Identity",
+            on_click=on_check_device_identity,
+        )
+        self.identity_item.subtitle = ft.Text(
+            "Not queried", size=12, color=COLOR_DISABLED, selectable=True,
+        )
+
         items = ft.Column([
             self.latency_item,
             self.auto_settings,
@@ -68,6 +78,7 @@ class SettingsCard(ft.Container):
                 ft.Icons.REFRESH, "grey700", "Check Battery",
                 on_click=on_check_battery
             ),
+            self.identity_item,
         ], spacing=0)
 
 
@@ -80,6 +91,10 @@ class SettingsCard(ft.Container):
 
     def set_latency_mode(self, mode: str) -> None:
         self.latency_item.set_mode(mode)
+
+    def set_device_identity_result(self, text: str, pending: bool = False) -> None:
+        self.identity_item.subtitle.value = text
+        self.identity_item.disabled = pending
 
     def set_low_latency_rules(self, platform: str, exclusions: list[str], inclusions: list[str]) -> None:
         self.auto_settings.set_rules(platform, exclusions, inclusions)

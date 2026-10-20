@@ -391,6 +391,10 @@ def main(page: ft.Page):
 
             page.update()
         
+        elif msg_type == "device_identity":
+            settings_card.set_device_identity_result(message["text"])
+            page.update()
+
         elif msg_type == "window":
             action = message.get("action")
             if action == "show":
@@ -825,7 +829,24 @@ def main(page: ft.Page):
         )
         page.update()
 
+    def on_check_device_identity(e):
+        if settings_card.identity_item.disabled:
+            return
+        settings_card.set_device_identity_result("Reading device identity...", pending=True)
+        page.update()
+
+        def query_identity():
+            try:
+                success, message = controller.request_device_identity()
+            except Exception as exc:
+                success, message = False, f"Device identity request failed: {exc}"
+            page.pubsub.send_all({"type": "device_identity", "text": message})
+            update_status(message, "green" if success else "red")
+
+        threading.Thread(target=query_identity, daemon=True).start()
+
     settings_card = SettingsCard(
+        on_check_device_identity=on_check_device_identity,
         on_low_latency_mode_change=on_latency_mode_change,
         on_add_low_latency_list_item=on_add_low_latency_list_item,
         on_remove_low_latency_list_item=on_remove_low_latency_list_item,
