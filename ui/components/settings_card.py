@@ -1,0 +1,93 @@
+"""Settings card UI components."""
+
+import flet as ft
+from typing import Callable, Optional
+
+from ..constants import (
+    COLOR_CARD_BG,
+    COLOR_DIVIDER,
+    CARD_BORDER_RADIUS,
+)
+
+from .auto_mode import AutoModeSettingsAccordion
+from .latency import LowLatencyModeSettingItem
+from .setting_items import SettingItem, ToggleSettingItem
+
+
+class SettingsCard(ft.Container):
+    """Card containing settings options."""
+
+    def __init__(
+        self,
+        on_low_latency_mode_change: Optional[Callable] = None,
+        on_add_low_latency_list_item: Optional[Callable[[str, str], None]] = None,
+        on_remove_low_latency_list_item: Optional[Callable[[str, str], None]] = None,
+        on_set_low_latency_item_mode: Optional[Callable[[str, str, str], None]] = None,
+        on_add_low_latency_include_item: Optional[Callable[[str, str], None]] = None,
+        on_wait_until_app_close_change: Optional[Callable] = None,
+        on_check_battery: Optional[Callable] = None,
+        on_startup_toggle: Optional[Callable] = None,
+        startup_enabled: bool = False,
+        low_latency_mode: str = "off",
+        active_platform: str = "windows",
+        low_latency_exclusions_by_platform: Optional[dict[str, list[str]]] = None,
+        low_latency_inclusions_by_platform: Optional[dict[str, list[str]]] = None,
+        wait_until_app_close_enabled: bool = False,
+    ):
+        self.latency_item = LowLatencyModeSettingItem(
+            ft.Icons.SPEED, "blue_700", "Low Latency Mode",
+            value=low_latency_mode,
+            on_change=on_low_latency_mode_change,
+        )
+
+        self.auto_settings = AutoModeSettingsAccordion(
+            exclusions_by_platform=low_latency_exclusions_by_platform or {},
+            inclusions_by_platform=low_latency_inclusions_by_platform or {},
+            active_platform=active_platform,
+            wait_until_app_close_enabled=wait_until_app_close_enabled,
+            on_wait_until_app_close_change=on_wait_until_app_close_change,
+            on_add_item=on_add_low_latency_list_item,
+            on_add_include_item=on_add_low_latency_include_item,
+            on_remove_item=on_remove_low_latency_list_item,
+            on_set_item_mode=on_set_low_latency_item_mode,
+        )
+
+        self.startup_item = ToggleSettingItem(
+            ft.Icons.ROCKET_LAUNCH, "deep_orange_700", "Run at Startup",
+            value=startup_enabled,
+            on_change=on_startup_toggle
+        )
+
+        items = ft.Column([
+            self.latency_item,
+            self.auto_settings,
+            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
+            self.startup_item,
+            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
+            SettingItem(
+                ft.Icons.REFRESH, "grey700", "Check Battery",
+                on_click=on_check_battery
+            ),
+        ], spacing=0)
+
+
+        super().__init__(
+            content=items,
+            bgcolor=COLOR_CARD_BG,
+            border_radius=CARD_BORDER_RADIUS,
+            padding=10
+        )
+
+    def set_latency_mode(self, mode: str) -> None:
+        self.latency_item.set_mode(mode)
+
+    def set_low_latency_rules(self, platform: str, exclusions: list[str], inclusions: list[str]) -> None:
+        self.auto_settings.set_rules(platform, exclusions, inclusions)
+
+    def set_wait_until_app_close(self, enabled: bool) -> None:
+        self.auto_settings.set_wait_until_app_close(enabled)
+
+    @property
+    def startup_switch(self) -> ft.Switch:
+        """Access the underlying switch for startup setting."""
+        return self.startup_item.switch
