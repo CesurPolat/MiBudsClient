@@ -126,7 +126,8 @@ class AppMessageHandlerTests(unittest.TestCase):
             main.main(self.page)
 
         handler = self.page.pubsub.subscribe.call_args.args[0].__self__
-        home, settings = self.page.add.call_args.args[2].controls
+        layout = self.page.add.call_args.args[0]
+        home, settings = layout.page_content.controls
         self.assertEqual(home.content.controls, [
             handler._device_status_card, handler._settings_card.home_controls_card,
         ])

@@ -7,8 +7,10 @@ from .latency import LowLatencyModeSettingItem
 from .auto_mode import PlatformExceptionEditor, AutoModeSettingsAccordion
 from .settings_card import SettingsCard
 from .common import StatusBar, DeviceImage, AppTitle, Spacer, Footer
+from .app_layout import AppLayout
 
 __all__ = [
+    "AppLayout",
     "BatteryIndicator",
     "BatteryPanel",
     "DeviceStatusCard",
