@@ -46,7 +46,8 @@ class _TeeStream(io.TextIOBase):
 class DebugConsoleManager:
     """Provides runtime debug log capture and F12 console toggling."""
 
-    def __init__(self, max_lines: int = 1200):
+    def __init__(self, max_lines: int = 1200, *, publish: Optional[Callable[[dict], None]] = None):
+        self._publish = publish
         self._lock = threading.Lock()
         self._logs: Deque[str] = deque(maxlen=max_lines)
         self._log_callback: Optional[Callable[[str], None]] = None
@@ -62,6 +63,24 @@ class DebugConsoleManager:
         self._hotkey_thread: Optional[threading.Thread] = None
         self._hotkey_running = False
         self._hotkey_thread_id: Optional[int] = None
+
+    def handle_keyboard_event(self, event) -> None:
+        """Forward F12 presses to the application message handler."""
+        if str(getattr(event, "key", "")).upper() == "F12":
+            self.request_toggle()
+
+    def request_toggle(self) -> None:
+        """Publish a toggle request without opening a console on the input thread."""
+        if self._publish is None:
+            return
+        if not sys.platform.startswith("win"):
+            self._publish({
+                "type": "status",
+                "text": "Debug console is currently supported on Windows",
+                "color": "orange",
+            })
+            return
+        self._publish({"type": "debug_console", "action": "toggle"})
 
     def start_f12_hotkey_listener(self, on_hotkey: Callable[[], None]) -> bool:
         """Start a Windows hotkey listener for F12 as a reliable fallback."""

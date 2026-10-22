@@ -2,7 +2,6 @@
 
 import flet as ft
 import os
-import sys
 import threading
 import time
 
@@ -29,7 +28,7 @@ from utils.latency_controller import LatencyController
 
 def main(page: ft.Page):
     """Main application entry point."""
-    debug_console = DebugConsoleManager()
+    debug_console = DebugConsoleManager(publish=page.pubsub.send_all)
     debug_console.install()
     
     # ─────────────────────────────────────────────────────────────────────────
@@ -126,18 +125,7 @@ def main(page: ft.Page):
 
             threading.Thread(target=_reconnect_worker, daemon=True).start()
 
-    def on_keyboard_event(e):
-        key_name = str(getattr(e, "key", "")).upper()
-        if key_name != "F12":
-            return
-
-        if not sys.platform.startswith("win"):
-            update_status("Debug console is currently supported on Windows", "orange")
-            return
-
-        page.pubsub.send_all({"type": "debug_console", "action": "toggle"})
-
-    page.on_keyboard_event = on_keyboard_event
+    page.on_keyboard_event = debug_console.handle_keyboard_event
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Bluetooth Controller
@@ -231,9 +219,7 @@ def main(page: ft.Page):
     )
     page.pubsub.subscribe(message_handler.handle)
     threading.Thread(target=tray.run, daemon=True).start()
-    debug_console.start_f12_hotkey_listener(
-        lambda: page.pubsub.send_all({"type": "debug_console", "action": "toggle"})
-    )
+    debug_console.start_f12_hotkey_listener(debug_console.request_toggle)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Update Checker
