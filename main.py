@@ -5,7 +5,6 @@ import os
 import sys
 import threading
 import time
-import webbrowser
 
 from bluetooth import BTController
 from utils import (
@@ -13,18 +12,18 @@ from utils import (
     is_startup_enabled, 
     check_for_updates,
     should_show_update_notification,
-    suppress_update_notification,
     check_for_existing_instance,
     start_instance_listener
 )
 from ui import (
     APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, COLOR_CARD_BG,
-    BATTERY_UNKNOWN, WindowManager, SystemTray
+    WindowManager, SystemTray
 )
 from ui.components import (
     AppTitle, DeviceStatusCard, SettingsCard, Spacer, Footer
 )
 from ui.battery_updates import BatteryUpdates
+from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
 from utils.game_monitor import FullscreenGameMonitor
 from utils.latency_controller import LatencyController
@@ -68,15 +67,10 @@ def main(page: ft.Page):
         "game_monitor": None,
     }
 
-    notification_state = {
-        "last_connection_event": None
-    }
-
     tray_ref = {
         "instance": None
     }
 
-    debug_state = {"last_toggle_at": 0.0}
     latency = LatencyController(
         publish=page.pubsub.send_all,
         get_controller=lambda: controller_ref["instance"],
@@ -95,188 +89,12 @@ def main(page: ft.Page):
         get_latency_mode=lambda: latency.state["selected_mode"],
     )
     tray_ref["instance"] = tray
-    threading.Thread(target=tray.run, daemon=True).start()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Create UI Components
     # ─────────────────────────────────────────────────────────────────────────
     title = AppTitle(APP_TITLE)
     device_status_card = DeviceStatusCard()
-
-    # ─────────────────────────────────────────────────────────────────────────
-    # Message Handlers
-    # ─────────────────────────────────────────────────────────────────────────
-    def on_pubsub_message(message):
-        """Handle pubsub messages for cross-thread UI updates."""
-        if not isinstance(message, dict):
-            return
-        
-        msg_type = message.get("type")
-        
-        if msg_type == "status":
-            device_status_card.update_status(
-                message.get("text", ""),
-                message.get("color", "white")
-            )
-            page.update()
-        
-        elif msg_type == "battery":
-            left = message.get("left", BATTERY_UNKNOWN)
-            right = message.get("right", BATTERY_UNKNOWN)
-            case = message.get("case", BATTERY_UNKNOWN)
-            transient = message.get("transient", False)
-
-            device_status_card.update_battery(left, right, case, transient=transient)
-
-            page.update()
-        
-        elif msg_type == "device_identity":
-            settings_card.set_device_identity_result(message["text"])
-            page.update()
-
-        elif msg_type == "window":
-            action = message.get("action")
-            if action == "show":
-                window_mgr.apply_show()
-                reconnect_if_disconnected_on_show()
-            elif action == "hide":
-                window_mgr.apply_hide()
-        
-        elif msg_type == "latency":
-            enabled = bool(message.get("enabled"))
-            mode = str(message.get("mode", latency.state["selected_mode"]))
-            latency.state["effective_low_latency"] = enabled
-            latency.state["selected_mode"] = mode
-
-            settings_card.set_latency_mode(mode)
-            if mode == "auto":
-                mode_text = "Automatic"
-                color = "blue" if enabled else "white"
-            elif mode == "on":
-                mode_text = "Low Latency"
-                color = "blue"
-            else:
-                mode_text = "Standard"
-                color = "white"
-
-            update_status(f"{mode_text} mode set", color)
-            page.update()
-
-        elif msg_type == "auto_hold_released":
-            latency.on_hold_released(str(message.get("app_id", "")))
-
-        elif msg_type == "update_notification":
-            latest_ver = message.get("latest_ver")
-            if not latest_ver:
-                return
-
-            def on_dont_show_again_change(e):
-                if e.control.value:
-                    suppress_update_notification(latest_ver)
-
-            def on_update_click(e):
-                webbrowser.open(GITHUB_URL)
-                snack_bar.open = False
-                page.update()
-
-            snack_bar = ft.SnackBar(
-                content=ft.Row(
-                    controls=[
-                        ft.Text(
-                            f"New version available: {latest_ver}",
-                            color="white",
-                            expand=True,
-                            no_wrap=True,
-                            overflow=ft.TextOverflow.ELLIPSIS,
-                        ),
-                        ft.Row(
-                            controls=[
-                                ft.Checkbox(
-                                    label=None,
-                                    value=False,
-                                    fill_color="white",
-                                    check_color="#171717",
-                                    width=20,
-                                    height=20,
-                                    on_change=on_dont_show_again_change,
-                                ),
-                                ft.Text(
-                                    "Don't show again",
-                                    color="white",
-                                    size=12,
-                                    no_wrap=True,
-                                ),
-                            ],
-                            spacing=6,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        ),
-                        ft.ElevatedButton(
-                            "Download",
-                            icon=ft.Icons.DOWNLOAD,
-                            on_click=on_update_click,
-                            style=ft.ButtonStyle(
-                                color="white",
-                                bgcolor="#2E7D32",
-                            ),
-                        ),
-                    ],
-                    spacing=10,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                ),
-                duration=10000,
-                bgcolor="#171717",
-                show_close_icon=True,
-                close_icon_color="white"
-            )
-            page.overlay.append(snack_bar)
-            snack_bar.open = True
-            page.update()
-
-        elif msg_type == "app" and message.get("action") == "close":
-            game_monitor = controller_ref.get("game_monitor")
-            if game_monitor:
-                game_monitor.stop()
-            debug_console.stop_f12_hotkey_listener()
-            window_mgr.close()
-
-        elif msg_type == "debug_console":
-            action = message.get("action")
-            if action != "toggle":
-                return
-
-            now = time.monotonic()
-            if now - debug_state["last_toggle_at"] < 0.35:
-                return
-            debug_state["last_toggle_at"] = now
-
-            result = debug_console.toggle_console()
-            if result == "opened":
-                device_status_card.update_status("Debug console opened", "blue")
-            elif result == "closed":
-                device_status_card.update_status("Debug console closed", "white")
-            else:
-                device_status_card.update_status("Debug console could not be opened", "red")
-            page.update()
-
-        elif msg_type == "connection_event":
-            event = message.get("event")
-            if event == notification_state["last_connection_event"]:
-                return
-
-            notification_state["last_connection_event"] = event
-            if event == "connected":
-                tray.notify("Earbuds connected")
-            elif event == "disconnected":
-                latency.clear_latency_hold()
-                tray.notify("Earbuds disconnected")
-
-        elif msg_type == "fullscreen_state":
-            is_fullscreen = bool(message.get("is_fullscreen", False))
-            app_id = str(message.get("app_id", "")).strip().lower()
-            latency.on_monitor_state(is_fullscreen, app_id)
-
-    page.pubsub.subscribe(on_pubsub_message)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Controller Callbacks
@@ -322,9 +140,6 @@ def main(page: ft.Page):
         page.pubsub.send_all({"type": "debug_console", "action": "toggle"})
 
     page.on_keyboard_event = on_keyboard_event
-    debug_console.start_f12_hotkey_listener(
-        lambda: page.pubsub.send_all({"type": "debug_console", "action": "toggle"})
-    )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Bluetooth Controller
@@ -468,6 +283,23 @@ def main(page: ft.Page):
         Spacer(height=5),
         Footer(APP_VERSION, GITHUB_URL),
         Spacer(height=10)
+    )
+
+    message_handler = AppMessageHandler(
+        page=page,
+        device_status_card=device_status_card,
+        settings_card=settings_card,
+        window_manager=window_mgr,
+        latency=latency,
+        tray=tray,
+        debug_console=debug_console,
+        on_window_show=reconnect_if_disconnected_on_show,
+        get_game_monitor=lambda: controller_ref["game_monitor"],
+    )
+    page.pubsub.subscribe(message_handler.handle)
+    threading.Thread(target=tray.run, daemon=True).start()
+    debug_console.start_f12_hotkey_listener(
+        lambda: page.pubsub.send_all({"type": "debug_console", "action": "toggle"})
     )
 
     # ─────────────────────────────────────────────────────────────────────────
