@@ -68,16 +68,24 @@ class SettingsCard(ft.Container):
             "Not queried", size=12, color=COLOR_DISABLED, selectable=True,
         )
 
+        self.home_controls_card = ft.Container(
+            content=ft.Column([
+                self.latency_item,
+                self.auto_settings,
+                ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
+                self.startup_item,
+                ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
+                SettingItem(
+                    ft.Icons.REFRESH, "grey700", "Check Battery",
+                    on_click=on_check_battery,
+                ),
+            ], spacing=0),
+            bgcolor=COLOR_CARD_BG,
+            border_radius=CARD_BORDER_RADIUS,
+            padding=10,
+        )
+
         items = ft.Column([
-            self.latency_item,
-            self.auto_settings,
-            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-            self.startup_item,
-            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-            SettingItem(
-                ft.Icons.REFRESH, "grey700", "Check Battery",
-                on_click=on_check_battery
-            ),
             self.identity_item,
         ], spacing=0)
 

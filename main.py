@@ -872,12 +872,69 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Build Page Layout
     # ─────────────────────────────────────────────────────────────────────────
+    # Keep both pages mounted so background callbacks and form state survive navigation.
+    transition = ft.Animation(220, ft.AnimationCurve.EASE_OUT_CUBIC)
+    home_content = ft.Container(
+        content=ft.Column(
+            controls=[device_status_card, settings_card.home_controls_card],
+            spacing=16,
+        ),
+        opacity=1,
+        offset=ft.Offset(0, 0),
+        animate_opacity=transition,
+        animate_offset=transition,
+    )
+    settings_content = ft.Container(
+        content=settings_card,
+        opacity=0,
+        offset=ft.Offset(0.06, 0),
+        ignore_interactions=True,
+        animate_opacity=transition,
+        animate_offset=transition,
+    )
+    page_content = ft.Stack(
+        controls=[home_content, settings_content],
+        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+    )
+
+    def show_settings(open_settings: bool) -> None:
+        home_content.opacity = 0 if open_settings else 1
+        home_content.offset = ft.Offset(-0.06 if open_settings else 0, 0)
+        home_content.ignore_interactions = open_settings
+        settings_content.opacity = 1 if open_settings else 0
+        settings_content.offset = ft.Offset(0 if open_settings else 0.06, 0)
+        settings_content.ignore_interactions = not open_settings
+        back_button.visible = open_settings
+        settings_button.visible = not open_settings
+        title.value = "Settings" if open_settings else APP_TITLE
+        page.update()
+
+    back_button = ft.IconButton(
+        icon=ft.Icons.ARROW_BACK,
+        icon_color="white",
+        tooltip="Back",
+        visible=False,
+        on_click=lambda _: show_settings(False),
+    )
+    settings_button = ft.IconButton(
+        icon=ft.Icons.SETTINGS_OUTLINED,
+        icon_color="white",
+        tooltip="Settings",
+        on_click=lambda _: show_settings(True),
+    )
+    navigation_header = ft.Row(
+        controls=[
+            ft.Container(content=back_button, width=48),
+            ft.Container(content=title, expand=True, alignment=ft.Alignment.CENTER),
+            ft.Container(content=settings_button, width=48),
+        ],
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
     page.add(
-        title,
+        navigation_header,
         Spacer(height=8),
-        device_status_card,
-        Spacer(height=10),
-        settings_card,
+        page_content,
         Spacer(height=5),
         Footer(APP_VERSION, GITHUB_URL),
         Spacer(height=10)

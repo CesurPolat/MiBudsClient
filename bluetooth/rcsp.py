@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from .device_catalog import DEVICE_MODEL_CODES, DEVICE_MODEL_NAMES
+from .device_catalog import DEVICE_MODEL_CODES, DEVICE_MODEL_NAMES, get_device_models
 
 
 
@@ -21,6 +21,11 @@ class DeviceIdentity:
     @property
     def model_codes(self) -> tuple[str, ...]:
         return DEVICE_MODEL_CODES.get((self.vid, self.pid), ())
+
+    @property
+    def models(self) -> tuple[dict, ...]:
+        """Complete app records (func_list, extra_info, icons, etc.) for this ID."""
+        return get_device_models(self.vid, self.pid)
 
     def describe(self) -> str:
         model = self.model_name or "Unknown model"

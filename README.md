@@ -14,6 +14,23 @@ A Python & Flet-based desktop client for Redmi Buds 6 Play. Features real-time b
 - **Smart Updater:** Built-in update checker that supports semantic versioning, including pre-release tags like `alpha`, `beta`, and `rc`.
 - **Modern UI:** A sleek, dark-themed interface built with the Flet framework.
 
+## Device catalog
+
+`assets/device_catalog.json` contains the complete app product response and is
+the primary source for exact VID/PID model names and metadata. It is bundled
+with the other assets. The SDK table in `bluetooth/device_catalog.py` remains a
+fallback for identities absent from the app response.
+
+`get_device_models(vid, pid)` (or `DeviceIdentity.models`) returns independent
+copies of the matching app records, including `model`, `pattern`, `pdid`,
+`func_list`, `extra_info`, icons and platform/version fields. VID/PID arguments
+are integers; the source JSON stores them as hexadecimal strings. Function
+`extra_data` stays in its original JSON-string form and can be decoded with
+`json.loads()` when needed. SDK-only identities return no app metadata.
+
+Catalog recognition does not enable device control or interpret function IDs;
+Bluetooth control remains specific to Redmi Buds 6 Play.
+
 ## Downloads
 
 <table>

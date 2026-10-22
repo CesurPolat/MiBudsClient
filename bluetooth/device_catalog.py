@@ -1,4 +1,39 @@
-"""User-supplied identity metadata; recognition does not imply protocol support."""
+"""App product metadata; recognition does not imply protocol support.
+
+assets/device_catalog.json is the unmodified app response and the primary
+source for model names, functions, extra_info, icons and platform metadata.
+The older SDK identities below only fill gaps not covered by that response.
+"""
+
+from copy import deepcopy
+import json
+from pathlib import Path
+import sys
+
+
+def _load_app_catalog():
+    root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
+    with (root / "assets" / "device_catalog.json").open(encoding="utf-8-sig") as source:
+        return json.load(source)
+
+
+_APP_CATALOG = _load_app_catalog()
+CATALOG_LAST_MODIFY_TIME = _APP_CATALOG["result"]["last_modify_time"]
+_APP_MODELS = {}
+for _product in _APP_CATALOG["result"]["tw_product_list"]:
+    # App VID/PID values are hexadecimal strings, unlike the legacy SDK table.
+    _key = (int(_product["vid"], 16), int(_product["pid"], 16))
+    _APP_MODELS.setdefault(_key, []).append(_product)
+
+
+def get_device_models(vid: int, pid: int) -> tuple[dict, ...]:
+    """Return complete app records, including raw func_list/extra_data.
+
+    Keep all variants for a VID/PID and return independent copies so callers
+    cannot accidentally change the shared catalog. Unknown/SDK-only IDs have
+    no app metadata; never infer functions from a related product family.
+    """
+    return tuple(deepcopy(_APP_MODELS.get((vid, pid), ())))
 
 
 # Original Chinese labels keyed by internal code, retained for future zh locales.
@@ -23,7 +58,7 @@ SDK_PIDS_WITHOUT_VID = {
 }
 
 
-# (internal code, decimal PIDs, product family when supplied).
+# Legacy SDK fallback: (internal code, decimal PIDs, product family).
 # Names shared by a PID remain ambiguous rather than selecting one product.
 _XIAOMI_PRODUCTS = (
     ("J77S", (20505, 20534), None),
@@ -98,6 +133,13 @@ def _build_catalog():
                 name_list = names.setdefault(key, [])
                 if family not in name_list:
                     name_list.append(family)
+    # App records override legacy guesses for the exact VID/PID only. In
+    # particular, do not propagate one variant's functions to other PIDs.
+    for key, models in _APP_MODELS.items():
+        names[key] = list(dict.fromkeys(model["name"] for model in models if model.get("name")))
+        codes.setdefault(key, list(dict.fromkeys(
+            model["model"] for model in models if model.get("model")
+        )))
     return (
         {key: " / ".join(values) for key, values in names.items()},
         {key: tuple(values) for key, values in codes.items()},

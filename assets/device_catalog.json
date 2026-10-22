@@ -1,0 +1,2791 @@
+{
+    "code": 0,
+    "message": "ok",
+    "result": {
+        "tw_product_list": [
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2132E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"auto_fit\":0,\"tws_gear\":[1,0,2]}"
+                    },
+                    {
+                        "func_id": 1004,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1]}"
+                    },
+                    {
+                        "func_id": 2001,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2006,
+                        "group_id": 2,
+                        "extra_data": "{\n  \"sound_effect\":[0,6,5,1]\n}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/d718d2ed6677a3105f510d7613a3b8cd-black.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/caf0f92ec1432b6c6c4e939c20f58bdc-white.png\"}]}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[1,2,3]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,3,4,5]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3]}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_dynamic": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/cc08435043f619a1c1140e062589aa8c.json"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/391ed7cfec9e7f742a2e12fa468003e8.json"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/69053743ddbde48e7cc46fcaa140696c.json"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/f7ec3e59c411d1e7c32799599422f9bc.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/e688c1ee0aa9a288b4d13d2bb1946bab-black.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/2198054dad49aca8e6b258c2ff540119-white.png"
+                    }
+                ],
+                "model": "miwear.headphone.l76g",
+                "name": "Redmi Buds 4 Pro",
+                "pattern": "L76g",
+                "pdid": 9444,
+                "pid": "EA0F",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "5A4D"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2137E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"auto_fit\":0,\"tws_gear\":[1,0,2]}"
+                    },
+                    {
+                        "func_id": 1004,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1]}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[1,2,3]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,3,4,5]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3]}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3009,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/27e252f3546c4af0b5f57de8dd34db65-white.json"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/cbd7bac19650e3f0a50c82c0fe6d58e4-wathet.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/196725e1a4d4ad3320e6b4f794c03ee5-white.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/97a4cc84736e8efe4d8d791b889f63e8-blue.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/e878d4bd43589589e2fd9eac12416628-black.png"
+                    }
+                ],
+                "model": "miwear.headphone.l77g",
+                "name": "Redmi Buds 4",
+                "pattern": "L77g",
+                "pdid": 9445,
+                "pid": "5037",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2111E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1004,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1]}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/a78e1a3d1de4890d973b03995a976c11-white.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/2bc5feb4331e8630a5fe460d528172e7-black.png\"}]}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3],\"awaken_voice\":true}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[3,4]}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,5]}"
+                    },
+                    {
+                        "func_id": 1006,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[1,0,2,4]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/d8bd7bed1dde47682c129acbeafa323b.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/e182de8e5cefafe4f910885d5029bb26-white.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/2a482c9b56258fd40c44673bf5c0715b-black.png"
+                    }
+                ],
+                "model": "miwear.headphone.k75g",
+                "name": "Xiaomi Buds 3",
+                "pattern": "k75g",
+                "pdid": 9979,
+                "pid": "502b",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2115E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1004,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1]}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"auto_fit\":0,\"tws_gear\":[1,0,2]}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/0b9fafa41e5bf5eb539cd5dc861db503-white.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/e96ff4e491dcb2ad33705494a7d52e8f-black.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/a0740e79d68f50cc9be7c2bab088c63f-green.png\"}]}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3],\"awaken_voice\":true}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[3,4]}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,5]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/46d232b9561f09a5f35f460e534ad304.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/cc84f8a82eb63c0dc06bed46886308fe-white.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/8a3e6be028134597fb58420205179a13-black.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/ff913190becd20cff8ad9d42bc97db07-green.png"
+                    }
+                ],
+                "min_version_ios": "1.0.1",
+                "model": "miwear.headphone.k73ag",
+                "name": "Xiaomi Buds 3T Pro",
+                "pattern": "k73a",
+                "pdid": 9980,
+                "pid": "502d",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2126E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1003,
+                        "group_id": 1,
+                        "extra_data": "{\"auto_fit\":0,\"tws_gear\":[0,1,2,3,4,5]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3],\"awaken_voice\":true}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3001,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/20a4e7b143755d4ad27f9a68109e00c9-golden.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/6b37d60489c27be5de1a98e765f85890-black.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/f9da2961f6f7e5c01de8701c1c638f19-silver.png\"}]}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[3,4]}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,5]}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[1]}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"fw_version\":\"2.5.6.4\",\"effects\":[0,6,5,1，11,12]}}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1,2]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/5e26407b1fecbfef72b0ca9abad34494-golden.json"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/a3c94f21dca9e30a02e199854ba72ec1-tarnish.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/c0b1a2503b5378aee27081219fc31479-golden.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/4468e86d4d72e00ab4f18a7f2ad78d43-tarnish.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/6b1404aead3b359e8dc375254c2b7b23-silver.png"
+                    }
+                ],
+                "min_version_ios": "1.0.1",
+                "model": "miwear.headphone.l71g",
+                "name": "Xiaomi Buds 4 Pro",
+                "pattern": "l71g",
+                "pdid": 9883,
+                "pid": "503b",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 7,
+                    "default_color": 7,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2111E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1004,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1]}"
+                    },
+                    {
+                        "func_id": 1006,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[1,0,2,4]}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":7,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/41e5859557e4142176463705197bb42a.png\"}]}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3],\"awaken_voice\":true}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[3,4]}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,5]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 7,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/8053ef0ea691f2da3243cf36623c2a0e.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 7,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/765774863db308b19b896ebb8fbd95c7.png"
+                    }
+                ],
+                "min_version_ios": "1.0.1",
+                "model": "miwear.headphone.k75sg",
+                "name": "Xiaomi Buds 3 Star Wars",
+                "pattern": "k75s",
+                "pdid": 11520,
+                "pid": "505a",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2232E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 3011,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/44c082c50ca4b6b3f84a9f80d1f0fd42.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/c6d960ba46208125c07ab53e46e3fbcc-black.png"
+                    },
+                    {
+                        "color": 7,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/7f810c1256c75ea2c14c52b3d03cb993.png"
+                    }
+                ],
+                "model": "miwear.headphone.m79arg",
+                "name": "Redmi Buds 4 Active",
+                "pattern": "m79arg",
+                "pdid": 12244,
+                "pid": "505f",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2316E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[1,0,2]}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[1,2,3]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,3,4,5]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3],\"awaken_voice\":true}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1]\n}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1,2]}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"fw_version\":\"1.0.0.0\",\"effects\":[0,6,5,1]}}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/7b1a7d3d07a3695b8b132a25070873db.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/0383ae380fc5cd05ee1f2e748c9d0f8e.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/e381b3cabaf7d05b33aaf1c3c7d8c83d.png\"}]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/511870ffd03be79e3e024899552cd2bf.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/74779914e6f8265aafc5602547105f4e.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/f09230fbc08b8e364058ef47d0ac33d8.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/c8b739df4ba866e0357e297d165fcf54.png"
+                    }
+                ],
+                "min_version_android": "1.16.0",
+                "min_version_ios": "1.6.0",
+                "model": "miwear.headphone.n77g",
+                "name": "Redmi Buds 5",
+                "pattern": "n77g",
+                "pdid": 15517,
+                "pid": "5075",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 2,
+                    "ota_type": 1,
+                    "sale_model": "M2341E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"auto_fit\":1,  \"tws_gear\":[0,2],  \"anc_wear_type\":2}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2003,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2005,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3006,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,10]}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,10]}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,9]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6,9,10]}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\n\"sound_effect\": {\n\"app_version\": \"\",\n\"fw_version\": \"\",\n\"effects\": [0,1,6,13,11,10]\n},\n\"ota_sound_effect\": [{\n\"app_version\": \"\",\n\"fw_version\": \"3.0.7.6\",\n\"effects\": [14,1,6,13,11,10]\n}]\n}"
+                    },
+                    {
+                        "func_id": 5003,
+                        "group_id": 5,
+                        "extra_data": "{\"icon_record_headphone\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机.png\"},{\"color\":4,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机.png\"}],\"icon_record_box\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机盒.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机盒.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机盒.png\"},{\"color\":4,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/半入耳耳机盒.png\"}]}"
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_render\":{\"app_version\":\"\",\"fw_version\":\"\",\"scenes\":[2,3]}}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/n75国际data.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N75_0611_国际白.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N75_0611_国际黑.png"
+                    },
+                    {
+                        "color": 4,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N75_0611_国际金.png"
+                    }
+                ],
+                "min_version_android": "1.20.0",
+                "min_version_ios": "1.11.0",
+                "model": "miwear.headphone.n75g",
+                "name": "Xiaomi Buds 5",
+                "pattern": "n75g",
+                "pdid": 17347,
+                "pid": "5082",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": " M2317E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1]\n}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"fw_version\":\"1.0.0.0\",\"effects\":[0,6,5,1,10]}}"
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\n     \"sound_render\":{\n        \"app_version\":\"\",\n        \"fw_version\":\"\",\n        \"scenes\":[1,2,3]\n     }\n}"
+                    },
+                    {
+                        "func_id": 3012,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3013,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/国际白.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/国际黑.png\"},{\"color\":9,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/国际紫.png\"}]}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"auto_fit\":0,\"tws_gear\":[1,0,2]}"
+                    },
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1,2]}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3],\"awaken_voice\":true}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/ffd100a72c0d35b45892c9052836cbc7-white.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/645680cd46d75c8000e64c7e8e3db719-white.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/be2430a8e668f7aa35d428e7a66c25a6-black.png"
+                    },
+                    {
+                        "color": 9,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/4c3258e17f17aa690bd2b83bad99a914-purple.png"
+                    }
+                ],
+                "min_version_android": "1.16.0",
+                "min_version_ios": "1.6.0",
+                "model": "miwear.headphone.n76g",
+                "name": "Redmi Buds 5 Pro",
+                "pattern": "n76g",
+                "pdid": 14805,
+                "pid": "506d",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 2,
+                    "ota_type": 1,
+                    "sale_model": "M2344E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1,9]\n}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1]\n}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1]\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\n\"click_action\":[0,9]\n}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"fw_version\":\"1.0.0.0\",\"effects\":[0,6,5,1,7]}}"
+                    },
+                    {
+                        "func_id": 5004,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/白色app重置.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N79黑.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N79白.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N79蓝.png"
+                    },
+                    {
+                        "color": 4,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N79粉.png"
+                    }
+                ],
+                "min_version_android": "1.19.0",
+                "min_version_ios": "1.10.0",
+                "model": "miwear.headphone.n79g",
+                "name": "Redmi Buds 6 Active",
+                "pattern": "n79g",
+                "pdid": 17719,
+                "pid": "5089",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 2,
+                    "ota_type": 1,
+                    "sale_model": "M2349E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0], \"anc_wear_type\":2}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0]}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6],\"noise_ctrl\":[1,2,3]}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"fw_version\":\"1.0.0.0\",\"effects\":[0,6,5,1,10]}}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N79A白色.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/黑色.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/白色.png"
+                    },
+                    {
+                        "color": 5,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/蓝色.png"
+                    }
+                ],
+                "model": "miwear.headphone.n79ag",
+                "name": "Redmi Buds 6 Lite",
+                "pattern": "n79ag",
+                "pdid": 17721,
+                "pid": "508b",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 2,
+                    "ota_type": 1,
+                    "sale_model": "M2319E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"fw_version\":\"1.0.0.0\",\"effects\":[0,6,1]}}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,9]}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,6,9]}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 6001,
+                        "group_id": 6,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2017,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N74A-灰色app重置.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N74A 香槟金.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/N74A 灰.png"
+                    }
+                ],
+                "model": "miwear.headphone.n74ag",
+                "name": "Xiaomi OpenWear Stereo",
+                "pattern": "n74ag",
+                "pdid": 17128,
+                "pid": "5080",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2420E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,1,4,5,2,3,9]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,9,8],\"noise_ctrl\":[1,2,3],\"awaken_voice\":true}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"effects\":[0,6,5,1,7]}\r\n}"
+                    },
+                    {
+                        "func_id": 3011,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[1,4,5,2,3,8]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[3,2,1,4,5,8]}"
+                    },
+                    {
+                        "func_id": 5004,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/白色.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/国际白.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/国际黑.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/国际粉.png"
+                    },
+                    {
+                        "color": 4,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/国际蓝.png"
+                    }
+                ],
+                "model": "miwear.headphone.n79bg",
+                "name": "Redmi Buds 6 Play",
+                "pattern": "n79bg",
+                "pdid": 19804,
+                "pid": "509b",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2429E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77gl_耳机贴合度_黑.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77gl_耳机贴合度_青.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77gl_耳机贴合度_白.png\"}]}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\r\n   \"tws_gear\":[0,1,2]\r\n}"
+                    },
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\r\n  \"tws_gear\":[1,0,2], \r\n   \"anc_wear_type\":2\r\n}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\r\n        \"sound_effect\": {\r\n                \"app_version\": \"\",\r\n                \"fw_version\": \"\",\r\n                \"effects\": [0, 6, 5, 1]\r\n        },\r\n        \"ota_sound_effect\": [{\r\n                \"app_version\": \"\",\r\n                \"fw_version\": \"1.1.5.1\",\r\n                \"effects\": [0, 6, 5, 1, 10]\r\n        }]\r\n}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1,9]\r\n}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1]\r\n}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1]\r\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\r\n\"click_action\":[0,6,9],\r\n\"noise_ctrl\":[1,2,3],\r\n\"awaken_voice\":true\r\n}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77g_动图_白色.json"
+                    },
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77g_动图_黑色.json"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77g_动图_青色.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77gl_首页_白色.png"
+                    },
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77gl_首页_黑色.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O77gl_首页_青色.png"
+                    }
+                ],
+                "min_version_android": "1.23.0",
+                "min_version_ios": "1.15.0",
+                "model": "miwear.headphone.o77g",
+                "name": "Redmi Buds 6",
+                "pattern": "o77g",
+                "pdid": 20732,
+                "pid": "50a0",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2438E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71g_耳机贴合度_黑色2.png\"}]}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1,9]\n}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1,10]\n}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1,10]\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\r\n        \"click_action\": [6, 0, 9, 10],\r\n        \"noise_ctrl\": [1, 2, 3]\r\n}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\r\n        \"sound_effect\": {\r\n                \"app_version\": \"\",\r\n                \"effects\": [14, 15, 13, 6, 1, 12, 10]\r\n        }\r\n}"
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\r\n     \"sound_render\":{\r\n        \"app_version\":\"\",\r\n        \"fw_version\":\"\",\r\n        \"scenes\":[3,2]\r\n     }\r\n}"
+                    },
+                    {
+                        "func_id": 4011,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[11,8]\r\n}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\r\n        \"auto_fit\": 1,\r\n        \"tws_gear\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],\r\n        \"anc_wear_type\": 2\r\n}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2017,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\n        \"tws_gear\": [0, 1, 2]\n}"
+                    },
+                    {
+                        "func_id": 2018,
+                        "group_id": 2,
+                        "extra_data": "{\r\n        \"app_version\": \"\",\r\n        \"fw_version\": \"5.3.0.0\"\r\n}"
+                    },
+                    {
+                        "func_id": 5003,
+                        "group_id": 5,
+                        "extra_data": "{\"icon_record_headphone\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机.png\"}],\"icon_record_box\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机盒.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机盒.png\"}]}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71g_动图_黑色.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71g_首页设备图__黑色.png"
+                    }
+                ],
+                "min_version_android": "1.25.0",
+                "min_version_ios": "1.17.0",
+                "model": "miwear.headphone.o71g",
+                "name": "Xiaomi Buds 5 Pro Wi-Fi",
+                "pattern": "o77g",
+                "pdid": 21039,
+                "pid": "50ac",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 2,
+                    "ota_type": 1,
+                    "sale_model": "M2437E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71btg_耳机贴合度_白色.png\"},{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71btg_耳机贴合度_钛色.png\"}]}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1,9]\r\n}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1,10]\r\n}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1,10]\r\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\r\n        \"click_action\": [6, 0, 9, 10],\r\n        \"noise_ctrl\": [1, 2, 3]\r\n}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5003,
+                        "group_id": 5,
+                        "extra_data": "{\"icon_record_headphone\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机.png\"}],\"icon_record_box\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机盒.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71耳机盒.png\"}]}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\r\n        \"sound_effect\": {\r\n                \"app_version\": \"\",\r\n                \"effects\": [14, 15, 13, 6, 1, 12, 10]\r\n        }\r\n}"
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\r\n     \"sound_render\":{\r\n        \"app_version\":\"\",\r\n        \"fw_version\":\"\",\r\n        \"scenes\":[3,2]\r\n     }\r\n}"
+                    },
+                    {
+                        "func_id": 4011,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[11,8]\r\n}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\r\n        \"auto_fit\": 1,\r\n        \"tws_gear\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],\r\n        \"anc_wear_type\": 2\r\n}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2017,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\n        \"tws_gear\": [0, 1, 2]\n}"
+                    },
+                    {
+                        "func_id": 2018,
+                        "group_id": 2,
+                        "extra_data": "{\r\n        \"app_version\": \"\",\r\n        \"fw_version\": \"3.1.0.0\"\r\n}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71btg_动图_白色.json"
+                    },
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71btg_动图_钛色.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71btg_首页设备图__白色.png"
+                    },
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O71btg_首页设备图__钛色.png"
+                    }
+                ],
+                "min_version_android": "1.25.0",
+                "min_version_ios": "1.17.0",
+                "model": "miwear.headphone.o71btg",
+                "name": "Xiaomi Buds 5 Pro",
+                "pattern": "o71btg",
+                "pdid": 22768,
+                "pid": "50b4",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 2,
+                    "ota_type": 1,
+                    "sale_model": "M2430E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O76_耳机贴合度_国际白色.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O76_耳机贴合度_国际黑色.png\"},{\"color\":5,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O76_耳机贴合度_国际紫色.png\"}]}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\r\n   \"tws_gear\":[0,1,2]\r\n}"
+                    },
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1003,
+                        "group_id": 1,
+                        "extra_data": "{\r\n        \"auto_fit\": 1,\r\n        \"anc_wear_type\": 1,\r\n        \"tws_gear\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]\r\n}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\r\n     \"sound_render\":{\r\n        \"app_version\":\"\",\r\n        \"fw_version\":\"\",\r\n        \"scenes\":[1,2,3,4,5]\r\n     }\r\n}"
+                    },
+                    {
+                        "func_id": 4011,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[11,8]\r\n}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\r\n        \"sound_effect\": {\r\n                \"app_version\": \"\",\r\n                \"fw_version\": \"\",\r\n                \"effects\": [0, 5, 6, 1, 10]\r\n        }\r\n}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1]\r\n}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1]\r\n}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\r\n  \"click_action\":[8,2,3,4,5,1]\r\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\r\n        \"click_action\": [0, 6],\r\n        \"noise_ctrl\": [1,2,3],\r\n        \"awaken_voice\": true\r\n}"
+                    },
+                    {
+                        "func_id": 3012,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O76_动图_国际黑色.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O76_国际白色.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O76_国际黑色.png"
+                    },
+                    {
+                        "color": 5,
+                        "icon_url": "https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/O76_国际紫色.png"
+                    }
+                ],
+                "min_version_android": "1.24.0",
+                "min_version_ios": "1.16.0",
+                "model": "miwear.headphone.o76gl",
+                "name": "Redmi Buds 6 Pro",
+                "pattern": "o76g",
+                "pdid": 20831,
+                "pid": "509e",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2535E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [8, 2, 3, 4, 5, 1]\n}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [8, 2, 3, 4, 5, 1]\n}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [8, 2, 3, 4, 5, 1]\n}"
+                    },
+                    {
+                        "func_id": 4011,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [11, 8]\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "\n{\n\"click_action\":[8,0,6],\n\"noise_ctrl\":[1,2,3]\n}\n"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}   "
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\n        \"tws_gear\": [0, 1, 2]\n}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\n        \"tws_gear\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],\n        \"anc_wear_type\": 2\n}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}   "
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\n     \"sound_render\":{\n        \"app_version\":\"\",\n        \"fw_version\":\"\",\n        \"scenes\":[1,2,3,4,5]\n     }\n}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\n        \"sound_effect\": {\n                \"app_version\": \"\",\n                \"fw_version\": \"\",\n                \"effects\": [0, 5, 6, 1, 10]\n        }\n}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}   "
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}   "
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}   "
+                    },
+                    {
+                        "func_id": 1008,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1009,
+                        "group_id": 1,
+                        "extra_data": "{\"mode\":[1,2,3,0]}"
+                    },
+                    {
+                        "func_id": 2020,
+                        "group_id": 2,
+                        "extra_data": "{\"mode\":[0,1]}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"color\":1,\"icon_url\":\"https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/贴合度检测-白色.png\"},{\"color\":2,\"icon_url\":\"https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/贴合度检测-锖色.png\"},{\"color\":3,\"icon_url\":\"https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/贴合度检测-蓝色.png\"}]}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/动图-白色app.json"
+                    }
+                ],
+                "icon_logo": [
+                    {
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/杜比-首页设备图-正常.png",
+                        "type": 0
+                    },
+                    {
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/杜比-首页设备图-深色.png",
+                        "type": 1
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/首页设备图-白.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/首页设备图-黑.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/首页设备图-蓝.png"
+                    }
+                ],
+                "min_version_android": "1.31.0",
+                "min_version_ios": "1.23.0",
+                "model": "miwear.headphone.p76gl",
+                "name": "REDMI Buds 8 Pro",
+                "pattern": "p76g",
+                "pdid": 26914,
+                "pid": "50e5",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2537E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1]\n}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1]\n}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\n  \"click_action\":[8,2,3,4,5,1]\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\n\"click_action\":[0,8]\n}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"app_version\":\"\",\"fw_version\":\"1.0.0.0\",\"effects\":[21,5,1,6,7,10]}}"
+                    },
+                    {
+                        "func_id": 3007,
+                        "group_id": 3,
+                        "extra_data": "{\n default_switch:0\n}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/P79-黑色app重置.json"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/P79-白色app重置.json"
+                    },
+                    {
+                        "color": 4,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/P79-蓝色app重置.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/APP设置页主页-白.png"
+                    },
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/APP设置页主页-黑.png"
+                    },
+                    {
+                        "color": 4,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/APP设置页主页-蓝.png"
+                    }
+                ],
+                "min_version_android": "1.32.0",
+                "min_version_ios": "1.24.0",
+                "model": "miwear.headphone.p79g",
+                "name": "REDMI Buds 8 Active",
+                "pattern": "p79g",
+                "pdid": 27032,
+                "pid": "50e2",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2503E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [8, 2, 3, 4, 5, 1]\n}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\n \"sound_render\": {\n \"app_version\": \"\",\n \"fw_version\": \"\",\n \"scenes\": [2, 3, 4, 5]\n }\n}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5003,
+                        "group_id": 5,
+                        "extra_data": "{\"icon_record_headphone\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/耳挂式耳机.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/耳挂式耳机.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/耳挂式耳机.png\"}],\"icon_record_box\": [{\"color\":1,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/耳挂式耳机盒.png\"},{\"color\":2,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/耳挂式耳机盒.png\"},{\"color\":3,\"icon_url\":\"https://cdn.awsde0-fusion.fds.api.mi-img.com/static-files/tws_icon/耳挂式耳机盒.png\"}]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [8, 2, 3, 4, 5, 1,10 ]\n}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [8, 2, 3, 4, 5, 1]\n}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\n        \"click_action\": [0, 8, 10],\n        \"noise_ctrl\": [1, 3],\n        \"awaken_voice\": true\n}"
+                    },
+                    {
+                        "func_id": 2019,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\n        \"sound_effect\": {\n                \"app_version\": \"\",\n                \"fw_version\": \"\",\n                \"effects\": [21, 14, 15, 1, 6]\n        }\n}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/O74 APP 动图-锖色.json"
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/O74 APP主页 锖色-国际.png"
+                    },
+                    {
+                        "color": 2,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/O74 APP主页 钛色-国际.png"
+                    },
+                    {
+                        "color": 3,
+                        "icon_url": "https://cdn.alsgp0.fds.api.mi-img.com/static-files/tws_icon/O74 APP主页 金色-国际.png"
+                    }
+                ],
+                "min_version_android": "1.29.0",
+                "min_version_ios": "1.21.0",
+                "model": "miwear.headphone.o74g",
+                "name": "Xiaomi OpenWear Stereo Pro",
+                "pattern": "o74g",
+                "pdid": 25844,
+                "pid": "50d7",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "headphone_type": 1,
+                    "miuiQuickLinkVersion": 2,
+                    "ota_type": 1,
+                    "sale_model": "M2540E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 1001,
+                        "group_id": 1,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,2],\"anc_wear_type\":2}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5003,
+                        "group_id": 5,
+                        "extra_data": "{\"icon_record_headphone\":[{\"color\":1,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E9%94%96%E8%89%B2-%E8%80%B3%E6%9C%BA_158984367505479.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=BshxMOADYP1c/mqIYv6PvzOKcfs=\"},{\"color\":2,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E7%99%BD%E8%89%B2-%E8%80%B3%E6%9C%BA_158984377991240.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=oQezss/shpxAHb76GW1bDxn0+wo=\"},{\"color\":3,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E9%92%9B%E8%89%B2-%E8%80%B3%E6%9C%BA_158984385331273.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=0tceVdIjmAKDqiWn6TySsTrKsdc=\"},{\"color\":4,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E7%B4%AB%E8%89%B2-%E8%80%B3%E6%9C%BA_158984392671306.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=gnaDPnXlBli+Q5i3tv4fz1Qct1I=\"}],\"icon_record_box\":[{\"color\":1,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E9%BB%91%E8%89%B2-%E5%BC%80%E7%9B%96_158984426225739.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=Tt5DHZs4ZuShw29dTg3jXuxZclU=\"},{\"color\":2,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E7%99%BD%E8%89%B2-%E5%BC%80%E7%9B%96_158984435662924.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=KgBYoPx6oFj1ShNbvYrs6GyYCGU=\"},{\"color\":3,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E9%92%9B%E8%89%B2-%E5%BC%80%E7%9B%96_158984453488717.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=82hhofFCDRVk/mil3lmrbRloyCk=\"},{\"color\":4,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E7%B4%AB%E8%89%B2-%E5%BC%80%E7%9B%96_158984471314510.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=a+yjp5Q/n7arU11Nj6NkBcOTVD8=\"}]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,0,6,10,9,12],\"noise_ctrl\":[1,3]}"
+                    },
+                    {
+                        "func_id": 4004,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,10]}"
+                    },
+                    {
+                        "func_id": 4005,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,10]}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,9]}"
+                    },
+                    {
+                        "func_id": 4011,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,11,13]}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3006,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3015,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2002,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2004,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2009,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_render\":{\"scenes\":[2,3]}}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"effects\":[21,14,15,13,1,6,10]}}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "device_id": "0201010053",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/json%E9%BB%910926_140153109610497.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=EWuhQsveUWgvRkI0sgKetvq6qrw="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "0201010054",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/json%E7%99%BD0926_140153653821448.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=a+EMULyEhb2o2iaiS5itL0WypoQ="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "0201010055",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E9%92%9B%E8%89%B2_140153674792969.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=EYjcEEJOWC437OWr087TkqJKYUE="
+                    },
+                    {
+                        "color": 4,
+                        "device_id": "0201010052",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E5%86%B0%E6%A2%85%E7%B2%89_140153693667338.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=hJcgsnMdxtWn4w6nry2Y0q9T8i0="
+                    }
+                ],
+                "icon_logo": [
+                    {
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/harman_GL_45_156685565952287.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=3xwA1Cw9TfWyAvkfGbmlYSrBWMo="
+                    },
+                    {
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/harman_GL_white_45_156685573292322.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=QsHFhUwh58E5bK/MafvSIdeU9ZQ=",
+                        "type": 1
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "device_id": "0201010053",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%BE%93%E5%87%BA%E7%B4%A0%E5%9B%BE%202_0000_resize_144357186339367.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=xbQWsNXefN8Thu5T/P2EhSneDqw="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "0201010054",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6_0030_resize_144357196825134.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=6olVuYvr1ZKLIA6sclbeznuHx5I="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "0201010055",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%BE%93%E5%87%BA%E7%B4%A0%E5%9B%BE%202_0000-1_resize_144357206262323.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=ufZP7tpzIsINTRb9OHczta1aYyE="
+                    },
+                    {
+                        "color": 4,
+                        "device_id": "0201010052",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%BE%93%E5%87%BA%E7%B4%A0%E5%9B%BE%202_0000-2_resize_144357213602362.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=u7aiHw1Bb9RRzhaNte7J5nG2aCM="
+                    }
+                ],
+                "min_version_android": "1.31.0",
+                "min_version_ios": "1.23.0",
+                "model": "miwear.headphone.p75g",
+                "name": "Xiaomi Buds 6",
+                "pattern": "P75",
+                "pdid": 28252,
+                "pid": "50eb",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "headphone_type": 2,
+                    "isBoneConduction": true,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2546E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[1,0,2],\"auto_fit\":1,\"anc_wear_type\":3}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0]}"
+                    },
+                    {
+                        "func_id": 4012,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,4,5,1,16]}"
+                    },
+                    {
+                        "func_id": 4013,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,4,5,1,16]}"
+                    },
+                    {
+                        "func_id": 4014,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,13,15,16],\"noise_ctrl\":[1,2,3],\"hasSecondaryPage\":true}"
+                    },
+                    {
+                        "func_id": 4018,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[0,4,5,1,16]}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"effects\":[21,5,6,1,10]}}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3006,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "device_id": "020101005D",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/JSON_%E9%BB%91_157072369910490.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=E7i+ELo9Cj/QdS0WFGNgi6yNS3k="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "020101005E",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/JSON_%E7%99%BD_157072460088029.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=54Xa05sjbwHWZiUE51RJ9/FA8+Q="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "020101005F",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/JSON_%E8%93%9D_157072396124892.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=I1fqtupIbvHogV24N0KN5UnT6kY="
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "device_id": "020101005D",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/860x580_157072311190231.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=sFM6cYAxW1PTQGJ9jPeeJNBigvY="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "020101005E",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/860x580_157072319578840.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=uxI5C5IF6EomFeUje0bKKmsHkp4="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "020101005F",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/860x580_157072347890393.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=68dGobUT4TrbXvYsitT75l/A0pE="
+                    }
+                ],
+                "min_version_android": "1.33.0",
+                "min_version_ios": "1.27.0",
+                "model": "miwear.headphone.o70cg",
+                "name": "REDMI Headphones Neo",
+                "pattern": "o70cg",
+                "pdid": 33104,
+                "pid": "50f0",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "headphone_type": 0,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2539E1"
+                },
+                "func_list": [
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0],\"anc_wear_type\":2}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0]}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"effects\":[21,5,1,6,7,10]}}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,0,6],\"noise_ctrl\":[1,3,2]}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "device_id": "020101005A",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/json%20%E7%99%BD_141916115043054.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=LCCF+bFbYK5wSoDgPOdaaxmZPew="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "020101005B",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/JSON_%E9%BB%91_141552647143850.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=bb9HXmMJEmwkcl0/ByOctZtSX18="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "020101005C",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/JSON_%E8%93%9D_141552662872495.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=w9t3SGBu88bnarxTqUVpsFrU1Ks="
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "device_id": "020101005A",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%AE%BE%E7%BD%AE%E9%A1%B5%E4%B8%BB%E5%9B%BE%205_130074829389825.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AK7GLVK7GPCJW6HOWC\u0026Signature=6VG8incOk14eGY9ysFgE4y4/OPA="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "020101005B",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/P79A%E9%BB%91_141552638755240.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=MGP/3lIQxom/PSuCbDywdMW2tjo="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "020101005C",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/P79A%E8%93%9D_141552656581037.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=nBMexfBU48JJ7w/gX1iSOrJzE3s="
+                    }
+                ],
+                "min_version_android": "1.31.0",
+                "min_version_ios": "1.23.0",
+                "model": "miwear.headphone.p79ag",
+                "name": "REDMI Buds 8 Lite",
+                "pattern": "",
+                "pdid": 28424,
+                "pid": "50ef",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            },
+            {
+                "extra_info": {
+                    "conn_channel": 1,
+                    "conn_type": 2,
+                    "default_color": 1,
+                    "headphone_type": 0,
+                    "miuiQuickLinkVersion": 1,
+                    "ota_type": 1,
+                    "sale_model": "M2544E1",
+                    "single_earphone_replace": true
+                },
+                "func_list": [
+                    {
+                        "func_id": 5001,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 5002,
+                        "group_id": 5,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 1002,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[1,0,2],\"auto_fit\":1,\"anc_wear_type\":2}"
+                    },
+                    {
+                        "func_id": 1005,
+                        "group_id": 1,
+                        "extra_data": "{\"tws_gear\":[0,1,2]}"
+                    },
+                    {
+                        "func_id": 3002,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3003,
+                        "group_id": 3,
+                        "extra_data": "{\"icon\":[{\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%B4%B4%E5%90%88%E5%BA%A6%E6%A3%80%E6%B5%8B_0000_145905950916879.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=qbIK7Y+UbH3h454p//pET3LTZRo=\",\"color\":1},{\"color\":2,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%B4%B4%E5%90%88%E5%BA%A6%E6%A3%80%E6%B5%8B_0000_145905961402640.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=Kc6mYe/CIzM3V1Zt92ZryT2bPgw=\"},{\"color\":3,\"icon_url\":\"https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%B4%B4%E5%90%88%E5%BA%A6%E6%A3%80%E6%B5%8B_0000_146834038194179.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=G72bpFl4hemV0J9zcsTaA3xWXpo=\"}]}"
+                    },
+                    {
+                        "func_id": 3004,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3006,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 3008,
+                        "group_id": 3,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2008,
+                        "group_id": 2,
+                        "extra_data": "{}"
+                    },
+                    {
+                        "func_id": 2016,
+                        "group_id": 2,
+                        "extra_data": "{\"sound_effect\":{\"effects\":[21,5,1,6,7,10]}}"
+                    },
+                    {
+                        "func_id": 4001,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4002,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1]}"
+                    },
+                    {
+                        "func_id": 4003,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,0,6,9],\"noise_ctrl\":[1,2,3]}"
+                    },
+                    {
+                        "func_id": 4006,
+                        "group_id": 4,
+                        "extra_data": "{\"click_action\":[8,2,3,4,5,1,9]}"
+                    }
+                ],
+                "icon_guide": [
+                    {
+                        "color": 1,
+                        "device_id": "0201010065",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E9%BB%910114_148369173381254.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=y+TmjEVpP3pBRp0F0HfGHusajFc="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "0201010066",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E7%99%BD_148435007176998.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=swVc45SH+cRieACPJWh9FPDpFGk="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "0201010067",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E7%BB%BF_148435019759911.json?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=R7DleK6cGT383oeCGXCHoMrcysE="
+                    }
+                ],
+                "icon_static": [
+                    {
+                        "color": 1,
+                        "device_id": "0201010065",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/860x580-%E4%B8%BB%E5%9B%BE-%E9%BB%91_145905450746102.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=fXb4hGc7A5Rlh55QFZ+vMpecN0U="
+                    },
+                    {
+                        "color": 2,
+                        "device_id": "0201010066",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/860x580-%E4%B8%BB%E5%9B%BE-%E7%99%BD_145905518903548.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=hXu7LY4TJKqwNVUbpxgvUT2s4xM="
+                    },
+                    {
+                        "color": 3,
+                        "device_id": "0201010067",
+                        "icon_url": "https://cdn.cnbj1.fds.api.mi-img.com/hlth-operate/article/user/resource/%E8%AE%BE%E7%BD%AE%E9%A1%B5%E4%B8%BB%E5%9B%BE-%E6%9F%A5%E6%89%BE%E8%80%B3%E6%9C%BA_0000_146834016174081.png?Expires=9223372036854775807\u0026GalaxyAccessKeyId=AKT2UWBXKVZSRFIQAA\u0026Signature=to3jMwS9VTKyBI48TVc4JjsL9cA="
+                    }
+                ],
+                "model": "miwear.headphone.p77g",
+                "name": "REDMI Buds 8",
+                "pattern": "",
+                "pdid": 30153,
+                "pid": "50f3",
+                "status_android": 3,
+                "status_ios": 3,
+                "vid": "2717"
+            }
+        ],
+        "last_modify_time": 1788314349
+    }
+}
