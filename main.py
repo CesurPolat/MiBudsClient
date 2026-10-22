@@ -3,7 +3,6 @@
 import flet as ft
 import os
 import threading
-import time
 
 from bluetooth import BTController
 from utils import (
@@ -20,7 +19,7 @@ from ui import (
 from ui.components import (
     AppLayout, DeviceStatusCard, SettingsCard
 )
-from ui.battery_updates import BatteryUpdates
+from ui.device_connection import DeviceConnection
 from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
 from utils.game_monitor import FullscreenGameMonitor
@@ -61,7 +60,6 @@ def main(page: ft.Page):
     # Controller will be set after initialization
     controller_ref = {
         "instance": None,
-        "reconnect_in_progress": False,
         "game_monitor": None,
     }
 
@@ -96,34 +94,10 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Controller Callbacks
     # ─────────────────────────────────────────────────────────────────────────
-    battery_updates = BatteryUpdates(page.pubsub.send_all)
-
-    def update_status(text, color="white"):
-        page.pubsub.send_all({
-            "type": "status", 
-            "text": text, 
-            "color": color
-        })
-
-    def request_battery_delayed():
-        time.sleep(1)
-        controller.resume_reconnect_attempts()
-        controller.request_battery()
-
-    def reconnect_if_disconnected_on_show():
-        """When window is shown from tray, trigger an immediate reconnect attempt if disconnected."""
-        if not controller.connected and not controller_ref["reconnect_in_progress"]:
-            controller_ref["reconnect_in_progress"] = True
-
-            def _reconnect_worker():
-                try:
-                    controller.resume_reconnect_attempts()
-                    update_status("Connection lost. Reconnecting...", "orange")
-                    controller.reconnect(force_rediscovery=True)
-                finally:
-                    controller_ref["reconnect_in_progress"] = False
-
-            threading.Thread(target=_reconnect_worker, daemon=True).start()
+    device_connection = DeviceConnection(
+        publish=page.pubsub.send_all,
+        get_controller=lambda: controller_ref["instance"],
+    )
 
     page.on_keyboard_event = debug_console.handle_keyboard_event
 
@@ -131,12 +105,9 @@ def main(page: ft.Page):
     # Initialize Bluetooth Controller
     # ─────────────────────────────────────────────────────────────────────────
     controller = BTController(
-        status_callback=update_status,
-        battery_callback=battery_updates.update,
-        check_battery_callback=lambda: threading.Thread(
-            target=request_battery_delayed, 
-            daemon=True
-        ).start(),
+        status_callback=device_connection.update_status,
+        battery_callback=device_connection.update_battery,
+        check_battery_callback=device_connection.request_battery_delayed,
         connection_event_callback=lambda event: page.pubsub.send_all(
             {"type": "connection_event", "event": event}
         )
@@ -151,12 +122,12 @@ def main(page: ft.Page):
     def on_startup_change(e):
         enabled = e.control.value
         if set_startup(enabled):
-            update_status(
+            device_connection.update_status(
                 f"Startup {'enabled' if enabled else 'disabled'}", 
                 "green" if enabled else "white"
             )
         else:
-            update_status("Failed to change startup setting", "red")
+            device_connection.update_status("Failed to change startup setting", "red")
             e.control.value = not enabled
             page.update()
 
@@ -172,7 +143,7 @@ def main(page: ft.Page):
             except Exception as exc:
                 success, message = False, f"Device identity request failed: {exc}"
             page.pubsub.send_all({"type": "device_identity", "text": message})
-            update_status(message, "green" if success else "red")
+            device_connection.update_status(message, "green" if success else "red")
 
         threading.Thread(target=query_identity, daemon=True).start()
 
@@ -214,7 +185,7 @@ def main(page: ft.Page):
         latency=latency,
         tray=tray,
         debug_console=debug_console,
-        on_window_show=reconnect_if_disconnected_on_show,
+        on_window_show=device_connection.reconnect_on_show,
         get_game_monitor=lambda: controller_ref["game_monitor"],
     )
     page.pubsub.subscribe(message_handler.handle)
