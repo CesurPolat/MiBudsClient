@@ -6,8 +6,6 @@ import threading
 
 from bluetooth import BTController
 from utils import (
-    set_startup, 
-    is_startup_enabled, 
     start_update_check,
     check_for_existing_instance,
     start_instance_listener
@@ -17,9 +15,10 @@ from ui import (
     WindowManager, SystemTray
 )
 from ui.components import (
-    AppLayout, DeviceStatusCard, SettingsCard
+    AppLayout, DeviceStatusCard
 )
 from ui.device_connection import DeviceConnection
+from ui.settings_controller import SettingsController
 from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
 from utils.game_monitor import FullscreenGameMonitor
@@ -119,57 +118,14 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Build Settings Card with Controller Actions
     # ─────────────────────────────────────────────────────────────────────────
-    def on_startup_change(e):
-        enabled = e.control.value
-        if set_startup(enabled):
-            device_connection.update_status(
-                f"Startup {'enabled' if enabled else 'disabled'}", 
-                "green" if enabled else "white"
-            )
-        else:
-            device_connection.update_status("Failed to change startup setting", "red")
-            e.control.value = not enabled
-            page.update()
-
-    def on_check_device_identity(e):
-        if settings_card.identity_item.disabled:
-            return
-        settings_card.set_device_identity_result("Reading device identity...", pending=True)
-        page.update()
-
-        def query_identity():
-            try:
-                success, message = controller.request_device_identity()
-            except Exception as exc:
-                success, message = False, f"Device identity request failed: {exc}"
-            page.pubsub.send_all({"type": "device_identity", "text": message})
-            device_connection.update_status(message, "green" if success else "red")
-
-        threading.Thread(target=query_identity, daemon=True).start()
-
-    settings_card = SettingsCard(
-        on_check_device_identity=on_check_device_identity,
-        on_low_latency_mode_change=latency.on_latency_mode_change,
-        on_add_low_latency_list_item=latency.on_add_low_latency_list_item,
-        on_remove_low_latency_list_item=latency.on_remove_low_latency_list_item,
-        on_set_low_latency_item_mode=latency.on_set_low_latency_item_mode,
-        on_add_low_latency_include_item=latency.on_add_low_latency_include_item,
-        on_wait_until_app_close_change=latency.on_wait_until_app_close_change,
-        on_check_battery=lambda _: controller.request_battery(),
-        on_startup_toggle=on_startup_change,
-        startup_enabled=is_startup_enabled(),
-        low_latency_mode=latency.state["selected_mode"],
-        active_platform=latency.platform_key,
-        low_latency_exclusions_by_platform={
-            "windows": sorted(latency.low_latency_exceptions_by_platform.get("windows", [])),
-            "linux": sorted(latency.low_latency_exceptions_by_platform.get("linux", [])),
-        },
-        low_latency_inclusions_by_platform={
-            "windows": sorted(latency.low_latency_includes_by_platform.get("windows", [])),
-            "linux": sorted(latency.low_latency_includes_by_platform.get("linux", [])),
-        },
-        wait_until_app_close_enabled=latency.state["hold_until_app_close_enabled"],
+    settings_controller = SettingsController(
+        controller=controller,
+        latency=latency,
+        device_connection=device_connection,
+        publish=page.pubsub.send_all,
+        on_update=page.update,
     )
+    settings_card = settings_controller.card
 
     # ─────────────────────────────────────────────────────────────────────────
     # Build Page Layout
