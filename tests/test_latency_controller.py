@@ -1,0 +1,139 @@
+"""Behavior checks for latency policy without Bluetooth hardware or a UI."""
+
+import unittest
+from contextlib import ExitStack
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
+
+from utils.latency_controller import LatencyController
+
+
+class LatencyControllerTests(unittest.TestCase):
+    def setUp(self):
+        self.stack = ExitStack()
+        self.addCleanup(self.stack.close)
+        defaults = {
+            "get_low_latency_mode": "off",
+            "get_low_latency_hold_until_app_close": False,
+            "get_all_low_latency_exceptions": {"windows": [], "linux": []},
+            "get_all_low_latency_includes": {"windows": [], "linux": []},
+        }
+        for name, value in defaults.items():
+            self.stack.enter_context(patch(f"utils.latency_controller.{name}", return_value=value))
+        self.saves = {
+            name: self.stack.enter_context(patch(f"utils.latency_controller.{name}"))
+            for name in (
+                "set_low_latency_mode", "set_low_latency_hold_until_app_close",
+                "set_low_latency_exceptions", "set_low_latency_includes",
+            )
+        }
+        self.stack.enter_context(patch("utils.latency_controller.threading.Thread"))
+        self.device = Mock()
+        self.device.send_command.return_value = (True, "OK")
+        self.publish = Mock()
+        self.rules_changed = Mock()
+        self.controller = LatencyController(
+            publish=self.publish, get_controller=lambda: self.device,
+            get_tray=lambda: None, on_rules_change=self.rules_changed,
+            on_ui_update=Mock(),
+        )
+        self.controller.platform_key = "windows"
+
+    def test_manual_modes_and_invalid_selection(self):
+        self.controller.set_selected_latency_mode(" ON ")
+        self.device.send_command.assert_called_once_with("low")
+        self.controller.set_selected_latency_mode("off")
+        self.device.send_command.assert_called_with("std")
+        self.controller.set_selected_latency_mode("invalid")
+        self.assertEqual(self.device.send_command.call_count, 2)
+        self.assertEqual(self.controller.state["selected_mode"], "off")
+        self.assertEqual(self.saves["set_low_latency_mode"].call_count, 2)
+
+    def test_auto_fullscreen_exclusion_and_include_precedence(self):
+        c = self.controller
+        c.set_selected_latency_mode("auto")
+        c.on_monitor_state(True, "game.exe")
+        self.assertTrue(c.state["effective_low_latency"])
+        c.on_monitor_state(False, "game.exe")
+        self.assertFalse(c.state["effective_low_latency"])
+        c.low_latency_exceptions_by_platform["windows"] = ["game.exe"]
+        c.on_monitor_state(True, "game.exe")
+        self.assertFalse(c.state["effective_low_latency"])
+        c.low_latency_includes_by_platform["windows"] = ["game.exe"]
+        c.on_monitor_state(False, "game.exe")
+        self.assertTrue(c.state["effective_low_latency"])
+
+    def test_hold_survives_lost_fullscreen_and_ignores_stale_release(self):
+        c = self.controller
+        c.set_selected_latency_mode("auto")
+        c.set_hold_until_app_close_enabled(True)
+        with patch.object(c, "is_process_running", return_value=True):
+            c.on_monitor_state(True, "game.exe")
+            c.on_monitor_state(False, "desktop.exe")
+        self.assertTrue(c.state["effective_low_latency"])
+        c.on_hold_released("other.exe")
+        self.assertTrue(c.state["effective_low_latency"])
+        c.on_hold_released("game.exe")
+        self.assertFalse(c.state["effective_low_latency"])
+        self.assertEqual(c.state["latency_hold_app_id"], "")
+        self.device.send_command.assert_called_with("std")
+
+    def test_disabling_hold_reapplies_current_monitor_state(self):
+        c = self.controller
+        c.set_selected_latency_mode("auto")
+        c.set_hold_until_app_close_enabled(True)
+        with patch.object(c, "is_process_running", return_value=True):
+            c.on_monitor_state(True, "game.exe")
+            c.on_monitor_state(False, "desktop.exe")
+        c.set_hold_until_app_close_enabled(False)
+        self.assertFalse(c.state["effective_low_latency"])
+        self.assertEqual(c.state["latency_hold_app_id"], "")
+
+    def test_rules_are_normalized_and_kept_separate_per_platform(self):
+        c = self.controller
+        c.on_add_low_latency_list_item("windows", " GAME.EXE ")
+        c.on_set_low_latency_item_mode("windows", "game.exe", "include")
+        self.assertEqual(c.low_latency_exceptions_by_platform["windows"], [])
+        self.assertEqual(c.low_latency_includes_by_platform["windows"], ["game.exe"])
+        self.assertEqual(c.low_latency_includes_by_platform["linux"], [])
+        self.rules_changed.assert_called_with("windows", [], ["game.exe"])
+        c.on_remove_low_latency_list_item("windows", "game.exe")
+        self.rules_changed.assert_called_with("windows", [], [])
+        calls = self.rules_changed.call_count
+        c.on_add_low_latency_list_item("invalid", "game.exe")
+        self.assertEqual(self.rules_changed.call_count, calls)
+
+    def test_failed_device_command_publishes_error(self):
+        self.device.send_command.return_value = (False, "Disconnected")
+        self.controller.set_selected_latency_mode("on")
+        self.publish.assert_any_call({"type": "status", "text": "Disconnected", "color": "red"})
+
+    def test_watcher_publishes_release_and_clears_running_flag(self):
+        c = self.controller
+        c.state.update(selected_mode="auto", hold_until_app_close_enabled=True,
+                       latency_hold_app_id="game.exe")
+        with patch("utils.latency_controller.threading.Thread") as thread, patch.object(
+            c, "is_process_running", return_value=False,
+        ):
+            c.start_hold_watcher_if_needed()
+            self.assertTrue(c.state["hold_watcher_running"])
+            c.start_hold_watcher_if_needed()
+            thread.assert_called_once()
+            thread.call_args.kwargs["target"]()
+        self.publish.assert_called_with({"type": "auto_hold_released", "app_id": "game.exe"})
+        self.assertFalse(c.state["hold_watcher_running"])
+
+    def test_process_discovery_on_windows_and_linux(self):
+        for platform, result, expected_command in (
+            ("win32", SimpleNamespace(stdout="game.exe 123", returncode=0), "tasklist"),
+            ("linux", SimpleNamespace(stdout="123", returncode=0), "pgrep"),
+        ):
+            with self.subTest(platform=platform), patch("utils.latency_controller.sys.platform", platform), patch(
+                "utils.latency_controller.subprocess.run", return_value=result,
+            ) as run:
+                self.assertTrue(self.controller.is_process_running(" GAME.EXE "))
+                self.assertEqual(run.call_args.args[0][0], expected_command)
+
+
+if __name__ == "__main__":
+    unittest.main()

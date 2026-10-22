@@ -2,17 +2,10 @@
 
 import flet as ft
 import os
-import shutil
-import subprocess
 import sys
 import threading
 import time
 import webbrowser
-
-try:
-    import winsound
-except ImportError:
-    winsound = None
 
 from bluetooth import BTController
 from utils import (
@@ -21,27 +14,20 @@ from utils import (
     check_for_updates,
     should_show_update_notification,
     suppress_update_notification,
-    get_all_low_latency_exceptions,
-    get_all_low_latency_includes,
-    set_low_latency_exceptions,
-    set_low_latency_includes,
-    get_low_latency_mode,
-    set_low_latency_mode,
-    get_low_latency_hold_until_app_close,
-    set_low_latency_hold_until_app_close,
     check_for_existing_instance,
     start_instance_listener
 )
 from ui import (
     APP_TITLE, APP_VERSION, GITHUB_URL, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, COLOR_CARD_BG,
-    BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET, WindowManager, SystemTray
+    BATTERY_UNKNOWN, WindowManager, SystemTray
 )
 from ui.components import (
-    AppTitle, DeviceImage, BatteryPanel, SettingsCard, StatusBar, Spacer, Footer
+    AppTitle, DeviceStatusCard, SettingsCard, Spacer, Footer
 )
+from ui.battery_updates import BatteryUpdates
 from utils.debug_console import DebugConsoleManager
 from utils.game_monitor import FullscreenGameMonitor
-
+from utils.latency_controller import LatencyController
 
 def main(page: ft.Page):
     """Main application entry point."""
@@ -78,24 +64,9 @@ def main(page: ft.Page):
     # Controller will be set after initialization
     controller_ref = {
         "instance": None,
-        "selected_mode": get_low_latency_mode(),
-        "effective_low_latency": False,
         "reconnect_in_progress": False,
         "game_monitor": None,
-        "latency_hold_app_id": "",
-        "hold_watcher_running": False,
-        "hold_until_app_close_enabled": get_low_latency_hold_until_app_close(),
-        "last_monitor_state": {"is_fullscreen": False, "app_id": ""},
     }
-    platform_key = "windows" if sys.platform.startswith("win") else "linux"
-    low_latency_exceptions_by_platform = get_all_low_latency_exceptions()
-    low_latency_includes_by_platform = get_all_low_latency_includes()
-
-    def active_low_latency_exceptions() -> set[str]:
-        return set(low_latency_exceptions_by_platform.get(platform_key, []))
-
-    def active_low_latency_includes() -> set[str]:
-        return set(low_latency_includes_by_platform.get(platform_key, []))
 
     notification_state = {
         "last_connection_event": None
@@ -105,219 +76,14 @@ def main(page: ft.Page):
         "instance": None
     }
 
-    debug_state = {
-        "last_toggle_at": 0.0
-    }
-
-    def is_process_running(app_id: str) -> bool:
-        app_name = (app_id or "").strip().lower()
-        if not app_name:
-            return False
-
-        try:
-            if sys.platform.startswith("win"):
-                startupinfo = None
-                creationflags = 0
-                if hasattr(subprocess, "STARTUPINFO"):
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    startupinfo.wShowWindow = subprocess.SW_HIDE
-                if hasattr(subprocess, "CREATE_NO_WINDOW"):
-                    creationflags |= subprocess.CREATE_NO_WINDOW
-
-                result = subprocess.run(
-                    ["tasklist", "/FI", f"IMAGENAME eq {app_name}"],
-                    capture_output=True,
-                    text=True,
-                    startupinfo=startupinfo,
-                    creationflags=creationflags,
-                    check=False,
-                )
-                output = (result.stdout or "").lower()
-                return app_name in output and "no tasks are running" not in output
-
-            if sys.platform.startswith("linux"):
-                result = subprocess.run(
-                    ["pgrep", "-f", app_name],
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-                return result.returncode == 0 and bool((result.stdout or "").strip())
-        except Exception:
-            return False
-
-        return False
-
-    def clear_latency_hold() -> None:
-        controller_ref["latency_hold_app_id"] = ""
-
-    def start_hold_watcher_if_needed() -> None:
-        if controller_ref["hold_watcher_running"]:
-            return
-
-        hold_app_id = controller_ref["latency_hold_app_id"]
-        if not hold_app_id:
-            return
-
-        if controller_ref["selected_mode"] != "auto":
-            return
-
-        if not controller_ref["hold_until_app_close_enabled"]:
-            return
-
-        controller_ref["hold_watcher_running"] = True
-
-        def _watcher() -> None:
-            try:
-                while True:
-                    if controller_ref["selected_mode"] != "auto":
-                        return
-
-                    if not controller_ref["hold_until_app_close_enabled"]:
-                        return
-
-                    current_hold = controller_ref["latency_hold_app_id"]
-                    if not current_hold:
-                        return
-
-                    if not is_process_running(current_hold):
-                        page.pubsub.send_all({"type": "auto_hold_released", "app_id": current_hold})
-                        return
-
-                    time.sleep(2)
-            finally:
-                controller_ref["hold_watcher_running"] = False
-
-        threading.Thread(target=_watcher, daemon=True).start()
-
-    def apply_monitor_latency_policy(is_fullscreen: bool, app_id: str, source: str = "monitor") -> None:
-        normalized_app = (app_id or "").strip().lower()
-        selected_mode = controller_ref["selected_mode"]
-        hold_enabled = bool(controller_ref["hold_until_app_close_enabled"])
-        current_hold = controller_ref["latency_hold_app_id"]
-
-        def enable_low_latency(message: str, color: str = "blue") -> None:
-            if not controller_ref["effective_low_latency"]:
-                set_effective_latency_state(True, source=source)
-            update_status(message, color)
-
-        def disable_low_latency(message: str = "Standard mode restored") -> None:
-            if controller_ref["effective_low_latency"]:
-                set_effective_latency_state(False, source=source)
-            update_status(message, "white")
-
-        if selected_mode == "on":
-            clear_latency_hold()
-            enable_low_latency("Low Latency enabled", "blue")
-            return
-
-        if selected_mode == "off":
-            clear_latency_hold()
-            disable_low_latency()
-            return
-
-        if selected_mode == "auto":
-            included_apps = active_low_latency_includes()
-            excluded_apps = active_low_latency_exceptions()
-            include_match = bool(normalized_app and normalized_app in included_apps)
-            exclude_match = bool(normalized_app and normalized_app in excluded_apps)
-            fullscreen_match = bool(is_fullscreen and normalized_app and not exclude_match)
-            matches = include_match or fullscreen_match
-
-            if include_match:
-                enable_message = "Included app detected. Low Latency enabled"
-            else:
-                enable_message = "Fullscreen detected. Low Latency enabled"
-
-            if exclude_match:
-                disable_message = f"Auto low latency skipped for {normalized_app}"
-            elif include_match:
-                disable_message = "Included app left. Standard mode restored"
-            else:
-                disable_message = "Fullscreen ended. Standard mode restored"
-
-            if matches:
-                if hold_enabled:
-                    set_latency_hold(normalized_app)
-                else:
-                    clear_latency_hold()
-                enable_low_latency(enable_message, "blue")
-                return
-
-            if hold_enabled and current_hold and is_process_running(current_hold):
-                enable_low_latency(f"Keeping Low Latency until {current_hold} closes", "blue")
-                return
-
-            clear_latency_hold()
-            disable_low_latency(disable_message)
-            return
-
-        clear_latency_hold()
-        disable_low_latency()
-
-    def set_effective_latency_state(new_state: bool, source: str = "manual") -> None:
-        controller_ref["effective_low_latency"] = bool(new_state)
-
-        if controller_ref["instance"]:
-            mode = "low" if new_state else "std"
-            success, message = controller_ref["instance"].send_command(mode)
-            if not success:
-                page.pubsub.send_all({"type": "status", "text": message, "color": "red"})
-
-        tray_inst = tray_ref["instance"]
-        if tray_inst:
-            tray_inst.refresh_menu()
-
-        page.pubsub.send_all(
-            {
-                "type": "latency",
-                "enabled": bool(new_state),
-                "mode": controller_ref["selected_mode"],
-                "source": source,
-            }
-        )
-
-    def set_selected_latency_mode(mode: str, source: str = "manual") -> None:
-        normalized_mode = (mode or "").strip().lower()
-        if normalized_mode not in {"off", "auto", "on"}:
-            return
-
-        controller_ref["selected_mode"] = normalized_mode
-        set_low_latency_mode(normalized_mode)
-
-        last_state = controller_ref.get("last_monitor_state", {})
-        apply_monitor_latency_policy(
-            bool(last_state.get("is_fullscreen", False)),
-            str(last_state.get("app_id", "")),
-            source=source,
-        )
-
-        tray_inst = tray_ref["instance"]
-        if tray_inst:
-            tray_inst.refresh_menu()
-
-    def set_hold_until_app_close_enabled(enabled: bool) -> None:
-        controller_ref["hold_until_app_close_enabled"] = bool(enabled)
-        set_low_latency_hold_until_app_close(enabled)
-        last_state = controller_ref.get("last_monitor_state", {})
-        apply_monitor_latency_policy(
-            bool(last_state.get("is_fullscreen", False)),
-            str(last_state.get("app_id", "")),
-            source="manual",
-        )
-
-    def set_latency_hold(app_id: str) -> None:
-        normalized = (app_id or "").strip().lower()
-        if not normalized:
-            return
-        if not controller_ref["hold_until_app_close_enabled"]:
-            return
-        controller_ref["latency_hold_app_id"] = normalized
-        start_hold_watcher_if_needed()
-
-    def select_latency_mode_from_tray(mode: str) -> None:
-        set_selected_latency_mode(mode, source="tray")
+    debug_state = {"last_toggle_at": 0.0}
+    latency = LatencyController(
+        publish=page.pubsub.send_all,
+        get_controller=lambda: controller_ref["instance"],
+        get_tray=lambda: tray_ref["instance"],
+        on_rules_change=lambda *args: settings_card.set_low_latency_rules(*args),
+        on_ui_update=page.update,
+    )
 
     def tray_exit_request() -> None:
         page.pubsub.send_all({"type": "app", "action": "close"})
@@ -325,8 +91,8 @@ def main(page: ft.Page):
     tray = SystemTray(
         on_show=window_mgr.show,
         on_exit=tray_exit_request,
-        on_latency_mode_select=select_latency_mode_from_tray,
-        get_latency_mode=lambda: controller_ref["selected_mode"],
+        on_latency_mode_select=latency.select_latency_mode_from_tray,
+        get_latency_mode=lambda: latency.state["selected_mode"],
     )
     tray_ref["instance"] = tray
     threading.Thread(target=tray.run, daemon=True).start()
@@ -335,29 +101,7 @@ def main(page: ft.Page):
     # Create UI Components
     # ─────────────────────────────────────────────────────────────────────────
     title = AppTitle(APP_TITLE)
-    device_image = DeviceImage()
-    battery_panel = BatteryPanel()
-    status_bar = StatusBar()
-    status_bar.size = 11
-    device_status_card = ft.Container(
-        content=ft.Row(
-            controls=[
-                device_image,
-                ft.Column(
-                    controls=[status_bar, battery_panel],
-                    spacing=6,
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment=ft.CrossAxisAlignment.START,
-                    expand=True,
-                ),
-            ],
-            spacing=12,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        ),
-        padding=ft.padding.symmetric(horizontal=12, vertical=10),
-        bgcolor=COLOR_BG,
-        border_radius=18,
-    )
+    device_status_card = DeviceStatusCard()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Message Handlers
@@ -370,7 +114,7 @@ def main(page: ft.Page):
         msg_type = message.get("type")
         
         if msg_type == "status":
-            status_bar.update_status(
+            device_status_card.update_status(
                 message.get("text", ""),
                 message.get("color", "white")
             )
@@ -382,12 +126,7 @@ def main(page: ft.Page):
             case = message.get("case", BATTERY_UNKNOWN)
             transient = message.get("transient", False)
 
-            battery_panel.update_all(left, right, case)
-
-            if transient:
-                status_bar.update_status("Refreshing battery data...", "white")
-            else:
-                status_bar.update_status("Battery data updated", "green")
+            device_status_card.update_battery(left, right, case, transient=transient)
 
             page.update()
         
@@ -405,9 +144,9 @@ def main(page: ft.Page):
         
         elif msg_type == "latency":
             enabled = bool(message.get("enabled"))
-            mode = str(message.get("mode", controller_ref["selected_mode"]))
-            controller_ref["effective_low_latency"] = enabled
-            controller_ref["selected_mode"] = mode
+            mode = str(message.get("mode", latency.state["selected_mode"]))
+            latency.state["effective_low_latency"] = enabled
+            latency.state["selected_mode"] = mode
 
             settings_card.set_latency_mode(mode)
             if mode == "auto":
@@ -424,17 +163,7 @@ def main(page: ft.Page):
             page.update()
 
         elif msg_type == "auto_hold_released":
-            released_app = str(message.get("app_id", "")).strip().lower()
-            active_hold = controller_ref["latency_hold_app_id"]
-            if controller_ref["selected_mode"] != "auto" or not active_hold:
-                return
-            if released_app and active_hold != released_app:
-                return
-
-            clear_latency_hold()
-            if controller_ref["effective_low_latency"]:
-                set_effective_latency_state(False, source="auto_hold_release")
-                update_status("Tracked app closed. Standard mode restored", "white")
+            latency.on_hold_released(str(message.get("app_id", "")))
 
         elif msg_type == "update_notification":
             latest_ver = message.get("latest_ver")
@@ -523,11 +252,11 @@ def main(page: ft.Page):
 
             result = debug_console.toggle_console()
             if result == "opened":
-                status_bar.update_status("Debug console opened", "blue")
+                device_status_card.update_status("Debug console opened", "blue")
             elif result == "closed":
-                status_bar.update_status("Debug console closed", "white")
+                device_status_card.update_status("Debug console closed", "white")
             else:
-                status_bar.update_status("Debug console could not be opened", "red")
+                device_status_card.update_status("Debug console could not be opened", "red")
             page.update()
 
         elif msg_type == "connection_event":
@@ -539,130 +268,20 @@ def main(page: ft.Page):
             if event == "connected":
                 tray.notify("Earbuds connected")
             elif event == "disconnected":
-                clear_latency_hold()
+                latency.clear_latency_hold()
                 tray.notify("Earbuds disconnected")
 
         elif msg_type == "fullscreen_state":
             is_fullscreen = bool(message.get("is_fullscreen", False))
             app_id = str(message.get("app_id", "")).strip().lower()
-            controller_ref["last_monitor_state"] = {
-                "is_fullscreen": is_fullscreen,
-                "app_id": app_id,
-            }
-            apply_monitor_latency_policy(is_fullscreen, app_id, source="monitor")
+            latency.on_monitor_state(is_fullscreen, app_id)
 
     page.pubsub.subscribe(on_pubsub_message)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Controller Callbacks
     # ─────────────────────────────────────────────────────────────────────────
-    previous_charging_state = {
-        "left": None,
-        "right": None,
-    }
-
-    def get_charging_state(raw_value):
-        """Return charging state for a raw battery value, or None if unknown."""
-        if raw_value == BATTERY_UNKNOWN:
-            return None
-        return raw_value >= BATTERY_CHARGING_OFFSET
-
-    def play_charge_transition_sound(started):
-        """Play distinct tone patterns for charge transitions on Windows/Linux."""
-        start_pattern = [(880, 80), (1175, 90), (1568, 120)]
-        stop_pattern = [(1568, 80), (1175, 90), (880, 120)]
-        tones = start_pattern if started else stop_pattern
-
-        def _play_tones():
-            if winsound and sys.platform.startswith("win"):
-                try:
-                    for frequency, duration in tones:
-                        winsound.Beep(frequency, duration)
-                    return
-                except RuntimeError:
-                    winsound.MessageBeep(winsound.MB_OK)
-                    return
-
-            if sys.platform.startswith("linux"):
-                play_bin = shutil.which("play")
-                beep_bin = shutil.which("beep")
-
-                if play_bin:
-                    for frequency, duration in tones:
-                        subprocess.run(
-                            [
-                                play_bin,
-                                "-nq",
-                                "synth",
-                                f"{duration / 1000:.3f}",
-                                "sine",
-                                str(frequency),
-                            ],
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL,
-                            check=False,
-                        )
-                    return
-
-                if beep_bin:
-                    for frequency, duration in tones:
-                        subprocess.run(
-                            [beep_bin, "-f", str(frequency), "-l", str(duration)],
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL,
-                            check=False,
-                        )
-                    return
-
-            # Last-resort fallback: terminal bell pattern.
-            for _, duration in tones:
-                try:
-                    sys.stdout.write("\a")
-                    sys.stdout.flush()
-                except Exception:
-                    pass
-                time.sleep(duration / 1000)
-
-        threading.Thread(target=_play_tones, daemon=True).start()
-
-    def update_battery_ui(left, right, case):
-        current_charging_state = {
-            "left": get_charging_state(left),
-            "right": get_charging_state(right),
-        }
-
-        for side in ("left", "right"):
-            previous_state = previous_charging_state[side]
-            current_state = current_charging_state[side]
-
-            if previous_state is None or current_state is None:
-                previous_charging_state[side] = current_state
-                continue
-
-            if not previous_state and current_state:
-                play_charge_transition_sound(started=True)
-            elif previous_state and not current_state:
-                play_charge_transition_sound(started=False)
-
-            previous_charging_state[side] = current_state
-
-        # UX hint: briefly clear battery fields before showing the latest values,
-        # even when values are unchanged.
-        page.pubsub.send_all({
-            "type": "battery",
-            "left": BATTERY_UNKNOWN,
-            "right": BATTERY_UNKNOWN,
-            "case": BATTERY_UNKNOWN,
-            "transient": True
-        })
-        time.sleep(0.2)
-        page.pubsub.send_all({
-            "type": "battery", 
-            "left": left, 
-            "right": right, 
-            "case": case,
-            "transient": False
-        })
+    battery_updates = BatteryUpdates(page.pubsub.send_all)
 
     def update_status(text, color="white"):
         page.pubsub.send_all({
@@ -712,7 +331,7 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     controller = BTController(
         status_callback=update_status,
-        battery_callback=update_battery_ui,
+        battery_callback=battery_updates.update,
         check_battery_callback=lambda: threading.Thread(
             target=request_battery_delayed, 
             daemon=True
@@ -740,95 +359,6 @@ def main(page: ft.Page):
             e.control.value = not enabled
             page.update()
 
-    def on_latency_mode_change(e):
-        selected = str(getattr(e.control, "value", "off"))
-        set_selected_latency_mode(selected, source="manual")
-
-    def on_add_low_latency_list_item(platform: str, value: str):
-        target_platform = (platform or "").strip().lower()
-        if target_platform not in {"windows", "linux"}:
-            return
-        normalized = (value or "").strip().lower()
-        if not normalized:
-            return
-        excluded_values = set(low_latency_exceptions_by_platform.get(target_platform, []))
-        included_values = set(low_latency_includes_by_platform.get(target_platform, []))
-        included_values.discard(normalized)
-        excluded_values.add(normalized)
-        excluded_sorted = sorted(excluded_values)
-        included_sorted = sorted(included_values)
-        low_latency_exceptions_by_platform[target_platform] = excluded_sorted
-        low_latency_includes_by_platform[target_platform] = included_sorted
-        set_low_latency_exceptions(excluded_sorted, platform=target_platform)
-        set_low_latency_includes(included_sorted, platform=target_platform)
-        settings_card.set_low_latency_rules(target_platform, excluded_sorted, included_sorted)
-
-    def on_remove_low_latency_list_item(platform: str, value: str):
-        target_platform = (platform or "").strip().lower()
-        if target_platform not in {"windows", "linux"}:
-            return
-        normalized = (value or "").strip().lower()
-        if not normalized:
-            return
-        excluded_values = set(low_latency_exceptions_by_platform.get(target_platform, []))
-        included_values = set(low_latency_includes_by_platform.get(target_platform, []))
-        excluded_values.discard(normalized)
-        included_values.discard(normalized)
-        excluded_sorted = sorted(excluded_values)
-        included_sorted = sorted(included_values)
-        low_latency_exceptions_by_platform[target_platform] = excluded_sorted
-        low_latency_includes_by_platform[target_platform] = included_sorted
-        set_low_latency_exceptions(excluded_sorted, platform=target_platform)
-        set_low_latency_includes(included_sorted, platform=target_platform)
-        settings_card.set_low_latency_rules(target_platform, excluded_sorted, included_sorted)
-
-    def on_set_low_latency_item_mode(platform: str, value: str, mode: str):
-        target_platform = (platform or "").strip().lower()
-        normalized = (value or "").strip().lower()
-        selected_mode = (mode or "").strip().lower()
-        if target_platform not in {"windows", "linux"} or not normalized:
-            return
-        if selected_mode not in {"exclude", "include"}:
-            return
-
-        excluded_values = set(low_latency_exceptions_by_platform.get(target_platform, []))
-        included_values = set(low_latency_includes_by_platform.get(target_platform, []))
-        excluded_values.discard(normalized)
-        included_values.discard(normalized)
-
-        if selected_mode == "exclude":
-            excluded_values.add(normalized)
-        else:
-            included_values.add(normalized)
-
-        excluded_sorted = sorted(excluded_values)
-        included_sorted = sorted(included_values)
-        low_latency_exceptions_by_platform[target_platform] = excluded_sorted
-        low_latency_includes_by_platform[target_platform] = included_sorted
-        set_low_latency_exceptions(excluded_sorted, platform=target_platform)
-        set_low_latency_includes(included_sorted, platform=target_platform)
-        settings_card.set_low_latency_rules(target_platform, excluded_sorted, included_sorted)
-
-        last_state = controller_ref.get("last_monitor_state", {})
-        apply_monitor_latency_policy(
-            bool(last_state.get("is_fullscreen", False)),
-            str(last_state.get("app_id", "")),
-            source="manual",
-        )
-
-    def on_add_low_latency_include_item(platform: str, value: str):
-        on_add_low_latency_list_item(platform, value)
-        on_set_low_latency_item_mode(platform, value, "include")
-
-    def on_wait_until_app_close_change(e):
-        enabled = bool(e.control.value)
-        set_hold_until_app_close_enabled(enabled)
-        update_status(
-            f"Wait until app closes {'enabled' if enabled else 'disabled'}",
-            "green" if enabled else "white",
-        )
-        page.update()
-
     def on_check_device_identity(e):
         if settings_card.identity_item.disabled:
             return
@@ -847,26 +377,26 @@ def main(page: ft.Page):
 
     settings_card = SettingsCard(
         on_check_device_identity=on_check_device_identity,
-        on_low_latency_mode_change=on_latency_mode_change,
-        on_add_low_latency_list_item=on_add_low_latency_list_item,
-        on_remove_low_latency_list_item=on_remove_low_latency_list_item,
-        on_set_low_latency_item_mode=on_set_low_latency_item_mode,
-        on_add_low_latency_include_item=on_add_low_latency_include_item,
-        on_wait_until_app_close_change=on_wait_until_app_close_change,
+        on_low_latency_mode_change=latency.on_latency_mode_change,
+        on_add_low_latency_list_item=latency.on_add_low_latency_list_item,
+        on_remove_low_latency_list_item=latency.on_remove_low_latency_list_item,
+        on_set_low_latency_item_mode=latency.on_set_low_latency_item_mode,
+        on_add_low_latency_include_item=latency.on_add_low_latency_include_item,
+        on_wait_until_app_close_change=latency.on_wait_until_app_close_change,
         on_check_battery=lambda _: controller.request_battery(),
         on_startup_toggle=on_startup_change,
         startup_enabled=is_startup_enabled(),
-        low_latency_mode=controller_ref["selected_mode"],
-        active_platform=platform_key,
+        low_latency_mode=latency.state["selected_mode"],
+        active_platform=latency.platform_key,
         low_latency_exclusions_by_platform={
-            "windows": sorted(low_latency_exceptions_by_platform.get("windows", [])),
-            "linux": sorted(low_latency_exceptions_by_platform.get("linux", [])),
+            "windows": sorted(latency.low_latency_exceptions_by_platform.get("windows", [])),
+            "linux": sorted(latency.low_latency_exceptions_by_platform.get("linux", [])),
         },
         low_latency_inclusions_by_platform={
-            "windows": sorted(low_latency_includes_by_platform.get("windows", [])),
-            "linux": sorted(low_latency_includes_by_platform.get("linux", [])),
+            "windows": sorted(latency.low_latency_includes_by_platform.get("windows", [])),
+            "linux": sorted(latency.low_latency_includes_by_platform.get("linux", [])),
         },
-        wait_until_app_close_enabled=controller_ref["hold_until_app_close_enabled"],
+        wait_until_app_close_enabled=latency.state["hold_until_app_close_enabled"],
     )
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -974,7 +504,6 @@ def main(page: ft.Page):
     # Start Single Instance Listener
     # ─────────────────────────────────────────────────────────────────────────
     start_instance_listener(window_mgr)
-
 
 if __name__ == "__main__":
     check_for_existing_instance()
