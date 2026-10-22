@@ -2,8 +2,25 @@ import json
 import urllib.request
 import urllib.error
 import re
-from typing import Optional, Tuple
+import threading
+import time
+from typing import Callable, Optional, Tuple
 from ui.constants import APP_VERSION, GITHUB_URL
+from .user_preferences import should_show_update_notification
+
+
+def start_update_check(on_update_available: Callable[[str], None]) -> threading.Thread:
+    """Check once in the background and report an update allowed by preferences."""
+    def perform_update_check() -> None:
+        # Keep the existing startup delay before checking for updates.
+        time.sleep(3)
+        has_update, latest_ver = check_for_updates()
+        if has_update and latest_ver and should_show_update_notification(latest_ver):
+            on_update_available(latest_ver)
+
+    worker = threading.Thread(target=perform_update_check, daemon=True)
+    worker.start()
+    return worker
 
 def parse_version(version_str: str) -> Tuple[int, ...]:
     """

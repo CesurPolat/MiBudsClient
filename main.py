@@ -10,8 +10,7 @@ from bluetooth import BTController
 from utils import (
     set_startup, 
     is_startup_enabled, 
-    check_for_updates,
-    should_show_update_notification,
+    start_update_check,
     check_for_existing_instance,
     start_instance_listener
 )
@@ -305,15 +304,11 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Update Checker
     # ─────────────────────────────────────────────────────────────────────────
-    def perform_update_check():
-        """Check for updates and notify if available."""
-        # Wait a bit for the UI to be fully ready
-        time.sleep(3)
-        has_update, latest_ver = check_for_updates()
-        if has_update and latest_ver and should_show_update_notification(latest_ver):
-            page.pubsub.send_all({"type": "update_notification", "latest_ver": latest_ver})
-
-    threading.Thread(target=perform_update_check, daemon=True).start()
+    start_update_check(
+        on_update_available=lambda version: page.pubsub.send_all(
+            {"type": "update_notification", "latest_ver": version}
+        )
+    )
 
     def on_fullscreen_change(is_fullscreen: bool, app_id: str):
         page.pubsub.send_all(

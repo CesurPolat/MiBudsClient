@@ -113,7 +113,8 @@ class AppMessageHandlerTests(unittest.TestCase):
 
         with ExitStack() as stack:
             for name in ("WindowManager", "SystemTray", "DebugConsoleManager",
-                         "BTController", "FullscreenGameMonitor", "start_instance_listener"):
+                         "BTController", "FullscreenGameMonitor", "start_instance_listener",
+                         "start_update_check"):
                 stack.enter_context(patch.object(main, name))
             stack.enter_context(patch.object(main.threading, "Thread"))
             stack.enter_context(patch.object(main, "is_startup_enabled", return_value=False))
