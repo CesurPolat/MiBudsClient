@@ -1,18 +1,10 @@
 """Publish battery refreshes and play charging transition notifications."""
 
-import shutil
-import subprocess
-import sys
-import threading
 import time
 from typing import Callable
 
-try:
-    import winsound
-except ImportError:
-    winsound = None
-
-from .constants import BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET
+from utils.sound import play_tones
+from ui.constants import BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET
 
 
 class BatteryUpdates:
@@ -39,57 +31,7 @@ class BatteryUpdates:
         stop_pattern = [(1568, 80), (1175, 90), (880, 120)]
         tones = start_pattern if started else stop_pattern
 
-        def _play_tones():
-            if winsound and sys.platform.startswith("win"):
-                try:
-                    for frequency, duration in tones:
-                        winsound.Beep(frequency, duration)
-                    return
-                except RuntimeError:
-                    winsound.MessageBeep(winsound.MB_OK)
-                    return
-
-            if sys.platform.startswith("linux"):
-                play_bin = shutil.which("play")
-                beep_bin = shutil.which("beep")
-
-                if play_bin:
-                    for frequency, duration in tones:
-                        subprocess.run(
-                            [
-                                play_bin,
-                                "-nq",
-                                "synth",
-                                f"{duration / 1000:.3f}",
-                                "sine",
-                                str(frequency),
-                            ],
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL,
-                            check=False,
-                        )
-                    return
-
-                if beep_bin:
-                    for frequency, duration in tones:
-                        subprocess.run(
-                            [beep_bin, "-f", str(frequency), "-l", str(duration)],
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL,
-                            check=False,
-                        )
-                    return
-
-            # Last-resort fallback: terminal bell pattern.
-            for _, duration in tones:
-                try:
-                    sys.stdout.write("\a")
-                    sys.stdout.flush()
-                except Exception:
-                    pass
-                time.sleep(duration / 1000)
-
-        threading.Thread(target=_play_tones, daemon=True).start()
+        play_tones(tones)
 
     def update(self, left, right, case):
         current_charging_state = {
