@@ -4,7 +4,7 @@ import threading
 import time
 from typing import Callable
 
-from .battery_updates import BatteryUpdates
+from ui.battery_updates import BatteryUpdates
 
 
 class DeviceConnection:

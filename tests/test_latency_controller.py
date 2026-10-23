@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from threading import Event, Thread
 from unittest.mock import Mock, patch
 
-from utils.latency_controller import LatencyController
+from controllers.latency.controller import LatencyController
 from ui.components import SettingsCard
 
 
@@ -21,15 +21,15 @@ class LatencyControllerTests(unittest.TestCase):
             "get_all_low_latency_includes": {"windows": [], "linux": []},
         }
         for name, value in defaults.items():
-            self.stack.enter_context(patch(f"utils.latency_controller.{name}", return_value=value))
+            self.stack.enter_context(patch(f"controllers.latency.controller.{name}", return_value=value))
         self.saves = {
-            name: self.stack.enter_context(patch(f"utils.latency_controller.{name}"))
+            name: self.stack.enter_context(patch(f"controllers.latency.controller.{name}"))
             for name in (
                 "set_low_latency_mode", "set_low_latency_hold_until_app_close",
                 "set_low_latency_exceptions", "set_low_latency_includes",
             )
         }
-        self.stack.enter_context(patch("utils.latency_controller.threading.Thread"))
+        self.stack.enter_context(patch("controllers.latency.controller.threading.Thread"))
         self.device = Mock()
         self.device.send_command.return_value = (True, "OK")
         self.publish = Mock()
@@ -219,7 +219,7 @@ class LatencyControllerTests(unittest.TestCase):
         c = self.controller
         c.state.update(selected_mode="auto", hold_until_app_close_enabled=True,
                        latency_hold_app_id="game.exe")
-        with patch("utils.latency_controller.threading.Thread") as thread, patch.object(
+        with patch("controllers.latency.controller.threading.Thread") as thread, patch.object(
             c, "is_process_running", return_value=False,
         ):
             c.start_hold_watcher_if_needed()
@@ -235,8 +235,8 @@ class LatencyControllerTests(unittest.TestCase):
             ("win32", SimpleNamespace(stdout="game.exe 123", returncode=0), "tasklist"),
             ("linux", SimpleNamespace(stdout="123", returncode=0), "pgrep"),
         ):
-            with self.subTest(platform=platform), patch("utils.latency_controller.sys.platform", platform), patch(
-                "utils.latency_controller.subprocess.run", return_value=result,
+            with self.subTest(platform=platform), patch("controllers.latency.controller.sys.platform", platform), patch(
+                "controllers.latency.controller.subprocess.run", return_value=result,
             ) as run:
                 self.assertTrue(self.controller.is_process_running(" GAME.EXE "))
                 self.assertEqual(run.call_args.args[0][0], expected_command)

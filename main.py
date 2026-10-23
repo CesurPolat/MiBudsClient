@@ -4,7 +4,7 @@ import flet as ft
 import os
 import threading
 
-from bluetooth import BTController
+from controllers.bluetooth import BTController
 from utils import (
     start_update_check,
     check_for_existing_instance,
@@ -19,12 +19,12 @@ from ui import (
 from ui.components import (
     AppLayout, DeviceStatusCard
 )
-from ui.device_connection import DeviceConnection
-from ui.settings_controller import SettingsController
+from controllers.device import DeviceConnection
+from controllers.settings import SettingsController
 from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
 from utils.game_monitor import FullscreenGameMonitor
-from utils.latency_controller import LatencyController
+from controllers.latency import LatencyController
 
 def main(page: ft.Page):
     """Main application entry point."""

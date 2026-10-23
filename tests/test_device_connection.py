@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import Mock, call, patch
 
-from ui.device_connection import DeviceConnection
+from controllers.device.controller import DeviceConnection
 
 
 class DeviceConnectionTests(unittest.TestCase):
@@ -20,8 +20,8 @@ class DeviceConnectionTests(unittest.TestCase):
         update.assert_called_once_with(188, 70, 80)
 
     def test_battery_request_waits_in_background_then_resumes_connection(self):
-        with patch("ui.device_connection.threading.Thread") as thread, patch(
-            "ui.device_connection.time.sleep",
+        with patch("controllers.device.controller.threading.Thread") as thread, patch(
+            "controllers.device.controller.time.sleep",
         ) as sleep:
             self.connection.request_battery_delayed()
             self.controller.request_battery.assert_not_called()
@@ -34,7 +34,7 @@ class DeviceConnectionTests(unittest.TestCase):
         ])
 
     def test_show_only_starts_one_reconnect_until_worker_finishes(self):
-        with patch("ui.device_connection.threading.Thread") as thread:
+        with patch("controllers.device.controller.threading.Thread") as thread:
             self.connection.reconnect_on_show()
             self.connection.reconnect_on_show()
             thread.assert_called_once()
@@ -49,7 +49,7 @@ class DeviceConnectionTests(unittest.TestCase):
         })
 
     def test_connected_or_uninitialized_device_does_not_reconnect(self):
-        with patch("ui.device_connection.threading.Thread") as thread:
+        with patch("controllers.device.controller.threading.Thread") as thread:
             self.controller.connected = True
             self.connection.reconnect_on_show()
             self.controller = None
@@ -58,7 +58,7 @@ class DeviceConnectionTests(unittest.TestCase):
 
     def test_worker_failure_allows_next_reconnect(self):
         self.controller.reconnect.side_effect = RuntimeError("Disconnected")
-        with patch("ui.device_connection.threading.Thread") as thread:
+        with patch("controllers.device.controller.threading.Thread") as thread:
             self.connection.reconnect_on_show()
             with self.assertRaises(RuntimeError):
                 thread.call_args.kwargs["target"]()
@@ -66,7 +66,7 @@ class DeviceConnectionTests(unittest.TestCase):
             self.assertEqual(thread.call_count, 2)
 
     def test_thread_start_failure_allows_next_reconnect(self):
-        with patch("ui.device_connection.threading.Thread") as thread:
+        with patch("controllers.device.controller.threading.Thread") as thread:
             thread.return_value.start.side_effect = RuntimeError("No thread")
             with self.assertRaises(RuntimeError):
                 self.connection.reconnect_on_show()

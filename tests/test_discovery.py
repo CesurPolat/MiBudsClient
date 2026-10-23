@@ -4,7 +4,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-from bluetooth.discovery import BluetoothDiscovery
+from controllers.bluetooth.discovery import BluetoothDiscovery
 
 
 class DiscoveryTests(unittest.TestCase):
@@ -33,14 +33,14 @@ class DiscoveryTests(unittest.TestCase):
 
     def test_linux_skips_other_models_before_querying_connection(self):
         devices = "Device 11:22:33:44:55:66 Keyboard\nDevice AA:BB:CC:DD:EE:FF Redmi Buds 6 Play\n"
-        with patch("bluetooth.discovery.subprocess.check_output", side_effect=[devices, "Connected: yes"]) as run:
+        with patch("controllers.bluetooth.discovery.subprocess.check_output", side_effect=[devices, "Connected: yes"]) as run:
             device = BluetoothDiscovery._get_connected_device_linux()
         self.assertEqual(device.address, "AA:BB:CC:DD:EE:FF")
         self.assertEqual(run.call_args.args[0], ["bluetoothctl", "info", "AA:BB:CC:DD:EE:FF"])
         self.assertEqual(run.call_count, 2)
 
     def test_linux_does_not_select_disconnected_target(self):
-        with patch("bluetooth.discovery.subprocess.check_output", side_effect=[
+        with patch("controllers.bluetooth.discovery.subprocess.check_output", side_effect=[
             "Device AA:BB:CC:DD:EE:FF Redmi Buds 6 Play", "Connected: no",
         ]):
             self.assertIsNone(BluetoothDiscovery._get_connected_device_linux())

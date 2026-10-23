@@ -12,7 +12,7 @@ import sys
 
 
 def _load_app_catalog():
-    root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
+    root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[2]))
     with (root / "assets" / "device_catalog.json").open(encoding="utf-8-sig") as source:
         return json.load(source)
 

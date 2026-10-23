@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from ui.settings_controller import SettingsController
+from controllers.settings.controller import SettingsController
 
 
 class SettingsControllerTests(unittest.TestCase):
@@ -18,7 +18,7 @@ class SettingsControllerTests(unittest.TestCase):
         latency.platform_key = "windows"
         latency.low_latency_exceptions_by_platform = {"windows": ["excluded.exe"]}
         latency.low_latency_includes_by_platform = {"linux": ["included"]}
-        with patch("ui.settings_controller.is_startup_enabled", return_value=True):
+        with patch("controllers.settings.controller.is_startup_enabled", return_value=True):
             self.settings = SettingsController(
                 controller=self.device, latency=latency, device_connection=self.connection,
                 publish=self.publish, on_update=self.update,
@@ -26,7 +26,7 @@ class SettingsControllerTests(unittest.TestCase):
 
     def test_startup_failure_restores_switch_value(self):
         event = SimpleNamespace(control=SimpleNamespace(value=False))
-        with patch("ui.settings_controller.set_startup", return_value=False) as save:
+        with patch("controllers.settings.controller.set_startup", return_value=False) as save:
             self.settings.on_startup_change(event)
         save.assert_called_once_with(False)
         self.assertTrue(event.control.value)
@@ -35,14 +35,14 @@ class SettingsControllerTests(unittest.TestCase):
 
     def test_startup_success_keeps_switch_value_and_publishes_status(self):
         event = SimpleNamespace(control=SimpleNamespace(value=False))
-        with patch("ui.settings_controller.set_startup", return_value=True):
+        with patch("controllers.settings.controller.set_startup", return_value=True):
             self.settings.on_startup_change(event)
         self.assertFalse(event.control.value)
         self.connection.update_status.assert_called_once_with("Startup disabled", "white")
 
     def test_identity_query_runs_in_background_and_blocks_duplicate_clicks(self):
         self.device.request_device_identity.return_value = (True, "Redmi Buds 6 Play")
-        with patch("ui.settings_controller.threading.Thread") as thread:
+        with patch("controllers.settings.controller.threading.Thread") as thread:
             self.settings.card.identity_item.on_click(None)
             self.settings.card.identity_item.on_click(None)
             self.assertTrue(self.settings.card.identity_item.disabled)
@@ -59,7 +59,7 @@ class SettingsControllerTests(unittest.TestCase):
             ((False, "Disconnected"), None, "Disconnected"),
             (None, RuntimeError("No connection"), "Device identity request failed: No connection"),
         ):
-            with self.subTest(error=error), patch("ui.settings_controller.threading.Thread") as thread:
+            with self.subTest(error=error), patch("controllers.settings.controller.threading.Thread") as thread:
                 self.settings.card.set_device_identity_result("Not queried")
                 self.device.request_device_identity.return_value = result
                 self.device.request_device_identity.side_effect = error

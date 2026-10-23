@@ -1,14 +1,27 @@
 """Catalog source fidelity and identity integration checks (no hardware)."""
 
 import json
+import os
+import tempfile
 from pathlib import Path
 import unittest
 
-from bluetooth.device_catalog import DEVICE_MODEL_NAMES, get_device_models
-from bluetooth.rcsp import DeviceIdentity
+from controllers.bluetooth.device_catalog import DEVICE_MODEL_NAMES, get_device_models
+from controllers.bluetooth.device_catalog import _load_app_catalog
+from controllers.bluetooth.rcsp import DeviceIdentity
 
 
 class DeviceCatalogTests(unittest.TestCase):
+    def test_source_catalog_load_does_not_depend_on_working_directory(self):
+        previous = Path.cwd()
+        with tempfile.TemporaryDirectory() as directory:
+            try:
+                os.chdir(directory)
+                data = _load_app_catalog()
+            finally:
+                os.chdir(previous)
+        self.assertIn("tw_product_list", data["result"])
+
     def test_all_app_fields_are_available_through_identity(self):
         source = Path(__file__).resolve().parents[1] / "assets" / "device_catalog.json"
         products = json.loads(source.read_text(encoding="utf-8-sig"))["result"]["tw_product_list"]

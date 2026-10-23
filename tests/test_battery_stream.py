@@ -3,9 +3,9 @@
 import unittest
 from unittest.mock import Mock
 
-from bluetooth.battery_stream import BatteryStreamParser
-from bluetooth.constants import BATTERY_PATTERN
-from bluetooth.controller import BTController
+from controllers.bluetooth.battery_stream import BatteryStreamParser
+from controllers.bluetooth.constants import BATTERY_PATTERN
+from controllers.bluetooth.controller import BTController
 
 
 class BatteryStreamTests(unittest.TestCase):

@@ -140,7 +140,7 @@ class AppMessageHandlerTests(unittest.TestCase):
                          "start_update_check"):
                 stack.enter_context(patch.object(main, name))
             stack.enter_context(patch.object(main.threading, "Thread"))
-            stack.enter_context(patch("ui.settings_controller.is_startup_enabled", return_value=False))
+            stack.enter_context(patch("controllers.settings.controller.is_startup_enabled", return_value=False))
             latency = stack.enter_context(patch.object(main, "LatencyController")).return_value
             latency.state = {"selected_mode": "off", "hold_until_app_close_enabled": False}
             latency.platform_key = "windows"

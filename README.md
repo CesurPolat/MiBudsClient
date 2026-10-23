@@ -18,7 +18,7 @@ A Python & Flet-based desktop client for Redmi Buds 6 Play. Features real-time b
 
 `assets/device_catalog.json` contains the complete app product response and is
 the primary source for exact VID/PID model names and metadata. It is bundled
-with the other assets. The SDK table in `bluetooth/device_catalog.py` remains a
+with the other assets. The SDK table in `controllers/bluetooth/device_catalog.py` remains a
 fallback for identities absent from the app response.
 
 `get_device_models(vid, pid)` (or `DeviceIdentity.models`) returns independent

@@ -7,7 +7,7 @@ import time
 from typing import Callable
 from functools import wraps
 
-from .user_preferences import (
+from utils.user_preferences import (
     get_all_low_latency_exceptions,
     get_all_low_latency_includes,
     set_low_latency_exceptions,

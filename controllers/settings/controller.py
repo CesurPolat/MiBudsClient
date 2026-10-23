@@ -4,7 +4,7 @@ import threading
 from typing import Callable
 
 from utils.startup_manager import is_startup_enabled, set_startup
-from .components.settings_card import SettingsCard
+from ui.components.settings_card import SettingsCard
 
 
 class SettingsController:
