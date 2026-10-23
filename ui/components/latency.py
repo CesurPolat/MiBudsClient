@@ -82,7 +82,9 @@ class LowLatencyModeSettingItem(ft.Column):
         return self._value
 
     def _select_mode(self, mode: str) -> None:
-        if mode not in self._mode_buttons or mode == self._value:
+        # Re-selecting a mode retries a failed command. The controller skips
+        # sends for modes it has already applied successfully.
+        if mode not in self._mode_buttons:
             return
 
         self._value = mode

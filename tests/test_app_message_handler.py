@@ -18,6 +18,11 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.window = Mock()
         self.latency = Mock()
         self.latency.state = {"selected_mode": "off"}
+        self.latency.get_display_state.side_effect = lambda: {
+            "mode": self.latency.state["selected_mode"],
+            "enabled": self.latency.state.get("effective_low_latency", False),
+            "error": None,
+        }
         self.tray = Mock()
         self.debug = Mock()
         self.reconnect = Mock()
@@ -45,6 +50,7 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertEqual(self.page.update.call_count, 2)
 
     def test_latency_updates_ui_without_sending_another_command(self):
+        self.latency.state.update(selected_mode="auto", effective_low_latency=True)
         self.handler.handle({"type": "latency", "mode": "auto", "enabled": True})
         self.assertEqual(self.latency.state["selected_mode"], "auto")
         self.assertTrue(self.latency.state["effective_low_latency"])
@@ -53,6 +59,23 @@ class AppMessageHandlerTests(unittest.TestCase):
             {"type": "status", "text": "Automatic mode set", "color": "blue"},
         )
         self.latency.set_selected_latency_mode.assert_not_called()
+
+    def test_late_latency_message_cannot_restore_old_state(self):
+        self.latency.state.update(selected_mode="on", effective_low_latency=True)
+        self.handler.handle({"type": "latency", "mode": "off", "enabled": False})
+        self.assertEqual(self.latency.state["selected_mode"], "on")
+        self.assertTrue(self.latency.state["effective_low_latency"])
+        self.settings.set_latency_mode.assert_called_once_with("on")
+
+    def test_failed_command_does_not_display_a_success_status(self):
+        self.latency.get_display_state.side_effect = None
+        self.latency.get_display_state.return_value = {
+            "mode": "on", "enabled": False, "error": "Disconnected",
+        }
+        self.handler.handle({"type": "latency", "mode": "off", "enabled": False})
+        self.page.pubsub.send_all.assert_called_once_with(
+            {"type": "status", "text": "Disconnected", "color": "red"},
+        )
 
     def test_connection_notifications_are_deduplicated(self):
         for event in ("connected", "connected", "disconnected", "disconnected"):

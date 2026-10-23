@@ -1,6 +1,7 @@
 """Route application pubsub messages to controllers and UI components."""
 
 import time
+import threading
 from typing import Callable
 
 from .constants import BATTERY_UNKNOWN
@@ -18,6 +19,7 @@ class AppMessageHandler:
         self._settings_card = settings_card
         self._window_manager = window_manager
         self._latency = latency
+        self._latency_display_lock = threading.Lock()
         self._tray = tray
         self._debug_console = debug_console
         self._on_window_show = on_window_show
@@ -82,24 +84,21 @@ class AppMessageHandler:
             self._window_manager.apply_hide()
 
     def _handle_latency(self, message: dict) -> None:
-        enabled = bool(message.get("enabled"))
-        mode = str(message.get("mode", self._latency.state["selected_mode"]))
-        self._latency.state["effective_low_latency"] = enabled
-        self._latency.state["selected_mode"] = mode
-
-        self._settings_card.set_latency_mode(mode)
-        if mode == "auto":
-            mode_text = "Automatic"
-            color = "blue" if enabled else "white"
-        elif mode == "on":
-            mode_text = "Low Latency"
-            color = "blue"
-        else:
-            mode_text = "Standard"
-            color = "white"
-
-        self._publish_status(f"{mode_text} mode set", color)
-        self._page.update()
+        # Notifications can be delayed or reordered. Always render current state.
+        with self._latency_display_lock:
+            state = self._latency.get_display_state()
+            mode, enabled = state["mode"], state["enabled"]
+            self._settings_card.set_latency_mode(mode)
+            if state["error"]:
+                text, color = state["error"], "red"
+            elif mode == "auto":
+                text, color = "Automatic mode set", "blue" if enabled else "white"
+            elif mode == "on":
+                text, color = "Low Latency mode set", "blue"
+            else:
+                text, color = "Standard mode set", "white"
+            self._publish_status(text, color)
+            self._page.update()
 
     def _handle_auto_hold_released(self, message: dict) -> None:
         self._latency.on_hold_released(str(message.get("app_id", "")))

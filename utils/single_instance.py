@@ -27,25 +27,65 @@ def check_for_existing_instance():
             pass  # Fail silently if the other instance is not ready
         sys.exit(0)  # Exit the new instance
 
-def start_instance_listener(window_manager):
-    """
-    Starts a thread that listens for 'focus' messages from new instances.
-    """
-    def listen_thread():
+_reserved_socket = None
+_reservation_lock = threading.Lock()
+
+
+def reserve_instance_port():
+    """Hold the instance port throughout startup, before the window is ready."""
+    global _reserved_socket
+    with _reservation_lock:
+        if _reserved_socket is not None:
+            return _reserved_socket
+        listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # Allow address reuse to avoid "Address already in use" errors on restart
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.bind(('127.0.0.1', SINGLE_INSTANCE_PORT))
-            s.listen(1)
-            while True:
-                conn, addr = s.accept()
-                data = conn.recv(1024)
-                if data == b"focus":
-                    if window_manager:
-                        window_manager.show()
-                conn.close()
-        except Exception:
-            pass # Fail silently
+            if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+                listener.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+            listener.bind(("127.0.0.1", SINGLE_INSTANCE_PORT))
+            listener.listen(8)
+        except OSError:
+            listener.close()
+            # Another startup may have won after check_for_existing_instance().
+            try:
+                with socket.create_connection(("127.0.0.1", SINGLE_INSTANCE_PORT), timeout=1) as client:
+                    client.sendall(b"focus")
+            except OSError:
+                pass
+            sys.exit(0)
+        _reserved_socket = listener
+        return listener
+
+
+def release_instance_port():
+    """Release the reservation once the application has shut down."""
+    global _reserved_socket
+    with _reservation_lock:
+        if _reserved_socket is not None:
+            try:
+                _reserved_socket.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+            _reserved_socket.close()
+            _reserved_socket = None
+
+
+def start_instance_listener(window_manager):
+    """Consume focus requests queued on the socket reserved during startup."""
+    listener = reserve_instance_port()
+
+    def listen_thread():
+        while True:
+            try:
+                conn, _ = listener.accept()
+            except OSError:
+                return
+            with conn:
+                conn.settimeout(1)
+                try:
+                    data = conn.recv(1024)
+                except OSError:
+                    continue
+                if data == b"focus" and window_manager:
+                    window_manager.show()
 
     threading.Thread(target=listen_thread, daemon=True).start()

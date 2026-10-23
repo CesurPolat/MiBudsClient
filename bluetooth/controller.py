@@ -9,6 +9,7 @@ from typing import Callable, Optional
 from .connection import BluetoothConnection
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
+from .battery_stream import BatteryStreamParser
 from .constants import RECONNECT_DELAY
 from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, parse_identity_fields
 
@@ -49,6 +50,7 @@ class BTController:
     ):
         self._connection = BluetoothConnection()
         self._protocol = BudsProtocol()
+        self._battery_parser = BatteryStreamParser()
         self._bd_addr = bd_addr
         self._running = True
         self._connect_lock = threading.Lock()
@@ -263,6 +265,7 @@ class BTController:
             self._identity_callback(identity)
 
     def _reset_identity_state(self, reason: str) -> None:
+        self._battery_parser.reset()
         with self._identity_condition:
             self._identity = None
             self._identity_parser.reset()
@@ -382,9 +385,9 @@ class BTController:
         self._process_identity_data(data)
 
         # Check for battery data
-        if self._protocol.is_battery_packet(data):
-            status = self._protocol.parse_battery(data)
-            if status:
+        statuses = self._battery_parser.feed(data)
+        if statuses:
+            for status in statuses:
                 self._notify_battery(status.left, status.right, status.case)
         
         # Check for mode acknowledgment

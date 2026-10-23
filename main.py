@@ -8,7 +8,9 @@ from bluetooth import BTController
 from utils import (
     start_update_check,
     check_for_existing_instance,
-    start_instance_listener
+    start_instance_listener,
+    reserve_instance_port,
+    release_instance_port,
 )
 from ui import (
     APP_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG,
@@ -184,4 +186,8 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     check_for_existing_instance()
-    ft.app(target=main, assets_dir="assets")
+    reserve_instance_port()
+    try:
+        ft.app(target=main, assets_dir="assets")
+    finally:
+        release_instance_port()

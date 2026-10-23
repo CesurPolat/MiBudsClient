@@ -5,6 +5,7 @@ import sys
 import threading
 import time
 from typing import Callable
+from functools import wraps
 
 from .user_preferences import (
     get_all_low_latency_exceptions,
@@ -18,12 +19,23 @@ from .user_preferences import (
 )
 
 
+def _serialized(method):
+    """Serialize state changes originating from tray, UI, and monitor callbacks."""
+    @wraps(method)
+    def call(self, *args, **kwargs):
+        with self._lock:
+            return method(self, *args, **kwargs)
+    return call
+
+
 class LatencyController:
     """Coordinate mode changes through callbacks, independently of Flet controls."""
 
     def __init__(self, publish: Callable, get_controller: Callable,
                  get_tray: Callable, on_rules_change: Callable,
                  on_ui_update: Callable):
+        self._lock = threading.RLock()
+        self._last_error = None
         self._publish = publish
         self._get_controller = get_controller
         self._get_tray = get_tray
@@ -41,15 +53,42 @@ class LatencyController:
         self.low_latency_exceptions_by_platform = get_all_low_latency_exceptions()
         self.low_latency_includes_by_platform = get_all_low_latency_includes()
 
+    def get_display_state(self) -> dict:
+        """Return the current controller-owned state, rather than a queued message."""
+        with self._lock:
+            return {
+                "mode": self.state["selected_mode"],
+                "enabled": self.state["effective_low_latency"],
+                "error": self._last_error,
+            }
+
+    def _publish_latency(self, source: str) -> None:
+        self._publish({
+            "type": "latency",
+            "enabled": self.state["effective_low_latency"],
+            "mode": self.state["selected_mode"],
+            "source": source,
+        })
+
+    def _reapply_policy(self, source: str = "manual") -> None:
+        last_state = self.state["last_monitor_state"]
+        self.apply_monitor_latency_policy(
+            bool(last_state.get("is_fullscreen", False)),
+            str(last_state.get("app_id", "")),
+            source=source,
+        )
+
     def _status(self, text: str, color: str = "white") -> None:
         self._publish({"type": "status", "text": text, "color": color})
 
+    @_serialized
     def on_monitor_state(self, is_fullscreen: bool, app_id: str) -> None:
         self.state["last_monitor_state"] = {
             "is_fullscreen": is_fullscreen, "app_id": app_id,
         }
         self.apply_monitor_latency_policy(is_fullscreen, app_id, source="monitor")
 
+    @_serialized
     def on_hold_released(self, app_id: str) -> None:
         released_app = (app_id or "").strip().lower()
         active_hold = self.state["latency_hold_app_id"]
@@ -59,8 +98,8 @@ class LatencyController:
             return
         self.clear_latency_hold()
         if self.state["effective_low_latency"]:
-            self.set_effective_latency_state(False, source="auto_hold_release")
-            self._status("Tracked app closed. Standard mode restored", "white")
+            if self.set_effective_latency_state(False, source="auto_hold_release"):
+                self._status("Tracked app closed. Standard mode restored", "white")
 
     def active_low_latency_exceptions(self) -> set[str]:
         return set(self.low_latency_exceptions_by_platform.get(self.platform_key, []))
@@ -108,9 +147,11 @@ class LatencyController:
 
         return False
 
+    @_serialized
     def clear_latency_hold(self) -> None:
         self.state["latency_hold_app_id"] = ""
 
+    @_serialized
     def start_hold_watcher_if_needed(self) -> None:
         if self.state["hold_watcher_running"]:
             return
@@ -146,10 +187,12 @@ class LatencyController:
 
                     time.sleep(2)
             finally:
-                self.state["hold_watcher_running"] = False
+                with self._lock:
+                    self.state["hold_watcher_running"] = False
 
         threading.Thread(target=_watcher, daemon=True).start()
 
+    @_serialized
     def apply_monitor_latency_policy(self, is_fullscreen: bool, app_id: str, source: str = "monitor") -> None:
         normalized_app = (app_id or "").strip().lower()
         selected_mode = self.state["selected_mode"]
@@ -158,12 +201,14 @@ class LatencyController:
 
         def enable_low_latency(message: str, color: str = "blue") -> None:
             if not self.state["effective_low_latency"]:
-                self.set_effective_latency_state(True, source=source)
+                if not self.set_effective_latency_state(True, source=source):
+                    return
             self._status(message, color)
 
         def disable_low_latency(message: str = "Standard mode restored") -> None:
             if self.state["effective_low_latency"]:
-                self.set_effective_latency_state(False, source=source)
+                if not self.set_effective_latency_state(False, source=source):
+                    return
             self._status(message, "white")
 
         if selected_mode == "on":
@@ -215,28 +260,32 @@ class LatencyController:
         self.clear_latency_hold()
         disable_low_latency()
 
-    def set_effective_latency_state(self, new_state: bool, source: str = "manual") -> None:
+    @_serialized
+    def set_effective_latency_state(self, new_state: bool, source: str = "manual") -> bool:
+        controller = self._get_controller()
+        try:
+            if controller is None:
+                success, message = False, "Device controller is unavailable."
+            else:
+                success, message = controller.send_command("low" if new_state else "std")
+        except Exception as exc:
+            success, message = False, f"Latency command failed: {exc}"
+
+        if not success:
+            self._last_error = message
+            self._status(message, "red")
+            self._publish_latency(source)
+            return False
+
+        self._last_error = None
         self.state["effective_low_latency"] = bool(new_state)
-
-        if self._get_controller():
-            mode = "low" if new_state else "std"
-            success, message = self._get_controller().send_command(mode)
-            if not success:
-                self._publish({"type": "status", "text": message, "color": "red"})
-
         tray_inst = self._get_tray()
         if tray_inst:
             tray_inst.refresh_menu()
+        self._publish_latency(source)
+        return True
 
-        self._publish(
-            {
-                "type": "latency",
-                "enabled": bool(new_state),
-                "mode": self.state["selected_mode"],
-                "source": source,
-            }
-        )
-
+    @_serialized
     def set_selected_latency_mode(self, mode: str, source: str = "manual") -> None:
         normalized_mode = (mode or "").strip().lower()
         if normalized_mode not in {"off", "auto", "on"}:
@@ -245,27 +294,21 @@ class LatencyController:
         self.state["selected_mode"] = normalized_mode
         set_low_latency_mode(normalized_mode)
 
-        last_state = self.state.get("last_monitor_state", {})
-        self.apply_monitor_latency_policy(
-            bool(last_state.get("is_fullscreen", False)),
-            str(last_state.get("app_id", "")),
-            source=source,
-        )
+        self._last_error = None
+        self._reapply_policy(source)
+        self._publish_latency(source)
 
         tray_inst = self._get_tray()
         if tray_inst:
             tray_inst.refresh_menu()
 
+    @_serialized
     def set_hold_until_app_close_enabled(self, enabled: bool) -> None:
         self.state["hold_until_app_close_enabled"] = bool(enabled)
         set_low_latency_hold_until_app_close(enabled)
-        last_state = self.state.get("last_monitor_state", {})
-        self.apply_monitor_latency_policy(
-            bool(last_state.get("is_fullscreen", False)),
-            str(last_state.get("app_id", "")),
-            source="manual",
-        )
+        self._reapply_policy()
 
+    @_serialized
     def set_latency_hold(self, app_id: str) -> None:
         normalized = (app_id or "").strip().lower()
         if not normalized:
@@ -282,81 +325,46 @@ class LatencyController:
         selected = str(getattr(e.control, "value", "off"))
         self.set_selected_latency_mode(selected, source="manual")
 
-    def on_add_low_latency_list_item(self, platform: str, value: str):
-        target_platform = (platform or "").strip().lower()
-        if target_platform not in {"windows", "linux"}:
-            return
-        normalized = (value or "").strip().lower()
-        if not normalized:
-            return
-        excluded_values = set(self.low_latency_exceptions_by_platform.get(target_platform, []))
-        included_values = set(self.low_latency_includes_by_platform.get(target_platform, []))
-        included_values.discard(normalized)
-        excluded_values.add(normalized)
-        excluded_sorted = sorted(excluded_values)
-        included_sorted = sorted(included_values)
-        self.low_latency_exceptions_by_platform[target_platform] = excluded_sorted
-        self.low_latency_includes_by_platform[target_platform] = included_sorted
-        set_low_latency_exceptions(excluded_sorted, platform=target_platform)
-        set_low_latency_includes(included_sorted, platform=target_platform)
-        self._on_rules_change(target_platform, excluded_sorted, included_sorted)
-
-    def on_remove_low_latency_list_item(self, platform: str, value: str):
-        target_platform = (platform or "").strip().lower()
-        if target_platform not in {"windows", "linux"}:
-            return
-        normalized = (value or "").strip().lower()
-        if not normalized:
-            return
-        excluded_values = set(self.low_latency_exceptions_by_platform.get(target_platform, []))
-        included_values = set(self.low_latency_includes_by_platform.get(target_platform, []))
-        excluded_values.discard(normalized)
-        included_values.discard(normalized)
-        excluded_sorted = sorted(excluded_values)
-        included_sorted = sorted(included_values)
-        self.low_latency_exceptions_by_platform[target_platform] = excluded_sorted
-        self.low_latency_includes_by_platform[target_platform] = included_sorted
-        set_low_latency_exceptions(excluded_sorted, platform=target_platform)
-        set_low_latency_includes(included_sorted, platform=target_platform)
-        self._on_rules_change(target_platform, excluded_sorted, included_sorted)
-
-    def on_set_low_latency_item_mode(self, platform: str, value: str, mode: str):
+    @_serialized
+    def _change_rule(self, platform: str, value: str, mode: str) -> None:
         target_platform = (platform or "").strip().lower()
         normalized = (value or "").strip().lower()
-        selected_mode = (mode or "").strip().lower()
         if target_platform not in {"windows", "linux"} or not normalized:
             return
-        if selected_mode not in {"exclude", "include"}:
+        if mode not in {"exclude", "include", "remove"}:
             return
-
-        excluded_values = set(self.low_latency_exceptions_by_platform.get(target_platform, []))
-        included_values = set(self.low_latency_includes_by_platform.get(target_platform, []))
-        excluded_values.discard(normalized)
-        included_values.discard(normalized)
-
-        if selected_mode == "exclude":
-            excluded_values.add(normalized)
-        else:
-            included_values.add(normalized)
-
-        excluded_sorted = sorted(excluded_values)
-        included_sorted = sorted(included_values)
+        excluded = set(self.low_latency_exceptions_by_platform.get(target_platform, []))
+        included = set(self.low_latency_includes_by_platform.get(target_platform, []))
+        excluded.discard(normalized)
+        included.discard(normalized)
+        if mode == "exclude":
+            excluded.add(normalized)
+        elif mode == "include":
+            included.add(normalized)
+        excluded_sorted, included_sorted = sorted(excluded), sorted(included)
         self.low_latency_exceptions_by_platform[target_platform] = excluded_sorted
         self.low_latency_includes_by_platform[target_platform] = included_sorted
         set_low_latency_exceptions(excluded_sorted, platform=target_platform)
         set_low_latency_includes(included_sorted, platform=target_platform)
         self._on_rules_change(target_platform, excluded_sorted, included_sorted)
+        if target_platform == self.platform_key:
+            if self.state["latency_hold_app_id"] == normalized and mode != "include":
+                self.clear_latency_hold()
+            self._reapply_policy(source="rules")
 
-        last_state = self.state.get("last_monitor_state", {})
-        self.apply_monitor_latency_policy(
-            bool(last_state.get("is_fullscreen", False)),
-            str(last_state.get("app_id", "")),
-            source="manual",
-        )
+    def on_add_low_latency_list_item(self, platform: str, value: str):
+        self._change_rule(platform, value, "exclude")
+
+    def on_remove_low_latency_list_item(self, platform: str, value: str):
+        self._change_rule(platform, value, "remove")
+
+    def on_set_low_latency_item_mode(self, platform: str, value: str, mode: str):
+        selected_mode = (mode or "").strip().lower()
+        if selected_mode in {"exclude", "include"}:
+            self._change_rule(platform, value, selected_mode)
 
     def on_add_low_latency_include_item(self, platform: str, value: str):
-        self.on_add_low_latency_list_item(platform, value)
-        self.on_set_low_latency_item_mode(platform, value, "include")
+        self._change_rule(platform, value, "include")
 
     def on_wait_until_app_close_change(self, e):
         enabled = bool(e.control.value)

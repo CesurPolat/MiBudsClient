@@ -1,4 +1,4 @@
-"""Bluetooth device discovery (Windows only)."""
+"""Redmi Buds 6 Play discovery on Windows and Linux."""
 
 import subprocess
 import json
@@ -43,6 +43,10 @@ if ($results) { $results | ConvertTo-Json -Compress }
 # ─────────────────────────────────────────────────────────────────────────────
 class BluetoothDiscovery:
     """Handles Bluetooth device discovery."""
+
+    @staticmethod
+    def _is_supported_device(name: str) -> bool:
+        return isinstance(name, str) and name.strip().casefold() == "redmi buds 6 play"
     
     @staticmethod
     def is_supported() -> bool:
@@ -51,7 +55,7 @@ class BluetoothDiscovery:
     
     @classmethod
     def get_connected_device(cls) -> Optional[BluetoothDevice]:
-        """Get the first connected Bluetooth device.
+        """Get the connected Redmi Buds 6 Play.
         
         Returns:
             BluetoothDevice if found, None otherwise
@@ -92,20 +96,14 @@ class BluetoothDiscovery:
         
         data = json.loads(output)
         
-        if isinstance(data, list):
-            for item in data:
-                address = item.get("Address")
-                if address:
-                    return BluetoothDevice(
-                        name=item.get("Name", ""),
-                        address=cls._format_mac(address)
-                    )
-            return None
-        
-        return BluetoothDevice(
-            name=data.get("Name", ""),
-            address=cls._format_mac(data.get("Address", ""))
-        )
+        for item in data if isinstance(data, list) else [data]:
+            if not isinstance(item, dict):
+                continue
+            address = item.get("Address")
+            name = item.get("Name", "")
+            if address and cls._is_supported_device(name):
+                return BluetoothDevice(name=name, address=cls._format_mac(address))
+        return None
 
     @classmethod
     def _get_connected_device_linux(cls) -> Optional[BluetoothDevice]:
@@ -119,9 +117,11 @@ class BluetoothDiscovery:
                 if len(parts) >= 3:
                     mac = parts[1]
                     name = parts[2]
+                    if not cls._is_supported_device(name):
+                        continue
                     
                     # Verify if connected
-                    info_output = subprocess.check_output(["bluetoothctl", "info", mac], text=True)
+                    info_output = subprocess.check_output(["bluetoothctl", "info", mac], text=True, timeout=5)
                     if "Connected: yes" in info_output:
                         return BluetoothDevice(name=name, address=cls._format_mac(mac))
         except (subprocess.SubprocessError, FileNotFoundError):

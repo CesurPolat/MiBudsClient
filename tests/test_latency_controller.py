@@ -3,9 +3,11 @@
 import unittest
 from contextlib import ExitStack
 from types import SimpleNamespace
+from threading import Event, Thread
 from unittest.mock import Mock, patch
 
 from utils.latency_controller import LatencyController
+from ui.components import SettingsCard
 
 
 class LatencyControllerTests(unittest.TestCase):
@@ -107,6 +109,111 @@ class LatencyControllerTests(unittest.TestCase):
         self.device.send_command.return_value = (False, "Disconnected")
         self.controller.set_selected_latency_mode("on")
         self.publish.assert_any_call({"type": "status", "text": "Disconnected", "color": "red"})
+        self.assertFalse(self.controller.state["effective_low_latency"])
+        self.assertEqual(self.controller.get_display_state()["error"], "Disconnected")
+        self.device.send_command.return_value = (True, "OK")
+        self.controller.set_selected_latency_mode("on")
+        self.assertEqual(self.device.send_command.call_count, 2)
+        self.assertTrue(self.controller.state["effective_low_latency"])
+        self.assertIsNone(self.controller.get_display_state()["error"])
+
+    def test_same_ui_button_retries_failure_but_not_successful_commands(self):
+        card = SettingsCard(on_low_latency_mode_change=self.controller.on_latency_mode_change)
+        self.device.send_command.return_value = (False, "Disconnected")
+        with patch.object(card.latency_item, "update"):
+            card.latency_item._mode_buttons["on"].on_click(None)
+            self.assertFalse(self.controller.state["effective_low_latency"])
+            self.device.send_command.return_value = (True, "OK")
+            card.latency_item._mode_buttons["on"].on_click(None)
+            self.assertTrue(self.controller.state["effective_low_latency"])
+            card.latency_item._mode_buttons["on"].on_click(None)
+        self.assertEqual(self.device.send_command.call_count, 2)
+
+    def test_failed_disable_preserves_known_device_state_and_can_retry(self):
+        c = self.controller
+        c.set_selected_latency_mode("on")
+        self.device.send_command.return_value = (False, "Disconnected")
+        c.set_selected_latency_mode("off")
+        self.assertTrue(c.state["effective_low_latency"])
+        self.device.send_command.return_value = (True, "OK")
+        c.set_selected_latency_mode("off")
+        self.assertFalse(c.state["effective_low_latency"])
+
+    def test_missing_controller_does_not_mark_mode_as_applied(self):
+        self.device = None
+        self.controller.set_selected_latency_mode("on")
+        self.assertFalse(self.controller.state["effective_low_latency"])
+        self.assertIsNotNone(self.controller.get_display_state()["error"])
+
+    def test_removing_included_foreground_app_immediately_reapplies_policy(self):
+        c = self.controller
+        c.set_selected_latency_mode("auto")
+        c.on_monitor_state(False, "game.exe")
+        c.on_add_low_latency_include_item("windows", "game.exe")
+        self.assertTrue(c.state["effective_low_latency"])
+        c.on_remove_low_latency_list_item("windows", "game.exe")
+        self.assertFalse(c.state["effective_low_latency"])
+        self.device.send_command.assert_called_with("std")
+
+    def test_adding_exclusion_immediately_disables_current_fullscreen_app(self):
+        c = self.controller
+        c.set_selected_latency_mode("auto")
+        c.on_monitor_state(True, "game.exe")
+        self.assertTrue(c.state["effective_low_latency"])
+        c.on_add_low_latency_list_item("windows", "game.exe")
+        self.assertFalse(c.state["effective_low_latency"])
+        c.on_remove_low_latency_list_item("windows", "game.exe")
+        self.assertTrue(c.state["effective_low_latency"])
+
+    def test_other_platform_rules_do_not_reapply_active_platform(self):
+        self.controller.set_selected_latency_mode("auto")
+        self.device.reset_mock()
+        self.controller.on_add_low_latency_include_item("linux", "game")
+        self.device.send_command.assert_not_called()
+
+    def test_mode_change_publishes_even_without_a_device_transition(self):
+        self.controller.set_selected_latency_mode("auto")
+        self.publish.assert_any_call({
+            "type": "latency", "enabled": False, "mode": "auto", "source": "manual",
+        })
+
+    def test_concurrent_mode_selections_serialize_device_commands(self):
+        entered, release, second_started = Event(), Event(), Event()
+        errors = []
+
+        def send(mode):
+            if mode == "low":
+                entered.set()
+                if not release.wait(2):
+                    raise TimeoutError("Test did not release command")
+            return True, "OK"
+
+        def select(mode):
+            try:
+                if mode == "off":
+                    second_started.set()
+                self.controller.set_selected_latency_mode(mode)
+            except Exception as exc:
+                errors.append(exc)
+
+        self.device.send_command.side_effect = send
+        first, second = Thread(target=select, args=("on",)), Thread(target=select, args=("off",))
+        first.start()
+        try:
+            self.assertTrue(entered.wait(2))
+            second.start()
+            self.assertTrue(second_started.wait(2))
+            self.assertEqual(self.device.send_command.call_count, 1)
+        finally:
+            release.set()
+            first.join(2)
+            if second.ident is not None:
+                second.join(2)
+        self.assertFalse(first.is_alive())
+        self.assertFalse(second.is_alive())
+        self.assertEqual(errors, [])
+        self.assertEqual([call.args[0] for call in self.device.send_command.call_args_list], ["low", "std"])
+        self.assertEqual(self.controller.get_display_state(), {"mode": "off", "enabled": False, "error": None})
 
     def test_watcher_publishes_release_and_clears_running_flag(self):
         c = self.controller
