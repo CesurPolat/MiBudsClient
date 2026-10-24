@@ -14,12 +14,14 @@ class DeviceStatusCard(ft.Container):
         self.battery_panel = BatteryPanel()
         self.status_bar = StatusBar()
         self.status_bar.size = 11
+        self.device_image = DeviceImage()
+        self.device_name = ft.Text(size=13, color="white", weight="w500", visible=False)
         super().__init__(
             content=ft.Row(
                 controls=[
-                    DeviceImage(),
+                    self.device_image,
                     ft.Column(
-                        controls=[self.status_bar, self.battery_panel],
+                        controls=[self.device_name, self.status_bar, self.battery_panel],
                         spacing=6,
                         alignment=ft.MainAxisAlignment.CENTER,
                         horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -33,6 +35,11 @@ class DeviceStatusCard(ft.Container):
             bgcolor=COLOR_BG,
             border_radius=18,
         )
+
+    def update_catalog_device(self, name: str, image_path: str = "") -> None:
+        self.device_name.value = name
+        self.device_name.visible = bool(name)
+        self.device_image.set_catalog_image(image_path)
 
     def update_status(self, text: str, color: str = "white") -> None:
         self.status_bar.update_status(text, color)

@@ -13,7 +13,7 @@ class AppMessageHandler:
 
     def __init__(self, *, page, device_status_card, settings_card, window_manager,
                  latency, tray, debug_console, on_window_show: Callable,
-                 get_game_monitor: Callable):
+                 get_game_monitor: Callable, on_catalog_stop: Callable | None = None):
         self._page = page
         self._device_status_card = device_status_card
         self._settings_card = settings_card
@@ -24,9 +24,11 @@ class AppMessageHandler:
         self._debug_console = debug_console
         self._on_window_show = on_window_show
         self._get_game_monitor = get_game_monitor
+        self._on_catalog_stop = on_catalog_stop
         self._last_connection_event = None
         self._last_debug_toggle_at = 0.0
         self._routes = {
+            "catalog_device": self._handle_catalog_device,
             "connection_state": self._handle_connection_state,
             "status": self._handle_status,
             "battery": self._handle_battery,
@@ -65,6 +67,12 @@ class AppMessageHandler:
     def _handle_connection_state(self, message: dict) -> None:
         self._settings_card.update_connection_state(
             message.get("state", ""), message.get("reason", "")
+        )
+        self._page.update()
+
+    def _handle_catalog_device(self, message: dict) -> None:
+        self._device_status_card.update_catalog_device(
+            message.get("name", ""), message.get("image_path", "")
         )
         self._page.update()
 
@@ -116,6 +124,8 @@ class AppMessageHandler:
     def _handle_app(self, message: dict) -> None:
         if message.get("action") != "close":
             return
+        if self._on_catalog_stop:
+            self._on_catalog_stop()
         game_monitor = self._get_game_monitor()
         if game_monitor:
             game_monitor.stop()

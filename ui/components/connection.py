@@ -4,14 +4,14 @@ import flet as ft
 
 class ConnectionPanel(ft.Column):
     def __init__(self):
-        self.connection_label = ft.Text("Bağlanıyor…", size=18, color="white", weight="w500")
+        self.connection_label = ft.Text("Connecting...", size=18, color="white", weight="w500")
         self.connection_progress = ft.ProgressRing(width=32, height=32, stroke_width=3)
         self.connection_reason = ft.Text(
             size=12, color="orange", visible=False, selectable=True,
             text_align=ft.TextAlign.CENTER,
         )
         self.retry_button = ft.TextButton(
-            content=ft.Text("Tekrar dene"), icon=ft.Icons.REFRESH, visible=False,
+            content=ft.Text("Retry"), icon=ft.Icons.REFRESH, visible=False,
         )
         super().__init__(controls=[
             ft.Icon(ft.Icons.BLUETOOTH, size=40, color="blue"),
@@ -29,10 +29,10 @@ class ConnectionPanel(ft.Column):
         connecting = state == "connecting"
         failed = state == "failed"
         self.connection_label.value = {
-            "connecting": "Bağlanıyor…",
-            "connected": "Bağlandı",
-            "failed": "Bağlanılamadı",
-        }.get(state, "Bağlantı bekleniyor…")
+            "connecting": "Connecting...",
+            "connected": "Connected",
+            "failed": "Could not connect",
+        }.get(state, "Waiting for connection...")
         self.connection_label.color = "green" if state == "connected" else "orange"
         self.connection_progress.visible = connecting
         self.connection_reason.value = reason

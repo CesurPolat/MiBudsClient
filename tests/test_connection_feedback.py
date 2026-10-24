@@ -43,7 +43,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         self.assertEqual(feedback.call_args_list[0].args, ("connecting", ""))
         state, reason = feedback.call_args.args
         self.assertEqual(state, "failed")
-        self.assertIn("Redmi Buds 6 Play", reason)
+        self.assertIn("No connected earbuds found in the catalog", reason)
         controller._connection.connect.assert_not_called()
 
     def test_socket_timeout_keeps_reason_and_success_clears_it(self):
@@ -52,7 +52,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         controller._connection.connect.side_effect = TimeoutError("timed out")
         self.assertFalse(controller.connect())
         self.assertEqual(feedback.call_args.args[0], "failed")
-        self.assertIn("zaman aşımı", feedback.call_args.args[1])
+        self.assertIn("connection timed out", feedback.call_args.args[1])
         self.assertIn("timed out", feedback.call_args.args[1])
         controller._connection.connect.side_effect = None
         self.assertTrue(controller.connect())
@@ -62,7 +62,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         controller, feedback = self.make_controller()
         with patch("controllers.bluetooth.controller.BluetoothDiscovery.get_connected_device", side_effect=PermissionError("denied")):
             self.assertFalse(controller.connect())
-        self.assertIn("erişimi reddedildi", feedback.call_args.args[1])
+        self.assertIn("access was denied", feedback.call_args.args[1])
 
     def test_queued_retry_does_not_disconnect_new_connection(self):
         controller, feedback = self.make_controller()

@@ -8,7 +8,6 @@ from ..constants import (
     COLOR_DISABLED,
     COLOR_TEXT_PRIMARY,
     DEVICE_IMAGE_SIZE,
-    DEVICE_IMAGE_PATH,
 )
 
 
@@ -31,16 +30,17 @@ class StatusBar(ft.Text):
 class DeviceImage(ft.Container):
     """Device image with fallback icon."""
 
-    def __init__(self, src: str = DEVICE_IMAGE_PATH):
+    def __init__(self, src: str | None = None):
+        self._image_control = ft.Image(
+            src=get_resource_path(src) if src else "",
+            width=DEVICE_IMAGE_SIZE,
+            height=DEVICE_IMAGE_SIZE,
+            fit="contain",
+            error_content=ft.Icon(ft.Icons.HEADSET, size=58, color="white10"),
+        )
         super().__init__(
             content=ft.Container(
-                content=ft.Image(
-                    src=get_resource_path(src),
-                    width=DEVICE_IMAGE_SIZE,
-                    height=DEVICE_IMAGE_SIZE,
-                    fit="contain",
-                    error_content=ft.Icon(ft.Icons.HEADSET, size=58, color="white10"),
-                ),
+                content=self._image_control if src else self._placeholder(),
                 alignment=ft.Alignment.CENTER,
                 border_radius=(DEVICE_IMAGE_SIZE + 4) // 2,
             ),
@@ -51,6 +51,14 @@ class DeviceImage(ft.Container):
             border_radius=(DEVICE_IMAGE_SIZE + 12) // 2,
             bgcolor=None,
         )
+
+    def set_catalog_image(self, path: str) -> None:
+        self._image_control.src = get_resource_path(path) if path else ""
+        self.content.content = self._image_control if path else self._placeholder()
+
+    @staticmethod
+    def _placeholder() -> ft.Icon:
+        return ft.Icon(ft.Icons.HEADSET, size=58, color="white10")
 
 
 class AppTitle(ft.Text):

@@ -9,6 +9,9 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import sys
+import threading
+
+from utils.mibuds_api import validate_catalog
 
 
 def _load_app_catalog():
@@ -18,6 +21,7 @@ def _load_app_catalog():
 
 
 _APP_CATALOG = _load_app_catalog()
+_CATALOG_LOCK = threading.RLock()
 CATALOG_LAST_MODIFY_TIME = _APP_CATALOG["result"]["last_modify_time"]
 _APP_MODELS = {}
 for _product in _APP_CATALOG["result"]["tw_product_list"]:
@@ -33,7 +37,18 @@ def get_device_models(vid: int, pid: int) -> tuple[dict, ...]:
     cannot accidentally change the shared catalog. Unknown/SDK-only IDs have
     no app metadata; never infer functions from a related product family.
     """
-    return tuple(deepcopy(_APP_MODELS.get((vid, pid), ())))
+    with _CATALOG_LOCK:
+        return tuple(deepcopy(_APP_MODELS.get((vid, pid), ())))
+
+
+def get_device_models_by_name(name: str) -> tuple[dict, ...]:
+    """Match full Bluetooth names against the active API/cache/bundled catalog."""
+    if not isinstance(name, str) or not name.strip():
+        return ()
+    normalized = " ".join(name.split()).casefold()
+    with _CATALOG_LOCK:
+        return tuple(deepcopy(model) for models in _APP_MODELS.values() for model in models
+                     if " ".join(model["name"].split()).casefold() == normalized)
 
 
 # Original Chinese labels keyed by internal code, retained for future zh locales.
@@ -147,3 +162,31 @@ def _build_catalog():
 
 
 DEVICE_MODEL_NAMES, DEVICE_MODEL_CODES = _build_catalog()
+
+
+def install_catalog(catalog: dict) -> None:
+    """Replace metadata only; catalog entries never enable Bluetooth protocols."""
+    global _APP_MODELS, CATALOG_LAST_MODIFY_TIME
+    products = deepcopy(validate_catalog(catalog))["result"]["tw_product_list"]
+    models = {}
+    for product in products:
+        key = (int(product["vid"], 16), int(product["pid"], 16))
+        models.setdefault(key, []).append(product)
+    with _CATALOG_LOCK:
+        _APP_MODELS = models
+        names, codes = _build_catalog()
+        DEVICE_MODEL_NAMES.clear()
+        DEVICE_MODEL_NAMES.update(names)
+        DEVICE_MODEL_CODES.clear()
+        DEVICE_MODEL_CODES.update(codes)
+        CATALOG_LAST_MODIFY_TIME = catalog["result"].get("last_modify_time")
+
+
+def get_device_name(vid: int, pid: int) -> str | None:
+    with _CATALOG_LOCK:
+        return DEVICE_MODEL_NAMES.get((vid, pid))
+
+
+def get_device_codes(vid: int, pid: int) -> tuple[str, ...]:
+    with _CATALOG_LOCK:
+        return DEVICE_MODEL_CODES.get((vid, pid), ())

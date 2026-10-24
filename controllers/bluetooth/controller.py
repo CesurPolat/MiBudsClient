@@ -53,6 +53,7 @@ class BTController:
         self._protocol = BudsProtocol()
         self._battery_parser = BatteryStreamParser()
         self._bd_addr = bd_addr
+        self._device_name = ""
         self._running = True
         self._connect_lock = threading.RLock()
         self._state_lock = threading.Lock()
@@ -85,6 +86,10 @@ class BTController:
     def connected(self) -> bool:
         """Check if connected to device."""
         return self._connection.connected
+
+    @property
+    def device_name(self) -> str:
+        return self._device_name if self.connected else ""
 
     @property
     def device_identity(self) -> Optional[DeviceIdentity]:
@@ -149,13 +154,14 @@ class BTController:
                     device = BluetoothDiscovery.get_connected_device()
                     if not device or not device.address:
                         reason = (
-                            "Redmi Buds 6 Play bulunamadı. Bluetooth'u açın ve "
-                            "kulaklığı sistemin Bluetooth ayarlarından bağlayın."
+                            "No connected earbuds found in the catalog. Turn on Bluetooth and "
+                            "connect your earbuds in the system Bluetooth settings."
                         )
                         self._notify_connection_state("failed", reason)
                         self._update_status("No connected Bluetooth device found.", "red")
                         return False
                     self._bd_addr = device.address
+                    self._device_name = device.name
                 self._reset_identity_state("Connection changed during identity query.")
                 self._connection.connect(self._bd_addr)
                 self._update_status("Connected", "blue")
@@ -168,12 +174,12 @@ class BTController:
                 self._connection.connected = False
                 self._update_status(f"Connection failed: {e}", "red")
                 if isinstance(e, (TimeoutError, socket.timeout)):
-                    reason = "Kulaklık yanıt vermedi (zaman aşımı). Yakında ve açık olduğundan emin olun."
+                    reason = "The earbuds did not respond (connection timed out). Make sure they are nearby and powered on."
                 elif isinstance(e, PermissionError):
-                    reason = "Bluetooth erişimi reddedildi. Sistem izinlerini kontrol edin."
+                    reason = "Bluetooth access was denied. Check your system permissions."
                 else:
-                    reason = "Bluetooth bağlantısı kurulamadı. Kulaklığın açık ve bağlı olduğunu kontrol edin."
-                self._notify_connection_state("failed", f"{reason}\nTeknik ayrıntı: {str(e) or type(e).__name__}")
+                    reason = "Could not establish a Bluetooth connection. Make sure your earbuds are powered on and connected."
+                self._notify_connection_state("failed", f"{reason}\nTechnical details: {str(e) or type(e).__name__}")
                 return False
     
     # ─────────────────────────────────────────────────────────────────────────
@@ -322,6 +328,7 @@ class BTController:
             self._connection.disconnect()
             if force_rediscovery:
                 self._bd_addr = None
+                self._device_name = ""
             self._notify_connection_event("reconnecting")
             return self.connect()
     
@@ -368,7 +375,7 @@ class BTController:
                 if not self.reconnect(force_rediscovery=force_rediscovery):
                     attempts, reached_limit = self._record_reconnect_failure()
                     if reached_limit:
-                        self._update_status("Could not connect. Press Tekrar dene.", "red")
+                        self._update_status("Could not connect. Press Retry.", "red")
                         self._notify_connection_event("reconnect_failed_limit")
                     else:
                         self._update_status(
@@ -421,7 +428,7 @@ class BTController:
         self._connection.connected = False
         self._update_status("Connection lost", "red")
         self._notify_connection_state(
-            "failed", "Kulaklık bağlantısı kesildi. Kulaklığın açık ve kapsama alanında olduğunu kontrol edin."
+            "failed", "The earbuds disconnected. Make sure they are powered on and within range."
         )
         self._notify_connection_event("disconnected")
         time.sleep(2)

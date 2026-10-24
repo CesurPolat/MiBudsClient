@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from .device_catalog import DEVICE_MODEL_CODES, DEVICE_MODEL_NAMES, get_device_models
+from .device_catalog import get_device_codes, get_device_name, get_device_models
 
 
 
@@ -16,11 +16,11 @@ class DeviceIdentity:
 
     @property
     def model_name(self) -> Optional[str]:
-        return DEVICE_MODEL_NAMES.get((self.vid, self.pid))
+        return get_device_name(self.vid, self.pid)
 
     @property
     def model_codes(self) -> tuple[str, ...]:
-        return DEVICE_MODEL_CODES.get((self.vid, self.pid), ())
+        return get_device_codes(self.vid, self.pid)
 
     @property
     def models(self) -> tuple[dict, ...]:

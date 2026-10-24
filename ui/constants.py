@@ -35,7 +35,6 @@ BATTERY_LOW_THRESHOLD = 20
 # UI Dimensions
 # ─────────────────────────────────────────────────────────────────────────────
 ICON_BUTTON_SIZE = 40
-DEVICE_IMAGE_PATH = "assets/images/MiBuds6Play.png"
 DEVICE_IMAGE_SIZE = 108
 CARD_BORDER_RADIUS = 20
 ICON_BORDER_RADIUS = 10

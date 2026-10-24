@@ -137,9 +137,10 @@ class AppMessageHandlerTests(unittest.TestCase):
         with ExitStack() as stack:
             for name in ("WindowManager", "SystemTray", "DebugConsoleManager",
                          "BTController", "FullscreenGameMonitor", "start_instance_listener",
-                         "start_update_check"):
+                         "start_update_check", "CatalogSync"):
                 stack.enter_context(patch.object(main, name))
             stack.enter_context(patch.object(main.threading, "Thread"))
+            main.CatalogSync.return_value.cached_device = ('Saved earbuds', 'assets/images/MiBuds6Play.png')
             stack.enter_context(patch("controllers.settings.controller.is_startup_enabled", return_value=False))
             latency = stack.enter_context(patch.object(main, "LatencyController")).return_value
             latency.state = {"selected_mode": "off", "hold_until_app_close_enabled": False}
@@ -155,7 +156,10 @@ class AppMessageHandlerTests(unittest.TestCase):
             handler._device_status_card, handler._settings_card.home_controls_card,
         ])
         self.assertIs(settings.content, handler._settings_card)
-        self.assertEqual(settings.content.content.controls, [handler._settings_card.identity_item])
+        self.assertEqual(handler._device_status_card.device_name.value, 'Saved earbuds')
+        self.assertTrue(handler._device_status_card.device_image._image_control.src.endswith('MiBuds6Play.png'))
+        self.assertIs(settings.content.content.controls[0], handler._settings_card.startup_item)
+        self.assertIs(settings.content.content.controls[-1], handler._settings_card.identity_item)
         calls = [c[0] for c in self.page.mock_calls]
         self.assertLess(calls.index("add"), calls.index("pubsub.subscribe"))
 

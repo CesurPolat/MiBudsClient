@@ -1,10 +1,12 @@
-"""Redmi Buds 6 Play discovery on Windows and Linux."""
+"""Discover connected catalog models on Windows and Linux."""
 
 import subprocess
 import json
 import sys
 from dataclasses import dataclass
 from typing import Optional
+
+from .device_catalog import get_device_models_by_name
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -46,7 +48,7 @@ class BluetoothDiscovery:
 
     @staticmethod
     def _is_supported_device(name: str) -> bool:
-        return isinstance(name, str) and name.strip().casefold() == "redmi buds 6 play"
+        return bool(get_device_models_by_name(name))
     
     @staticmethod
     def is_supported() -> bool:
@@ -55,7 +57,7 @@ class BluetoothDiscovery:
     
     @classmethod
     def get_connected_device(cls) -> Optional[BluetoothDevice]:
-        """Get the connected Redmi Buds 6 Play.
+        """Get the first connected device whose name is in the active catalog.
         
         Returns:
             BluetoothDevice if found, None otherwise

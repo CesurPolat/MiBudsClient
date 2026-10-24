@@ -20,6 +20,8 @@ from ui.components import (
     AppLayout, DeviceStatusCard
 )
 from controllers.device import DeviceConnection
+from controllers.device.catalog_sync import CatalogSync
+from ui.constants import APP_VERSION
 from controllers.settings import SettingsController
 from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
@@ -101,20 +103,34 @@ def main(page: ft.Page):
     )
 
     page.on_keyboard_event = debug_console.handle_keyboard_event
+    catalog_sync = CatalogSync(
+        publish=page.pubsub.send_all,
+        get_identity=lambda: controller_ref["instance"].device_identity
+        if controller_ref["instance"] is not None else None,
+        get_device_name=lambda: controller_ref["instance"].device_name
+        if controller_ref["instance"] is not None else "",
+        app_version=APP_VERSION,
+    )
+    cached_name, cached_image = catalog_sync.cached_device
+    if cached_image:
+        device_status_card.update_catalog_device(cached_name, cached_image)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Bluetooth Controller
     # ─────────────────────────────────────────────────────────────────────────
+    def on_connection_event(event):
+        page.pubsub.send_all({"type": "connection_event", "event": event})
+        catalog_sync.identity_changed(None)
+
     controller = BTController(
+        identity_callback=catalog_sync.identity_changed,
         connection_state_callback=lambda state, reason: page.pubsub.send_all(
             {"type": "connection_state", "state": state, "reason": reason}
         ),
         status_callback=device_connection.update_status,
         battery_callback=device_connection.update_battery,
         check_battery_callback=device_connection.request_battery_delayed,
-        connection_event_callback=lambda event: page.pubsub.send_all(
-            {"type": "connection_event", "event": event}
-        )
+        connection_event_callback=on_connection_event,
     )
     
     # Set controller reference for tray callbacks
@@ -149,8 +165,10 @@ def main(page: ft.Page):
         debug_console=debug_console,
         on_window_show=device_connection.reconnect_on_show,
         get_game_monitor=lambda: controller_ref["game_monitor"],
+        on_catalog_stop=catalog_sync.stop,
     )
     page.pubsub.subscribe(message_handler.handle)
+    catalog_sync.start()
     threading.Thread(target=tray.run, daemon=True).start()
     debug_console.start_f12_hotkey_listener(debug_console.request_toggle)
 
