@@ -73,8 +73,6 @@ class SettingsCard(ft.Container):
                 self.latency_item,
                 self.auto_settings,
                 ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-                self.startup_item,
-                ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
                 SettingItem(
                     ft.Icons.REFRESH, "grey700", "Check Battery",
                     on_click=on_check_battery,
@@ -86,6 +84,8 @@ class SettingsCard(ft.Container):
         )
 
         items = ft.Column([
+            self.startup_item,
+            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
             self.identity_item,
         ], spacing=0)
 
