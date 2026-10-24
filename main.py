@@ -106,6 +106,9 @@ def main(page: ft.Page):
     # Initialize Bluetooth Controller
     # ─────────────────────────────────────────────────────────────────────────
     controller = BTController(
+        connection_state_callback=lambda state, reason: page.pubsub.send_all(
+            {"type": "connection_state", "state": state, "reason": reason}
+        ),
         status_callback=device_connection.update_status,
         battery_callback=device_connection.update_battery,
         check_battery_callback=device_connection.request_battery_delayed,
@@ -128,6 +131,7 @@ def main(page: ft.Page):
         on_update=page.update,
     )
     settings_card = settings_controller.card
+    settings_card.connection_panel.retry_button.on_click = lambda e: device_connection.reconnect_on_show()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Build Page Layout

@@ -70,7 +70,7 @@ class SettingsControllerTests(unittest.TestCase):
 
     def test_home_battery_button_and_initial_settings_remain_wired(self):
         card = self.settings.card
-        card.home_controls_card.content.controls[-1].on_click(None)
+        card.connected_controls.controls[-1].on_click(None)
         self.device.request_battery.assert_called_once_with()
         self.assertTrue(card.startup_switch.value)
         self.assertEqual(card.latency_item.value, "auto")

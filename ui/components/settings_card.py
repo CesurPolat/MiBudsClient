@@ -11,6 +11,7 @@ from ..constants import (
 )
 
 from .auto_mode import AutoModeSettingsAccordion
+from .connection import ConnectionPanel
 from .latency import LowLatencyModeSettingItem
 from .setting_items import SettingItem, ToggleSettingItem
 
@@ -68,8 +69,8 @@ class SettingsCard(ft.Container):
             "Not queried", size=12, color=COLOR_DISABLED, selectable=True,
         )
 
-        self.home_controls_card = ft.Container(
-            content=ft.Column([
+        self.connection_panel = ConnectionPanel()
+        self.connected_controls = ft.Column([
                 self.latency_item,
                 self.auto_settings,
                 ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
@@ -77,7 +78,12 @@ class SettingsCard(ft.Container):
                     ft.Icons.REFRESH, "grey700", "Check Battery",
                     on_click=on_check_battery,
                 ),
-            ], spacing=0),
+            ], spacing=0, visible=False)
+        self.home_controls_card = ft.Container(
+            content=ft.Column([
+                self.connection_panel,
+                self.connected_controls,
+            ], spacing=0, horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
             bgcolor=COLOR_CARD_BG,
             border_radius=CARD_BORDER_RADIUS,
             padding=10,
@@ -96,6 +102,13 @@ class SettingsCard(ft.Container):
             border_radius=CARD_BORDER_RADIUS,
             padding=10
         )
+
+    def update_connection_state(self, state: str, reason: str = "") -> None:
+        """Show device controls only while the earbuds are connected."""
+        self.connection_panel.update_connection_state(state, reason)
+        connected = state == "connected"
+        self.connection_panel.visible = not connected
+        self.connected_controls.visible = connected
 
     def set_latency_mode(self, mode: str) -> None:
         self.latency_item.set_mode(mode)

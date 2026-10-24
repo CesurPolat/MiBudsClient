@@ -27,6 +27,7 @@ class AppMessageHandler:
         self._last_connection_event = None
         self._last_debug_toggle_at = 0.0
         self._routes = {
+            "connection_state": self._handle_connection_state,
             "status": self._handle_status,
             "battery": self._handle_battery,
             "device_identity": self._handle_device_identity,
@@ -58,6 +59,12 @@ class AppMessageHandler:
         self._device_status_card.update_status(
             message.get("text", ""),
             message.get("color", "white")
+        )
+        self._page.update()
+
+    def _handle_connection_state(self, message: dict) -> None:
+        self._settings_card.update_connection_state(
+            message.get("state", ""), message.get("reason", "")
         )
         self._page.update()
 

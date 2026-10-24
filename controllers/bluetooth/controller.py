@@ -47,13 +47,14 @@ class BTController:
         connection_event_callback: Optional[ConnectionEventCallback] = None,
         bd_addr: Optional[str] = None,
         identity_callback: Optional[Callable[[DeviceIdentity], None]] = None,
+        connection_state_callback: Optional[Callable[[str, str], None]] = None,
     ):
         self._connection = BluetoothConnection()
         self._protocol = BudsProtocol()
         self._battery_parser = BatteryStreamParser()
         self._bd_addr = bd_addr
         self._running = True
-        self._connect_lock = threading.Lock()
+        self._connect_lock = threading.RLock()
         self._state_lock = threading.Lock()
         self._identity_condition = threading.Condition()
         self._identity_parser = RcspStreamParser()
@@ -71,6 +72,11 @@ class BTController:
         self._battery_callback = battery_callback
         self._check_battery_callback = check_battery_callback
         self._connection_event_callback = connection_event_callback
+        self._connection_state_callback = connection_state_callback
+
+    def _notify_connection_state(self, state: str, reason: str = "") -> None:
+        if self._connection_state_callback:
+            self._connection_state_callback(state, reason)
     
     # ─────────────────────────────────────────────────────────────────────────
     # Properties
@@ -137,30 +143,37 @@ class BTController:
             if self._connection.connected:
                 return True
 
-            # Discover device if address not set
-            if not self._bd_addr:
-                device = BluetoothDiscovery.get_connected_device()
-                if not device or not device.address:
-                    self._update_status(
-                        f"No connected Bluetooth device found. Retrying in {RECONNECT_DELAY}s...",
-                        "red"
-                    )
-                    return False
-                self._bd_addr = device.address
-                self._update_status(f"MAC found: {self._bd_addr}", "blue")
-
-            # Establish connection
+            self._notify_connection_state("connecting")
             try:
+                if not self._bd_addr:
+                    device = BluetoothDiscovery.get_connected_device()
+                    if not device or not device.address:
+                        reason = (
+                            "Redmi Buds 6 Play bulunamadı. Bluetooth'u açın ve "
+                            "kulaklığı sistemin Bluetooth ayarlarından bağlayın."
+                        )
+                        self._notify_connection_state("failed", reason)
+                        self._update_status("No connected Bluetooth device found.", "red")
+                        return False
+                    self._bd_addr = device.address
                 self._reset_identity_state("Connection changed during identity query.")
                 self._connection.connect(self._bd_addr)
                 self._update_status("Connected", "blue")
                 self._reset_reconnect_state()
+                self._notify_connection_state("connected")
                 self._notify_connection_event("connected")
                 self.on_connect_setup()
                 return True
             except Exception as e:
                 self._connection.connected = False
                 self._update_status(f"Connection failed: {e}", "red")
+                if isinstance(e, (TimeoutError, socket.timeout)):
+                    reason = "Kulaklık yanıt vermedi (zaman aşımı). Yakında ve açık olduğundan emin olun."
+                elif isinstance(e, PermissionError):
+                    reason = "Bluetooth erişimi reddedildi. Sistem izinlerini kontrol edin."
+                else:
+                    reason = "Bluetooth bağlantısı kurulamadı. Kulaklığın açık ve bağlı olduğunu kontrol edin."
+                self._notify_connection_state("failed", f"{reason}\nTeknik ayrıntı: {str(e) or type(e).__name__}")
                 return False
     
     # ─────────────────────────────────────────────────────────────────────────
@@ -300,12 +313,17 @@ class BTController:
 
     def reconnect(self, force_rediscovery: bool = False) -> bool:
         """Reconnect to the device, optionally forcing MAC rediscovery."""
-        self._reset_identity_state("Disconnected during identity query.")
-        self._connection.disconnect()
-        if force_rediscovery:
-            self._bd_addr = None
-        self._notify_connection_event("reconnecting")
-        return self.connect()
+        with self._connect_lock:
+            # A queued UI retry must not disconnect a connection just established
+            # by the listener (or another command).
+            if self._connection.connected:
+                return True
+            self._reset_identity_state("Disconnected during identity query.")
+            self._connection.disconnect()
+            if force_rediscovery:
+                self._bd_addr = None
+            self._notify_connection_event("reconnecting")
+            return self.connect()
     
     def on_connect_setup(self):
             """Send a sequence of packets on connection."""
@@ -350,7 +368,7 @@ class BTController:
                 if not self.reconnect(force_rediscovery=force_rediscovery):
                     attempts, reached_limit = self._record_reconnect_failure()
                     if reached_limit:
-                        self._update_status("Could not connect. Press Refresh Battery.", "red")
+                        self._update_status("Could not connect. Press Tekrar dene.", "red")
                         self._notify_connection_event("reconnect_failed_limit")
                     else:
                         self._update_status(
@@ -402,6 +420,9 @@ class BTController:
         self._reset_identity_state("Disconnected during identity query.")
         self._connection.connected = False
         self._update_status("Connection lost", "red")
+        self._notify_connection_state(
+            "failed", "Kulaklık bağlantısı kesildi. Kulaklığın açık ve kapsama alanında olduğunu kontrol edin."
+        )
         self._notify_connection_event("disconnected")
         time.sleep(2)
     
