@@ -4,7 +4,7 @@ from utils.i18n import t, render
 
 import flet as ft
 
-GESTURE_NAMES = {1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long")}
+GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long")}
 ACTION_NAMES = dict(enumerate(t("action." + key) for key in (
     "assistant", "play", "previous", "next", "volume_up", "volume_down",
     "noise", "game", "none", "photo", "record", "volume", "translation", "track",

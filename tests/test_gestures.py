@@ -32,9 +32,13 @@ class GestureProtocolTests(unittest.TestCase):
                          "fedcbac4f20007420500020101ffef")
         self.assertEqual(build_gesture_assignment(0x42, 2, "right", 3).hex(),
                          "fedcbac4f200074205000202ff03ef")
+        self.assertEqual(build_gesture_assignment(0x42, 4, "left", 1).hex(),
+                         "fedcbac4f20007420500020401ffef")
+        self.assertEqual(build_gesture_assignment(0x42, 4, "right", 8).hex(),
+                         "fedcbac4f200074205000204ff08ef")
 
     def test_invalid_command_arguments(self):
-        for args in ((256, 1, "left", 1), (1, 4, "left", 1),
+        for args in ((256, 1, "left", 1), (1, 5, "left", 1),
                      (1, 1, "both", 1), (1, 1, "left", 255)):
             with self.subTest(args=args), self.assertRaises(ValueError):
                 build_gesture_assignment(*args)
@@ -63,7 +67,7 @@ class GestureProtocolTests(unittest.TestCase):
                              {1: (1, 3), 2: (2, 3), 3: (0, 8)})
         self.assertEqual(len(RcspStreamParser().feed(frame + frame)), 2)
 
-    def test_hardware_response_includes_unexposed_single_tap(self):
+    def test_hardware_response_includes_single_tap(self):
         # Redmi Buds 6 Play, 2026-10-26: read-only query captured on RFCOMM 6.
         frame = bytes.fromhex("fe dc ba 04 f3 00 11 00 a0 0e 00 02 04 08 08 01 01 01 02 03 03 03 00 00 ef")
         packet, = RcspStreamParser().feed(frame)
@@ -72,7 +76,7 @@ class GestureProtocolTests(unittest.TestCase):
 
     def test_exact_model_capabilities_and_unknown_identity(self):
         capabilities = gesture_capabilities("Redmi Buds 6 Play")
-        self.assertEqual(capabilities, {1: (1, 4, 5, 2, 3, 8),
+        self.assertEqual(capabilities, {4: (8, 1, 4, 5, 2, 3, 9), 1: (1, 4, 5, 2, 3, 8),
                                        2: (3, 2, 1, 4, 5, 8), 3: (0, 9, 8)})
         self.assertEqual(gesture_capabilities("Redmi Buds 6"), {})
         self.assertEqual(gesture_capabilities("Redmi Buds 6 Play", DeviceIdentity(0x2717, 20634)), {})
@@ -228,7 +232,7 @@ class GestureControllerTests(unittest.TestCase):
         controller._device_name = "Redmi Buds 6 Play"
         controller._connection.connected = True
         controller._gestures.write = Mock()
-        for args in ((1, "left", 7), (3, "left", 6), (1, "both", 1), (4, "left", 1)):
+        for args in ((1, "left", 7), (3, "left", 6), (1, "both", 1), (5, "left", 1)):
             self.assertFalse(controller.set_gesture_assignment(*args).success)
         controller._gestures.write.assert_not_called()
         controller._device_name = "Other earbuds"

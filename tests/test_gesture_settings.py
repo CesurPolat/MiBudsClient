@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from controllers.bluetooth.gestures import GestureResult
+from controllers.bluetooth.gestures import GestureResult, gesture_capabilities
 from controllers.settings.gestures import GestureSettingsController
 from ui.components.gestures import GestureSettings
 from ui.components.settings_card import SettingsCard
@@ -50,6 +50,21 @@ class GestureSettingsTests(unittest.TestCase):
         self.assertTrue(selector.options[-1].disabled)
         selector.on_select(SimpleNamespace(control=SimpleNamespace(value="254")))
         self.assign.assert_not_called()
+
+    def test_single_tap_uses_model_options_and_targets_each_side(self):
+        self.load({4: (8, 8)}, gesture_capabilities("Redmi Buds 6 Play"))
+        for side in ("left", "right"):
+            selector = self.panel.selectors[(4, side)]
+            self.assertEqual(selector.value, "8")
+            self.assertEqual([option.key for option in selector.options], ["8", "1", "4", "5", "2", "3", "9"])
+            selector.on_select(SimpleNamespace(control=SimpleNamespace(value="1")))
+            self.assign.assert_called_with(4, side, 1)
+
+    def test_single_tap_title_is_localized_in_all_languages(self):
+        from utils.i18n import render
+        from ui.components.gestures import GESTURE_NAMES
+        for language, expected in (("en", "Single tap"), ("tr", "Tek dokunma"), ("zh-CN", "单击")):
+            self.assertEqual(render(GESTURE_NAMES[4], language), expected)
 
     def test_changes_target_one_side_and_noop_does_not_write(self):
         self.load()

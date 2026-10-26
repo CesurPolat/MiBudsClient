@@ -56,6 +56,7 @@
   "gesture.refresh_first": "更改此分配设置前，请刷新触控设置。",
   "gesture.unconfirmed": "耳机未确认此分配设置。请刷新以读取当前设置。",
   "gesture.saved": "触控分配设置已保存并验证。",
+  "gesture.single": "单击",
   "gesture.double": "双击",
   "gesture.triple": "三击",
   "gesture.long": "长按",

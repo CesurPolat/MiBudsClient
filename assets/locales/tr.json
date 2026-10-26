@@ -56,6 +56,7 @@
   "gesture.refresh_first": "Bu atamayı değiştirmeden önce hareket ayarlarını yenileyin.",
   "gesture.unconfirmed": "Kulaklık bu atamayı doğrulamadı. Güncel ayarları okumak için yenileyin.",
   "gesture.saved": "Hareket ataması kaydedildi ve doğrulandı.",
+  "gesture.single": "Tek dokunma",
   "gesture.double": "Çift dokunma",
   "gesture.triple": "Üç kez dokunma",
   "gesture.long": "Uzun basma",

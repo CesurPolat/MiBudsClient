@@ -56,6 +56,7 @@
   "gesture.refresh_first": "Refresh gesture settings before changing this assignment.",
   "gesture.unconfirmed": "The earbuds did not confirm this assignment. Refresh to read current settings.",
   "gesture.saved": "Gesture assignment saved and verified.",
+  "gesture.single": "Single tap",
   "gesture.double": "Double tap",
   "gesture.triple": "Triple tap",
   "gesture.long": "Long press",
