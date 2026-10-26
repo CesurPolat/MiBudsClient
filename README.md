@@ -65,6 +65,20 @@ python main.py
 
 Upon launch, the app will automatically scan for your device and attempt to connect. Once connected, battery levels will be displayed on the screen.
 
+Open **Settings → Earbud Management → Gestures** to read touch assignments from
+Redmi Buds 6 Play. Each returned, supported gesture has separate left and right
+selectors. Options come from the exact model's catalog record. Changes are sent
+immediately and reported as saved only after reading the assignment back from
+the earbuds. Close and reopen **Gestures** to retry a failed request. Assignments are
+stored on the earbuds, not in local preferences; ANC cycle editing is excluded.
+
+The gesture packets were derived from APK analysis. On 2026-10-26, a connected
+Redmi Buds 6 Play successfully returned its assignments and acknowledged six
+same-value writes (both sides of double tap, triple tap, and long press), each
+verified by a fresh read. Changing to a different function and physically
+triggering that gesture still need manual verification. Linux hardware/UI
+validation is also outstanding.
+
 ## Building the Executable
 
 To package the application into a standalone executable for Windows, run the following command:

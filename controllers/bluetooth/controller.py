@@ -10,6 +10,8 @@ from .connection import BluetoothConnection
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
+from .gesture_transport import GestureTransport
+from .gestures import GestureResult, gesture_capabilities
 from .constants import RECONNECT_DELAY
 from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, parse_identity_fields
 
@@ -52,6 +54,7 @@ class BTController:
         self._connection = BluetoothConnection()
         self._protocol = BudsProtocol()
         self._battery_parser = BatteryStreamParser()
+        self._gestures = GestureTransport(self._connection)
         self._bd_addr = bd_addr
         self._device_name = ""
         self._running = True
@@ -257,6 +260,29 @@ class BTController:
                 if self._identity_pending is request:
                     self._identity_pending = None
 
+    @property
+    def gesture_session(self):
+        return self._gestures.generation
+
+    @property
+    def gesture_capabilities(self):
+        return gesture_capabilities(self.device_name, self.device_identity)
+
+    def request_gesture_settings(self, timeout=5.0, *, session=None):
+        """Read off the UI/listener thread; never reconnect for a stale action."""
+        if not self.connected:
+            return GestureResult(False, message="Connect your earbuds to manage gestures.")
+        if not self.gesture_capabilities:
+            return GestureResult(False, message="No confirmed gesture capabilities for this device.")
+        return self._gestures.read(timeout, session)
+
+    def set_gesture_assignment(self, gesture_type, side, action, timeout=5.0, *, session=None):
+        """Write one side, then verify by reading the device's settings back."""
+        allowed = self.gesture_capabilities.get(gesture_type, ())
+        if side not in ("left", "right") or type(action) is not int or action not in allowed:
+            return GestureResult(False, message="This assignment is not supported by this model.")
+        return self._gestures.write(gesture_type, side, action, timeout, session)
+
     def _process_identity_data(self, data: bytes) -> None:
         identity = None
         with self._identity_condition:
@@ -285,6 +311,7 @@ class BTController:
 
     def _reset_identity_state(self, reason: str) -> None:
         self._battery_parser.reset()
+        self._gestures.reset("Connection changed during gesture request.")
         with self._identity_condition:
             self._identity = None
             self._identity_parser.reset()
@@ -408,6 +435,7 @@ class BTController:
         packet_size = len(data)
         print(f"Received data size: {packet_size}")
         self._process_identity_data(data)
+        gesture_response = self._gestures.feed(data)
 
         # Check for battery data
         statuses = self._battery_parser.feed(data)
@@ -416,7 +444,7 @@ class BTController:
                 self._notify_battery(status.left, status.right, status.case)
         
         # Check for mode acknowledgment
-        elif self._protocol.is_mode_ack_packet(packet_size):
+        elif not gesture_response and self._protocol.is_mode_ack_packet(packet_size):
             if last_packet_size != packet_size:
                 self._trigger_battery_check()
         

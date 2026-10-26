@@ -14,6 +14,7 @@ from .auto_mode import AutoModeSettingsAccordion
 from .connection import ConnectionPanel
 from .latency import LowLatencyModeSettingItem
 from .setting_items import SettingItem, ToggleSettingItem
+from .gestures import GestureSettings
 
 
 class SettingsCard(ft.Container):
@@ -36,6 +37,9 @@ class SettingsCard(ft.Container):
         low_latency_inclusions_by_platform: Optional[dict[str, list[str]]] = None,
         wait_until_app_close_enabled: bool = False,
         on_check_device_identity: Optional[Callable] = None,
+        on_gesture_refresh: Optional[Callable] = None,
+        on_gesture_assignment: Optional[Callable] = None,
+        on_update: Callable = lambda: None,
     ):
         self.latency_item = LowLatencyModeSettingItem(
             ft.Icons.SPEED, "blue_700", "Low Latency Mode",
@@ -89,8 +93,11 @@ class SettingsCard(ft.Container):
             padding=10,
         )
 
+        self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
         items = ft.Column([
             self.startup_item,
+            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
+            self.gestures,
             ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
             self.identity_item,
         ], spacing=0)
@@ -109,6 +116,7 @@ class SettingsCard(ft.Container):
         connected = state == "connected"
         self.connection_panel.visible = not connected
         self.connected_controls.visible = connected
+        self.gestures.set_connection(connected)
 
     def set_latency_mode(self, mode: str) -> None:
         self.latency_item.set_mode(mode)

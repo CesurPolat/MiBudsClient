@@ -28,6 +28,7 @@ class AppMessageHandler:
         self._last_connection_event = None
         self._last_debug_toggle_at = 0.0
         self._routes = {
+            "gesture_settings": self._handle_gesture_settings,
             "catalog_device": self._handle_catalog_device,
             "connection_state": self._handle_connection_state,
             "status": self._handle_status,
@@ -88,6 +89,12 @@ class AppMessageHandler:
 
     def _handle_device_identity(self, message: dict) -> None:
         self._settings_card.set_device_identity_result(message["text"])
+        self._page.update()
+
+    def _handle_gesture_settings(self, message: dict) -> None:
+        self._settings_card.gestures.complete(
+            message["token"], message["result"], message["capabilities"]
+        )
         self._page.update()
 
     def _handle_window(self, message: dict) -> None:

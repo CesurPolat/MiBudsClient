@@ -5,6 +5,7 @@ from typing import Callable
 
 from utils.startup_manager import is_startup_enabled, set_startup
 from ui.components.settings_card import SettingsCard
+from .gestures import GestureSettingsController
 
 
 class SettingsController:
@@ -17,6 +18,9 @@ class SettingsController:
         self._publish = publish
         self._on_update = on_update
         self.card = SettingsCard(
+            on_gesture_refresh=lambda: self.gestures.refresh(),
+            on_gesture_assignment=lambda *args: self.gestures.assign(*args),
+            on_update=on_update,
             on_check_device_identity=self.on_check_device_identity,
             on_low_latency_mode_change=latency.on_latency_mode_change,
             on_add_low_latency_list_item=latency.on_add_low_latency_list_item,
@@ -39,6 +43,7 @@ class SettingsController:
             },
             wait_until_app_close_enabled=latency.state["hold_until_app_close_enabled"],
         )
+        self.gestures = GestureSettingsController(controller, self.card.gestures, publish)
 
     def on_startup_change(self, e):
         enabled = e.control.value
