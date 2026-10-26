@@ -63,7 +63,7 @@ class GestureSettingsTests(unittest.TestCase):
     def test_single_tap_title_is_localized_in_all_languages(self):
         from utils.i18n import render
         from ui.components.gestures import GESTURE_NAMES
-        for language, expected in (("en", "Single tap"), ("tr", "Tek dokunma"), ("zh-CN", "单击")):
+        for language, expected in (("en", "Single tap"), ("tr", "Tek dokunuş"), ("zh-CN", "单击")):
             self.assertEqual(render(GESTURE_NAMES[4], language), expected)
 
     def test_changes_target_one_side_and_noop_does_not_write(self):

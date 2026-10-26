@@ -9,7 +9,7 @@ from typing import Callable
 from .constants import BATTERY_UNKNOWN
 from .components.update_notification import show_update_notification
 from .localization import refresh_translations
-from utils.i18n import LANGUAGE_CHOICES, set_language
+from utils.i18n import LANGUAGE_CHOICES, is_rtl, set_language
 from utils.user_preferences import set_language_preference
 
 
@@ -56,6 +56,7 @@ class AppMessageHandler:
             return
         set_language_preference(language)
         set_language(language)
+        self._page.rtl = is_rtl()
         self._settings_card.language_selector.value = language
         self._tray.refresh_menu()
         self._update_page()

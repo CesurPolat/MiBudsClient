@@ -15,7 +15,7 @@ from ui.components import AppLayout, DeviceStatusCard, SettingsCard
 from ui.components.update_notification import show_update_notification
 from ui.localization import refresh_translations
 from ui.system_tray import SystemTray
-from utils.i18n import get_language, message, set_language, t
+from utils.i18n import LANGUAGES, get_language, message, set_language, t
 
 
 class LocalizedUITests(unittest.TestCase):
@@ -58,7 +58,7 @@ class LocalizedUITests(unittest.TestCase):
         self.switch("tr")
         self.assertEqual(self.layout.title.value, "Ayarlar")
         self.assertEqual(self.settings.startup_item.title.value, "Başlangıçta Çalıştır")
-        self.assertEqual(self.device.battery_panel._left._label_text.value, "SOL")
+        self.assertEqual(self.device.battery_panel._left._label_text.value, "Sol")
         self.assertEqual(self.device.battery_panel._left._value_text.value, "⚡ %67")
         self.assertEqual(panel.status.value, "Hareket ayarları okunuyor...")
         self.assertEqual(panel._token, token)
@@ -77,8 +77,8 @@ class LocalizedUITests(unittest.TestCase):
         callback = selector.on_select
         self.switch("zh-CN")
         self.assertEqual(panel.status.value, "触控设置已加载。")
-        self.assertEqual(selector.label, "左耳")
-        self.assertEqual(selector.options[0].text, "播放 / 暂停")
+        self.assertEqual(selector.label, "左")
+        self.assertEqual(selector.options[0].text, "播放/暂停")
         self.assertIs(selector, panel.selectors[(1, "left")])
         self.assertIs(callback, selector.on_select)
         self.switch("en")
@@ -123,9 +123,32 @@ class LocalizedUITests(unittest.TestCase):
         self.assertEqual(DeviceStatusCard().status_bar.value, "状态：正在启动…")
         self.assertEqual(SettingsCard().startup_item.title.value, "开机启动")
 
+    def test_all_languages_refresh_live_and_arabic_switches_layout_direction(self):
+        self.layout.show_settings(True)
+        self.settings.auto_settings._field.value = "game.exe"
+        self.settings.update_connection_state("connected")
+        token = self.settings.gestures.begin(message("gesture.reading"))
+        selector = self.settings.language_selector
+        self.assertEqual({option.key for option in selector.options}, {"system", *LANGUAGES})
+        for language in LANGUAGES:
+            with self.subTest(language=language):
+                self.switch(language)
+                self.assertEqual(self.page.rtl, language == "ar")
+                self.assertEqual(self.settings.auto_settings._field.value, "game.exe")
+                self.assertEqual(self.settings.gestures._token, token)
+                self.assertTrue(self.settings.gestures._busy)
+                self.assertTrue(self.settings.connected_controls.visible)
+                self.assertIs(self.settings.language_selector, selector)
+                self.assertEqual(selector.value, language)
+                self.assertEqual(self.layout.title.value, t("nav.settings"))
+                self.assertEqual(self.settings.gestures.status.value, t("gesture.reading"))
+                msgpack.packb(self.layout, default=configure_encode_object_for_msgpack(BaseControl))
+        self.assign.assert_not_called()
+        self.refresh.assert_not_called()
+
     def test_invalid_language_events_do_not_save_or_refresh(self):
         with patch("ui.app_message_handler.set_language_preference") as save:
-            for value in (None, "de", [], {}):
+            for value in (None, "zz", [], {}):
                 self.handler.handle({"type": "language", "language": value})
         save.assert_not_called()
         self.tray.refresh_menu.assert_not_called()

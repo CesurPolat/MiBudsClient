@@ -27,13 +27,14 @@ from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
 from utils.game_monitor import FullscreenGameMonitor
 from controllers.latency import LatencyController
-from utils.i18n import set_language
+from utils.i18n import is_rtl, set_language
 from utils.user_preferences import get_language_preference
 from ui.localization import refresh_translations
 
 def main(page: ft.Page):
     """Main application entry point."""
     set_language(get_language_preference())
+    page.rtl = is_rtl()
 
     def update_ui():
         refresh_translations(page.controls)

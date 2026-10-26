@@ -9,20 +9,35 @@ from functools import lru_cache
 
 from .resource_manager import get_resource_path
 
-LANGUAGES = {"tr": "Türkçe", "en": "English", "zh-CN": "简体中文"}
+LANGUAGES = {
+    "tr": "Türkçe", "en": "English", "ar": "العربية", "de": "Deutsch",
+    "es": "Español", "et": "Eesti", "fi": "Suomi", "fr": "Français",
+    "hi": "हिन्दी", "hu": "Magyar", "id": "Bahasa Indonesia", "it": "Italiano",
+    "ja": "日本語", "ko": "한국어", "ms": "Bahasa Melayu", "nl": "Nederlands",
+    "pl": "Polski", "pt-BR": "Português (Brasil)", "pt-PT": "Português (Portugal)",
+    "ru": "Русский", "sv": "Svenska", "th": "ไทย", "uk": "Українська",
+    "vi": "Tiếng Việt", "zh-CN": "简体中文", "zh-TW": "繁體中文（台灣）",
+    "zh-HK": "繁體中文（香港）",
+}
 LANGUAGE_CHOICES = ("system", *LANGUAGES)
 _language = "en"
 
 
 def resolve_language(code: str | None) -> str:
     code = (code or "").split(".")[0].split("@")[0].replace("_", "-").lower()
-    if code == "tr" or code.startswith("tr-"):
-        return "tr"
-    if code == "en" or code.startswith("en-"):
-        return "en"
-    if code in {"zh", "zh-cn", "zh-sg", "zh-hans"} or code.startswith("zh-hans-"):
+    parts = code.split("-")
+    language = {"in": "id"}.get(parts[0], parts[0])
+    if language == "zh":
+        if "hans" in parts:
+            return "zh-CN"
+        if "hk" in parts or "mo" in parts:
+            return "zh-HK"
+        if "hant" in parts or "tw" in parts:
+            return "zh-TW"
         return "zh-CN"
-    return "en"
+    if language == "pt":
+        return "pt-BR" if "br" in parts else "pt-PT"
+    return language if language in LANGUAGES else "en"
 
 
 def system_language() -> str:
@@ -42,7 +57,7 @@ def system_language() -> str:
         return "en"
 
 
-@lru_cache(maxsize=3)
+@lru_cache(maxsize=len(LANGUAGES))
 def load_catalog(language: str) -> dict[str, str]:
     if language not in LANGUAGES:
         language = "en"
@@ -62,6 +77,10 @@ def set_language(preference: str) -> str:
 
 def get_language() -> str:
     return _language
+
+
+def is_rtl() -> bool:
+    return _language == "ar"
 
 
 class Message(str):

@@ -10,7 +10,7 @@ from string import Formatter
 from unittest.mock import patch
 
 from utils.i18n import (
-    Message, error_message, get_language, load_catalog, message, render,
+    LANGUAGES, Message, error_message, get_language, is_rtl, load_catalog, message, render,
     resolve_language, set_language, system_language, t,
 )
 from utils.user_preferences import get_language_preference, set_language_preference
@@ -24,7 +24,7 @@ class TranslationTests(unittest.TestCase):
         english = load_catalog("en")
         self.assertTrue(english)
         formatter = Formatter()
-        for language in ("tr", "zh-CN"):
+        for language in LANGUAGES:
             catalog = load_catalog(language)
             self.assertEqual(catalog.keys(), english.keys())
             for key, value in english.items():
@@ -32,18 +32,31 @@ class TranslationTests(unittest.TestCase):
                     parameters = lambda text: {name for _, name, _, _ in formatter.parse(text) if name}
                     self.assertEqual(parameters(value), parameters(catalog[key]))
                     self.assertTrue(catalog[key].strip())
-                    self.assertNotIn("?", catalog[key])
+                    self.assertNotIn("\ufffd", catalog[key])
+                    self.assertNotIn("@string/", catalog[key])
 
     def test_supported_locale_variants_and_unsupported_fallback(self):
         for code, expected in (
             ("tr_TR.UTF-8", "tr"), ("tr-TR", "tr"), ("en_GB", "en"),
             ("zh_CN.UTF-8", "zh-CN"), ("zh-Hans-CN", "zh-CN"),
             ("zh-SG", "zh-CN"), ("zh", "zh-CN"),
-            ("zh-TW", "en"), ("zh-Hant", "en"), ("de_DE", "en"),
+            ("zh-TW", "zh-TW"), ("zh-Hant", "zh-TW"), ("de_DE", "de"),
+            ("zh-HK", "zh-HK"), ("zh-Hant-HK", "zh-HK"), ("zh-Hans-HK", "zh-CN"),
+            ("zh-MO", "zh-HK"), ("pt_BR.UTF-8", "pt-BR"), ("pt_PT", "pt-PT"),
+            ("pt", "pt-PT"), ("in_ID", "id"), ("id-ID", "id"), ("ms_MY", "ms"),
+            ("fr_CA", "fr"), ("es-419", "es"), ("en-XC", "en"), ("zz_ZZ", "en"),
             (None, "en"), ("C", "en"),
         ):
             with self.subTest(code=code):
                 self.assertEqual(resolve_language(code), expected)
+
+    def test_every_language_is_selectable_and_resolves_to_itself(self):
+        for language in LANGUAGES:
+            with self.subTest(language=language):
+                self.assertEqual(set_language(language), language)
+                self.assertEqual(get_language(), language)
+                self.assertEqual(is_rtl(), language == "ar")
+                self.assertTrue(t("language.title"))
 
     def test_linux_locale_precedence(self):
         with patch("utils.i18n.sys.platform", "linux"), patch.dict(
@@ -115,7 +128,7 @@ class TranslationTests(unittest.TestCase):
             with patch("utils.user_preferences._settings_file_path", return_value=str(path)):
                 self.assertEqual(get_language_preference(), "system")
                 path.write_text(json.dumps({"low_latency_mode": "auto", "skipped_update_version": "v1.2.3"}), encoding="utf-8")
-                for language in ("tr", "en", "zh-CN", "system"):
+                for language in (*LANGUAGES, "system"):
                     set_language_preference(language)
                     self.assertEqual(get_language_preference(), language)
                 set_language_preference("invalid")
