@@ -146,5 +146,17 @@
   "mode.standard": "Standard",
   "app.closing": "Stänger appen…",
   "identity.rejected": "Enhetsinformation: Begäran avvisades (0x{code})",
-  "identity.invalid": "Enhetens svar innehåller inget giltigt VID/PID-identitetsfält."
+  "identity.invalid": "Enhetens svar innehåller inget giltigt VID/PID-identitetsfält.",
+  "notification.removed_left": "Vänster hörlur har tagits ur etuiet",
+  "notification.removed_right": "Höger hörlur har tagits ur etuiet",
+  "notification.removed_both": "Båda hörlurarna har tagits ur etuiet",
+  "notification.last_battery": "Senaste batteriuppgifter: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Vänster hörlur har lagts i etuiet",
+  "notification.inserted_right": "Höger hörlur har lagts i etuiet",
+  "notification.inserted_both": "Båda hörlurarna har lagts i etuiet",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

@@ -146,5 +146,17 @@
   "mode.standard": "標準",
   "app.closing": "正在關閉應用程式…",
   "identity.rejected": "裝置資訊: 請求遭拒 (0x{code})",
-  "identity.invalid": "裝置回應中沒有有效的 VID/PID 識別欄位。"
+  "identity.invalid": "裝置回應中沒有有效的 VID/PID 識別欄位。",
+  "notification.removed_left": "左耳機已從充電盒取出",
+  "notification.removed_right": "右耳機已從充電盒取出",
+  "notification.removed_both": "兩隻耳機已從充電盒取出",
+  "notification.last_battery": "上次電量資訊：{battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "左耳機已放入充電盒",
+  "notification.inserted_right": "右耳機已放入充電盒",
+  "notification.inserted_both": "兩隻耳機已放入充電盒",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

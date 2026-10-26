@@ -13,6 +13,11 @@ except ImportError:
     winsound = None
 
 
+def play_connection_melody() -> None:
+    """Use the existing ascending melody for the app's first successful connection."""
+    play_tones([(880, 80), (1175, 90), (1568, 120)])
+
+
 def play_tones(tones: Sequence[tuple[int, int]]) -> None:
     """Play (frequency Hz, duration ms) pairs without blocking the caller."""
     tones = tuple(tones)

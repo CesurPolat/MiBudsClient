@@ -146,5 +146,17 @@
   "mode.standard": "Standaard",
   "app.closing": "App wordt afgesloten…",
   "identity.rejected": "Apparaatinformatie: Verzoek afgewezen (0x{code})",
-  "identity.invalid": "Het antwoord van het apparaat bevat geen geldig VID/PID-identiteitsveld."
+  "identity.invalid": "Het antwoord van het apparaat bevat geen geldig VID/PID-identiteitsveld.",
+  "notification.removed_left": "Linkeroordopje uit de case gehaald",
+  "notification.removed_right": "Rechteroordopje uit de case gehaald",
+  "notification.removed_both": "Beide oordopjes uit de case gehaald",
+  "notification.last_battery": "Laatste batterijgegevens: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Linkeroordopje in de case geplaatst",
+  "notification.inserted_right": "Rechteroordopje in de case geplaatst",
+  "notification.inserted_both": "Beide oordopjes in de case geplaatst",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

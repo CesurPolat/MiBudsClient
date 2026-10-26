@@ -146,5 +146,17 @@
   "mode.standard": "Vakio",
   "app.closing": "Sovellusta suljetaan…",
   "identity.rejected": "Laitteen tiedot: Pyyntö hylätty (0x{code})",
-  "identity.invalid": "Laitteen vastaus ei sisällä kelvollista VID/PID-tunnistekenttää."
+  "identity.invalid": "Laitteen vastaus ei sisällä kelvollista VID/PID-tunnistekenttää.",
+  "notification.removed_left": "Vasen kuuloke otettu kotelosta",
+  "notification.removed_right": "Oikea kuuloke otettu kotelosta",
+  "notification.removed_both": "Molemmat kuulokkeet otettu kotelosta",
+  "notification.last_battery": "Viimeisimmät akkutiedot: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Vasen kuuloke asetettu koteloon",
+  "notification.inserted_right": "Oikea kuuloke asetettu koteloon",
+  "notification.inserted_both": "Molemmat kuulokkeet asetettu koteloon",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

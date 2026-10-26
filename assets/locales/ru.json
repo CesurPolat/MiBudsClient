@@ -146,5 +146,17 @@
   "mode.standard": "По умолчанию",
   "app.closing": "Закрытие приложения…",
   "identity.rejected": "Сведения об устройстве: Запрос отклонён (0x{code})",
-  "identity.invalid": "Ответ устройства не содержит допустимого поля идентификации VID/PID."
+  "identity.invalid": "Ответ устройства не содержит допустимого поля идентификации VID/PID.",
+  "notification.removed_left": "Левый наушник извлечён из футляра",
+  "notification.removed_right": "Правый наушник извлечён из футляра",
+  "notification.removed_both": "Оба наушника извлечены из футляра",
+  "notification.last_battery": "Последние данные батареи: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Левый наушник помещён в футляр",
+  "notification.inserted_right": "Правый наушник помещён в футляр",
+  "notification.inserted_both": "Оба наушника помещены в футляр",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

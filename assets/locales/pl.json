@@ -146,5 +146,17 @@
   "mode.standard": "Standardowe",
   "app.closing": "Zamykanie aplikacji…",
   "identity.rejected": "Informacje o urządzeniu: Żądanie odrzucono (0x{code})",
-  "identity.invalid": "Odpowiedź urządzenia nie zawiera prawidłowego pola identyfikacji VID/PID."
+  "identity.invalid": "Odpowiedź urządzenia nie zawiera prawidłowego pola identyfikacji VID/PID.",
+  "notification.removed_left": "Lewą słuchawkę wyjęto z etui",
+  "notification.removed_right": "Prawą słuchawkę wyjęto z etui",
+  "notification.removed_both": "Obie słuchawki wyjęto z etui",
+  "notification.last_battery": "Ostatnie dane baterii: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Lewą słuchawkę włożono do etui",
+  "notification.inserted_right": "Prawą słuchawkę włożono do etui",
+  "notification.inserted_both": "Obie słuchawki włożono do etui",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

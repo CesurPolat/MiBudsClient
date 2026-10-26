@@ -1,10 +1,11 @@
-"""Publish battery refreshes and play charging transition notifications."""
+"""Publish battery refreshes and play the app's own case-transition melodies."""
 
 import time
 from typing import Callable
 
+from utils.battery import battery_state
 from utils.sound import play_tones
-from ui.constants import BATTERY_UNKNOWN, BATTERY_CHARGING_OFFSET
+from ui.constants import BATTERY_UNKNOWN
 
 
 class BatteryUpdates:
@@ -12,47 +13,26 @@ class BatteryUpdates:
 
     def __init__(self, publish: Callable[[dict], None]):
         self._publish = publish
-        self._previous_charging_state = {
-            "left": None,
-            "right": None,
-        }
+        self._previous_charging_state = {"left": None, "right": None}
 
     @staticmethod
     def get_charging_state(raw_value):
-        """Return charging state for a raw battery value, or None if unknown."""
-        if raw_value == BATTERY_UNKNOWN:
-            return None
-        return raw_value >= BATTERY_CHARGING_OFFSET
+        state = battery_state(raw_value)
+        return state[1] if state is not None else None
 
     @staticmethod
     def play_charge_transition_sound(started):
-        """Play distinct tone patterns for charge transitions on Windows/Linux."""
         start_pattern = [(880, 80), (1175, 90), (1568, 120)]
         stop_pattern = [(1568, 80), (1175, 90), (880, 120)]
-        tones = start_pattern if started else stop_pattern
-
-        play_tones(tones)
+        play_tones(start_pattern if started else stop_pattern)
 
     def update(self, left, right, case):
-        current_charging_state = {
-            "left": self.get_charging_state(left),
-            "right": self.get_charging_state(right),
-        }
-
-        for side in ("left", "right"):
-            previous_state = self._previous_charging_state[side]
-            current_state = current_charging_state[side]
-
-            if previous_state is None or current_state is None:
-                self._previous_charging_state[side] = current_state
-                continue
-
-            if not previous_state and current_state:
-                self.play_charge_transition_sound(started=True)
-            elif previous_state and not current_state:
-                self.play_charge_transition_sound(started=False)
-
-            self._previous_charging_state[side] = current_state
+        for side, raw_value in (("left", left), ("right", right)):
+            previous = self._previous_charging_state[side]
+            current = self.get_charging_state(raw_value)
+            if previous is not None and current is not None and previous != current:
+                self.play_charge_transition_sound(started=current)
+            self._previous_charging_state[side] = current
 
         # UX hint: briefly clear battery fields before showing the latest values,
         # even when values are unchanged.

@@ -146,5 +146,17 @@
   "mode.standard": "قياسية",
   "app.closing": "جارٍ إغلاق التطبيق…",
   "identity.rejected": "معلومات الجهاز: تم رفض الطلب (0x{code})",
-  "identity.invalid": "لا تتضمن استجابة الجهاز حقل هوية VID/PID صالحًا."
+  "identity.invalid": "لا تتضمن استجابة الجهاز حقل هوية VID/PID صالحًا.",
+  "notification.removed_left": "أُخرجت السماعة اليسرى من العلبة",
+  "notification.removed_right": "أُخرجت السماعة اليمنى من العلبة",
+  "notification.removed_both": "أُخرجت السماعتان من العلبة",
+  "notification.last_battery": "آخر معلومات البطارية: {battery}",
+  "notification.battery_percent": "{percent}٪",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "وُضعت السماعة اليسرى في العلبة",
+  "notification.inserted_right": "وُضعت السماعة اليمنى في العلبة",
+  "notification.inserted_both": "وُضعت السماعتان في العلبة",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

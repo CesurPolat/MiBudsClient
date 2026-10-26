@@ -146,5 +146,17 @@
   "mode.standard": "標準",
   "app.closing": "アプリを終了中…",
   "identity.rejected": "デバイス情報: リクエストが拒否されました (0x{code})",
-  "identity.invalid": "デバイスの応答に有効なVID/PID識別フィールドがありません。"
+  "identity.invalid": "デバイスの応答に有効なVID/PID識別フィールドがありません。",
+  "notification.removed_left": "左のイヤホンがケースから取り出されました",
+  "notification.removed_right": "右のイヤホンがケースから取り出されました",
+  "notification.removed_both": "両方のイヤホンがケースから取り出されました",
+  "notification.last_battery": "最後のバッテリー情報：{battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "左のイヤホンがケースに戻されました",
+  "notification.inserted_right": "右のイヤホンがケースに戻されました",
+  "notification.inserted_both": "両方のイヤホンがケースに戻されました",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

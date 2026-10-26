@@ -146,5 +146,17 @@
   "mode.standard": "मानक",
   "app.closing": "ऐप बंद हो रहा है…",
   "identity.rejected": "डिवाइस की जानकारी: अनुरोध अस्वीकार किया गया (0x{code})",
-  "identity.invalid": "डिवाइस के जवाब में मान्य VID/PID पहचान फ़ील्ड नहीं है।"
+  "identity.invalid": "डिवाइस के जवाब में मान्य VID/PID पहचान फ़ील्ड नहीं है।",
+  "notification.removed_left": "बायाँ ईयरबड केस से निकाला गया",
+  "notification.removed_right": "दायाँ ईयरबड केस से निकाला गया",
+  "notification.removed_both": "दोनों ईयरबड केस से निकाले गए",
+  "notification.last_battery": "बैटरी की पिछली जानकारी: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "बायाँ ईयरबड केस में रखा गया",
+  "notification.inserted_right": "दायाँ ईयरबड केस में रखा गया",
+  "notification.inserted_both": "दोनों ईयरबड केस में रखे गए",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

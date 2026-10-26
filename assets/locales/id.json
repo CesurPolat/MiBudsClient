@@ -146,5 +146,17 @@
   "mode.standard": "Standar",
   "app.closing": "Menutup aplikasi…",
   "identity.rejected": "Informasi perangkat: Permintaan ditolak (0x{code})",
-  "identity.invalid": "Respons perangkat tidak berisi bidang identitas VID/PID yang valid."
+  "identity.invalid": "Respons perangkat tidak berisi bidang identitas VID/PID yang valid.",
+  "notification.removed_left": "Earbud kiri dikeluarkan dari casing",
+  "notification.removed_right": "Earbud kanan dikeluarkan dari casing",
+  "notification.removed_both": "Kedua earbud dikeluarkan dari casing",
+  "notification.last_battery": "Data baterai terakhir: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Earbud kiri dimasukkan ke casing",
+  "notification.inserted_right": "Earbud kanan dimasukkan ke casing",
+  "notification.inserted_both": "Kedua earbud dimasukkan ke casing",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

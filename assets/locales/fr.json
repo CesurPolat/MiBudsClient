@@ -146,5 +146,17 @@
   "mode.standard": "Standard",
   "app.closing": "Fermeture de l’application…",
   "identity.rejected": "Informations sur l’appareil: Requête rejetée (0x{code})",
-  "identity.invalid": "La réponse de l’appareil ne contient aucun champ d’identité VID/PID valide."
+  "identity.invalid": "La réponse de l’appareil ne contient aucun champ d’identité VID/PID valide.",
+  "notification.removed_left": "Écouteur gauche retiré du boîtier",
+  "notification.removed_right": "Écouteur droit retiré du boîtier",
+  "notification.removed_both": "Les deux écouteurs ont été retirés du boîtier",
+  "notification.last_battery": "Dernières données de batterie : {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Écouteur gauche placé dans le boîtier",
+  "notification.inserted_right": "Écouteur droit placé dans le boîtier",
+  "notification.inserted_both": "Les deux écouteurs ont été placés dans le boîtier",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

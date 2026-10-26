@@ -9,8 +9,10 @@ from typing import Callable
 from .constants import BATTERY_UNKNOWN
 from .components.update_notification import show_update_notification
 from .localization import refresh_translations
+from .battery_notifications import BatteryNotificationState
 from utils.i18n import LANGUAGE_CHOICES, is_rtl, set_language
 from utils.user_preferences import set_language_preference
+from utils.sound import play_connection_melody
 
 
 class AppMessageHandler:
@@ -31,6 +33,12 @@ class AppMessageHandler:
         self._get_game_monitor = get_game_monitor
         self._on_catalog_stop = on_catalog_stop
         self._last_connection_event = None
+        self._connection_melody_played = False
+        self._battery_notifications = BatteryNotificationState()
+        self._notification_lock = threading.RLock()
+        self._connection_notification_timer = None
+        self._connection_notification_token = 0
+        self._connection_notification_pending = False
         self._last_debug_toggle_at = 0.0
         self._routes = {
             "language": self._handle_language,
@@ -47,6 +55,7 @@ class AppMessageHandler:
             "app": self._handle_app,
             "debug_console": self._handle_debug_console,
             "connection_event": self._handle_connection_event,
+            "connection_notification_timeout": self._handle_connection_notification_timeout,
             "fullscreen_state": self._handle_fullscreen_state,
         }
 
@@ -88,12 +97,18 @@ class AppMessageHandler:
         self._update_page()
 
     def _handle_connection_state(self, message: dict) -> None:
+        if message.get("state") in {"connecting", "failed"}:
+            with self._notification_lock:
+                # Preserve the last sample for the disconnect description, but
+                # do not accept late battery updates after a connection failure.
+                self._battery_notifications.active = False
         self._settings_card.update_connection_state(
             message.get("state", ""), message.get("reason", "")
         )
         self._update_page()
 
     def _handle_catalog_device(self, message: dict) -> None:
+        self._tray.set_device(message.get("name", ""), message.get("image_path", ""))
         self._device_status_card.update_catalog_device(
             message.get("name", ""), message.get("image_path", "")
         )
@@ -104,6 +119,26 @@ class AppMessageHandler:
         right = message.get("right", BATTERY_UNKNOWN)
         case = message.get("case", BATTERY_UNKNOWN)
         transient = message.get("transient", False)
+
+        if not transient:
+            with self._notification_lock:
+                removed = self._battery_notifications.update(left, right, case)
+                inserted = self._battery_notifications.inserted
+                if (self._connection_notification_pending and self._battery_notifications.active
+                        and self._battery_notifications.has_earbud_data):
+                    self._cancel_connection_notification()
+                    self._tray.notify(self._battery_notifications.body(t("tray.connected")), device=True, silent=True)
+                elif removed or inserted:
+                    def event(kind, sides):
+                        key = "both" if len(sides) == 2 else sides[0]
+                        return t("notification." + kind + "_" + key)
+
+                    if removed and inserted:
+                        text = t("notification.case_changes", removed=event("removed", removed),
+                                 inserted=event("inserted", inserted))
+                    else:
+                        text = event("removed", removed) if removed else event("inserted", inserted)
+                    self._tray.notify(self._battery_notifications.body(text), device=True, silent=True)
 
         self._device_status_card.update_battery(left, right, case, transient=transient)
 
@@ -153,6 +188,9 @@ class AppMessageHandler:
     def _handle_app(self, message: dict) -> None:
         if message.get("action") != "close":
             return
+        with self._notification_lock:
+            self._cancel_connection_notification()
+            self._battery_notifications.reset()
         if self._on_catalog_stop:
             self._on_catalog_stop()
         game_monitor = self._get_game_monitor()
@@ -182,15 +220,46 @@ class AppMessageHandler:
 
     def _handle_connection_event(self, message: dict) -> None:
         event = message.get("event")
-        if event == self._last_connection_event:
+        if event not in ("connected", "disconnected"):
             return
+        with self._notification_lock:
+            if event == self._last_connection_event:
+                return
+            self._last_connection_event = event
+            self._cancel_connection_notification()
+            if event == "connected":
+                if not self._connection_melody_played:
+                    self._connection_melody_played = True
+                    play_connection_melody()
+                self._battery_notifications.reset(active=True)
+                self._connection_notification_pending = True
+                token = self._connection_notification_token
+                timer = threading.Timer(3.0, lambda: self._page.pubsub.send_all(
+                    {"type": "connection_notification_timeout", "token": token}
+                ))
+                timer.daemon = True
+                self._connection_notification_timer = timer
+                timer.start()
+            else:
+                self._latency.clear_latency_hold()
+                self._tray.notify(self._battery_notifications.body(t("tray.disconnected"), last_known=True), device=True, silent=True)
+                self._battery_notifications.reset()
 
-        self._last_connection_event = event
-        if event == "connected":
-            self._tray.notify(t("tray.connected"))
-        elif event == "disconnected":
-            self._latency.clear_latency_hold()
-            self._tray.notify(t("tray.disconnected"))
+    def _cancel_connection_notification(self):
+        self._connection_notification_token += 1
+        self._connection_notification_pending = False
+        if self._connection_notification_timer is not None:
+            self._connection_notification_timer.cancel()
+            self._connection_notification_timer = None
+
+    def _handle_connection_notification_timeout(self, message):
+        with self._notification_lock:
+            if (message.get("token") != self._connection_notification_token
+                    or not self._connection_notification_pending
+                    or not self._battery_notifications.active):
+                return
+            self._cancel_connection_notification()
+            self._tray.notify(self._battery_notifications.body(t("tray.connected")), device=True, silent=True)
 
     def _handle_fullscreen_state(self, message: dict) -> None:
         is_fullscreen = bool(message.get("is_fullscreen", False))

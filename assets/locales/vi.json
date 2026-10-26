@@ -146,5 +146,17 @@
   "mode.standard": "Tiêu chuẩn",
   "app.closing": "Đang đóng ứng dụng…",
   "identity.rejected": "Thông tin thiết bị: Yêu cầu bị từ chối (0x{code})",
-  "identity.invalid": "Phản hồi của thiết bị không chứa trường nhận dạng VID/PID hợp lệ."
+  "identity.invalid": "Phản hồi của thiết bị không chứa trường nhận dạng VID/PID hợp lệ.",
+  "notification.removed_left": "Đã lấy tai nghe trái ra khỏi hộp",
+  "notification.removed_right": "Đã lấy tai nghe phải ra khỏi hộp",
+  "notification.removed_both": "Đã lấy cả hai tai nghe ra khỏi hộp",
+  "notification.last_battery": "Dữ liệu pin gần nhất: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Đã đặt tai nghe trái vào hộp",
+  "notification.inserted_right": "Đã đặt tai nghe phải vào hộp",
+  "notification.inserted_both": "Đã đặt cả hai tai nghe vào hộp",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

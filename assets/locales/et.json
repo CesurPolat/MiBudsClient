@@ -146,5 +146,17 @@
   "mode.standard": "Tavaline",
   "app.closing": "Rakenduse sulgemine…",
   "identity.rejected": "Seadme teave: Päring tagasi lükatud (0x{code})",
-  "identity.invalid": "Seadme vastus ei sisalda kehtivat VID/PID identiteedivälja."
+  "identity.invalid": "Seadme vastus ei sisalda kehtivat VID/PID identiteedivälja.",
+  "notification.removed_left": "Vasak kõrvaklapp võeti karbist välja",
+  "notification.removed_right": "Parem kõrvaklapp võeti karbist välja",
+  "notification.removed_both": "Mõlemad kõrvaklapid võeti karbist välja",
+  "notification.last_battery": "Viimased akuandmed: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Vasak kõrvaklapp pandi karpi",
+  "notification.inserted_right": "Parem kõrvaklapp pandi karpi",
+  "notification.inserted_both": "Mõlemad kõrvaklapid pandi karpi",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

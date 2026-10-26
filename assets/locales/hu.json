@@ -146,5 +146,17 @@
   "mode.standard": "Normál",
   "app.closing": "Az alkalmazás bezárása…",
   "identity.rejected": "Eszközinformációk: Kérés elutasítva (0x{code})",
-  "identity.invalid": "Az eszköz válasza nem tartalmaz érvényes VID/PID-azonosítómezőt."
+  "identity.invalid": "Az eszköz válasza nem tartalmaz érvényes VID/PID-azonosítómezőt.",
+  "notification.removed_left": "A bal fülhallgatót kivették a tokból",
+  "notification.removed_right": "A jobb fülhallgatót kivették a tokból",
+  "notification.removed_both": "Mindkét fülhallgatót kivették a tokból",
+  "notification.last_battery": "Legutóbbi akkumulátoradatok: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "A bal fülhallgatót a tokba helyezték",
+  "notification.inserted_right": "A jobb fülhallgatót a tokba helyezték",
+  "notification.inserted_both": "Mindkét fülhallgatót a tokba helyezték",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

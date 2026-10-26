@@ -146,5 +146,17 @@
   "mode.standard": "Padrão",
   "app.closing": "Fechando o aplicativo…",
   "identity.rejected": "Informações do dispositivo: Solicitação rejeitada (0x{code})",
-  "identity.invalid": "A resposta do dispositivo não contém um campo de identificação VID/PID válido."
+  "identity.invalid": "A resposta do dispositivo não contém um campo de identificação VID/PID válido.",
+  "notification.removed_left": "Fone esquerdo retirado do estojo",
+  "notification.removed_right": "Fone direito retirado do estojo",
+  "notification.removed_both": "Os dois fones foram retirados do estojo",
+  "notification.last_battery": "Últimos dados da bateria: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Fone esquerdo colocado no estojo",
+  "notification.inserted_right": "Fone direito colocado no estojo",
+  "notification.inserted_both": "Os dois fones foram colocados no estojo",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

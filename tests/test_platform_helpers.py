@@ -3,11 +3,16 @@
 import unittest
 from unittest.mock import Mock, call, patch
 
-from utils.sound import play_tones
+from utils.sound import play_connection_melody, play_tones
 from utils.tray_backend import configure_tray_backend
 
 
 class SoundTests(unittest.TestCase):
+    def test_connection_uses_original_ascending_melody(self):
+        with patch("utils.sound.play_tones") as play:
+            play_connection_melody()
+        play.assert_called_once_with([(880, 80), (1175, 90), (1568, 120)])
+
     def test_windows_playback_runs_in_background(self):
         sound = Mock()
         with patch("utils.sound.sys.platform", "win32"), patch("utils.sound.winsound", sound), patch(

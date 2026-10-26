@@ -146,5 +146,17 @@
   "mode.standard": "Standard",
   "app.closing": "Application is closing...",
   "identity.rejected": "Device identity query rejected (status 0x{code}).",
-  "identity.invalid": "Device response has no valid VID/PID identity field."
+  "identity.invalid": "Device response has no valid VID/PID identity field.",
+  "notification.removed_left": "Left earbud removed from the case",
+  "notification.removed_right": "Right earbud removed from the case",
+  "notification.removed_both": "Both earbuds removed from the case",
+  "notification.last_battery": "Last battery data: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Left earbud placed in the case",
+  "notification.inserted_right": "Right earbud placed in the case",
+  "notification.inserted_both": "Both earbuds placed in the case",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

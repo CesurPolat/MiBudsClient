@@ -146,5 +146,17 @@
   "mode.standard": "Standard",
   "app.closing": "Menutup aplikasi…",
   "identity.rejected": "Maklumat peranti: Permintaan ditolak (0x{code})",
-  "identity.invalid": "Respons peranti tidak mengandungi medan identiti VID/PID yang sah."
+  "identity.invalid": "Respons peranti tidak mengandungi medan identiti VID/PID yang sah.",
+  "notification.removed_left": "Fon telinga kiri dikeluarkan daripada bekas",
+  "notification.removed_right": "Fon telinga kanan dikeluarkan daripada bekas",
+  "notification.removed_both": "Kedua-dua fon telinga dikeluarkan daripada bekas",
+  "notification.last_battery": "Data bateri terakhir: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Fon telinga kiri dimasukkan ke dalam bekas",
+  "notification.inserted_right": "Fon telinga kanan dimasukkan ke dalam bekas",
+  "notification.inserted_both": "Kedua-dua fon telinga dimasukkan ke dalam bekas",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

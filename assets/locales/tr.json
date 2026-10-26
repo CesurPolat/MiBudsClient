@@ -146,5 +146,17 @@
   "mode.standard": "Standart",
   "app.closing": "Uygulama kapanıyor...",
   "identity.rejected": "Cihaz kimliği sorgusu reddedildi (durum 0x{code}).",
-  "identity.invalid": "Cihaz yanıtı geçerli VID/PID kimlik alanı içermiyor."
+  "identity.invalid": "Cihaz yanıtı geçerli VID/PID kimlik alanı içermiyor.",
+  "notification.removed_left": "Sol kulaklık kutudan çıkarıldı",
+  "notification.removed_right": "Sağ kulaklık kutudan çıkarıldı",
+  "notification.removed_both": "İki kulaklık da kutudan çıkarıldı",
+  "notification.last_battery": "Son pil bilgisi: {battery}",
+  "notification.battery_percent": "%{percent}",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Sol kulaklık kutuya yerleştirildi",
+  "notification.inserted_right": "Sağ kulaklık kutuya yerleştirildi",
+  "notification.inserted_both": "İki kulaklık da kutuya yerleştirildi",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

@@ -146,5 +146,17 @@
   "mode.standard": "Standard",
   "app.closing": "Anwendung wird geschlossen…",
   "identity.rejected": "Geräteinformationen: Anfrage abgelehnt (0x{code})",
-  "identity.invalid": "Geräteantwort enthält kein gültiges VID/PID-Identitätsfeld."
+  "identity.invalid": "Geräteantwort enthält kein gültiges VID/PID-Identitätsfeld.",
+  "notification.removed_left": "Linker Ohrhörer aus dem Ladecase genommen",
+  "notification.removed_right": "Rechter Ohrhörer aus dem Ladecase genommen",
+  "notification.removed_both": "Beide Ohrhörer aus dem Ladecase genommen",
+  "notification.last_battery": "Letzte Akkudaten: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Linker Ohrhörer ins Ladecase gelegt",
+  "notification.inserted_right": "Rechter Ohrhörer ins Ladecase gelegt",
+  "notification.inserted_both": "Beide Ohrhörer ins Ladecase gelegt",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

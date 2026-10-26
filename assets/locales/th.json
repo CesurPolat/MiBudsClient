@@ -146,5 +146,17 @@
   "mode.standard": "มาตรฐาน",
   "app.closing": "กำลังปิดแอป…",
   "identity.rejected": "ข้อมูลอุปกรณ์: คำขอถูกปฏิเสธ (0x{code})",
-  "identity.invalid": "การตอบกลับของอุปกรณ์ไม่มีช่องระบุ VID/PID ที่ถูกต้อง"
+  "identity.invalid": "การตอบกลับของอุปกรณ์ไม่มีช่องระบุ VID/PID ที่ถูกต้อง",
+  "notification.removed_left": "นำหูฟังข้างซ้ายออกจากเคสแล้ว",
+  "notification.removed_right": "นำหูฟังข้างขวาออกจากเคสแล้ว",
+  "notification.removed_both": "นำหูฟังทั้งสองข้างออกจากเคสแล้ว",
+  "notification.last_battery": "ข้อมูลแบตเตอรี่ล่าสุด: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "ใส่หูฟังข้างซ้ายในเคสแล้ว",
+  "notification.inserted_right": "ใส่หูฟังข้างขวาในเคสแล้ว",
+  "notification.inserted_both": "ใส่หูฟังทั้งสองข้างในเคสแล้ว",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

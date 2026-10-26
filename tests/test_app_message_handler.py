@@ -27,6 +27,12 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.debug = Mock()
         self.reconnect = Mock()
         self.monitor = Mock()
+        self.timer_patch = patch("ui.app_message_handler.threading.Timer")
+        self.timer_patch.start()
+        self.addCleanup(self.timer_patch.stop)
+        self.melody_patch = patch("ui.app_message_handler.play_connection_melody")
+        self.melody = self.melody_patch.start()
+        self.addCleanup(self.melody_patch.stop)
         self.handler = AppMessageHandler(
             page=self.page, device_status_card=self.status,
             settings_card=self.settings, window_manager=self.window,
@@ -78,12 +84,37 @@ class AppMessageHandlerTests(unittest.TestCase):
         )
 
     def test_connection_notifications_are_deduplicated(self):
-        for event in ("connected", "connected", "disconnected", "disconnected"):
+        for event in ("connected", "connected"):
+            self.handler.handle({"type": "connection_event", "event": event})
+        self.tray.notify.assert_not_called()
+        self.handler.handle({"type": "battery", "left": 60, "right": 70, "case": 255})
+        for event in ("disconnected", "disconnected"):
             self.handler.handle({"type": "connection_event", "event": event})
         self.assertEqual(self.tray.notify.call_args_list, [
-            call("Earbuds connected"), call("Earbuds disconnected"),
+            call("Earbuds connected\nLEFT: 60% · RIGHT: 70% · CASE: —", device=True, silent=True),
+            call("Earbuds disconnected\nLast battery data: LEFT: 60% · RIGHT: 70% · CASE: —", device=True, silent=True),
         ])
         self.latency.clear_latency_hold.assert_called_once_with()
+
+    def test_first_successful_connection_plays_melody_once_per_app_session(self):
+        self.handler.handle({"type": "connection_state", "state": "connecting"})
+        self.handler.handle({"type": "connection_state", "state": "failed"})
+        self.handler.handle({"type": "connection_event", "event": "reconnect_failed_limit"})
+        self.melody.assert_not_called()
+        self.handler.handle({"type": "connection_event", "event": "connected"})
+        self.melody.assert_called_once_with()
+        self.tray.notify.assert_not_called()  # audio does not wait for the battery description
+        for event in ("connected", "disconnected", "connected", "connected"):
+            self.handler.handle({"type": "connection_event", "event": event})
+        self.handler.handle({"type": "battery", "left": 60, "right": 70, "case": 255})
+        self.melody.assert_called_once_with()
+        for item in self.tray.notify.call_args_list:
+            self.assertTrue(item.kwargs["silent"])
+
+    def test_catalog_image_is_shared_with_screen_and_tray(self):
+        self.handler.handle({"type": "catalog_device", "name": "Redmi Buds 6 Play", "image_path": "cached.png"})
+        self.status.update_catalog_device.assert_called_once_with("Redmi Buds 6 Play", "cached.png")
+        self.tray.set_device.assert_called_once_with("Redmi Buds 6 Play", "cached.png")
 
     def test_window_and_monitor_messages(self):
         self.handler.handle({"type": "window", "action": "show"})
@@ -158,6 +189,7 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertIs(settings.content, handler._settings_card)
         self.assertEqual(handler._device_status_card.device_name.value, 'Saved earbuds')
         self.assertTrue(handler._device_status_card.device_image._image_control.src.endswith('MiBuds6Play.png'))
+        handler._tray.set_device.assert_called_once_with('Saved earbuds', 'assets/images/MiBuds6Play.png')
         self.assertIs(settings.content.content.controls[0], handler._settings_card.startup_item)
         self.assertIs(settings.content.content.controls[-1], handler._settings_card.identity_item)
         calls = [c[0] for c in self.page.mock_calls]

@@ -123,6 +123,7 @@ def main(page: ft.Page):
         app_version=APP_VERSION,
     )
     cached_name, cached_image = catalog_sync.cached_device
+    tray.set_device(cached_name, cached_image)
     if cached_image:
         device_status_card.update_catalog_device(cached_name, cached_image)
 

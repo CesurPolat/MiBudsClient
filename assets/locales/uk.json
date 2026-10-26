@@ -146,5 +146,17 @@
   "mode.standard": "За замовчуванням",
   "app.closing": "Закриття застосунку…",
   "identity.rejected": "Відомості про пристрій: Запит відхилено (0x{code})",
-  "identity.invalid": "Відповідь пристрою не містить дійсного поля ідентифікації VID/PID."
+  "identity.invalid": "Відповідь пристрою не містить дійсного поля ідентифікації VID/PID.",
+  "notification.removed_left": "Лівий навушник вийнято з футляра",
+  "notification.removed_right": "Правий навушник вийнято з футляра",
+  "notification.removed_both": "Обидва навушники вийнято з футляра",
+  "notification.last_battery": "Останні дані батареї: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Лівий навушник покладено у футляр",
+  "notification.inserted_right": "Правий навушник покладено у футляр",
+  "notification.inserted_both": "Обидва навушники покладено у футляр",
+  "notification.case_changes": "{removed}\n{inserted}"
 }

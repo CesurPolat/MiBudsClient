@@ -254,7 +254,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "en": {
@@ -407,7 +419,19 @@
         "mode.standard",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "ar": {
@@ -663,7 +687,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "de": {
@@ -919,7 +955,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "es": {
@@ -1175,7 +1223,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "et": {
@@ -1335,7 +1395,19 @@
         "mode.standard",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "fi": {
@@ -1495,7 +1567,19 @@
         "mode.standard",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "fr": {
@@ -1751,7 +1835,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "hi": {
@@ -1911,7 +2007,19 @@
         "mode.standard",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "hu": {
@@ -2071,7 +2179,19 @@
         "mode.standard",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "id": {
@@ -2327,7 +2447,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "it": {
@@ -2583,7 +2715,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "ja": {
@@ -2839,7 +2983,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "ko": {
@@ -3095,7 +3251,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "ms": {
@@ -3351,7 +3519,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "nl": {
@@ -3607,7 +3787,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "pl": {
@@ -3863,7 +4055,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "pt-BR": {
@@ -4116,7 +4320,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "pt-PT": {
@@ -4369,7 +4585,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "ru": {
@@ -4625,7 +4853,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "sv": {
@@ -4785,7 +5025,19 @@
         "mode.standard",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "th": {
@@ -5041,7 +5293,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "uk": {
@@ -5297,7 +5561,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "vi": {
@@ -5553,7 +5829,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "zh-CN": {
@@ -5806,7 +6094,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "zh-TW": {
@@ -6059,7 +6359,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     },
     "zh-HK": {
@@ -6312,7 +6624,19 @@
         "error.technical",
         "app.closing",
         "identity.rejected",
-        "identity.invalid"
+        "identity.invalid",
+        "notification.removed_left",
+        "notification.removed_right",
+        "notification.removed_both",
+        "notification.last_battery",
+        "notification.battery_percent",
+        "notification.battery_charging",
+        "notification.battery_summary",
+        "notification.with_battery",
+        "notification.inserted_left",
+        "notification.inserted_right",
+        "notification.inserted_both",
+        "notification.case_changes"
       ]
     }
   },

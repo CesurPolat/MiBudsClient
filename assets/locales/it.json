@@ -146,5 +146,17 @@
   "mode.standard": "Standard",
   "app.closing": "Chiusura dell’applicazione…",
   "identity.rejected": "Informazioni sul dispositivo: Richiesta rifiutata (0x{code})",
-  "identity.invalid": "La risposta del dispositivo non contiene un campo di identità VID/PID valido."
+  "identity.invalid": "La risposta del dispositivo non contiene un campo di identità VID/PID valido.",
+  "notification.removed_left": "Auricolare sinistro estratto dalla custodia",
+  "notification.removed_right": "Auricolare destro estratto dalla custodia",
+  "notification.removed_both": "Entrambi gli auricolari estratti dalla custodia",
+  "notification.last_battery": "Ultimi dati della batteria: {battery}",
+  "notification.battery_percent": "{percent}%",
+  "notification.battery_charging": "⚡ {level}",
+  "notification.battery_summary": "{left_label}: {left} · {right_label}: {right} · {case_label}: {case}",
+  "notification.with_battery": "{event}\n{battery}",
+  "notification.inserted_left": "Auricolare sinistro riposto nella custodia",
+  "notification.inserted_right": "Auricolare destro riposto nella custodia",
+  "notification.inserted_both": "Entrambi gli auricolari riposti nella custodia",
+  "notification.case_changes": "{removed}\n{inserted}"
 }
