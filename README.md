@@ -13,6 +13,24 @@ A Python & Flet-based desktop client for Redmi Buds 6 Play. Features real-time b
 - **Windows Startup Support:** Option to start the application automatically when Windows boots.
 - **Smart Updater:** Built-in update checker that supports semantic versioning, including pre-release tags like `alpha`, `beta`, and `rc`.
 - **Modern UI:** A sleek, dark-themed interface built with the Flet framework.
+- **Languages:** Turkish, English, and Simplified Chinese, with instant language switching.
+
+## Language settings
+
+Open **Settings → Language** to choose **System language**, **Türkçe**,
+**English**, or **简体中文**. The default follows the operating system; unsupported
+languages fall back to English. Your choice is saved and applies immediately to
+the screens, tray menu, and future notifications without reconnecting the earbuds.
+Technical logs, device names, process names, and raw error details are preserved.
+
+Translation catalogs live in `assets/locales/{language}.json` and are included by
+the existing assets packaging rule. Use stable keys and named placeholders in all
+three catalogs. UI text uses `utils.i18n.t()`; controller messages use
+`utils.i18n.message()`, a string-compatible value retaining its key and parameters.
+Use `render()` at the display boundary and `refresh_translations()` to update
+existing controls. Keep nested messages intact instead of interpolating them into
+f-strings. Catalog integrity and live-switch tests run with
+`python -m unittest discover -s tests`.
 
 ## Device catalog
 

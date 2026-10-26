@@ -1,8 +1,14 @@
 """Flet gesture editor; only device-confirmed assignments are displayed."""
 
+from utils.i18n import t, render
+
 import flet as ft
 
-from controllers.bluetooth.gestures import ACTION_NAMES, GESTURE_NAMES
+GESTURE_NAMES = {1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long")}
+ACTION_NAMES = dict(enumerate(t("action." + key) for key in (
+    "assistant", "play", "previous", "next", "volume_up", "volume_down",
+    "noise", "game", "none", "photo", "record", "volume", "translation", "track",
+)))
 from ..constants import COLOR_TEXT_PRIMARY, COLOR_DISABLED
 from .setting_items import SettingItem
 
@@ -20,16 +26,16 @@ class GestureSettings(ft.Column):
         self._assignments = {}
         self._capabilities = {}
         self.selectors = {}
-        self.status = ft.Text("Connect your earbuds to manage gestures.", size=12, color=COLOR_DISABLED)
+        self.status = ft.Text(t("gesture.connect"), size=12, color=COLOR_DISABLED)
         self.refresh_button = ft.IconButton(
-            icon=ft.Icons.REFRESH, tooltip="Refresh gestures", disabled=True, visible=False,
+            icon=ft.Icons.REFRESH, tooltip=t("gesture.refresh"), disabled=True, visible=False,
             on_click=lambda _: self._refresh(),
         )
-        self.toggle_button = SettingItem(ft.Icons.TOUCH_APP, "blue_700", "Gestures", on_click=self._toggle)
+        self.toggle_button = SettingItem(ft.Icons.TOUCH_APP, "blue_700", t("gesture.title"), on_click=self._toggle)
         self.rows = ft.Column(spacing=12)
         self.body = ft.Column([self.status, self.refresh_button, self.rows], visible=False)
         super().__init__([
-            ft.Container(content=ft.Text("Earbud Management", weight="w600", color=COLOR_TEXT_PRIMARY), padding=10),
+            ft.Container(content=ft.Text(t("gesture.management"), weight="w600", color=COLOR_TEXT_PRIMARY), padding=10),
             self.toggle_button, self.body,
         ], spacing=8)
 
@@ -54,7 +60,7 @@ class GestureSettings(ft.Column):
         self._needs_refresh = True
         self._assignments = {}
         self._capabilities = {}
-        self.status.value = "Open gestures to read assignments." if connected else "Connect your earbuds to manage gestures."
+        self.status.value = t("gesture.open") if connected else t("gesture.connect")
         self.status.color = COLOR_DISABLED
         self._render()
         if connected and self._opened:
@@ -66,7 +72,7 @@ class GestureSettings(ft.Column):
         self._token += 1
         token = self._token
         self._busy = True
-        self.status.value = message
+        self.status.value = render(message)
         self.status.color = COLOR_DISABLED
         self._render()
         self._on_update()
@@ -80,10 +86,10 @@ class GestureSettings(ft.Column):
         if result.success:
             self._assignments = dict(result.assignments)
             self._capabilities = dict(capabilities)
-        self.status.value = result.message
+        self.status.value = render(result.message)
         self.status.color = "green" if result.success else "red"
         if result.success and not (self._assignments.keys() & self._capabilities.keys()):
-            self.status.value = "The earbuds returned no supported gesture assignments."
+            self.status.value = t("gesture.empty")
         self._render()
 
     def _change(self, gesture, side, event):
@@ -113,12 +119,12 @@ class GestureSettings(ft.Column):
             for index, side in enumerate(("left", "right")):
                 current = self._assignments[gesture][index]
                 allowed = self._capabilities[gesture]
-                options = [ft.dropdown.Option(str(action), ACTION_NAMES[action]) for action in allowed]
+                options = [ft.dropdown.Option(str(action), render(ACTION_NAMES[action])) for action in allowed]
                 if current not in allowed:
-                    label = ACTION_NAMES.get(current, f"Unknown (0x{current:02X})")
-                    options.append(ft.dropdown.Option(str(current), f"Current: {label}", disabled=True))
+                    label = ACTION_NAMES.get(current, t("gesture.unknown", code=f"{current:02X}"))
+                    options.append(ft.dropdown.Option(str(current), t("gesture.current", label=label), disabled=True))
                 selector = ft.Dropdown(
-                    label=side.title(), value=str(current), options=options,
+                    label=t("side." + side), value=str(current), options=options,
                     disabled=self._busy or not self._connected or self._needs_refresh, expand=True,
                     color=COLOR_TEXT_PRIMARY, bgcolor="#151922", filled=True,
                     fill_color="#151922", border_color="#2A303C",
@@ -127,4 +133,4 @@ class GestureSettings(ft.Column):
                 )
                 self.selectors[(gesture, side)] = selector
                 fields.append(selector)
-            self.rows.controls.extend([ft.Text(title, size=13, color=COLOR_TEXT_PRIMARY), ft.Row(fields, spacing=8)])
+            self.rows.controls.extend([ft.Text(render(title), size=13, color=COLOR_TEXT_PRIMARY), ft.Row(fields, spacing=8)])

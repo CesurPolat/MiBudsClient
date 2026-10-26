@@ -2,6 +2,7 @@
 
 import os
 import flet as ft
+from utils.i18n import t
 import subprocess
 import threading
 import time
@@ -111,7 +112,7 @@ class WindowManager:
                         [
                             ft.ProgressRing(width=50, height=50, stroke_width=4),
                             ft.Text(
-                                "Application is closing...",
+                                t("app.closing"),
                                 size=20,
                                 color=ft.Colors.WHITE,
                             ),

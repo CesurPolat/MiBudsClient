@@ -1,5 +1,7 @@
 """Latency UI components."""
 
+from utils.i18n import t
+
 import flet as ft
 from typing import Callable, Optional
 
@@ -30,9 +32,9 @@ class LowLatencyModeSettingItem(ft.Column):
             "on": ft.Icons.SPEED,
         }
         self._mode_labels = {
-            "off": "Off",
-            "auto": "Auto",
-            "on": "On",
+            "off": t("latency.off"),
+            "auto": t("latency.auto"),
+            "on": t("latency.on"),
         }
         self._mode_buttons = {
             mode: ft.Container(

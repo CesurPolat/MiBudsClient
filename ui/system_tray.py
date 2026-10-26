@@ -1,6 +1,7 @@
 """System tray icon and menu."""
 
 from typing import Callable, Optional
+from utils.i18n import t, render
 
 from utils.tray_backend import configure_tray_backend
 
@@ -38,25 +39,25 @@ class SystemTray:
             has_menu = bool(getattr(pystray.Icon, "HAS_MENU", False))
             if has_menu:
                 menu = pystray.Menu(
-                    pystray.MenuItem("Open", lambda icon, item: self.on_show(), default=True),
+                    pystray.MenuItem(lambda item: t("tray.open"), lambda icon, item: self.on_show(), default=True),
                     pystray.Menu.SEPARATOR,
                     pystray.MenuItem(
-                        "Low Latency: Off",
+                        lambda item: t("tray.off"),
                         lambda icon, item: self._on_mode_select("off"),
                         checked=lambda item: self._is_mode("off"),
                     ),
                     pystray.MenuItem(
-                        "Low Latency: Auto",
+                        lambda item: t("tray.auto"),
                         lambda icon, item: self._on_mode_select("auto"),
                         checked=lambda item: self._is_mode("auto"),
                     ),
                     pystray.MenuItem(
-                        "Low Latency: On",
+                        lambda item: t("tray.on"),
                         lambda icon, item: self._on_mode_select("on"),
                         checked=lambda item: self._is_mode("on"),
                     ),
                     pystray.Menu.SEPARATOR,
-                    pystray.MenuItem("Quit", lambda icon, item: self._exit())
+                    pystray.MenuItem(lambda item: t("tray.quit"), lambda icon, item: self._exit())
                 )
             else:
                 print(
@@ -64,7 +65,7 @@ class SystemTray:
                     "Open/Quit options in tray menu are unavailable."
                 )
                 menu = pystray.Menu(
-                    pystray.MenuItem("Open", lambda icon, item: self.on_show(), default=True)
+                    pystray.MenuItem(lambda item: t("tray.open"), lambda icon, item: self.on_show(), default=True)
                 )
             
             self.icon = pystray.Icon("MiBudsClient", tray_image, "Mi Buds Client", menu)
@@ -98,7 +99,7 @@ class SystemTray:
 
         try:
             if hasattr(self.icon, "notify"):
-                self.icon.notify(message, title)
+                self.icon.notify(render(message), title)
         except Exception as e:
             print(f"Tray notify error: {e}")
     

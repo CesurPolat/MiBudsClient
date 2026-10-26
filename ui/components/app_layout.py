@@ -1,8 +1,11 @@
 """Main screen, settings screen, and their shared navigation layout."""
 
+from utils.i18n import t
+
 from typing import Callable
 
 import flet as ft
+from ui.localization import refresh_translations
 
 from ..constants import APP_TITLE, APP_VERSION, GITHUB_URL
 from .common import AppTitle, Spacer, Footer
@@ -44,14 +47,14 @@ class AppLayout(ft.Column):
         self.back_button = ft.IconButton(
             icon=ft.Icons.ARROW_BACK,
             icon_color="white",
-            tooltip="Back",
+            tooltip=t("nav.back"),
             visible=False,
             on_click=lambda _: self.show_settings(False),
         )
         self.settings_button = ft.IconButton(
             icon=ft.Icons.SETTINGS_OUTLINED,
             icon_color="white",
-            tooltip="Settings",
+            tooltip=t("nav.settings"),
             on_click=lambda _: self.show_settings(True),
         )
         self.navigation_header = ft.Row(
@@ -85,5 +88,8 @@ class AppLayout(ft.Column):
         self.settings_content.ignore_interactions = not open_settings
         self.back_button.visible = open_settings
         self.settings_button.visible = not open_settings
-        self.title.value = "Settings" if open_settings else APP_TITLE
+        self.title.value = t("nav.settings") if open_settings else APP_TITLE
         self._on_update()
+
+    def refresh_translations(self) -> None:
+        refresh_translations(self)

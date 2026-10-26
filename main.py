@@ -27,9 +27,19 @@ from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
 from utils.game_monitor import FullscreenGameMonitor
 from controllers.latency import LatencyController
+from utils.i18n import set_language
+from utils.user_preferences import get_language_preference
+from ui.localization import refresh_translations
 
 def main(page: ft.Page):
     """Main application entry point."""
+    set_language(get_language_preference())
+
+    def update_ui():
+        refresh_translations(page.controls)
+        refresh_translations(page.overlay)
+        page.update()
+
     debug_console = DebugConsoleManager(publish=page.pubsub.send_all)
     debug_console.install()
     
@@ -53,7 +63,7 @@ def main(page: ft.Page):
     
     page.scroll = "auto"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.update()
+    update_ui()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Managers
@@ -75,7 +85,7 @@ def main(page: ft.Page):
         get_controller=lambda: controller_ref["instance"],
         get_tray=lambda: tray_ref["instance"],
         on_rules_change=lambda *args: settings_card.set_low_latency_rules(*args),
-        on_ui_update=page.update,
+        on_ui_update=update_ui,
     )
 
     def tray_exit_request() -> None:
@@ -144,7 +154,10 @@ def main(page: ft.Page):
         latency=latency,
         device_connection=device_connection,
         publish=page.pubsub.send_all,
-        on_update=page.update,
+        on_update=update_ui,
+        on_language_change=lambda e: page.pubsub.send_all(
+            {"type": "language", "language": e.control.value}
+        ),
     )
     settings_card = settings_controller.card
     settings_card.connection_panel.retry_button.on_click = lambda e: device_connection.reconnect_on_show()
@@ -152,7 +165,7 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Build Page Layout
     # ─────────────────────────────────────────────────────────────────────────
-    layout = AppLayout(device_status_card, settings_card, on_update=page.update)
+    layout = AppLayout(device_status_card, settings_card, on_update=update_ui)
     page.add(layout)
 
     message_handler = AppMessageHandler(

@@ -1,5 +1,7 @@
 """Serialized gesture transactions, fed exclusively by the existing listener."""
 
+from utils.i18n import message as m, error_message
+
 import threading
 from dataclasses import dataclass
 
@@ -58,7 +60,7 @@ class GestureTransport:
                 if counter != request.counter:
                     continue
                 matched = True
-                request.error = f"Gesture request rejected (status 0x{status:02X})." if status else ""
+                request.error = m("gesture.rejected", code=f"{status:02X}") if status else ""
                 request.data = packet.payload[2:]
                 request.completed = True
                 self._condition.notify_all()
@@ -67,7 +69,7 @@ class GestureTransport:
     def _exchange(self, opcode, builder, timeout, generation):
         with self._condition:
             if generation != self._generation or not self._connection.connected:
-                raise ConnectionError("Earbuds disconnected. Refresh to read settings again.")
+                raise ConnectionError(m("gesture.disconnected"))
             counter = self._counter
             self._counter = (counter + 1) & 255
             # The legacy latency command always uses 0x90 with opcode F2.
@@ -79,11 +81,11 @@ class GestureTransport:
             try:
                 self._connection.send(builder(counter))
                 if not self._condition.wait_for(lambda: request.completed, timeout):
-                    raise TimeoutError("Gesture request timed out. Refresh to try again.")
+                    raise TimeoutError(m("gesture.timeout"))
                 if request.error:
                     raise ConnectionError(request.error)
                 if generation != self._generation:
-                    raise ConnectionError("Connection changed during gesture request.")
+                    raise ConnectionError(m("gesture.connection_changed"))
                 return request.data
             finally:
                 self._pending = None
@@ -98,12 +100,12 @@ class GestureTransport:
                 assignments = parse_gesture_records(data)
                 with self._condition:
                     if generation != self._generation:
-                        raise ConnectionError("Connection changed during gesture request.")
+                        raise ConnectionError(m("gesture.connection_changed"))
                     self._last_read = dict(assignments)
-                return GestureResult(True, assignments, "Gesture settings loaded.")
+                return GestureResult(True, assignments, m("gesture.loaded"))
             except (OSError, ValueError) as exc:
                 self._last_read = None
-                return GestureResult(False, message=str(exc))
+                return GestureResult(False, message=error_message(exc))
 
     def write(self, gesture_type, side, action, timeout=5.0, generation=None):
         if timeout <= 0:
@@ -113,19 +115,19 @@ class GestureTransport:
             try:
                 with self._condition:
                     if self._last_read is None or gesture_type not in self._last_read:
-                        raise ValueError("Refresh gesture settings before changing this assignment.")
+                        raise ValueError(m("gesture.refresh_first"))
                     self._last_read = None
                 self._exchange(0xF2, lambda counter: build_gesture_assignment(
                     counter, gesture_type, side, action), timeout, generation)
                 result = self.read(timeout, generation)
                 if not result.success:
-                    return GestureResult(False, message=f"Write sent; verification failed: {result.message}")
+                    return GestureResult(False, message=m("gesture.verification_failed", details=result.message))
                 actual = result.assignments.get(gesture_type)
                 if actual is None or actual[0 if side == "left" else 1] != action:
                     self._last_read = None
-                    return GestureResult(False, message="The earbuds did not confirm this assignment. Refresh to read current settings.")
-                result.message = "Gesture assignment saved and verified."
+                    return GestureResult(False, message=m("gesture.unconfirmed"))
+                result.message = m("gesture.saved")
                 return result
             except (OSError, ValueError) as exc:
                 self._last_read = None
-                return GestureResult(False, message=str(exc))
+                return GestureResult(False, message=error_message(exc))

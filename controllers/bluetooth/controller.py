@@ -1,5 +1,7 @@
 """Main Bluetooth Controller for Mi Buds."""
 
+from utils.i18n import message as m, error_message
+
 import socket
 import threading
 import time
@@ -156,18 +158,15 @@ class BTController:
                 if not self._bd_addr:
                     device = BluetoothDiscovery.get_connected_device()
                     if not device or not device.address:
-                        reason = (
-                            "No connected earbuds found in the catalog. Turn on Bluetooth and "
-                            "connect your earbuds in the system Bluetooth settings."
-                        )
+                        reason = m("connection.no_catalog")
                         self._notify_connection_state("failed", reason)
-                        self._update_status("No connected Bluetooth device found.", "red")
+                        self._update_status(m("connection.no_device"), "red")
                         return False
                     self._bd_addr = device.address
                     self._device_name = device.name
-                self._reset_identity_state("Connection changed during identity query.")
+                self._reset_identity_state(m("identity.connection_changed"))
                 self._connection.connect(self._bd_addr)
-                self._update_status("Connected", "blue")
+                self._update_status(m("connection.connected"), "blue")
                 self._reset_reconnect_state()
                 self._notify_connection_state("connected")
                 self._notify_connection_event("connected")
@@ -175,14 +174,14 @@ class BTController:
                 return True
             except Exception as e:
                 self._connection.connected = False
-                self._update_status(f"Connection failed: {e}", "red")
+                self._update_status(m("connection.failure_details", details=str(e)), "red")
                 if isinstance(e, (TimeoutError, socket.timeout)):
-                    reason = "The earbuds did not respond (connection timed out). Make sure they are nearby and powered on."
+                    reason = m("connection.timeout")
                 elif isinstance(e, PermissionError):
-                    reason = "Bluetooth access was denied. Check your system permissions."
+                    reason = m("connection.permission")
                 else:
-                    reason = "Could not establish a Bluetooth connection. Make sure your earbuds are powered on and connected."
-                self._notify_connection_state("failed", f"{reason}\nTechnical details: {str(e) or type(e).__name__}")
+                    reason = m("connection.establish_failed")
+                self._notify_connection_state("failed", m("connection.technical", reason=reason, details=str(e) or type(e).__name__))
                 return False
     
     # ─────────────────────────────────────────────────────────────────────────
@@ -198,16 +197,15 @@ class BTController:
             (success, message) tuple
         """
         if not self._ensure_connected():
-            return False, "Could not connect to device."
+            return False, m("connection.device_failed")
         
         try:
             payload = self._protocol.build_mode_command(mode)
             self._connection.send(payload)
-            mode_name = self._protocol.get_mode_name(mode)
-            return True, f"{mode_name} mode sent."
+            return True, m("command.mode_sent", mode=m("mode.low" if mode == "low" else "mode.standard"))
         except Exception as e:
             self._connection.connected = False
-            return False, f"Send error: {e}"
+            return False, m("command.send_error", details=str(e))
     
     def request_battery(self, user_initiated: bool = True) -> tuple[bool, str]:
         """Request battery status from device."""
@@ -216,15 +214,15 @@ class BTController:
             self.resume_reconnect_attempts()
 
         if not self._ensure_connected():
-            return False, "Could not connect to device."
+            return False, m("connection.device_failed")
         
         try:
             payload = self._protocol.build_battery_request()
             self._connection.send(payload)
-            return True, "Battery request sent."
+            return True, m("battery.sent")
         except Exception as e:
             self._connection.connected = False
-            return False, f"Request error: {e}"
+            return False, m("command.request_error", details=str(e))
     
     def request_device_identity(self, timeout: float = 5.0) -> tuple[bool, str]:
         """Query VID/PID; call off the UI/listener thread while listen() runs."""
@@ -232,11 +230,11 @@ class BTController:
             raise ValueError("Identity timeout must be positive")
         self.resume_reconnect_attempts()
         if not self._ensure_connected():
-            return False, "Could not connect to device."
+            return False, m("connection.device_failed")
 
         with self._identity_condition:
             if self._identity_pending is not None:
-                return False, "A device identity query is already running."
+                return False, m("identity.busy")
             request = _IdentityRequest(self._identity_counter)
             self._identity_counter = (self._identity_counter + 1) & 0xFF
             self._identity_pending = request
@@ -247,14 +245,14 @@ class BTController:
             self._connection.send(build_identity_request(request.counter))
             with self._identity_condition:
                 if not self._identity_condition.wait_for(lambda: request.completed, timeout):
-                    return False, "Device identity query timed out."
+                    return False, m("identity.timeout")
                 if request.error:
                     return False, request.error
                 identity = request.identity
                 return True, identity.describe()
         except Exception as exc:
             self._connection.connected = False
-            return False, f"Device identity request failed: {exc}"
+            return False, m("identity.failed", details=error_message(exc))
         finally:
             with self._identity_condition:
                 if self._identity_pending is request:
@@ -271,16 +269,16 @@ class BTController:
     def request_gesture_settings(self, timeout=5.0, *, session=None):
         """Read off the UI/listener thread; never reconnect for a stale action."""
         if not self.connected:
-            return GestureResult(False, message="Connect your earbuds to manage gestures.")
+            return GestureResult(False, message=m("gesture.connect"))
         if not self.gesture_capabilities:
-            return GestureResult(False, message="No confirmed gesture capabilities for this device.")
+            return GestureResult(False, message=m("gesture.no_capabilities"))
         return self._gestures.read(timeout, session)
 
     def set_gesture_assignment(self, gesture_type, side, action, timeout=5.0, *, session=None):
         """Write one side, then verify by reading the device's settings back."""
         allowed = self.gesture_capabilities.get(gesture_type, ())
         if side not in ("left", "right") or type(action) is not int or action not in allowed:
-            return GestureResult(False, message="This assignment is not supported by this model.")
+            return GestureResult(False, message=m("gesture.unsupported"))
         return self._gestures.write(gesture_type, side, action, timeout, session)
 
     def _process_identity_data(self, data: bytes) -> None:
@@ -296,11 +294,11 @@ class BTController:
                 if counter != request.counter:
                     continue
                 if status != 0:
-                    request.error = f"Device identity query rejected (status 0x{status:02X})."
+                    request.error = m("identity.rejected", code=f"{status:02X}")
                 else:
                     request.identity = parse_identity_fields(packet.payload[2:])
                     if request.identity is None:
-                        request.error = "Device response has no valid VID/PID identity field."
+                        request.error = m("identity.invalid")
                     else:
                         identity = request.identity
                         self._identity = identity
@@ -311,7 +309,7 @@ class BTController:
 
     def _reset_identity_state(self, reason: str) -> None:
         self._battery_parser.reset()
-        self._gestures.reset("Connection changed during gesture request.")
+        self._gestures.reset(m("gesture.connection_changed"))
         with self._identity_condition:
             self._identity = None
             self._identity_parser.reset()
@@ -331,14 +329,14 @@ class BTController:
             (success, message) tuple
         """
         if not self._ensure_connected():
-            return False, "Could not connect to device."
+            return False, m("connection.device_failed")
         
         try:
             self._connection.send(data)
-            return True, f"Raw data sent: {data.hex()}"
+            return True, m("command.raw_sent", data=data.hex())
         except Exception as e:
             self._connection.connected = False
-            return False, f"Send error: {e}"
+            return False, m("command.send_error", details=str(e))
     
     def _ensure_connected(self) -> bool:
         """Ensure connected, attempting to connect if not."""
@@ -351,7 +349,7 @@ class BTController:
             # by the listener (or another command).
             if self._connection.connected:
                 return True
-            self._reset_identity_state("Disconnected during identity query.")
+            self._reset_identity_state(m("identity.disconnected"))
             self._connection.disconnect()
             if force_rediscovery:
                 self._bd_addr = None
@@ -397,16 +395,16 @@ class BTController:
                     time.monotonic() - disconnected_since >= self._STALE_CONNECTION_TIMEOUT
                 )
                 if force_rediscovery:
-                    self._update_status("Connection stale. Full reconnect...", "orange")
+                    self._update_status(m("connection.stale"), "orange")
 
                 if not self.reconnect(force_rediscovery=force_rediscovery):
                     attempts, reached_limit = self._record_reconnect_failure()
                     if reached_limit:
-                        self._update_status("Could not connect. Press Retry.", "red")
+                        self._update_status(m("connection.retry_limit"), "red")
                         self._notify_connection_event("reconnect_failed_limit")
                     else:
                         self._update_status(
-                            f"Reconnect failed ({attempts}/{self._max_reconnect_attempts}). Retrying in {RECONNECT_DELAY}s...",
+                            m("connection.retrying", attempts=attempts, maximum=self._max_reconnect_attempts, delay=RECONNECT_DELAY),
                             "orange"
                         )
                     time.sleep(RECONNECT_DELAY)
@@ -452,11 +450,11 @@ class BTController:
     
     def _handle_disconnect(self) -> None:
         """Handle connection loss."""
-        self._reset_identity_state("Disconnected during identity query.")
+        self._reset_identity_state(m("identity.disconnected"))
         self._connection.connected = False
-        self._update_status("Connection lost", "red")
+        self._update_status(m("connection.lost"), "red")
         self._notify_connection_state(
-            "failed", "The earbuds disconnected. Make sure they are powered on and within range."
+            "failed", m("connection.disconnected_reason")
         )
         self._notify_connection_event("disconnected")
         time.sleep(2)
@@ -467,5 +465,5 @@ class BTController:
     def stop(self) -> None:
         """Stop the controller."""
         self._running = False
-        self._reset_identity_state("Controller stopped during identity query.")
+        self._reset_identity_state(m("identity.stopped"))
         self._connection.disconnect()

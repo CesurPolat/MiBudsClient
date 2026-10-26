@@ -11,6 +11,22 @@ DEFAULT_LOW_LATENCY_MODE = "off"
 DEFAULT_LOW_LATENCY_HOLD_UNTIL_APP_CLOSE = True
 
 
+def get_language_preference() -> str:
+    """Old installations follow the system until a language is selected."""
+    from .i18n import LANGUAGE_CHOICES
+    value = _load_settings().get("language", "system")
+    return value if isinstance(value, str) and value in LANGUAGE_CHOICES else "system"
+
+
+def set_language_preference(language: str) -> None:
+    from .i18n import LANGUAGE_CHOICES
+    if language not in LANGUAGE_CHOICES:
+        return
+    settings = _load_settings()
+    settings["language"] = language
+    _save_settings(settings)
+
+
 DEFAULT_LOW_LATENCY_EXCEPTIONS_WINDOWS = [
     "explorer.exe",
     "vlc.exe",

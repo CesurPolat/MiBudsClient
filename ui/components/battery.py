@@ -1,5 +1,7 @@
 """Battery UI components."""
 
+from utils.i18n import t
+
 import flet as ft
 
 from ..constants import (
@@ -61,9 +63,9 @@ class BatteryPanel(ft.Container):
     """Panel displaying all three battery indicators."""
 
     def __init__(self):
-        self._left = BatteryIndicator("LEFT")
-        self._right = BatteryIndicator("RIGHT")
-        self._case = BatteryIndicator("CASE")
+        self._left = BatteryIndicator(t("battery.left"))
+        self._right = BatteryIndicator(t("battery.right"))
+        self._case = BatteryIndicator(t("battery.case"))
 
         super().__init__(
             content=ft.Row(

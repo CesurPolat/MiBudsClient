@@ -1,11 +1,16 @@
 """Route application pubsub messages to controllers and UI components."""
 
+from utils.i18n import t
+
 import time
 import threading
 from typing import Callable
 
 from .constants import BATTERY_UNKNOWN
 from .components.update_notification import show_update_notification
+from .localization import refresh_translations
+from utils.i18n import LANGUAGE_CHOICES, set_language
+from utils.user_preferences import set_language_preference
 
 
 class AppMessageHandler:
@@ -28,6 +33,7 @@ class AppMessageHandler:
         self._last_connection_event = None
         self._last_debug_toggle_at = 0.0
         self._routes = {
+            "language": self._handle_language,
             "gesture_settings": self._handle_gesture_settings,
             "catalog_device": self._handle_catalog_device,
             "connection_state": self._handle_connection_state,
@@ -43,6 +49,21 @@ class AppMessageHandler:
             "connection_event": self._handle_connection_event,
             "fullscreen_state": self._handle_fullscreen_state,
         }
+
+    def _handle_language(self, message: dict) -> None:
+        language = message.get("language")
+        if not isinstance(language, str) or language not in LANGUAGE_CHOICES:
+            return
+        set_language_preference(language)
+        set_language(language)
+        self._settings_card.language_selector.value = language
+        self._tray.refresh_menu()
+        self._update_page()
+
+    def _update_page(self) -> None:
+        refresh_translations(self._page.controls)
+        refresh_translations(self._page.overlay)
+        self._page.update()
 
     def handle(self, message) -> None:
         """Ignore unrelated messages and dispatch recognized message types."""
@@ -63,19 +84,19 @@ class AppMessageHandler:
             message.get("text", ""),
             message.get("color", "white")
         )
-        self._page.update()
+        self._update_page()
 
     def _handle_connection_state(self, message: dict) -> None:
         self._settings_card.update_connection_state(
             message.get("state", ""), message.get("reason", "")
         )
-        self._page.update()
+        self._update_page()
 
     def _handle_catalog_device(self, message: dict) -> None:
         self._device_status_card.update_catalog_device(
             message.get("name", ""), message.get("image_path", "")
         )
-        self._page.update()
+        self._update_page()
 
     def _handle_battery(self, message: dict) -> None:
         left = message.get("left", BATTERY_UNKNOWN)
@@ -85,17 +106,17 @@ class AppMessageHandler:
 
         self._device_status_card.update_battery(left, right, case, transient=transient)
 
-        self._page.update()
+        self._update_page()
 
     def _handle_device_identity(self, message: dict) -> None:
         self._settings_card.set_device_identity_result(message["text"])
-        self._page.update()
+        self._update_page()
 
     def _handle_gesture_settings(self, message: dict) -> None:
         self._settings_card.gestures.complete(
             message["token"], message["result"], message["capabilities"]
         )
-        self._page.update()
+        self._update_page()
 
     def _handle_window(self, message: dict) -> None:
         action = message.get("action")
@@ -114,13 +135,13 @@ class AppMessageHandler:
             if state["error"]:
                 text, color = state["error"], "red"
             elif mode == "auto":
-                text, color = "Automatic mode set", "blue" if enabled else "white"
+                text, color = t("latency.automatic_set"), "blue" if enabled else "white"
             elif mode == "on":
-                text, color = "Low Latency mode set", "blue"
+                text, color = t("latency.low_set"), "blue"
             else:
-                text, color = "Standard mode set", "white"
+                text, color = t("latency.standard_set"), "white"
             self._publish_status(text, color)
-            self._page.update()
+            self._update_page()
 
     def _handle_auto_hold_released(self, message: dict) -> None:
         self._latency.on_hold_released(str(message.get("app_id", "")))
@@ -151,12 +172,12 @@ class AppMessageHandler:
 
         result = self._debug_console.toggle_console()
         if result == "opened":
-            self._device_status_card.update_status("Debug console opened", "blue")
+            self._device_status_card.update_status(t("debug.opened"), "blue")
         elif result == "closed":
-            self._device_status_card.update_status("Debug console closed", "white")
+            self._device_status_card.update_status(t("debug.closed"), "white")
         else:
-            self._device_status_card.update_status("Debug console could not be opened", "red")
-        self._page.update()
+            self._device_status_card.update_status(t("debug.failed"), "red")
+        self._update_page()
 
     def _handle_connection_event(self, message: dict) -> None:
         event = message.get("event")
@@ -165,10 +186,10 @@ class AppMessageHandler:
 
         self._last_connection_event = event
         if event == "connected":
-            self._tray.notify("Earbuds connected")
+            self._tray.notify(t("tray.connected"))
         elif event == "disconnected":
             self._latency.clear_latency_hold()
-            self._tray.notify("Earbuds disconnected")
+            self._tray.notify(t("tray.disconnected"))
 
     def _handle_fullscreen_state(self, message: dict) -> None:
         is_fullscreen = bool(message.get("is_fullscreen", False))

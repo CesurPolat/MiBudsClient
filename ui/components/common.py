@@ -1,5 +1,7 @@
 """Common UI components."""
 
+from utils.i18n import t, render
+
 import flet as ft
 
 from utils.resource_manager import get_resource_path
@@ -14,16 +16,16 @@ from ..constants import (
 class StatusBar(ft.Text):
     """Status text display at the bottom of the app."""
 
-    def __init__(self, initial_text: str = "Status: Starting..."):
+    def __init__(self, initial_text: str | None = None):
         super().__init__(
-            value=initial_text,
+            value=render(initial_text) if initial_text is not None else t("status.starting"),
             color=COLOR_DISABLED,
             size=12
         )
 
     def update_status(self, text: str, color: str = COLOR_TEXT_PRIMARY) -> None:
         """Update the status text and color."""
-        self.value = f"Status: {text}"
+        self.value = t("status.message", text=text)
         self.color = color
 
 
@@ -86,7 +88,7 @@ class Footer(ft.Column):
     def __init__(self, version: str, github_url: str):
         super().__init__(
             controls=[
-                ft.Text(f"version {version}", color=COLOR_DISABLED, size=10),
+                ft.Text(t("footer.version", version=version), color=COLOR_DISABLED, size=10),
                 ft.TextButton(
                     content=ft.Text(
                         github_url.replace("https://", ""),

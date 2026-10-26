@@ -1,5 +1,7 @@
 """Coordinate device callbacks, battery requests, and reconnects for the UI."""
 
+from utils.i18n import message as m
+
 import threading
 import time
 from typing import Callable
@@ -47,7 +49,7 @@ class DeviceConnection:
         def reconnect_worker() -> None:
             try:
                 controller.resume_reconnect_attempts()
-                self.update_status("Connection lost. Reconnecting...", "orange")
+                self.update_status(m("connection.reconnecting"), "orange")
                 controller.reconnect(force_rediscovery=True)
             finally:
                 self._reset_reconnect()

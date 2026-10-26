@@ -1,5 +1,7 @@
 """Bind settings controls to startup, device, and latency actions."""
 
+from utils.i18n import message as m, error_message
+
 import threading
 from typing import Callable
 
@@ -12,12 +14,14 @@ class SettingsController:
     """Build the settings controls and handle their application callbacks."""
 
     def __init__(self, *, controller, latency, device_connection,
-                 publish: Callable[[dict], None], on_update: Callable[[], None]):
+                 publish: Callable[[dict], None], on_update: Callable[[], None],
+                 on_language_change: Callable | None = None):
         self._controller = controller
         self._device_connection = device_connection
         self._publish = publish
         self._on_update = on_update
         self.card = SettingsCard(
+            on_language_change=on_language_change,
             on_gesture_refresh=lambda: self.gestures.refresh(),
             on_gesture_assignment=lambda *args: self.gestures.assign(*args),
             on_update=on_update,
@@ -49,25 +53,25 @@ class SettingsController:
         enabled = e.control.value
         if set_startup(enabled):
             self._device_connection.update_status(
-                f"Startup {'enabled' if enabled else 'disabled'}",
+                m("startup.enabled" if enabled else "startup.disabled"),
                 "green" if enabled else "white"
             )
         else:
-            self._device_connection.update_status("Failed to change startup setting", "red")
+            self._device_connection.update_status(m("startup.failed"), "red")
             e.control.value = not enabled
             self._on_update()
 
     def on_check_device_identity(self, e):
         if self.card.identity_item.disabled:
             return
-        self.card.set_device_identity_result("Reading device identity...", pending=True)
+        self.card.set_device_identity_result(m("identity.reading"), pending=True)
         self._on_update()
 
         def query_identity():
             try:
                 success, message = self._controller.request_device_identity()
             except Exception as exc:
-                success, message = False, f"Device identity request failed: {exc}"
+                success, message = False, m("identity.failed", details=error_message(exc))
             self._publish({"type": "device_identity", "text": message})
             self._device_connection.update_status(message, "green" if success else "red")
 

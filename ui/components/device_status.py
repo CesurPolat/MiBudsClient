@@ -1,5 +1,7 @@
 """Device image, connection status, and battery summary card."""
 
+from utils.i18n import t
+
 import flet as ft
 
 from ..constants import COLOR_BG
@@ -47,6 +49,6 @@ class DeviceStatusCard(ft.Container):
     def update_battery(self, left: int, right: int, case: int, transient: bool = False) -> None:
         self.battery_panel.update_all(left, right, case)
         if transient:
-            self.update_status("Refreshing battery data...", "white")
+            self.update_status(t("battery.refreshing"), "white")
         else:
-            self.update_status("Battery data updated", "green")
+            self.update_status(t("battery.updated"), "green")

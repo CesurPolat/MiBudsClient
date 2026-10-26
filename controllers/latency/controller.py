@@ -1,5 +1,7 @@
 """Low latency mode policy, app rules, and hold-until-close handling."""
 
+from utils.i18n import message as m, error_message
+
 import subprocess
 import sys
 import threading
@@ -99,7 +101,7 @@ class LatencyController:
         self.clear_latency_hold()
         if self.state["effective_low_latency"]:
             if self.set_effective_latency_state(False, source="auto_hold_release"):
-                self._status("Tracked app closed. Standard mode restored", "white")
+                self._status(m("latency.app_closed"), "white")
 
     def active_low_latency_exceptions(self) -> set[str]:
         return set(self.low_latency_exceptions_by_platform.get(self.platform_key, []))
@@ -205,7 +207,7 @@ class LatencyController:
                     return
             self._status(message, color)
 
-        def disable_low_latency(message: str = "Standard mode restored") -> None:
+        def disable_low_latency(message: str = m("latency.standard_restored")) -> None:
             if self.state["effective_low_latency"]:
                 if not self.set_effective_latency_state(False, source=source):
                     return
@@ -213,7 +215,7 @@ class LatencyController:
 
         if selected_mode == "on":
             self.clear_latency_hold()
-            enable_low_latency("Low Latency enabled", "blue")
+            enable_low_latency(m("latency.enabled"), "blue")
             return
 
         if selected_mode == "off":
@@ -230,16 +232,16 @@ class LatencyController:
             matches = include_match or fullscreen_match
 
             if include_match:
-                enable_message = "Included app detected. Low Latency enabled"
+                enable_message = m("latency.included")
             else:
-                enable_message = "Fullscreen detected. Low Latency enabled"
+                enable_message = m("latency.fullscreen")
 
             if exclude_match:
-                disable_message = f"Auto low latency skipped for {normalized_app}"
+                disable_message = m("latency.skipped", app=normalized_app)
             elif include_match:
-                disable_message = "Included app left. Standard mode restored"
+                disable_message = m("latency.include_left")
             else:
-                disable_message = "Fullscreen ended. Standard mode restored"
+                disable_message = m("latency.fullscreen_ended")
 
             if matches:
                 if hold_enabled:
@@ -250,7 +252,7 @@ class LatencyController:
                 return
 
             if hold_enabled and current_hold and self.is_process_running(current_hold):
-                enable_low_latency(f"Keeping Low Latency until {current_hold} closes", "blue")
+                enable_low_latency(m("latency.keeping", app=current_hold), "blue")
                 return
 
             self.clear_latency_hold()
@@ -265,11 +267,11 @@ class LatencyController:
         controller = self._get_controller()
         try:
             if controller is None:
-                success, message = False, "Device controller is unavailable."
+                success, message = False, m("latency.unavailable")
             else:
                 success, message = controller.send_command("low" if new_state else "std")
         except Exception as exc:
-            success, message = False, f"Latency command failed: {exc}"
+            success, message = False, m("latency.failed", details=error_message(exc))
 
         if not success:
             self._last_error = message
@@ -370,7 +372,7 @@ class LatencyController:
         enabled = bool(e.control.value)
         self.set_hold_until_app_close_enabled(enabled)
         self._status(
-            f"Wait until app closes {'enabled' if enabled else 'disabled'}",
+            m("latency.wait_enabled" if enabled else "latency.wait_disabled"),
             "green" if enabled else "white",
         )
         self._on_ui_update()

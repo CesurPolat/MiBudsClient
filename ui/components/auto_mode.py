@@ -1,5 +1,7 @@
 """Auto mode UI components."""
 
+from utils.i18n import t
+
 import flet as ft
 from typing import Callable, Optional
 
@@ -42,7 +44,7 @@ class PlatformExceptionEditor(ft.Column):
                     self._field,
                     ft.IconButton(
                         icon=ft.Icons.ADD,
-                        tooltip="Add",
+                        tooltip=t("auto.add"),
                         on_click=self._add_value,
                     ),
                 ],
@@ -110,7 +112,7 @@ class PlatformExceptionEditor(ft.Column):
         if not self._values:
             self._list_column.controls = [
                 ft.Container(
-                    content=ft.Text("No entries.", size=12, color=COLOR_DISABLED),
+                    content=ft.Text(t("auto.empty"), size=12, color=COLOR_DISABLED),
                     padding=ft.padding.symmetric(horizontal=10, vertical=8),
                     bgcolor="#12161E",
                     border_radius=12,
@@ -126,7 +128,7 @@ class PlatformExceptionEditor(ft.Column):
                     title=ft.Text(item, size=13, color=COLOR_TEXT_PRIMARY),
                     trailing=ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINE,
-                        tooltip="Remove",
+                        tooltip=t("auto.remove"),
                         icon_color=COLOR_DISABLED,
                         on_click=lambda e, name=item: self._remove_value(name),
                     ),
@@ -192,13 +194,13 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
                     self._field,
                     ft.IconButton(
                         icon=ft.Icons.DO_NOT_DISTURB,
-                        tooltip="Add as exclude",
+                        tooltip=t("auto.exclude_add"),
                         icon_color="#FF8A80",
                         on_click=self._add_exclude,
                     ),
                     ft.IconButton(
                         icon=ft.Icons.CHECK_CIRCLE_OUTLINE,
-                        tooltip="Add as include",
+                        tooltip=t("auto.include_add"),
                         icon_color="#81C784",
                         on_click=self._add_include,
                     ),
@@ -215,14 +217,14 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
         self.wait_toggle = ToggleSettingItem(
             ft.Icons.TIMER,
             "teal_700",
-            "Wait until app closes",
+            t("auto.wait"),
             value=wait_until_app_close_enabled,
             on_change=on_wait_until_app_close_change,
         )
 
-        label_suffix = "(.exe)" if self._active_platform == "windows" else "(executable names)"
+        label_suffix = "(.exe)" if self._active_platform == "windows" else t("auto.executable_names")
         self._list_label = ft.Text(
-            f"{platform_text} process list {label_suffix}",
+            t("auto.process_list", platform=platform_text, suffix=label_suffix),
             size=12,
             weight="w600",
             color=COLOR_TEXT_PRIMARY,
@@ -241,13 +243,13 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
         header_text = ft.Column(
             controls=[
                 ft.Text(
-                    "Automatic Mode Settings",
+                    t("auto.title"),
                     color=COLOR_TEXT_PRIMARY,
                     size=14,
                     weight="w600",
                 ),
                 ft.Text(
-                    "Auto: fullscreen apps open Low Latency; includes force open, excludes skip.",
+                    t("auto.description"),
                     size=12,
                     color=COLOR_DISABLED,
                 ),
@@ -274,7 +276,7 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
                 self.wait_toggle,
                 ft.Container(
                     content=ft.Text(
-                        "When enabled, Low Latency stays active until the matched app closes.",
+                        t("auto.wait_description"),
                         size=11,
                         color=COLOR_DISABLED,
                     ),
@@ -370,7 +372,7 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
 
     def _build_mode_chip(self, value: str, mode: str, selected: bool) -> ft.Container:
         return ft.Container(
-            content=ft.Text(mode.capitalize(), size=11, weight="w600", color="white" if selected else COLOR_TEXT_PRIMARY),
+            content=ft.Text(t("auto." + mode), size=11, weight="w600", color="white" if selected else COLOR_TEXT_PRIMARY),
             bgcolor="#1976D2" if selected else "#2B2F3A",
             border=ft.border.all(1, "#4FC3F7" if selected else "#3B3F4A"),
             border_radius=999,
@@ -383,7 +385,7 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
         if not self._rules:
             self._list_column.controls = [
                 ft.Container(
-                    content=ft.Text("No entries.", size=12, color=COLOR_DISABLED),
+                    content=ft.Text(t("auto.empty"), size=12, color=COLOR_DISABLED),
                     padding=ft.padding.symmetric(horizontal=10, vertical=8),
                     bgcolor="#12161E",
                     border_radius=12,
@@ -402,7 +404,7 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
                     self._build_mode_chip(item, "include", mode == "include"),
                     ft.IconButton(
                         icon=ft.Icons.DELETE_OUTLINE,
-                        tooltip="Remove",
+                        tooltip=t("auto.remove"),
                         icon_color=COLOR_DISABLED,
                         on_click=lambda e, name=item: self._remove_rule(name),
                     ),

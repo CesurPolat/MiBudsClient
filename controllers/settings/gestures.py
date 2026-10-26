@@ -1,5 +1,7 @@
 """Run gesture requests off the UI thread and publish versioned completions."""
 
+from utils.i18n import message as m, error_message
+
 import threading
 
 from controllers.bluetooth.gestures import GestureResult
@@ -19,7 +21,7 @@ class GestureSettingsController:
 
     def _start(self, assignment):
         session = self._controller.gesture_session
-        token = self._panel.begin("Saving and verifying assignment..." if assignment else "Reading gesture settings...")
+        token = self._panel.begin(m("gesture.saving") if assignment else m("gesture.reading"))
         if token is None:
             return
         def work():
@@ -30,7 +32,7 @@ class GestureSettingsController:
                     result = self._controller.request_gesture_settings(session=session)
                 capabilities = self._controller.gesture_capabilities
             except Exception as exc:
-                result = GestureResult(False, message=f"Gesture request failed: {exc}")
+                result = GestureResult(False, message=m("gesture.failed", details=error_message(exc)))
                 capabilities = {}
             self._publish({"type": "gesture_settings", "token": token,
                            "result": result, "capabilities": capabilities})
