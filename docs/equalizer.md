@@ -1,6 +1,7 @@
 # Equalizer
 
-Settings → Equalizer reads config `0007` and `0037` separately. Presets come
+Opening Settings → Equalizer reads config `0007` and `0037` separately on
+every expansion. The separate Refresh button is hidden. Presets come
 from the exact Redmi Buds 6 Play catalog record. The custom editor requires a
 valid version-1, EQ-ID-1 band response; missing or unsupported custom data does
 not disable presets. No default ten-band curve is sent to the device.
@@ -9,7 +10,8 @@ The local curve is a draft. Releasing a slider sends a preview, while Save
 sends a separate persistence command. Reset requests the device's reset and
 verifies a zero-gain curve. Writes require acknowledgment; presets, save and
 reset also require matching readback. A failed operation keeps the draft
-visible but requires Refresh before more writes. Refresh replaces the draft
+visible but requires closing and reopening the section before more writes.
+Reopening replaces the draft
 with device data. Disconnect clears the device state and invalidates pending
 UI completions.
 

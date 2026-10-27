@@ -21,7 +21,7 @@ class EqualizerSettings(ft.Column):
         self.draft = ()
         self.status = ft.Text(t("eq.connect"), size=12, color=COLOR_DISABLED)
         self.refresh_button = ft.IconButton(icon=ft.Icons.REFRESH, tooltip=t("eq.refresh"),
-                                          disabled=True, on_click=lambda _: self._act("read"))
+                                          disabled=True, visible=False, on_click=lambda _: self._act("read"))
         self.profile = ft.Dropdown(label=t("eq.profile"), disabled=True, options=[],
                                    on_select=self._select, color=COLOR_TEXT_PRIMARY, filled=True)
         self.sliders = []
@@ -40,7 +40,7 @@ class EqualizerSettings(ft.Column):
         self._opened = not self._opened
         self.body.visible = self._opened
         self.toggle.trailing.icon = ft.Icons.EXPAND_LESS if self._opened else ft.Icons.CHEVRON_RIGHT
-        if self._opened and self._needs_refresh:
+        if self._opened:
             self._act("read")
         self._on_update()
 
