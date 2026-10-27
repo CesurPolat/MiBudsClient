@@ -20,6 +20,7 @@ from .connection import ConnectionPanel
 from .latency import LowLatencyModeSettingItem
 from .setting_items import SettingItem, ToggleSettingItem
 from .gestures import GestureSettings
+from .equalizer import EqualizerSettings
 
 
 class SettingsCard(ft.Container):
@@ -46,6 +47,7 @@ class SettingsCard(ft.Container):
         on_gesture_assignment: Optional[Callable] = None,
         on_update: Callable = lambda: None,
         on_language_change: Optional[Callable] = None,
+        on_eq_action: Optional[Callable] = None,
     ):
         self.latency_item = LowLatencyModeSettingItem(
             ft.Icons.SPEED, "blue_700", t("latency.title"),
@@ -100,6 +102,7 @@ class SettingsCard(ft.Container):
         )
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
+        self.equalizer = EqualizerSettings(on_eq_action, on_update)
         self.language_selector = ft.Dropdown(
             label=t("language.title"),
             value=get_language_preference(),
@@ -117,6 +120,8 @@ class SettingsCard(ft.Container):
             ft.Container(content=self.language_selector, padding=10),
             ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
             self.gestures,
+            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
+            self.equalizer,
             ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
             self.identity_item,
         ], spacing=0)
@@ -136,6 +141,7 @@ class SettingsCard(ft.Container):
         self.connection_panel.visible = not connected
         self.connected_controls.visible = connected
         self.gestures.set_connection(connected)
+        self.equalizer.set_connection(connected)
 
     def set_latency_mode(self, mode: str) -> None:
         self.latency_item.set_mode(mode)

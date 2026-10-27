@@ -13,6 +13,8 @@ from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
 from .gesture_transport import GestureTransport
+from .eq_transport import EqTransport
+from .equalizer import EqResult, eq_profiles
 from .gestures import GestureResult, gesture_capabilities
 from .constants import RECONNECT_DELAY
 from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, parse_identity_fields
@@ -57,6 +59,7 @@ class BTController:
         self._protocol = BudsProtocol()
         self._battery_parser = BatteryStreamParser()
         self._gestures = GestureTransport(self._connection)
+        self._equalizer = EqTransport(self._gestures)
         self._bd_addr = bd_addr
         self._device_name = ""
         self._running = True
@@ -263,6 +266,24 @@ class BTController:
         return self._gestures.generation
 
     @property
+    def eq_session(self):
+        return self._gestures.generation
+
+    @property
+    def eq_profiles(self):
+        return eq_profiles(self.device_name, self.device_identity)
+
+    def request_eq_settings(self, timeout=5.0, *, session=None):
+        if not self.eq_profiles:
+            return EqResult(False, message=m("eq.unsupported"))
+        return self._equalizer.read(timeout, session)
+
+    def apply_eq(self, operation, *, profile=None, bands=(), timeout=5.0, session=None):
+        if not self.eq_profiles or (operation == "profile" and profile not in self.eq_profiles):
+            return EqResult(False, message=m("eq.unsupported"))
+        return self._equalizer.apply(operation, profile=profile, bands=bands, timeout=timeout, session=session)
+
+    @property
     def gesture_capabilities(self):
         return gesture_capabilities(self.device_name, self.device_identity)
 
@@ -433,7 +454,7 @@ class BTController:
         packet_size = len(data)
         print(f"Received data size: {packet_size}")
         self._process_identity_data(data)
-        gesture_response = self._gestures.feed(data)
+        config_response = self._gestures.feed(data)
 
         # Check for battery data
         statuses = self._battery_parser.feed(data)
@@ -442,7 +463,7 @@ class BTController:
                 self._notify_battery(status.left, status.right, status.case)
         
         # Check for mode acknowledgment
-        elif not gesture_response and self._protocol.is_mode_ack_packet(packet_size):
+        elif not config_response and self._protocol.is_mode_ack_packet(packet_size):
             if last_packet_size != packet_size:
                 self._trigger_battery_check()
         

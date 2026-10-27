@@ -43,6 +43,7 @@ class AppMessageHandler:
         self._routes = {
             "language": self._handle_language,
             "gesture_settings": self._handle_gesture_settings,
+            "eq_settings": self._handle_eq_settings,
             "catalog_device": self._handle_catalog_device,
             "connection_state": self._handle_connection_state,
             "status": self._handle_status,
@@ -151,6 +152,12 @@ class AppMessageHandler:
     def _handle_gesture_settings(self, message: dict) -> None:
         self._settings_card.gestures.complete(
             message["token"], message["result"], message["capabilities"]
+        )
+        self._update_page()
+
+    def _handle_eq_settings(self, message: dict) -> None:
+        self._settings_card.equalizer.complete(
+            message["token"], message["result"], message["profiles"], message["operation"]
         )
         self._update_page()
 
