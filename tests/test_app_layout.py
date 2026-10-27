@@ -21,6 +21,8 @@ class AppLayoutTests(unittest.TestCase):
         self.assertEqual(layout.settings_content.opacity, 0)
         self.assertTrue(layout.settings_content.ignore_interactions)
         self.assertFalse(layout.back_button.visible)
+        self.assertIsNone(layout.home_content.top)
+        self.assertEqual(layout.settings_content.top, 0)
 
         layout.settings_button.on_click(None)
         self.assertEqual(layout.title.value, "Settings")
@@ -30,6 +32,8 @@ class AppLayoutTests(unittest.TestCase):
         self.assertEqual(layout.settings_content.opacity, 1)
         self.assertTrue(layout.back_button.visible)
         self.assertFalse(layout.settings_button.visible)
+        self.assertEqual(layout.home_content.top, 0)
+        self.assertIsNone(layout.settings_content.top)
 
         layout.back_button.on_click(None)
         self.assertEqual(layout.title.value, APP_TITLE)

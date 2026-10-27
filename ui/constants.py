@@ -8,6 +8,8 @@ APP_VERSION = "v0.2.0"
 GITHUB_URL = "https://github.com/CesurPolat/MiBudsClient"
 WINDOW_WIDTH = 550
 WINDOW_HEIGHT = 735
+WINDOW_MIN_WIDTH = 420
+WINDOW_MIN_HEIGHT = 400
 TRAY_ICON_PATH = "assets/icon.png"
 TRAY_ICON_SIZE = (64, 64)
 

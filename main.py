@@ -13,7 +13,7 @@ from utils import (
     release_instance_port,
 )
 from ui import (
-    APP_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG,
+    APP_TITLE, COLOR_BG,
     WindowManager, SystemTray
 )
 from ui.components import (
@@ -52,24 +52,16 @@ def main(page: ft.Page):
     page.padding = 20
     
     # Newer Flet API properties
-    page.window.width = WINDOW_WIDTH
-    page.window.height = WINDOW_HEIGHT
-    page.window.min_width = WINDOW_WIDTH
-    page.window.min_height = WINDOW_HEIGHT
-    page.window.max_width = WINDOW_WIDTH
-    page.window.max_height = WINDOW_HEIGHT
-    page.window.resizable = page.platform != ft.PagePlatform.WINDOWS
-    page.window.maximizable = False
     page.window.icon = "icon.ico" if page.platform == ft.PagePlatform.WINDOWS else "icon.png"  # Path relative to assets_dir
     
     page.scroll = "auto"
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
+    window_mgr = WindowManager(page)
     update_ui()
 
     # ─────────────────────────────────────────────────────────────────────────
     # Initialize Managers
     # ─────────────────────────────────────────────────────────────────────────
-    window_mgr = WindowManager(page)
     
     # Controller will be set after initialization
     controller_ref = {

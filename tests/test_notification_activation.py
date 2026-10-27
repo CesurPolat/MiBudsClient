@@ -7,6 +7,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
+import flet as ft
+
 from ui.system_tray import SystemTray
 from ui.window_manager import WindowManager
 from utils.image_notifications import ImageNotifications
@@ -14,7 +16,7 @@ from utils.image_notifications import ImageNotifications
 
 class NotificationActivationTests(unittest.TestCase):
     def test_activation_publishes_existing_window_show_route(self):
-        page = SimpleNamespace(window=Mock(), pubsub=Mock())
+        page = SimpleNamespace(window=Mock(), pubsub=Mock(), platform=ft.PagePlatform.WINDOWS)
         manager = WindowManager(page)
         tray = SystemTray(manager.show, Mock())
         tray._image_notifications._activate()

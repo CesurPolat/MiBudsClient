@@ -20,11 +20,13 @@ class AppLayout(ft.Column):
                  settings_card: SettingsCard, on_update: Callable[[], None]):
         self._on_update = on_update
         self.title = AppTitle(APP_TITLE)
-        transition = ft.Animation(220, ft.AnimationCurve.EASE_OUT_CUBIC)
+        transition = ft.Animation(280, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
         self.home_content = ft.Container(
             content=ft.Column(
                 controls=[device_status_card, settings_card.home_controls_card],
                 spacing=16,
+                tight=True,
+                horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
             ),
             opacity=1,
             offset=ft.Offset(0, 0),
@@ -33,6 +35,9 @@ class AppLayout(ft.Column):
         )
         self.settings_content = ft.Container(
             content=settings_card,
+            top=0,
+            left=0,
+            right=0,
             opacity=0,
             offset=ft.Offset(0.06, 0),
             ignore_interactions=True,
@@ -41,6 +46,7 @@ class AppLayout(ft.Column):
         )
         self.page_content = ft.Stack(
             controls=[self.home_content, self.settings_content],
+            fit=ft.StackFit.PASS_THROUGH,
             clip_behavior=ft.ClipBehavior.HARD_EDGE,
         )
 
@@ -73,13 +79,20 @@ class AppLayout(ft.Column):
                 self.page_content,
                 Spacer(height=5),
                 Footer(APP_VERSION, GITHUB_URL),
-                Spacer(height=10),
             ],
             spacing=10,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            tight=True,
+            horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
         )
 
     def show_settings(self, open_settings: bool) -> None:
+        # Only the active screen contributes to the Stack's natural height.
+        # Keep the inactive screen mounted for callbacks and form state.
+        for screen, active in ((self.home_content, not open_settings),
+                               (self.settings_content, open_settings)):
+            screen.top = None if active else 0
+            screen.left = None if active else 0
+            screen.right = None if active else 0
         self.home_content.opacity = 0 if open_settings else 1
         self.home_content.offset = ft.Offset(-0.06 if open_settings else 0, 0)
         self.home_content.ignore_interactions = open_settings
