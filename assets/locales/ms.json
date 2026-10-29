@@ -28,7 +28,7 @@
   "connection.retry_limit": "Tidak dapat menyambung. Tekan Cuba lagi.",
   "connection.no_device": "Tiada peranti Bluetooth yang bersambung ditemui.",
   "connection.no_catalog": "Tiada fon telinga yang bersambung ditemui dalam katalog. Hidupkan Bluetooth dan sambungkan fon telinga melalui tetapan sistem.",
-  "connection.timeout": "Fon telinga tidak memberi respons. Pastikan ia dihidupkan dan berdekatan.",
+  "connection.timeout": "Fon telinga tidak memberi respons. Pastikan ia dihidupkan dan berdekatan.\nJika masalah berterusan, matikan Bluetooth komputer, tunggu 10 saat, kemudian hidupkannya semula dan cuba sambung semula dalam MiBudsClient.\nJika masalah berterusan, letakkan kedua-dua fon telinga dalam bekas pengecas, tutup penutup sepenuhnya, tunggu 5 saat, kemudian keluarkannya dan cuba sambung semula.",
   "connection.permission": "Akses Bluetooth ditolak. Semak kebenaran sistem.",
   "connection.establish_failed": "Tidak dapat mewujudkan sambungan Bluetooth. Pastikan fon telinga dihidupkan dan bersambung.",
   "connection.disconnected_reason": "Sambungan fon telinga terputus. Pastikan ia dihidupkan dan dalam julat.",

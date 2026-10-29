@@ -28,7 +28,7 @@
   "connection.retry_limit": "無法連線。請按重試。",
   "connection.no_device": "找不到已連接的 Bluetooth 裝置。",
   "connection.no_catalog": "目錄中找不到已連接的耳機。請開啟 Bluetooth 並在系統設定中連接耳機。",
-  "connection.timeout": "耳機未回應。請確認耳機已開機且在附近。",
+  "connection.timeout": "耳機未回應。請確認耳機已開機且在附近。\n如果問題持續發生，請關閉電腦的藍牙，等待10秒後重新開啟，再於MiBudsClient重試連線。\n如果問題持續發生，請將兩隻耳機放入充電盒，完全蓋上盒蓋，等待5秒後取出耳機，再次嘗試連線。",
   "connection.permission": "Bluetooth 存取遭拒。請檢查系統權限。",
   "connection.establish_failed": "無法建立 Bluetooth 連線。請確認耳機已開機並已連接。",
   "connection.disconnected_reason": "耳機已中斷連線。請確認耳機已開機且在連線範圍內。",

@@ -28,7 +28,7 @@
   "connection.retry_limit": "Verbindung fehlgeschlagen. Drücke auf Erneut versuchen.",
   "connection.no_device": "Kein verbundenes Bluetooth-Gerät gefunden.",
   "connection.no_catalog": "Keine verbundenen Ohrhörer im Katalog gefunden. Aktiviere Bluetooth und verbinde die Ohrhörer in den Systemeinstellungen.",
-  "connection.timeout": "Die Ohrhörer haben nicht geantwortet. Stelle sicher, dass sie eingeschaltet und in der Nähe sind.",
+  "connection.timeout": "Die Ohrhörer haben nicht geantwortet. Stelle sicher, dass sie eingeschaltet und in der Nähe sind.\nFalls das Problem weiterhin besteht, schalte Bluetooth am Computer aus, warte 10 Sekunden, schalte es wieder ein und versuche die Verbindung in MiBudsClient erneut.\nFalls das Problem weiterhin besteht, lege beide Ohrhörer in das Ladecase, schließe den Deckel vollständig, warte 5 Sekunden, nimm sie heraus und versuche erneut, eine Verbindung herzustellen.",
   "connection.permission": "Bluetooth-Zugriff verweigert. Überprüfe die Systemberechtigungen.",
   "connection.establish_failed": "Bluetooth-Verbindung konnte nicht hergestellt werden. Stelle sicher, dass die Ohrhörer eingeschaltet und verbunden sind.",
   "connection.disconnected_reason": "Die Verbindung zu den Ohrhörern wurde getrennt. Stelle sicher, dass sie eingeschaltet und in Reichweite sind.",

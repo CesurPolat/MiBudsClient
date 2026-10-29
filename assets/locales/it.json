@@ -28,7 +28,7 @@
   "connection.retry_limit": "Impossibile connettersi. Premi Riprova.",
   "connection.no_device": "Nessun dispositivo Bluetooth collegato trovato.",
   "connection.no_catalog": "Nessun auricolare collegato trovato nel catalogo. Attiva il Bluetooth e collega gli auricolari dalle impostazioni di sistema.",
-  "connection.timeout": "Gli auricolari non hanno risposto. Assicurati che siano accesi e vicini.",
+  "connection.timeout": "Gli auricolari non hanno risposto. Assicurati che siano accesi e vicini.\nSe il problema persiste, disattiva il Bluetooth del computer, attendi 10 secondi, riattivalo e riprova la connessione in MiBudsClient.\nSe il problema persiste, riponi entrambi gli auricolari nella custodia di ricarica, chiudi completamente il coperchio, attendi 5 secondi, poi estraili e riprova la connessione.",
   "connection.permission": "Accesso Bluetooth negato. Controlla le autorizzazioni di sistema.",
   "connection.establish_failed": "Impossibile stabilire una connessione Bluetooth. Assicurati che gli auricolari siano accesi e collegati.",
   "connection.disconnected_reason": "Gli auricolari si sono scollegati. Assicurati che siano accesi e nel raggio di connessione.",

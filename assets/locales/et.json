@@ -28,7 +28,7 @@
   "connection.retry_limit": "Ühendamine ebaõnnestus. Vajuta Proovi uuesti.",
   "connection.no_device": "Ühendatud Bluetooth-seadet ei leitud.",
   "connection.no_catalog": "Kataloogist ei leitud ühendatud kõrvaklappe. Lülita Bluetooth sisse ja ühenda kõrvaklapid süsteemi seadetes.",
-  "connection.timeout": "Kõrvaklapid ei vastanud. Kontrolli, et need oleksid sisse lülitatud ja läheduses.",
+  "connection.timeout": "Kõrvaklapid ei vastanud. Kontrolli, et need oleksid sisse lülitatud ja läheduses.\nKui probleem püsib, lülita arvuti Bluetooth välja, oota 10 sekundit, lülita see uuesti sisse ja proovi MiBudsClientis uuesti ühendust luua.\nKui probleem püsib, pane mõlemad kõrvaklapid laadimiskarpi, sulge kaas täielikult, oota 5 sekundit, võta klapid välja ja proovi uuesti ühendust luua.",
   "connection.permission": "Bluetoothile juurdepääs keelati. Kontrolli süsteemi õigusi.",
   "connection.establish_failed": "Bluetooth-ühendust ei saanud luua. Kontrolli, et kõrvaklapid oleksid sisse lülitatud ja ühendatud.",
   "connection.disconnected_reason": "Kõrvaklappide ühendus katkes. Kontrolli, et need oleksid sisse lülitatud ja leviulatuses.",

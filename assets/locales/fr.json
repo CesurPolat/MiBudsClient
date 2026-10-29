@@ -28,7 +28,7 @@
   "connection.retry_limit": "Connexion impossible. Appuyez sur Réessayer.",
   "connection.no_device": "Aucun appareil Bluetooth connecté trouvé.",
   "connection.no_catalog": "Aucun écouteur connecté trouvé dans le catalogue. Activez le Bluetooth et connectez les écouteurs dans les paramètres du système.",
-  "connection.timeout": "Les écouteurs n’ont pas répondu. Vérifiez qu’ils sont allumés et à proximité.",
+  "connection.timeout": "Les écouteurs n’ont pas répondu. Vérifiez qu’ils sont allumés et à proximité.\nSi le problème persiste, désactivez le Bluetooth de votre ordinateur, attendez 10 secondes, réactivez-le et réessayez la connexion dans MiBudsClient.\nSi le problème persiste, placez les deux écouteurs dans le boîtier de charge, fermez complètement le couvercle, attendez 5 secondes, puis sortez-les et réessayez la connexion.",
   "connection.permission": "L’accès au Bluetooth a été refusé. Vérifiez les autorisations du système.",
   "connection.establish_failed": "Impossible d’établir une connexion Bluetooth. Vérifiez que les écouteurs sont allumés et connectés.",
   "connection.disconnected_reason": "Les écouteurs ont été déconnectés. Vérifiez qu’ils sont allumés et à portée.",

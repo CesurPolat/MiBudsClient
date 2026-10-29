@@ -28,7 +28,7 @@
   "connection.retry_limit": "Yhdistäminen epäonnistui. Paina Yritä uudelleen.",
   "connection.no_device": "Yhdistettyä Bluetooth-laitetta ei löytynyt.",
   "connection.no_catalog": "Luettelosta ei löytynyt yhdistettyjä kuulokkeita. Ota Bluetooth käyttöön ja yhdistä kuulokkeet järjestelmän asetuksissa.",
-  "connection.timeout": "Kuulokkeet eivät vastanneet. Varmista, että ne ovat päällä ja lähellä.",
+  "connection.timeout": "Kuulokkeet eivät vastanneet. Varmista, että ne ovat päällä ja lähellä.\nJos ongelma jatkuu, poista tietokoneen Bluetooth käytöstä, odota 10 sekuntia, ota se uudelleen käyttöön ja yritä yhteyttä uudelleen MiBudsClientissa.\nJos ongelma jatkuu, aseta molemmat kuulokkeet latauskoteloon, sulje kansi kokonaan, odota 5 sekuntia, ota kuulokkeet ulos ja yritä yhteyttä uudelleen.",
   "connection.permission": "Bluetoothin käyttö estettiin. Tarkista järjestelmän käyttöoikeudet.",
   "connection.establish_failed": "Bluetooth-yhteyttä ei voitu muodostaa. Varmista, että kuulokkeet ovat päällä ja yhdistetty.",
   "connection.disconnected_reason": "Kuulokkeiden yhteys katkesi. Varmista, että ne ovat päällä ja kantaman sisällä.",

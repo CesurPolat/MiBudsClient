@@ -28,7 +28,7 @@
   "connection.retry_limit": "Det gick inte att ansluta. Tryck på Försök igen.",
   "connection.no_device": "Ingen ansluten Bluetooth-enhet hittades.",
   "connection.no_catalog": "Inga anslutna hörlurar hittades i katalogen. Slå på Bluetooth och anslut hörlurarna i systeminställningarna.",
-  "connection.timeout": "Hörlurarna svarade inte. Kontrollera att de är påslagna och i närheten.",
+  "connection.timeout": "Hörlurarna svarade inte. Kontrollera att de är påslagna och i närheten.\nOm problemet kvarstår, stäng av Bluetooth på datorn, vänta 10 sekunder, slå på det igen och försök ansluta på nytt i MiBudsClient.\nOm problemet kvarstår, lägg båda hörlurarna i laddningsfodralet, stäng locket helt, vänta 5 sekunder, ta sedan ut dem och försök ansluta igen.",
   "connection.permission": "Bluetooth-åtkomst nekades. Kontrollera systembehörigheterna.",
   "connection.establish_failed": "Det gick inte att upprätta en Bluetooth-anslutning. Kontrollera att hörlurarna är påslagna och anslutna.",
   "connection.disconnected_reason": "Hörlurarna kopplades från. Kontrollera att de är påslagna och inom räckhåll.",

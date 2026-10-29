@@ -28,7 +28,7 @@
   "connection.retry_limit": "Tidak dapat terhubung. Tekan Coba lagi.",
   "connection.no_device": "Tidak ditemukan perangkat Bluetooth yang terhubung.",
   "connection.no_catalog": "Tidak ditemukan earbud yang terhubung dalam katalog. Aktifkan Bluetooth dan hubungkan earbud melalui setelan sistem.",
-  "connection.timeout": "Earbud tidak merespons. Pastikan earbud menyala dan berada di dekat Anda.",
+  "connection.timeout": "Earbud tidak merespons. Pastikan earbud menyala dan berada di dekat Anda.\nJika masalah berlanjut, matikan Bluetooth komputer, tunggu 10 detik, lalu nyalakan kembali dan coba sambungkan lagi di MiBudsClient.\nJika masalah berlanjut, masukkan kedua earbud ke dalam casing pengisi daya, tutup rapat, tunggu 5 detik, lalu keluarkan dan coba sambungkan lagi.",
   "connection.permission": "Akses Bluetooth ditolak. Periksa izin sistem.",
   "connection.establish_failed": "Tidak dapat membuat koneksi Bluetooth. Pastikan earbud menyala dan terhubung.",
   "connection.disconnected_reason": "Koneksi earbud terputus. Pastikan earbud menyala dan berada dalam jangkauan.",

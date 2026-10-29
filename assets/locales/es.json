@@ -28,7 +28,7 @@
   "connection.retry_limit": "No se pudo conectar. Pulsa Reintentar.",
   "connection.no_device": "No se encontró ningún dispositivo Bluetooth conectado.",
   "connection.no_catalog": "No se encontraron auriculares conectados en el catálogo. Activa Bluetooth y conéctalos desde los ajustes del sistema.",
-  "connection.timeout": "Los auriculares no respondieron. Comprueba que estén encendidos y cerca.",
+  "connection.timeout": "Los auriculares no respondieron. Comprueba que estén encendidos y cerca.\nSi el problema persiste, desactiva el Bluetooth del ordenador, espera 10 segundos, vuelve a activarlo e intenta conectarte de nuevo en MiBudsClient.\nSi el problema persiste, coloca ambos auriculares en el estuche de carga, cierra completamente la tapa, espera 5 segundos, sácalos e intenta conectarte de nuevo.",
   "connection.permission": "Se denegó el acceso a Bluetooth. Revisa los permisos del sistema.",
   "connection.establish_failed": "No se pudo establecer la conexión Bluetooth. Comprueba que los auriculares estén encendidos y conectados.",
   "connection.disconnected_reason": "Los auriculares se desconectaron. Comprueba que estén encendidos y dentro del alcance.",

@@ -28,7 +28,7 @@
   "connection.retry_limit": "Nie udało się połączyć. Naciśnij Spróbuj ponownie.",
   "connection.no_device": "Nie znaleziono połączonego urządzenia Bluetooth.",
   "connection.no_catalog": "W katalogu nie znaleziono połączonych słuchawek. Włącz Bluetooth i połącz słuchawki w ustawieniach systemu.",
-  "connection.timeout": "Słuchawki nie odpowiedziały. Sprawdź, czy są włączone i znajdują się w pobliżu.",
+  "connection.timeout": "Słuchawki nie odpowiedziały. Sprawdź, czy są włączone i znajdują się w pobliżu.\nJeśli problem nadal występuje, wyłącz Bluetooth na komputerze, odczekaj 10 sekund, włącz go ponownie i spróbuj ponownie połączyć się w MiBudsClient.\nJeśli problem nadal występuje, włóż obie słuchawki do etui ładującego, zamknij całkowicie pokrywę, odczekaj 5 sekund, a następnie wyjmij je i spróbuj ponownie się połączyć.",
   "connection.permission": "Odmowa dostępu do Bluetooth. Sprawdź uprawnienia systemowe.",
   "connection.establish_failed": "Nie udało się nawiązać połączenia Bluetooth. Sprawdź, czy słuchawki są włączone i połączone.",
   "connection.disconnected_reason": "Słuchawki zostały rozłączone. Sprawdź, czy są włączone i znajdują się w zasięgu.",

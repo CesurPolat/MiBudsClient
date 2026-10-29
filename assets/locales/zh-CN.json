@@ -28,7 +28,7 @@
   "connection.retry_limit": "无法连接，请点击重试。",
   "connection.no_device": "未找到已连接的蓝牙设备。",
   "connection.no_catalog": "未在目录中找到已连接的耳机。请开启蓝牙，并在系统蓝牙设置中连接耳机。",
-  "connection.timeout": "耳机未响应（连接超时）。请确保耳机已开机且在附近。",
+  "connection.timeout": "耳机未响应（连接超时）。请确保耳机已开机且在附近。\n如果问题仍然存在，请关闭电脑的蓝牙，等待10秒后重新开启，然后在MiBudsClient中重试连接。\n如果问题仍然存在，请将两只耳机放入充电盒，完全合上盒盖，等待5秒后取出耳机，再次尝试连接。",
   "connection.permission": "蓝牙访问被拒绝，请检查系统权限。",
   "connection.establish_failed": "无法建立蓝牙连接。请确保耳机已开机并已连接。",
   "connection.disconnected_reason": "耳机连接已断开。请确保耳机已开机且在连接范围内。",

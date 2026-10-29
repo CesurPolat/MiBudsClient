@@ -28,7 +28,7 @@
   "connection.retry_limit": "Não foi possível conectar. Pressione Tentar novamente.",
   "connection.no_device": "Nenhum dispositivo Bluetooth conectado foi encontrado.",
   "connection.no_catalog": "Nenhum fone conectado foi encontrado no catálogo. Ative o Bluetooth e conecte os fones nas configurações do sistema.",
-  "connection.timeout": "Os fones não responderam. Verifique se estão ligados e por perto.",
+  "connection.timeout": "Os fones não responderam. Verifique se estão ligados e por perto.\nSe o problema persistir, desligue o Bluetooth do computador, aguarde 10 segundos, ligue-o novamente e tente conectar de novo no MiBudsClient.\nSe o problema persistir, coloque os dois fones no estojo de carregamento, feche completamente a tampa, aguarde 5 segundos, retire-os e tente conectar novamente.",
   "connection.permission": "O acesso ao Bluetooth foi negado. Verifique as permissões do sistema.",
   "connection.establish_failed": "Não foi possível estabelecer a conexão Bluetooth. Verifique se os fones estão ligados e conectados.",
   "connection.disconnected_reason": "Os fones foram desconectados. Verifique se estão ligados e dentro do alcance.",

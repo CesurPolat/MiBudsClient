@@ -28,7 +28,7 @@
   "connection.retry_limit": "연결할 수 없습니다. 다시 시도를 누르세요.",
   "connection.no_device": "연결된 Bluetooth 기기를 찾을 수 없습니다.",
   "connection.no_catalog": "카탈로그에서 연결된 이어버드를 찾을 수 없습니다. Bluetooth를 켜고 시스템 설정에서 이어버드를 연결하세요.",
-  "connection.timeout": "이어버드가 응답하지 않았습니다. 전원이 켜져 있고 가까이 있는지 확인하세요.",
+  "connection.timeout": "이어버드가 응답하지 않았습니다. 전원이 켜져 있고 가까이 있는지 확인하세요.\n문제가 계속되면 컴퓨터의 Bluetooth를 끄고 10초 후에 다시 켠 다음 MiBudsClient에서 연결을 다시 시도하세요.\n문제가 계속되면 양쪽 이어버드를 충전 케이스에 넣고 뚜껑을 완전히 닫은 후 5초 동안 기다리세요. 그런 다음 이어버드를 꺼내 연결을 다시 시도하세요.",
   "connection.permission": "Bluetooth 접근이 거부되었습니다. 시스템 권한을 확인하세요.",
   "connection.establish_failed": "Bluetooth 연결을 설정할 수 없습니다. 이어버드의 전원이 켜져 있고 연결되어 있는지 확인하세요.",
   "connection.disconnected_reason": "이어버드 연결이 끊어졌습니다. 전원이 켜져 있고 연결 범위 안에 있는지 확인하세요.",

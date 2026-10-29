@@ -28,7 +28,7 @@
   "connection.retry_limit": "Nem sikerült csatlakozni. Nyomd meg az Újrapróbálkozás gombot.",
   "connection.no_device": "Nem található csatlakoztatott Bluetooth-eszköz.",
   "connection.no_catalog": "A katalógusban nincs csatlakoztatott fülhallgató. Kapcsold be a Bluetooth-t, és csatlakoztasd a rendszerbeállításokban.",
-  "connection.timeout": "A fülhallgató nem válaszolt. Ellenőrizd, hogy be van-e kapcsolva, és a közelben van-e.",
+  "connection.timeout": "A fülhallgató nem válaszolt. Ellenőrizd, hogy be van-e kapcsolva, és a közelben van-e.\nHa a probléma továbbra is fennáll, kapcsold ki a számítógép Bluetooth-funkcióját, várj 10 másodpercet, kapcsold vissza, majd próbálj újra csatlakozni a MiBudsClientben.\nHa a probléma továbbra is fennáll, tedd mindkét fülhallgatót a töltőtokba, csukd le teljesen a fedelet, várj 5 másodpercet, majd vedd ki őket, és próbálj újra csatlakozni.",
   "connection.permission": "A Bluetooth-hozzáférés megtagadva. Ellenőrizd a rendszerengedélyeket.",
   "connection.establish_failed": "Nem sikerült Bluetooth-kapcsolatot létesíteni. Ellenőrizd, hogy a fülhallgató be van-e kapcsolva és csatlakoztatva.",
   "connection.disconnected_reason": "A fülhallgató kapcsolata megszakadt. Ellenőrizd, hogy be van-e kapcsolva, és hatótávolságon belül van-e.",

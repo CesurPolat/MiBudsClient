@@ -28,7 +28,7 @@
   "connection.retry_limit": "Không thể kết nối. Nhấn Thử lại.",
   "connection.no_device": "Không tìm thấy thiết bị Bluetooth đã kết nối.",
   "connection.no_catalog": "Không tìm thấy tai nghe đã kết nối trong danh mục. Bật Bluetooth và kết nối tai nghe trong cài đặt hệ thống.",
-  "connection.timeout": "Tai nghe không phản hồi. Hãy bảo đảm tai nghe đang bật và ở gần.",
+  "connection.timeout": "Tai nghe không phản hồi. Hãy bảo đảm tai nghe đang bật và ở gần.\nNếu sự cố vẫn tiếp diễn, hãy tắt Bluetooth trên máy tính, chờ 10 giây, sau đó bật lại và thử kết nối lại trong MiBudsClient.\nNếu sự cố vẫn tiếp diễn, hãy đặt cả hai tai nghe vào hộp sạc, đóng kín nắp, chờ 5 giây, sau đó lấy tai nghe ra và thử kết nối lại.",
   "connection.permission": "Quyền truy cập Bluetooth bị từ chối. Kiểm tra quyền của hệ thống.",
   "connection.establish_failed": "Không thể thiết lập kết nối Bluetooth. Hãy bảo đảm tai nghe đang bật và đã kết nối.",
   "connection.disconnected_reason": "Tai nghe đã ngắt kết nối. Hãy bảo đảm tai nghe đang bật và trong phạm vi kết nối.",

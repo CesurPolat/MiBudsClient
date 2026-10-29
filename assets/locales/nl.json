@@ -28,7 +28,7 @@
   "connection.retry_limit": "Kan geen verbinding maken. Druk op Opnieuw proberen.",
   "connection.no_device": "Geen verbonden Bluetooth-apparaat gevonden.",
   "connection.no_catalog": "Geen verbonden oordopjes in de catalogus gevonden. Schakel Bluetooth in en verbind de oordopjes via de systeeminstellingen.",
-  "connection.timeout": "De oordopjes hebben niet gereageerd. Controleer of ze aanstaan en in de buurt zijn.",
+  "connection.timeout": "De oordopjes hebben niet gereageerd. Controleer of ze aanstaan en in de buurt zijn.\nAls het probleem aanhoudt, schakel Bluetooth op je computer uit, wacht 10 seconden, schakel het weer in en probeer opnieuw verbinding te maken in MiBudsClient.\nAls het probleem aanhoudt, plaats beide oordopjes in de oplaadcase, sluit het deksel volledig, wacht 5 seconden, haal ze eruit en probeer opnieuw verbinding te maken.",
   "connection.permission": "Bluetooth-toegang geweigerd. Controleer de systeemmachtigingen.",
   "connection.establish_failed": "Kan geen Bluetooth-verbinding maken. Controleer of de oordopjes aanstaan en verbonden zijn.",
   "connection.disconnected_reason": "De verbinding met de oordopjes is verbroken. Controleer of ze aanstaan en binnen bereik zijn.",

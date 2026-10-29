@@ -28,7 +28,7 @@
   "connection.retry_limit": "Bağlanılamadı. Yeniden Dene'ye basın.",
   "connection.no_device": "Bağlı Bluetooth cihazı bulunamadı.",
   "connection.no_catalog": "Katalogda bağlı kulaklık bulunamadı. Bluetooth'u açıp sistem Bluetooth ayarlarından kulaklığınızı bağlayın.",
-  "connection.timeout": "Kulaklık yanıt vermedi (bağlantı zaman aşımı). Açık ve yakında olduğundan emin olun.",
+  "connection.timeout": "Kulaklık yanıt vermedi (bağlantı zaman aşımı). Açık ve yakında olduğundan emin olun.\nSorun devam ederse bilgisayarınızın Bluetooth bağlantısını kapatın, 10 saniye bekleyip yeniden açın ve MiBudsClient üzerinden tekrar bağlanmayı deneyin.\nSorun devam ederse her iki kulaklığı şarj kutusuna koyun, kapağı tamamen kapatıp 5 saniye bekleyin. Ardından kulaklıkları çıkarıp tekrar bağlanmayı deneyin.",
   "connection.permission": "Bluetooth erişimi reddedildi. Sistem izinlerini kontrol edin.",
   "connection.establish_failed": "Bluetooth bağlantısı kurulamadı. Kulaklığınızın açık ve bağlı olduğundan emin olun.",
   "connection.disconnected_reason": "Kulaklığın bağlantısı kesildi. Açık ve kapsama alanında olduğundan emin olun.",

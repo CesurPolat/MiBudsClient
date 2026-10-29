@@ -28,7 +28,7 @@
   "connection.retry_limit": "接続できませんでした。再試行を押してください。",
   "connection.no_device": "接続済みのBluetoothデバイスが見つかりません。",
   "connection.no_catalog": "カタログに接続済みのイヤホンがありません。Bluetoothを有効にし、システム設定からイヤホンを接続してください。",
-  "connection.timeout": "イヤホンが応答しませんでした。電源が入っていて近くにあることを確認してください。",
+  "connection.timeout": "イヤホンが応答しませんでした。電源が入っていて近くにあることを確認してください。\n問題が解決しない場合は、パソコンのBluetoothをオフにして10秒待ってから再度オンにし、MiBudsClientで接続を再試行してください。\n問題が解決しない場合は、両方のイヤホンを充電ケースに入れ、ふたを完全に閉めて5秒待ってから取り出し、接続を再試行してください。",
   "connection.permission": "Bluetoothへのアクセスが拒否されました。システムの権限を確認してください。",
   "connection.establish_failed": "Bluetooth接続を確立できませんでした。イヤホンの電源が入り、接続されていることを確認してください。",
   "connection.disconnected_reason": "イヤホンの接続が切れました。電源が入り、接続範囲内にあることを確認してください。",

@@ -28,7 +28,7 @@
   "connection.retry_limit": "Could not connect. Press Retry.",
   "connection.no_device": "No connected Bluetooth device found.",
   "connection.no_catalog": "No connected earbuds found in the catalog. Turn on Bluetooth and connect your earbuds in the system Bluetooth settings.",
-  "connection.timeout": "The earbuds did not respond (connection timed out). Make sure they are nearby and powered on.",
+  "connection.timeout": "The earbuds did not respond (connection timed out). Make sure they are nearby and powered on.\nIf the problem persists, turn Bluetooth off on your computer, wait 10 seconds, then turn it back on and retry the connection in MiBudsClient.\nIf the problem persists, place both earbuds in the charging case, close the lid completely, wait 5 seconds, then take them out and try connecting again.",
   "connection.permission": "Bluetooth access was denied. Check your system permissions.",
   "connection.establish_failed": "Could not establish a Bluetooth connection. Make sure your earbuds are powered on and connected.",
   "connection.disconnected_reason": "The earbuds disconnected. Make sure they are powered on and within range.",
