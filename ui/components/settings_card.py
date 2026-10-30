@@ -15,6 +15,8 @@ from ..constants import (
     COLOR_DISABLED,
 )
 
+from controllers.bluetooth.capabilities import DeviceCapabilities
+
 from .auto_mode import AutoModeSettingsAccordion
 from .connection import ConnectionPanel
 from .latency import LowLatencyModeSettingItem
@@ -49,6 +51,8 @@ class SettingsCard(ft.Container):
         on_language_change: Optional[Callable] = None,
         on_eq_action: Optional[Callable] = None,
     ):
+        self._capabilities = DeviceCapabilities()
+        self._connected = False
         self.latency_item = LowLatencyModeSettingItem(
             ft.Icons.SPEED, "blue_700", t("latency.title"),
             value=low_latency_mode,
@@ -82,14 +86,12 @@ class SettingsCard(ft.Container):
         )
 
         self.connection_panel = ConnectionPanel()
+        self.battery_item = SettingItem(ft.Icons.REFRESH, "grey700", t("battery.check"), on_click=on_check_battery)
         self.connected_controls = ft.Column([
                 self.latency_item,
                 self.auto_settings,
                 ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-                SettingItem(
-                    ft.Icons.REFRESH, "grey700", t("battery.check"),
-                    on_click=on_check_battery,
-                ),
+                self.battery_item,
             ], spacing=0, visible=False)
         self.home_controls_card = ft.Container(
             content=ft.Column([
@@ -103,6 +105,7 @@ class SettingsCard(ft.Container):
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
         self.equalizer = EqualizerSettings(on_eq_action, on_update)
+        self.device_components = {"gestures": self.gestures, "eq": self.equalizer}
         self.language_selector = ft.Dropdown(
             label=t("language.title"),
             value=get_language_preference(),
@@ -114,18 +117,8 @@ class SettingsCard(ft.Container):
             filled=True,
             expand=True,
         )
-        items = ft.Column([
-            self.startup_item,
-            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-            ft.Container(content=self.language_selector, padding=10),
-            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-            self.gestures,
-            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-            self.equalizer,
-            ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-            self.identity_item,
-        ], spacing=0)
-
+        self._language_container = ft.Container(content=self.language_selector, padding=10)
+        items = ft.Column(spacing=0)
 
         super().__init__(
             content=items,
@@ -133,15 +126,47 @@ class SettingsCard(ft.Container):
             border_radius=CARD_BORDER_RADIUS,
             padding=10
         )
+        self._render_capabilities()
+
+    def set_capabilities(self, capabilities):
+        if capabilities != self._capabilities:
+            self.gestures.set_connection(False)
+            self.equalizer.set_connection(False)
+        self._capabilities = capabilities
+        self.equalizer.custom_supported = capabilities.supports("custom_eq")
+        self._render_capabilities()
+
+    def _render_capabilities(self):
+        caps = self._capabilities
+        self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
+        self.battery_item.visible = self._connected and caps.supports("battery")
+        controls = [self.latency_item, self.auto_settings] if self.latency_item.visible else []
+        if self.battery_item.visible:
+            if controls:
+                controls.append(ft.Divider(color=COLOR_DIVIDER, thickness=0.5))
+            controls.append(self.battery_item)
+        self.connected_controls.controls = controls
+        self.home_controls_card.visible = not self._connected or bool(controls)
+        for feature, panel in self.device_components.items():
+            panel.visible = self._connected and caps.supports(feature)
+            panel.set_connection(panel.visible)
+        sections = [self.startup_item, self._language_container]
+        sections.extend(panel for panel in self.device_components.values() if panel.visible)
+        sections.append(self.identity_item)
+        self.content.controls = []
+        for section in sections:
+            if self.content.controls:
+                self.content.controls.append(ft.Divider(color=COLOR_DIVIDER, thickness=0.5))
+            self.content.controls.append(section)
 
     def update_connection_state(self, state: str, reason: str = "") -> None:
         """Show device controls only while the earbuds are connected."""
         self.connection_panel.update_connection_state(state, reason)
         connected = state == "connected"
+        self._connected = connected
         self.connection_panel.visible = not connected
         self.connected_controls.visible = connected
-        self.gestures.set_connection(connected)
-        self.equalizer.set_connection(connected)
+        self._render_capabilities()
 
     def set_latency_mode(self, mode: str) -> None:
         self.latency_item.set_mode(mode)

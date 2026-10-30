@@ -15,11 +15,13 @@ class EqTransport:
     def _exchange(self, opcode, builder, config, timeout, session):
         return self.channel.exchange(opcode, builder, timeout, session, config)
 
-    def read(self, timeout=5.0, session=None):
+    def read(self, timeout=5.0, session=None, *, custom=True):
         session = self.channel.generation if session is None else session
         with self.channel.transaction():
+            include_custom = custom
             profile, custom, errors = None, None, []
-            for config, parser in ((7, parse_profile), (55, parse_custom_eq)):
+            configs = ((7, parse_profile), (55, parse_custom_eq)) if include_custom else ((7, parse_profile),)
+            for config, parser in configs:
                 try:
                     data = self._exchange(0xF3, lambda ss: build_eq_request(ss, config), config, timeout, session)
                     value = parser(data)
@@ -36,7 +38,7 @@ class EqTransport:
             self._session = session
             if self._state is None:
                 return EqResult(False, message=m("eq.failed", details="; ".join(errors)))
-            return EqResult(True, state, m("eq.loaded") if custom else m("eq.presets_only"))
+            return EqResult(True, state, m("eq.loaded") if custom or not include_custom else m("eq.presets_only"))
 
     def apply(self, operation, *, profile=None, bands=(), timeout=5.0, session=None):
         session = self.channel.generation if session is None else session

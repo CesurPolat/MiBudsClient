@@ -5,6 +5,7 @@ import time
 import re
 from urllib.parse import unquote, urlsplit
 
+from controllers.bluetooth.capabilities import resolve_capabilities
 from controllers.bluetooth.device_catalog import get_device_models_by_name, install_catalog
 from utils.mibuds_api import CatalogClient
 
@@ -21,6 +22,7 @@ class CatalogSync:
         self.cached_device = self.client.load_last_device_image()
         self._last_presentation = self.cached_device if self.cached_device[1] else None
         self._awaiting_first_device = True
+        self._last_capabilities = None
 
     def start(self):
         self._thread = threading.Thread(target=self._run, daemon=True)
@@ -45,6 +47,10 @@ class CatalogSync:
             models = identity.models
         else:
             models = get_device_models_by_name(device_name)
+        capabilities = resolve_capabilities(device_name, identity)
+        if capabilities != self._last_capabilities:
+            self._last_capabilities = capabilities
+            self._publish({"type": "capabilities_changed"})
         normalized_name = " ".join(device_name.split()).casefold()
         model = next((item for item in models
                       if " ".join(item["name"].split()).casefold() == normalized_name),

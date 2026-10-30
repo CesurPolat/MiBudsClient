@@ -38,21 +38,9 @@ class EqResult:
 
 
 def eq_profiles(device_name, identity=None):
-    from .device_catalog import get_device_models_by_name
-    from utils.mibuds_api import parse_extra_data
-    models = identity.models if identity is not None else get_device_models_by_name(device_name)
-    models = [model for model in models if model["name"].strip().casefold() == "redmi buds 6 play"]
-    if len(models) != 1:
-        return ()
-    for function in models[0].get("func_list", []):
-        if function.get("func_id") != 2016:
-            continue
-        effects = parse_extra_data(function.get("extra_data")).get("sound_effect", {})
-        effects = effects.get("effects", []) if isinstance(effects, dict) else effects
-        if isinstance(effects, list):
-            return tuple(dict.fromkeys(value for value in effects
-                                       if type(value) is int and value in PROFILE_KEYS))
-    return ()
+    from .capabilities import resolve_capabilities
+    caps = resolve_capabilities(device_name, identity)
+    return caps.profiles if caps.supports("eq") else ()
 
 
 def _frame(opcode, counter, payload):

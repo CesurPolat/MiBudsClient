@@ -20,7 +20,8 @@ class AppMessageHandler:
 
     def __init__(self, *, page, device_status_card, settings_card, window_manager,
                  latency, tray, debug_console, on_window_show: Callable,
-                 get_game_monitor: Callable, on_catalog_stop: Callable | None = None):
+                 get_game_monitor: Callable, on_catalog_stop: Callable | None = None, get_capabilities: Callable | None = None):
+        self._get_capabilities = get_capabilities
         self._page = page
         self._device_status_card = device_status_card
         self._settings_card = settings_card
@@ -41,6 +42,7 @@ class AppMessageHandler:
         self._connection_notification_pending = False
         self._last_debug_toggle_at = 0.0
         self._routes = {
+            "capabilities_changed": self._handle_capabilities_changed,
             "language": self._handle_language,
             "gesture_settings": self._handle_gesture_settings,
             "eq_settings": self._handle_eq_settings,
@@ -59,6 +61,14 @@ class AppMessageHandler:
             "connection_notification_timeout": self._handle_connection_notification_timeout,
             "fullscreen_state": self._handle_fullscreen_state,
         }
+
+    def _handle_capabilities_changed(self, message):
+        if self._get_capabilities is not None:
+            capabilities = self._get_capabilities()
+            self._settings_card.set_capabilities(capabilities)
+            self._latency.set_device_capabilities(capabilities)
+            self._tray.refresh_menu()
+        self._update_page()
 
     def _handle_language(self, message: dict) -> None:
         language = message.get("language")
@@ -98,6 +108,11 @@ class AppMessageHandler:
         self._update_page()
 
     def _handle_connection_state(self, message: dict) -> None:
+        if self._get_capabilities is not None:
+            capabilities = self._get_capabilities()
+            self._settings_card.set_capabilities(capabilities)
+            self._latency.set_device_capabilities(capabilities)
+            self._tray.refresh_menu()
         if message.get("state") in {"connecting", "failed"}:
             with self._notification_lock:
                 # Preserve the last sample for the disconnect description, but

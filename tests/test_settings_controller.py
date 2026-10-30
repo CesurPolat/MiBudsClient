@@ -1,3 +1,4 @@
+from controllers.bluetooth.capabilities import resolve_capabilities
 """Settings callbacks preserve startup and device identity behavior."""
 
 import unittest
@@ -70,7 +71,9 @@ class SettingsControllerTests(unittest.TestCase):
 
     def test_home_battery_button_and_initial_settings_remain_wired(self):
         card = self.settings.card
-        card.connected_controls.controls[-1].on_click(None)
+        card.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
+        card.update_connection_state("connected")
+        card.battery_item.on_click(None)
         self.device.request_battery.assert_called_once_with()
         self.assertTrue(card.startup_switch.value)
         self.assertEqual(card.latency_item.value, "auto")

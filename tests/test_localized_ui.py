@@ -1,3 +1,4 @@
+from controllers.bluetooth.capabilities import resolve_capabilities
 """Live language changes preserve controls, pending requests, and user input."""
 
 import unittest
@@ -28,6 +29,7 @@ class LocalizedUITests(unittest.TestCase):
         self.assign = Mock()
         self.refresh = Mock()
         self.settings = SettingsCard(on_gesture_assignment=self.assign, on_gesture_refresh=self.refresh)
+        self.settings.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
         self.device = DeviceStatusCard()
         self.layout = AppLayout(self.device, self.settings, Mock())
         self.page = SimpleNamespace(controls=[self.layout], overlay=[], update=Mock(), pubsub=Mock())

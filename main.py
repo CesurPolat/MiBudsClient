@@ -89,6 +89,7 @@ def main(page: ft.Page):
         on_exit=tray_exit_request,
         on_latency_mode_select=latency.select_latency_mode_from_tray,
         get_latency_mode=lambda: latency.state["selected_mode"],
+        latency_available=lambda: controller_ref["instance"] is not None and controller_ref["instance"].capabilities.supports("latency"),
     )
     tray_ref["instance"] = tray
 
@@ -173,6 +174,7 @@ def main(page: ft.Page):
         on_window_show=device_connection.reconnect_on_show,
         get_game_monitor=lambda: controller_ref["game_monitor"],
         on_catalog_stop=catalog_sync.stop,
+        get_capabilities=lambda: controller.capabilities,
     )
     page.pubsub.subscribe(message_handler.handle)
     catalog_sync.start()

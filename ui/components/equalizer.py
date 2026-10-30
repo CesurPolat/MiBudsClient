@@ -11,6 +11,7 @@ class EqualizerSettings(ft.Column):
     def __init__(self, on_action=None, on_update=lambda: None):
         self._on_action = on_action
         self._on_update = on_update
+        self.custom_supported = True
         self._connected = False
         self._opened = False
         self._busy = False
@@ -59,6 +60,8 @@ class EqualizerSettings(ft.Column):
             self._act("read")
 
     def _act(self, operation, **kwargs):
+        if operation not in ("read", "profile") and not self.custom_supported:
+            return
         if not self._connected or self._busy or (operation != "read" and self._needs_refresh):
             return
         if self._on_action:
@@ -122,7 +125,7 @@ class EqualizerSettings(ft.Column):
             self.profile.options.append(ft.dropdown.Option(str(current), t("eq.current", code=f"{current:02X}"), disabled=True))
         self.profile.value = str(current) if current is not None else None
         self.profile.disabled = not enabled or current is None or not self._profiles
-        self.custom_body.visible = bool(self._state and self._state.custom)
+        self.custom_body.visible = bool(self.custom_supported and self._state and self._state.custom)
         self.save_button.disabled = self.reset_button.disabled = not (enabled and self.custom_body.visible)
         self.sliders = []
         self.rows.controls = []

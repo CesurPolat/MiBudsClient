@@ -23,29 +23,9 @@ class GestureResult:
 
 
 def gesture_capabilities(device_name: str, identity=None) -> dict[int, tuple[int, ...]]:
-    """Use the exact model record, never a related product's functions."""
-    # UI also imports the labels above during package initialization.
-    from .device_catalog import get_device_models_by_name
-    from utils.mibuds_api import parse_extra_data
-
-    if identity is not None:
-        models = identity.models
-    else:
-        models = get_device_models_by_name(device_name)
-    models = [model for model in models if model["name"].strip().casefold() == _MODEL]
-    if len(models) != 1:
-        return {}
-    capabilities = {}
-    for function in models[0].get("func_list", []):
-        gesture = _FUNCTION_TYPES.get(function.get("func_id"))
-        actions = parse_extra_data(function.get("extra_data")).get("click_action")
-        if gesture is not None and isinstance(actions, list):
-            # Noise control is outside this model's gesture editor scope.
-            allowed = tuple(dict.fromkeys(action for action in actions
-                            if type(action) is int and action in ACTION_NAMES and action != 6))
-            if allowed:
-                capabilities[gesture] = allowed
-    return capabilities
+    from .capabilities import resolve_capabilities
+    caps = resolve_capabilities(device_name, identity)
+    return caps.gestures if caps.supports("gestures") else {}
 
 
 def _check_counter(counter: int) -> None:

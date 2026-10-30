@@ -8,6 +8,7 @@ import time
 from dataclasses import dataclass
 from typing import Callable, Optional
 
+from .capabilities import resolve_capabilities, DeviceCapabilities
 from .connection import BluetoothConnection
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
@@ -204,6 +205,8 @@ class BTController:
             return False, m("connection.device_failed")
         
         try:
+            if not self.capabilities.supports("latency"):
+                return False, m("connection.device_failed")
             payload = self._protocol.build_mode_command(mode)
             self._connection.send(payload)
             return True, m("command.mode_sent", mode=m("mode.low" if mode == "low" else "mode.standard"))
@@ -221,6 +224,8 @@ class BTController:
             return False, m("connection.device_failed")
         
         try:
+            if not self.capabilities.supports("battery"):
+                return False, m("connection.device_failed")
             payload = self._protocol.build_battery_request()
             self._connection.send(payload)
             return True, m("battery.sent")
@@ -263,6 +268,10 @@ class BTController:
                     self._identity_pending = None
 
     @property
+    def capabilities(self):
+        return resolve_capabilities(self.device_name, self.device_identity) if self.connected else DeviceCapabilities()
+
+    @property
     def gesture_session(self):
         return self._gestures.generation
 
@@ -275,12 +284,14 @@ class BTController:
         return eq_profiles(self.device_name, self.device_identity)
 
     def request_eq_settings(self, timeout=5.0, *, session=None):
-        if not self.eq_profiles:
+        if not self.capabilities.supports("eq"):
             return EqResult(False, message=m("eq.unsupported"))
-        return self._equalizer.read(timeout, session)
+        return self._equalizer.read(timeout, session, custom=self.capabilities.supports("custom_eq"))
 
     def apply_eq(self, operation, *, profile=None, bands=(), timeout=5.0, session=None):
-        if not self.eq_profiles or (operation == "profile" and profile not in self.eq_profiles):
+        if operation != "profile" and not self.capabilities.supports("custom_eq"):
+            return EqResult(False, message=m("eq.unsupported"))
+        if not self.capabilities.supports("eq") or (operation == "profile" and profile not in self.eq_profiles):
             return EqResult(False, message=m("eq.unsupported"))
         return self._equalizer.apply(operation, profile=profile, bands=bands, timeout=timeout, session=session)
 
@@ -382,6 +393,8 @@ class BTController:
     
     def on_connect_setup(self):
             """Send a sequence of packets on connection."""
+            if not self.capabilities.supports("battery"):
+                return
             packets = [
                 "fedcba04510003000301ef"
             ]

@@ -1,3 +1,4 @@
+from controllers.bluetooth.capabilities import resolve_capabilities
 """Flet states and background gesture completion routing without hardware."""
 
 import unittest
@@ -117,6 +118,7 @@ class GestureSettingsTests(unittest.TestCase):
 
     def test_card_connection_state_reaches_gesture_panel(self):
         card = SettingsCard()
+        card.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
         card.update_connection_state("connected")
         self.assertFalse(card.gestures.refresh_button.disabled)
         card.update_connection_state("failed")

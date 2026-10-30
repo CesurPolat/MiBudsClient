@@ -3,7 +3,7 @@
 ## Must-follow constraints
 
 - **Windows and Linux support.** Bluetooth discovery can use platform-specific implementations (Windows: PowerShell via `subprocess` + `Get-PnpDevice`, Linux: native Linux-compatible discovery). Keep behavior consistent across supported platforms.
-- **Redmi Buds 6 Play only.** Supported device is hardcoded. Protocol parsing (battery pattern, mode commands) is device-specific; changes require testing on actual hardware.
+- **Model-specific support.** Catalog features describe UI capabilities, not protocol compatibility. Existing codecs remain limited to Redmi Buds 6 Play. Enable additional model backends only after model-specific protocol and actual hardware validation.
 - **Single RFCOMM port.** RFCOMM_PORT = 6 in `controllers/bluetooth/constants.py`. Do not make this configurable.
 - **Assets directory bundling.** Build uses `datas=[('assets', 'assets')]` in PyInstaller spec. All UI assets (icon.ico, images) must stay in `assets/` folder.
 - **Single instance enforcement.** Application forbids multiple running instances via port 65432. Do not remove or change `check_for_existing_instance()` at app startup.

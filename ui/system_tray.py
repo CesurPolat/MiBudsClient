@@ -25,7 +25,9 @@ class SystemTray:
         on_exit: Callable,
         on_latency_mode_select: Optional[Callable[[str], None]] = None,
         get_latency_mode: Optional[Callable[[], str]] = None,
+        latency_available: Callable[[], bool] = lambda: False,
     ):
+        self.latency_available = latency_available
         self.on_show = on_show
         self.on_exit = on_exit
         self.on_latency_mode_select = on_latency_mode_select
@@ -49,16 +51,19 @@ class SystemTray:
                     pystray.MenuItem(
                         lambda item: t("tray.off"),
                         lambda icon, item: self._on_mode_select("off"),
+                        visible=lambda item: self.latency_available(),
                         checked=lambda item: self._is_mode("off"),
                     ),
                     pystray.MenuItem(
                         lambda item: t("tray.auto"),
                         lambda icon, item: self._on_mode_select("auto"),
+                        visible=lambda item: self.latency_available(),
                         checked=lambda item: self._is_mode("auto"),
                     ),
                     pystray.MenuItem(
                         lambda item: t("tray.on"),
                         lambda icon, item: self._on_mode_select("on"),
+                        visible=lambda item: self.latency_available(),
                         checked=lambda item: self._is_mode("on"),
                     ),
                     pystray.Menu.SEPARATOR,
@@ -92,7 +97,7 @@ class SystemTray:
 
     def _on_mode_select(self, mode: str) -> None:
         """Select latency mode from tray menu."""
-        if self.on_latency_mode_select:
+        if self.latency_available() and self.on_latency_mode_select:
             self.on_latency_mode_select(mode)
 
     def refresh_menu(self) -> None:

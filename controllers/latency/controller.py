@@ -40,6 +40,7 @@ class LatencyController:
         self._last_error = None
         self._publish = publish
         self._get_controller = get_controller
+        self._device_capabilities = None
         self._get_tray = get_tray
         self._on_rules_change = on_rules_change
         self._on_ui_update = on_ui_update
@@ -54,6 +55,17 @@ class LatencyController:
         self.platform_key = "windows" if sys.platform.startswith("win") else "linux"
         self.low_latency_exceptions_by_platform = get_all_low_latency_exceptions()
         self.low_latency_includes_by_platform = get_all_low_latency_includes()
+
+    @_serialized
+    def set_device_capabilities(self, capabilities) -> None:
+        """Forget the previous device's effective mode without sending packets."""
+        if capabilities == self._device_capabilities:
+            return
+        self._device_capabilities = capabilities
+        self.clear_latency_hold()
+        self.state["effective_low_latency"] = False
+        self._last_error = None
+        self._publish_latency("device")
 
     def get_display_state(self) -> dict:
         """Return the current controller-owned state, rather than a queued message."""
@@ -196,6 +208,11 @@ class LatencyController:
 
     @_serialized
     def apply_monitor_latency_policy(self, is_fullscreen: bool, app_id: str, source: str = "monitor") -> None:
+        controller = self._get_controller()
+        if controller is not None and not controller.capabilities.supports("latency"):
+            self.clear_latency_hold()
+            self.state["effective_low_latency"] = False
+            return
         normalized_app = (app_id or "").strip().lower()
         selected_mode = self.state["selected_mode"]
         hold_enabled = bool(self.state["hold_until_app_close_enabled"])
@@ -265,6 +282,10 @@ class LatencyController:
     @_serialized
     def set_effective_latency_state(self, new_state: bool, source: str = "manual") -> bool:
         controller = self._get_controller()
+        if controller is not None and not controller.capabilities.supports("latency"):
+            self.clear_latency_hold()
+            self.state["effective_low_latency"] = False
+            return False
         try:
             if controller is None:
                 success, message = False, m("latency.unavailable")
