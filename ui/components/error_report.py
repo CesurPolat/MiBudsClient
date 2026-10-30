@@ -7,6 +7,7 @@ from functools import wraps
 import flet as ft
 from utils.i18n import t
 from utils.error_reports import encode_report, redact
+from ui.constants import COLOR_CARD_BG, COLOR_TEXT_PRIMARY, CARD_BORDER_RADIUS
 
 
 def serialized(method):
@@ -109,6 +110,11 @@ class ErrorReportDialog:
         if self.snack is not None and self.snack.open:
             self.snack.open = False
             self.snack.update()
-        snack = ft.SnackBar(content=ft.Text(t('report.' + state)))
+        snack = ft.SnackBar(
+            content=ft.Text(t('report.' + state), color=COLOR_TEXT_PRIMARY),
+            bgcolor=COLOR_CARD_BG,
+            behavior=ft.SnackBarBehavior.FLOATING,
+            shape=ft.RoundedRectangleBorder(radius=CARD_BORDER_RADIUS),
+        )
         self.snack = snack
         self.page.show_dialog(snack)

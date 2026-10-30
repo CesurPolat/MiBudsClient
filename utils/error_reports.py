@@ -134,6 +134,7 @@ class ErrorReportClient:
         request = Request(self.url, data=encode_report(report), method='POST', headers={
             'Content-Type': 'application/json', 'Accept': 'application/json',
             'X-MiBuds-App-Version': report.get('app_version', ''),
+            'User-Agent': f"MiBudsClient/{report.get('app_version') or 'dev'}",
         })
         try:
             with self.transport(request, timeout=10) as response:

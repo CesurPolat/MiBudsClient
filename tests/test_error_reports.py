@@ -182,7 +182,10 @@ class ErrorReportTests(unittest.TestCase):
         client.send(make_report(ValueError('test')))
         request = transport.call_args.args[0]
         self.assertEqual(request.method, 'POST')
+        self.assertEqual(request.get_header('User-agent'), 'MiBudsClient/dev')
         self.assertNotIn('X-mibuds-install-id', request.headers)
+        client.send(make_report(ValueError('test'), app_version='v1.2.3'))
+        self.assertEqual(transport.call_args.args[0].get_header('User-agent'), 'MiBudsClient/1.2.3')
         response.read.return_value = b'{}'
         with self.assertRaises(DeliveryError):
             client.send(make_report(ValueError('test')))
