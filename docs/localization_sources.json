@@ -296,7 +296,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "en": {
@@ -491,7 +501,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "ar": {
@@ -789,7 +809,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "de": {
@@ -1087,7 +1117,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "es": {
@@ -1385,7 +1425,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "et": {
@@ -1587,7 +1637,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "fi": {
@@ -1789,7 +1849,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "fr": {
@@ -2087,7 +2157,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "hi": {
@@ -2289,7 +2369,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "hu": {
@@ -2491,7 +2581,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "id": {
@@ -2789,7 +2889,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "it": {
@@ -3087,7 +3197,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "ja": {
@@ -3385,7 +3505,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "ko": {
@@ -3683,7 +3813,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "ms": {
@@ -3981,7 +4121,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "nl": {
@@ -4279,7 +4429,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "pl": {
@@ -4577,7 +4737,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "pt-BR": {
@@ -4872,7 +5042,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "pt-PT": {
@@ -5167,7 +5347,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "ru": {
@@ -5465,7 +5655,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "sv": {
@@ -5667,7 +5867,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "th": {
@@ -5965,7 +6175,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "uk": {
@@ -6263,7 +6483,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "vi": {
@@ -6561,7 +6791,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "zh-CN": {
@@ -6856,7 +7096,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "zh-TW": {
@@ -7151,7 +7401,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     },
     "zh-HK": {
@@ -7446,7 +7706,17 @@
         "eq.rejected",
         "eq.disconnected",
         "eq.connection_changed",
-        "eq.timeout"
+        "eq.timeout",
+        "report.title",
+        "report.consent",
+        "report.description",
+        "report.privacy",
+        "report.preview",
+        "report.send",
+        "report.cancel",
+        "report.sent",
+        "report.queued",
+        "report.failed"
       ]
     }
   },

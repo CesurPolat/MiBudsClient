@@ -110,7 +110,8 @@ class LowLatencyModeSettingItem(ft.Column):
             normalized = "off"
         self._value = normalized
         self._apply_styles()
-        self.update()
+        # Capability/connection changes can temporarily detach this selector.
+        # The message handler updates the page after all state is applied.
 
     def _apply_styles(self) -> None:
         for mode, button in self._mode_buttons.items():

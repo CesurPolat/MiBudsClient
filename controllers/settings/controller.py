@@ -1,3 +1,4 @@
+from utils.error_reports import publish_exception
 """Bind settings controls to startup, device, and latency actions."""
 
 from utils.i18n import message as m, error_message
@@ -74,6 +75,7 @@ class SettingsController:
             try:
                 success, message = self._controller.request_device_identity()
             except Exception as exc:
+                publish_exception(self._publish, exc, "device_identity")
                 success, message = False, m("identity.failed", details=error_message(exc))
             self._publish({"type": "device_identity", "text": message})
             self._device_connection.update_status(message, "green" if success else "red")

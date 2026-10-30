@@ -19,6 +19,7 @@ class WindowManager:
         self.page = page
         self._auto_resize = auto_resize
         self._is_closing = False
+        self._session_closed = False
         self._close_lock = threading.Lock()
         self._force_exit_armed = False
         self._fit_revision = 0
@@ -130,16 +131,20 @@ class WindowManager:
     
     def show(self) -> None:
         """Show and bring window to front via pubsub."""
+        if self._is_closing or self._session_closed:
+            return
         self.page.pubsub.send_all({"type": "window", "action": "show"})
     
     def hide(self) -> None:
         """Hide window to tray via pubsub."""
+        if self._is_closing or self._session_closed:
+            return
         self.page.pubsub.send_all({"type": "window", "action": "hide"})
 
     def close(self) -> None:
         """Close the application with a guarded, graceful flow."""
         with self._close_lock:
-            if self._is_closing:
+            if self._is_closing or self._session_closed:
                 return
             self._is_closing = True
 
@@ -147,17 +152,51 @@ class WindowManager:
         self._force_exit_after_delay()
 
         self.show_closing_screen()
-        self._on_close_handler(None)
+        self._run_window_async(self._close_window)
 
     def _run_window_async(self, handler, timeout_sec: float = 1.5) -> bool:
         """Run async Flet window API calls from sync handlers."""
+        if self._session_closed:
+            return False
+
+        async def guarded():
+            if self._session_closed or (self._is_closing and handler != self._close_window):
+                return
+            try:
+                await asyncio.wait_for(handler(), timeout=timeout_sec)
+            except Exception as error:
+                if not self._ignore_destroyed_session(error):
+                    print(f"Window async call error: {error}")
+
         try:
             # Non-blocking: waiting here can deadlock when called on UI loop paths.
-            self.page.run_task(handler)
+            # Catch inside the coroutine: run_task re-raises failed Future results.
+            self.page.run_task(guarded)
             return True
         except Exception as e:
-            print(f"Window async call error: {e}")
+            if not self._ignore_destroyed_session(e):
+                print(f"Window async call error: {e}")
             return False
+
+    def _ignore_destroyed_session(self, error) -> bool:
+        if (isinstance(error, RuntimeError)
+                and str(error) == "An attempt to fetch destroyed session."):
+            self._session_closed = True
+            return True
+        return False
+
+    async def _close_window(self) -> None:
+        if self._session_closed:
+            return
+        try:
+            self.page.window.prevent_close = False
+            self.page.update()
+            await asyncio.wait_for(self.page.window.close(), timeout=1.0)
+        except Exception as error:
+            if self._ignore_destroyed_session(error) or self._session_closed:
+                return
+            print(f"Window close failed, trying destroy: {error}")
+            await self.page.window.destroy()
 
     def _force_exit_after_delay(self, delay_sec: float = 2.0) -> None:
         """Force process exit only if graceful close gets stuck."""
@@ -176,24 +215,12 @@ class WindowManager:
         threading.Thread(target=_killer, daemon=True).start()
         
     def _on_close_handler(self, e) -> None:
-        """Handle the graceful close request from Flet."""
-        if not self._is_closing:
-            self.close()
-            return
-
-        try:
-            self.page.window.prevent_close = False
-            self.page.update()
-
-            # Ask desktop window to close first, fallback to destroy if needed.
-            closed = self._run_window_async(self.page.window.close)
-            if not closed:
-                self._run_window_async(self.page.window.destroy)
-        except Exception as e:
-            print(f"Window close handler error: {e}")
-        finally:
-            # Keep a delayed force-exit as a safety net for stuck backend threads.
-            self._force_exit_after_delay()
+        """Flet emits on_close after destroying the session, not as a request."""
+        with self._close_lock:
+            self._session_closed = True
+            self._is_closing = True
+        # No UI updates or window RPCs are valid at this point.
+        self._force_exit_after_delay()
         
     def show_closing_screen(self) -> None:
         """Displays a simple closing screen."""
@@ -225,6 +252,8 @@ class WindowManager:
         
     def apply_show(self) -> None:
         """Apply show state to window."""
+        if self._session_closed:
+            return
         self.page.window.visible = True
         self.page.window.minimized = False
         self.page.window.skip_task_bar = False
@@ -234,6 +263,8 @@ class WindowManager:
     
     def apply_hide(self) -> None:
         """Apply hide state to window."""
+        if self._session_closed or self._is_closing:
+            return
         self.page.window.minimized = False
         self.page.window.visible = False
         self.page.window.skip_task_bar = True

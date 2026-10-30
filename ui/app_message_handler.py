@@ -20,7 +20,10 @@ class AppMessageHandler:
 
     def __init__(self, *, page, device_status_card, settings_card, window_manager,
                  latency, tray, debug_console, on_window_show: Callable,
-                 get_game_monitor: Callable, on_catalog_stop: Callable | None = None, get_capabilities: Callable | None = None):
+                 get_game_monitor: Callable, on_catalog_stop: Callable | None = None, get_capabilities: Callable | None = None,
+                 ui_lock=None):
+        self._dispatch_lock = ui_lock if ui_lock is not None else threading.RLock()
+        self._closing = False
         self._get_capabilities = get_capabilities
         self._page = page
         self._device_status_card = device_status_card
@@ -88,7 +91,18 @@ class AppMessageHandler:
 
     def handle(self, message) -> None:
         """Ignore unrelated messages and dispatch recognized message types."""
+        # Pubsub delivers synchronous callbacks on concurrent executor threads.
+        # Flet control-list diffs must be generated and sent in the same order.
+        with self._dispatch_lock:
+            self._handle_message(message)
+
+    def _handle_message(self, message) -> None:
+        if self._closing:
+            return
         if not isinstance(message, dict):
+            return
+        callback = getattr(self, "report_message", None)
+        if callback and callback(message):
             return
         message_type = message.get("type")
         if not isinstance(message_type, str):
@@ -181,6 +195,9 @@ class AppMessageHandler:
         if action == "show":
             self._window_manager.apply_show()
             self._on_window_show()
+            callback = getattr(self, "report_on_show", None)
+            if callback:
+                callback()
         elif action == "hide":
             self._window_manager.apply_hide()
 
@@ -210,6 +227,7 @@ class AppMessageHandler:
     def _handle_app(self, message: dict) -> None:
         if message.get("action") != "close":
             return
+        self._closing = True
         with self._notification_lock:
             self._cancel_connection_notification()
             self._battery_notifications.reset()

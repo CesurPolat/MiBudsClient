@@ -1,3 +1,4 @@
+from utils.error_reports import publish_exception
 """Execute EQ work outside Flet and reject completions from old connections."""
 import threading
 
@@ -27,6 +28,7 @@ class EqSettingsController:
                 if self._controller.eq_session != session:
                     return
             except Exception as exc:
+                publish_exception(self._publish, exc, "equalizer")
                 result = EqResult(False, message=m("eq.failed", details=error_message(exc)))
                 profiles = ()
             self._publish({"type": "eq_settings", "token": token, "result": result,

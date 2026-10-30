@@ -46,7 +46,8 @@ class _TeeStream(io.TextIOBase):
 class DebugConsoleManager:
     """Provides runtime debug log capture and F12 console toggling."""
 
-    def __init__(self, max_lines: int = 1200, *, publish: Optional[Callable[[dict], None]] = None):
+    def __init__(self, max_lines: int = 1200, *, publish: Optional[Callable[[dict], None]] = None, on_exception=None):
+        self.on_exception = on_exception
         self._publish = publish
         self._lock = threading.Lock()
         self._logs: Deque[str] = deque(maxlen=max_lines)
@@ -159,6 +160,11 @@ class DebugConsoleManager:
                 pass
 
     def _handle_exception(self, exc_type, exc_value, exc_traceback) -> None:
+        if self.on_exception and not issubclass(exc_type, (SystemExit, KeyboardInterrupt)):
+            try:
+                self.on_exception(exc_value, tb=exc_traceback)
+            except Exception:
+                pass
         formatted = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
         self._append_log(formatted, "stderr")
         self._write_to_console(formatted)

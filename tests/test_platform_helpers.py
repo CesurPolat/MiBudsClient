@@ -1,9 +1,12 @@
 """Platform fallbacks retain their behavior without playing sounds or loading GI."""
 
 import unittest
+import io
+import wave
+import struct
 from unittest.mock import Mock, call, patch
 
-from utils.sound import play_connection_melody, play_tones
+from utils.sound import play_connection_melody, play_tones, _tone_wave
 from utils.tray_backend import configure_tray_backend
 
 
@@ -11,10 +14,28 @@ class SoundTests(unittest.TestCase):
     def test_connection_uses_original_ascending_melody(self):
         with patch("utils.sound.play_tones") as play:
             play_connection_melody()
-        play.assert_called_once_with([(880, 80), (1175, 90), (1568, 120)])
+        play.assert_called_once_with([(880, 80), (1175, 90), (1568, 120)], delay=1.0)
+
+    def sound_mock(self):
+        return Mock(SND_MEMORY=4, SND_NODEFAULT=2, MB_OK=0)
+
+    def test_wave_contains_original_notes_with_stream_warmup(self):
+        with wave.open(io.BytesIO(_tone_wave([(880, 80), (1175, 90), (1568, 120)]))) as wav:
+            self.assertEqual((wav.getnchannels(), wav.getsampwidth(), wav.getframerate()), (1, 2, 44100))
+            self.assertAlmostEqual(wav.getnframes() / wav.getframerate(), 0.44, places=3)
+            samples = struct.unpack('<' + 'h' * wav.getnframes(), wav.readframes(wav.getnframes()))
+        self.assertTrue(all(value == 0 for value in samples[:6615]))
+        offset = 6615
+        for frequency, duration in ((880, 80), (1175, 90), (1568, 120)):
+            count = round(44100 * duration / 1000)
+            note = samples[offset:offset + count]
+            crossings = sum(a <= 0 < b for a, b in zip(note, note[1:]))
+            self.assertAlmostEqual(crossings * 44100 / count, frequency, delta=20)
+            self.assertEqual((note[0], note[-1]), (0, 0))
+            offset += count
 
     def test_windows_playback_runs_in_background(self):
-        sound = Mock()
+        sound = self.sound_mock()
         with patch("utils.sound.sys.platform", "win32"), patch("utils.sound.winsound", sound), patch(
             "utils.sound.threading.Thread",
         ) as thread:
@@ -23,10 +44,37 @@ class SoundTests(unittest.TestCase):
             self.assertTrue(thread.call_args.kwargs["daemon"])
             thread.return_value.start.assert_called_once_with()
             thread.call_args.kwargs["target"]()
-        self.assertEqual(sound.Beep.call_args_list, [call(880, 80), call(1175, 90)])
+        sound.PlaySound.assert_called_once()
+        self.assertEqual(sound.PlaySound.call_args.args[1], 6)
+        self.assertTrue(sound.PlaySound.call_args.args[0].startswith(b'RIFF'))
+        sound.Beep.assert_not_called()
+
+    def test_connection_delay_happens_on_the_worker_before_audio(self):
+        sound = self.sound_mock()
+        order = Mock()
+        order.attach_mock(sound.PlaySound, 'play')
+        with patch('utils.sound.sys.platform', 'win32'), patch('utils.sound.winsound', sound), patch(
+            'utils.sound.time.sleep', order.sleep,
+        ), patch('utils.sound.threading.Thread') as thread:
+            play_connection_melody()
+            order.sleep.assert_not_called()
+            thread.call_args.kwargs['target']()
+        self.assertEqual(order.mock_calls[0], call.sleep(1.0))
+        self.assertEqual(order.mock_calls[1][0], 'play')
+
+    def test_windows_wave_failure_falls_back_to_original_beeps(self):
+        sound = self.sound_mock()
+        sound.PlaySound.side_effect = RuntimeError('WAV unavailable')
+        with patch('utils.sound.sys.platform', 'win32'), patch('utils.sound.winsound', sound), patch(
+            'utils.sound.threading.Thread',
+        ) as thread:
+            play_tones([(880, 80)])
+            thread.call_args.kwargs['target']()
+        sound.Beep.assert_called_once_with(880, 80)
 
     def test_windows_beep_failure_uses_message_beep(self):
-        sound = Mock()
+        sound = self.sound_mock()
+        sound.PlaySound.side_effect = RuntimeError('WAV unavailable')
         sound.Beep.side_effect = RuntimeError("Unavailable")
         with patch("utils.sound.sys.platform", "win32"), patch("utils.sound.winsound", sound), patch(
             "utils.sound.threading.Thread",

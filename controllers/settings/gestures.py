@@ -1,3 +1,4 @@
+from utils.error_reports import publish_exception
 """Run gesture requests off the UI thread and publish versioned completions."""
 
 from utils.i18n import message as m, error_message
@@ -32,6 +33,7 @@ class GestureSettingsController:
                     result = self._controller.request_gesture_settings(session=session)
                 capabilities = self._controller.gesture_capabilities
             except Exception as exc:
+                publish_exception(self._publish, exc, "gestures")
                 result = GestureResult(False, message=m("gesture.failed", details=error_message(exc)))
                 capabilities = {}
             self._publish({"type": "gesture_settings", "token": token,

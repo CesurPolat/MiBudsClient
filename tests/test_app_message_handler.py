@@ -145,6 +145,16 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.handler.handle({"type": "app", "action": "close"})
         self.assertEqual(order.mock_calls, [call.monitor(), call.hotkey(), call.close()])
 
+    def test_late_messages_after_close_do_not_update_detached_controls(self):
+        self.handler.handle({'type': 'app', 'action': 'close'})
+        self.page.update.reset_mock()
+        self.handler.handle({'type': 'latency'})
+        self.handler.handle({'type': 'battery', 'left': 50, 'right': 50, 'case': 50})
+        self.handler.handle({'type': 'app', 'action': 'close'})
+        self.settings.set_latency_mode.assert_not_called()
+        self.page.update.assert_not_called()
+        self.window.close.assert_called_once()
+
     def test_update_notification_actions(self):
         self.page.overlay = []
         show_update_notification(self.page, "")

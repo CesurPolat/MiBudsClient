@@ -30,16 +30,21 @@ from controllers.latency import LatencyController
 from utils.i18n import is_rtl, set_language
 from utils.user_preferences import get_language_preference
 from ui.localization import refresh_translations
+from utils.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
+from ui.components.error_report import ErrorReportDialog
 
 def main(page: ft.Page):
     """Main application entry point."""
     set_language(get_language_preference())
     page.rtl = is_rtl()
 
+    ui_lock = threading.RLock()
+
     def update_ui():
-        refresh_translations(page.controls)
-        refresh_translations(page.overlay)
-        page.update()
+        with ui_lock:
+            refresh_translations(page.controls)
+            refresh_translations(page.overlay)
+            page.update()
 
     debug_console = DebugConsoleManager(publish=page.pubsub.send_all)
     debug_console.install()
@@ -68,6 +73,15 @@ def main(page: ft.Page):
         "instance": None,
         "game_monitor": None,
     }
+    reports = ErrorReportManager(
+        publish=page.pubsub.send_all, app_version=APP_VERSION,
+        get_device=lambda: getattr(getattr(controller_ref['instance'], 'capabilities', None), 'name', ''),
+    )
+    report_queue = ReportQueue(notify=lambda state: page.pubsub.send_all(
+        {'type': 'error_report_status', 'state': state}))
+    report_dialog = ErrorReportDialog(page, report_queue, ui_lock=ui_lock)
+    debug_console.on_exception = reports.capture
+    page.on_error = lambda e: reports.capture(RuntimeError(str(getattr(e, 'data', '') or 'Flet error').splitlines()[0]), 'ui')
 
     tray_ref = {
         "instance": None
@@ -162,8 +176,10 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     layout = AppLayout(device_status_card, settings_card, on_update=update_ui)
     page.add(layout)
+    guard_ui_callbacks(page.controls, reports.capture, ui_lock=ui_lock)
 
     message_handler = AppMessageHandler(
+        ui_lock=ui_lock,
         page=page,
         device_status_card=device_status_card,
         settings_card=settings_card,
@@ -176,7 +192,28 @@ def main(page: ft.Page):
         on_catalog_stop=catalog_sync.stop,
         get_capabilities=lambda: controller.capabilities,
     )
+    def handle_message(message):
+        try:
+            if isinstance(message, dict):
+                kind = message.get('type')
+                if kind == 'report_exception':
+                    reports.capture(message['error'], message.get('action', ''))
+                    return True
+                if kind == 'error_report':
+                    report_dialog.receive(message['report'])
+                    return True
+                if kind == 'error_report_status':
+                    report_dialog.status(message['state'])
+                    return True
+                if kind == 'app' and message.get('action') == 'close':
+                    report_queue.stop()
+        except Exception as exc:
+            if not isinstance(message, dict) or message.get('type') not in {'error_report', 'error_report_status', 'report_exception'}:
+                reports.capture(exc, 'ui_message')
+    message_handler.report_message = handle_message
+    message_handler.report_on_show = report_dialog.show_pending
     page.pubsub.subscribe(message_handler.handle)
+    report_queue.start()
     catalog_sync.start()
     threading.Thread(target=tray.run, daemon=True).start()
     debug_console.start_f12_hotkey_listener(debug_console.request_toggle)

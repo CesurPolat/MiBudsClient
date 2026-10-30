@@ -188,5 +188,15 @@
   "eq.rejected": "EQ request rejected (status 0x{code}).",
   "eq.disconnected": "Earbuds are disconnected.",
   "eq.connection_changed": "Connection changed during EQ request.",
-  "eq.timeout": "EQ request timed out."
+  "eq.timeout": "EQ request timed out.",
+  "report.title": "An error occurred",
+  "report.consent": "Would you like to share error information with the developer?",
+  "report.description": "What were you doing when the error occurred?",
+  "report.privacy": "Optional. Do not include passwords, tokens or personal information. Approved reports may be saved locally for up to 7 days and retried; server reports are not automatically deleted.",
+  "report.preview": "Technical details",
+  "report.send": "Send",
+  "report.cancel": "Cancel",
+  "report.sent": "Sent",
+  "report.queued": "Saved for later delivery",
+  "report.failed": "Could not save or deliver the report"
 }

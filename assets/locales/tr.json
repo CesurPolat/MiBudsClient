@@ -188,5 +188,15 @@
   "eq.rejected": "EQ isteği reddedildi (durum 0x{code}).",
   "eq.disconnected": "Kulaklık bağlantısı yok.",
   "eq.connection_changed": "EQ işlemi sırasında bağlantı değişti.",
-  "eq.timeout": "EQ isteği zaman aşımına uğradı."
+  "eq.timeout": "EQ isteği zaman aşımına uğradı.",
+  "report.title": "Bir hata oluştu",
+  "report.consent": "Hata bilgilerini geliştiriciyle paylaşmak ister misiniz?",
+  "report.description": "Hata oluştuğunda ne yapıyordunuz?",
+  "report.privacy": "İsteğe bağlı. Şifre, token veya kişisel bilgi yazmayın. Onaylı raporlar en fazla 7 gün yerelde saklanıp yeniden gönderilebilir; sunucudaki raporlar otomatik silinmez.",
+  "report.preview": "Teknik bilgiler",
+  "report.send": "Gönder",
+  "report.cancel": "Vazgeç",
+  "report.sent": "Gönderildi",
+  "report.queued": "Daha sonra gönderilmek üzere kaydedildi",
+  "report.failed": "Rapor kaydedilemedi veya gönderilemedi"
 }
