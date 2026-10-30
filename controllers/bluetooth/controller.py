@@ -26,6 +26,7 @@ class _IdentityRequest:
     completed: bool = False
     identity: Optional[DeviceIdentity] = None
     error: str = ""
+    raw_hex: str = ""
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -228,7 +229,7 @@ class BTController:
             return False, m("command.request_error", details=str(e))
     
     def request_device_identity(self, timeout: float = 5.0) -> tuple[bool, str]:
-        """Query VID/PID; call off the UI/listener thread while listen() runs."""
+        """Read all target info and return raw hex; run off the UI/listener thread."""
         if timeout <= 0:
             raise ValueError("Identity timeout must be positive")
         self.resume_reconnect_attempts()
@@ -250,9 +251,9 @@ class BTController:
                 if not self._identity_condition.wait_for(lambda: request.completed, timeout):
                     return False, m("identity.timeout")
                 if request.error:
-                    return False, request.error
+                    return False, request.error + (f"\nRX: {request.raw_hex}" if request.raw_hex else "")
                 identity = request.identity
-                return True, identity.describe()
+                return True, f"{identity.describe()}\nRX: {request.raw_hex}"
         except Exception as exc:
             self._connection.connected = False
             return False, m("identity.failed", details=error_message(exc))
@@ -309,11 +310,12 @@ class BTController:
                 request = self._identity_pending
                 if request is None or request.completed:
                     continue
-                if packet.opcode != 0x02 or len(packet.payload) < 2:
+                if packet.flags & 0x80 or packet.opcode != 0x02 or len(packet.payload) < 2:
                     continue
                 status, counter = packet.payload[:2]
                 if counter != request.counter:
                     continue
+                request.raw_hex = packet.raw_hex
                 if status != 0:
                     request.error = m("identity.rejected", code=f"{status:02X}")
                 else:

@@ -40,6 +40,13 @@ class RcspPacket:
     opcode: int
     payload: bytes
 
+    @property
+    def raw_hex(self) -> str:
+        """Complete length-framed response, including header and terminator."""
+        header = bytes.fromhex("fe dc ba") + bytes([self.flags, self.opcode])
+        frame = header + len(self.payload).to_bytes(2, "big") + self.payload + bytes.fromhex("ef")
+        return frame.hex(" ").upper()
+
 
 def build_identity_request(counter: int) -> bytes:
     """GetTargetInfo with all fields requested and a caller-owned counter."""

@@ -8,7 +8,7 @@
   "latency.auto": "Auto",
   "latency.on": "On",
   "startup.title": "Run at Startup",
-  "identity.title": "Check Device Identity",
+  "identity.title": "Query Device Info (Raw Hex)",
   "identity.not_queried": "Not queried",
   "identity.reading": "Reading device identity...",
   "battery.check": "Check Battery",

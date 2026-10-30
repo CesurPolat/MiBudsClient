@@ -8,7 +8,7 @@
   "latency.auto": "Otomatik",
   "latency.on": "Açık",
   "startup.title": "Başlangıçta Çalıştır",
-  "identity.title": "Cihaz Kimliğini Sorgula",
+  "identity.title": "Cihaz Bilgilerini Sorgula (Ham Hex)",
   "identity.not_queried": "Sorgulanmadı",
   "identity.reading": "Cihaz kimliği okunuyor...",
   "battery.check": "Pili Sorgula",
