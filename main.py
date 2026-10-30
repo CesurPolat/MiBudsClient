@@ -34,7 +34,7 @@ from utils.error_reports import ErrorReportManager, ReportQueue, guard_ui_callba
 from ui.components.error_report import ErrorReportDialog
 
 # Temporary manual QA switch: show the report form on every application launch.
-SHOW_STARTUP_TEST_ERROR = True
+SHOW_STARTUP_TEST_ERROR = False
 
 def main(page: ft.Page):
     """Main application entry point."""
