@@ -10,6 +10,7 @@ from typing import Callable, Optional
 
 from .capabilities import resolve_capabilities, DeviceCapabilities
 from .connection import BluetoothConnection
+from .auth_session import AuthPolicy, profile_auth_policy
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
@@ -56,8 +57,10 @@ class BTController:
         bd_addr: Optional[str] = None,
         identity_callback: Optional[Callable[[DeviceIdentity], None]] = None,
         connection_state_callback: Optional[Callable[[str, str], None]] = None,
+        auth_policy: AuthPolicy | str | None = None,
     ):
         self._connection = BluetoothConnection()
+        self._auth_policy = AuthPolicy(auth_policy) if auth_policy is not None else None
         self._protocol = BudsProtocol()
         self._battery_parser = BatteryStreamParser()
         self._gestures = GestureTransport(self._connection)
@@ -101,6 +104,18 @@ class BTController:
     def connection_result(self):
         """Transport metadata for session/auth selection; not proof of auth."""
         return self._connection.result
+
+    @property
+    def session_ready(self):
+        return self.connected and self._connection.session_ready
+
+    @property
+    def transport_connected(self):
+        return self._connection.transport_connected
+
+    @property
+    def session_authenticated(self):
+        return self.connected and self._connection.session_authenticated
 
     @property
     def device_name(self) -> str:
@@ -175,7 +190,8 @@ class BTController:
                     self._bd_addr = device.address
                     self._device_name = device.name
                 self._reset_identity_state(m("identity.connection_changed"))
-                self._connection.connect(self._bd_addr, device_name=self._device_name)
+                policy = self._auth_policy or profile_auth_policy(self._device_name)
+                self._connection.connect(self._bd_addr, device_name=self._device_name, session_policy=policy)
                 self._update_status(m("connection.connected"), "blue")
                 self._reset_reconnect_state()
                 self._notify_connection_state("connected")
@@ -400,7 +416,7 @@ class BTController:
             """Send a sequence of packets on connection."""
             if not self.capabilities.supports("battery"):
                 return
-            packets = [
+            packets = [] if self._connection.session_authenticated else [
                 "fedcba04510003000301ef"
             ]
             for packet_hex in packets:
@@ -492,7 +508,7 @@ class BTController:
     def _handle_disconnect(self) -> None:
         """Handle connection loss."""
         self._reset_identity_state(m("identity.disconnected"))
-        self._connection.connected = False
+        self._connection.disconnect()
         self._update_status(m("connection.lost"), "red")
         self._notify_connection_state(
             "failed", m("connection.disconnected_reason")

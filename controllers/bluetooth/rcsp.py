@@ -87,6 +87,12 @@ class RcspStreamParser:
     def reset(self) -> None:
         self._buffer.clear()
 
+    def take_buffer(self) -> bytes:
+        """Hand off an incomplete frame when switching from auth to normal IO."""
+        data = bytes(self._buffer)
+        self._buffer.clear()
+        return data
+
     def feed(self, data: bytes) -> list[RcspPacket]:
         self._buffer.extend(data)
         packets = []
