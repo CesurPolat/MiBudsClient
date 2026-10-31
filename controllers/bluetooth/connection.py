@@ -1,6 +1,7 @@
 """Bluetooth socket connection handler."""
 
 import socket
+import os
 import threading
 import logging
 import time
@@ -233,6 +234,9 @@ class BluetoothConnection:
                 raise ConnectionError("Transport session is not ready")
             if self._sock:
                 self._sock.sendall(data)
+                if os.environ.get("MIBUDS_EXPERIMENTAL_ANC"):
+                    from .noise_capture import record
+                    record("TX", data)
     
     def receive(self) -> bytes:
         """Receive data from device.

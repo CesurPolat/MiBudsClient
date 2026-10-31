@@ -49,6 +49,8 @@ class AppMessageHandler:
             "language": self._handle_language,
             "gesture_settings": self._handle_gesture_settings,
             "eq_settings": self._handle_eq_settings,
+            "noise_settings": self._handle_noise_settings,
+            "noise_notification": self._handle_noise_notification,
             "catalog_device": self._handle_catalog_device,
             "connection_state": self._handle_connection_state,
             "status": self._handle_status,
@@ -188,6 +190,14 @@ class AppMessageHandler:
         self._settings_card.equalizer.complete(
             message["token"], message["result"], message["profiles"], message["operation"]
         )
+        self._update_page()
+
+    def _handle_noise_settings(self, message):
+        self._settings_card.noise.complete(message["token"], message["state"], message.get("error"))
+        self._update_page()
+
+    def _handle_noise_notification(self, message):
+        self._settings_card.noise.notification(message["session"], message["state"])
         self._update_page()
 
     def _handle_window(self, message: dict) -> None:

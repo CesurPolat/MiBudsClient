@@ -83,7 +83,8 @@ class CapabilityTests(unittest.TestCase):
         self.assertFalse(card.gestures.visible)
         self.assertFalse(card.equalizer.visible)
         self.assertEqual(card.connected_controls.controls, [])
-        self.assertEqual(len(card.content.controls), 5)  # three app sections, two dividers
+        self.assertTrue(card.noise.visible)  # Noise functions are available independently.
+        self.assertEqual(len(card.content.controls), 7)  # four sections, three dividers
         card.update_connection_state("failed")
         self.assertFalse(card.connected_controls.visible)
 

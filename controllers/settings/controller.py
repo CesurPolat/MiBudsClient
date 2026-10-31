@@ -10,6 +10,7 @@ from utils.startup_manager import is_startup_enabled, set_startup
 from ui.components.settings_card import SettingsCard
 from .gestures import GestureSettingsController
 from .equalizer import EqSettingsController
+from .noise import NoiseSettingsController
 
 
 class SettingsController:
@@ -27,6 +28,7 @@ class SettingsController:
             on_gesture_refresh=lambda: self.gestures.refresh(),
             on_gesture_assignment=lambda *args: self.gestures.assign(*args),
             on_eq_action=lambda *args, **kwargs: self.equalizer.action(*args, **kwargs),
+            on_noise_action=lambda *args, **kwargs: self.noise.action(*args, **kwargs),
             on_update=on_update,
             on_check_device_identity=self.on_check_device_identity,
             on_low_latency_mode_change=latency.on_latency_mode_change,
@@ -52,6 +54,7 @@ class SettingsController:
         )
         self.gestures = GestureSettingsController(controller, self.card.gestures, publish)
         self.equalizer = EqSettingsController(controller, self.card.equalizer, publish)
+        self.noise = NoiseSettingsController(controller, self.card.noise, publish)
 
     def on_startup_change(self, e):
         enabled = e.control.value

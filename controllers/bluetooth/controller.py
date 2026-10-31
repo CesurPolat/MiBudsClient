@@ -3,6 +3,7 @@
 from utils.i18n import message as m, error_message
 
 import socket
+import os
 import threading
 import time
 from dataclasses import dataclass
@@ -16,6 +17,8 @@ from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
 from .gesture_transport import GestureTransport
 from .eq_transport import EqTransport
+from .noise import noise_capabilities, noise_backend_enabled, parse_noise_notification
+from .noise_transport import NoiseTransport
 from .equalizer import EqResult, eq_profiles
 from .gestures import GestureResult, gesture_capabilities
 from .constants import RECONNECT_DELAY
@@ -65,6 +68,9 @@ class BTController:
         self._battery_parser = BatteryStreamParser()
         self._gestures = GestureTransport(self._connection)
         self._equalizer = EqTransport(self._gestures)
+        self._noise = NoiseTransport(self._gestures)
+        self._noise_parser = RcspStreamParser()
+        self.noise_callback = None
         self._bd_addr = bd_addr
         self._device_name = ""
         self._running = True
@@ -191,7 +197,20 @@ class BTController:
                     self._device_name = device.name
                 self._reset_identity_state(m("identity.connection_changed"))
                 policy = self._auth_policy or profile_auth_policy(self._device_name)
+                # Test sessions require an explicit model AND explicit auth policy.
+                test_caps = resolve_capabilities(self._device_name)
+                if self._auth_policy is None and noise_backend_enabled(test_caps):
+                    test_policy = os.environ.get("MIBUDS_EXPERIMENTAL_AUTH", "")
+                    if test_policy in (AuthPolicy.COMMAND.value, AuthPolicy.DIRECT.value):
+                        policy = AuthPolicy(test_policy)
                 self._connection.connect(self._bd_addr, device_name=self._device_name, session_policy=policy)
+                if noise_backend_enabled(test_caps):
+                    from .noise_capture import record
+                    result = self._connection.result
+                    record("SESSION", model=test_caps.model, device_name=self._device_name,
+                           service_uuid=result.service_uuid, channel=result.channel,
+                           resolution_source=result.resolution_source,
+                           auth_policy=policy.value, authenticated=self.session_authenticated)
                 self._update_status(m("connection.connected"), "blue")
                 self._reset_reconnect_state()
                 self._notify_connection_state("connected")
@@ -304,6 +323,22 @@ class BTController:
     def eq_profiles(self):
         return eq_profiles(self.device_name, self.device_identity)
 
+    @property
+    def noise_capabilities(self):
+        return noise_capabilities(self.capabilities)
+
+    def _require_noise_backend(self):
+        if not self.session_ready or not noise_backend_enabled(self.capabilities):
+            raise ValueError("ANC backend requires model-specific hardware validation")
+
+    def request_noise_settings(self, *, session, timeout=2.0):
+        self._require_noise_backend()
+        return self._noise.read(session, timeout)
+
+    def set_noise_settings(self, mode, level=None, *, session, timeout=2.0):
+        self._require_noise_backend()
+        return self._noise.apply(self.noise_capabilities, session, mode, level, timeout)
+
     def request_eq_settings(self, timeout=5.0, *, session=None):
         if not self.capabilities.supports("eq"):
             return EqResult(False, message=m("eq.unsupported"))
@@ -364,6 +399,7 @@ class BTController:
 
     def _reset_identity_state(self, reason: str) -> None:
         self._battery_parser.reset()
+        self._noise_parser.reset()
         self._gestures.reset(m("gesture.connection_changed"))
         with self._identity_condition:
             self._identity = None
@@ -491,6 +527,23 @@ class BTController:
         print(f"Received data size: {packet_size}")
         self._process_identity_data(data)
         config_response = self._gestures.feed(data)
+        if noise_backend_enabled(self.capabilities):
+            from .noise_capture import record
+            record("RX", data)
+            for packet in self._noise_parser.feed(data):
+                if packet.flags & 7 not in (4, 7):
+                    continue
+                try:
+                    state = parse_noise_notification(packet)
+                except ValueError:
+                    continue
+                if state is not None:
+                    # Respond only if the peer explicitly requests an ACK.
+                    if packet.flags & 0x80 and packet.flags & 0x40:
+                        self._connection.send(bytes.fromhex("fe dc ba 04 f4 00 02") +
+                                              bytes((0, packet.payload[0], 0xEF)))
+                    if self.noise_callback:
+                        self.noise_callback(self.eq_session, state)
 
         # Check for battery data
         statuses = self._battery_parser.feed(data)

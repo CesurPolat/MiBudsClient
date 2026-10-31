@@ -23,6 +23,8 @@ from .latency import LowLatencyModeSettingItem
 from .setting_items import SettingItem, ToggleSettingItem
 from .gestures import GestureSettings
 from .equalizer import EqualizerSettings
+from .noise import NoiseSettings
+from controllers.bluetooth.noise import noise_capabilities, noise_backend_enabled
 
 
 class SettingsCard(ft.Container):
@@ -50,6 +52,7 @@ class SettingsCard(ft.Container):
         on_update: Callable = lambda: None,
         on_language_change: Optional[Callable] = None,
         on_eq_action: Optional[Callable] = None,
+        on_noise_action: Optional[Callable] = None,
     ):
         self._capabilities = DeviceCapabilities()
         self._connected = False
@@ -105,6 +108,7 @@ class SettingsCard(ft.Container):
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
         self.equalizer = EqualizerSettings(on_eq_action, on_update)
+        self.noise = NoiseSettings(on_noise_action, on_update)
         self.device_components = {"gestures": self.gestures, "eq": self.equalizer}
         self.language_selector = ft.Dropdown(
             label=t("language.title"),
@@ -132,6 +136,7 @@ class SettingsCard(ft.Container):
         if capabilities != self._capabilities:
             self.gestures.set_connection(False)
             self.equalizer.set_connection(False)
+            self.noise.set_connection(False)
         self._capabilities = capabilities
         self.equalizer.custom_supported = capabilities.supports("custom_eq")
         self._render_capabilities()
@@ -151,6 +156,11 @@ class SettingsCard(ft.Container):
             panel.visible = self._connected and caps.supports(feature)
             panel.set_connection(panel.visible)
         sections = [self.startup_item, self._language_container]
+        self.noise.capabilities = noise_capabilities(caps)
+        self.noise.visible = self._connected and noise_backend_enabled(caps)
+        self.noise.set_connection(self.noise.visible)
+        if self.noise.visible:
+            sections.append(self.noise)
         sections.extend(panel for panel in self.device_components.values() if panel.visible)
         sections.append(self.identity_item)
         self.content.controls = []
