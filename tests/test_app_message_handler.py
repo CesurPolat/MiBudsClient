@@ -33,6 +33,9 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.melody_patch = patch("ui.app_message_handler.play_connection_melody")
         self.melody = self.melody_patch.start()
         self.addCleanup(self.melody_patch.stop)
+        self.disconnect_melody_patch = patch("ui.app_message_handler.play_disconnection_melody")
+        self.disconnect_melody = self.disconnect_melody_patch.start()
+        self.addCleanup(self.disconnect_melody_patch.stop)
         self.handler = AppMessageHandler(
             page=self.page, device_status_card=self.status,
             settings_card=self.settings, window_manager=self.window,
@@ -45,6 +48,16 @@ class AppMessageHandlerTests(unittest.TestCase):
             self.handler.handle(message)
         self.page.update.assert_not_called()
         self.status.update_status.assert_not_called()
+
+    def test_disconnect_sound_requires_a_connection_and_is_deduplicated(self):
+        self.handler.handle({"type": "connection_event", "event": "disconnected"})
+        self.disconnect_melody.assert_not_called()
+        for event in ("connected", "disconnected", "disconnected"):
+            self.handler.handle({"type": "connection_event", "event": event})
+        self.disconnect_melody.assert_called_once_with()
+        self.handler.handle({"type": "app", "action": "close"})
+        self.handler.handle({"type": "connection_event", "event": "disconnected"})
+        self.disconnect_melody.assert_called_once_with()
 
     def test_battery_refresh_and_identity_results(self):
         self.handler.handle({"type": "battery", "left": 188, "transient": True})

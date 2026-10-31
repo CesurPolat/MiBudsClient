@@ -98,6 +98,11 @@ class BTController:
         return self._connection.connected
 
     @property
+    def connection_result(self):
+        """Transport metadata for session/auth selection; not proof of auth."""
+        return self._connection.result
+
+    @property
     def device_name(self) -> str:
         return self._device_name if self.connected else ""
 
@@ -170,7 +175,7 @@ class BTController:
                     self._bd_addr = device.address
                     self._device_name = device.name
                 self._reset_identity_state(m("identity.connection_changed"))
-                self._connection.connect(self._bd_addr)
+                self._connection.connect(self._bd_addr, device_name=self._device_name)
                 self._update_status(m("connection.connected"), "blue")
                 self._reset_reconnect_state()
                 self._notify_connection_state("connected")

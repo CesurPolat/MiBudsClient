@@ -9,6 +9,11 @@ from ui.window_manager import WindowManager
 
 
 class WindowShutdownTests(unittest.TestCase):
+    def setUp(self):
+        sound_patch = patch('ui.window_manager.play_exit_melody')
+        self.exit_melody = sound_patch.start()
+        self.addCleanup(sound_patch.stop)
+
     def manager(self):
         page = SimpleNamespace(
             window=SimpleNamespace(close=AsyncMock(), destroy=AsyncMock(), to_front=AsyncMock()),
@@ -45,6 +50,7 @@ class WindowShutdownTests(unittest.TestCase):
         page.window.close.assert_awaited_once()
         page.window.destroy.assert_not_awaited()
         self.assertFalse(page.window.prevent_close)
+        self.exit_melody.assert_called_once_with()
 
     def test_session_destroyed_before_queued_task_runs(self):
         manager, page = self.manager()
@@ -95,6 +101,7 @@ class WindowShutdownTests(unittest.TestCase):
         page.window.on_event(SimpleNamespace(type=ft.WindowEventType.CLOSE))
         page.pubsub.send_all.assert_called_once_with({'type': 'window', 'action': 'hide'})
         self.assertFalse(manager._is_closing)
+        self.exit_melody.assert_not_called()
 
 
 if __name__ == '__main__':

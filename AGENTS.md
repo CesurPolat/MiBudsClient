@@ -4,7 +4,7 @@
 
 - **Windows and Linux support.** Bluetooth discovery can use platform-specific implementations (Windows: PowerShell via `subprocess` + `Get-PnpDevice`, Linux: native Linux-compatible discovery). Keep behavior consistent across supported platforms.
 - **Model-specific support.** Catalog features describe UI capabilities, not protocol compatibility. Existing codecs remain limited to Redmi Buds 6 Play. Enable additional model backends only after model-specific protocol and actual hardware validation.
-- **Single RFCOMM port.** RFCOMM_PORT = 6 in `controllers/bluetooth/constants.py`. Do not make this configurable.
+- **Dynamic RFCOMM service discovery.** Resolve the selected device's RFCOMM channel by exact service UUID. `RFCOMM_PORT = 6` in `controllers/bluetooth/constants.py` is only a Redmi Buds 6 Play fallback when no service channel is resolved; record `service_uuid=None` and `resolution_source="profile_fallback"`. Do not infer service/auth from a channel or scan channels blindly.
 - **Assets directory bundling.** Build uses `datas=[('assets', 'assets')]` in PyInstaller spec. All UI assets (icon.ico, images) must stay in `assets/` folder.
 - **Single instance enforcement.** Application forbids multiple running instances via port 65432. Do not remove or change `check_for_existing_instance()` at app startup.
 - **Flet-only UI.** The entire UI layer (including system tray via pystray) depends on Flet. Do not introduce other UI frameworks.

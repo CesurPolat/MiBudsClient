@@ -46,7 +46,17 @@ def play_connection_melody() -> None:
     play_tones([(880, 80), (1175, 90), (1568, 120)], delay=1.0)
 
 
-def play_tones(tones: Sequence[tuple[int, int]], *, delay: float = 0.0) -> None:
+def play_disconnection_melody() -> None:
+    """Descending counterpart to the connection melody, on the active output."""
+    play_tones([(1568, 80), (1175, 90), (880, 120)], delay=0.5)
+
+
+def play_exit_melody() -> None:
+    """Let the short goodbye finish during normal interpreter shutdown."""
+    play_tones([(1175, 80), (880, 90), (659, 120)], daemon=False)
+
+
+def play_tones(tones: Sequence[tuple[int, int]], *, delay: float = 0.0, daemon: bool = True) -> None:
     """Play (frequency Hz, duration ms) pairs without blocking the caller."""
     tones = tuple(tones)
 
@@ -113,4 +123,4 @@ def play_tones(tones: Sequence[tuple[int, int]], *, delay: float = 0.0) -> None:
                 pass
             time.sleep(duration / 1000)
 
-    threading.Thread(target=_play_tones, daemon=True).start()
+    threading.Thread(target=_play_tones, daemon=daemon).start()

@@ -12,7 +12,7 @@ from .localization import refresh_translations
 from .battery_notifications import BatteryNotificationState
 from utils.i18n import LANGUAGE_CHOICES, is_rtl, set_language
 from utils.user_preferences import set_language_preference
-from utils.sound import play_connection_melody
+from utils.sound import play_connection_melody, play_disconnection_melody
 
 
 class AppMessageHandler:
@@ -265,6 +265,7 @@ class AppMessageHandler:
         with self._notification_lock:
             if event == self._last_connection_event:
                 return
+            previous_event = self._last_connection_event
             self._last_connection_event = event
             self._cancel_connection_notification()
             if event == "connected":
@@ -281,6 +282,8 @@ class AppMessageHandler:
                 self._connection_notification_timer = timer
                 timer.start()
             else:
+                if previous_event == "connected":
+                    play_disconnection_melody()
                 self._latency.clear_latency_hold()
                 self._tray.notify(self._battery_notifications.body(t("tray.disconnected"), last_known=True), device=True, silent=True)
                 self._battery_notifications.reset()
