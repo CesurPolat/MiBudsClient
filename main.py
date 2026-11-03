@@ -21,7 +21,7 @@ from ui.components import (
 )
 from controllers.device import DeviceConnection
 from controllers.device.catalog_sync import CatalogSync
-from ui.constants import APP_VERSION
+from ui.constants import APP_VERSION, PAGE_PADDING
 from controllers.settings import SettingsController
 from ui.app_message_handler import AppMessageHandler
 from utils.debug_console import DebugConsoleManager
@@ -57,7 +57,7 @@ async def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     page.title = APP_TITLE
     page.bgcolor = COLOR_BG
-    page.padding = 20
+    page.padding = PAGE_PADDING
     
     # Newer Flet API properties
     page.window.icon = "icon.ico" if page.platform == ft.PagePlatform.WINDOWS else "icon.png"  # Path relative to assets_dir
@@ -177,7 +177,12 @@ async def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     # Build Page Layout
     # ─────────────────────────────────────────────────────────────────────────
-    layout = AppLayout(device_status_card, settings_card, on_update=update_ui)
+    layout = AppLayout(device_status_card, settings_card, on_update=update_ui,
+                       viewport_width=page.width)
+    async def on_page_resize(_):
+        if layout.set_viewport_width(page.width):
+            update_ui()
+    page.on_resize = on_page_resize
     page.add(layout)
     guard_ui_callbacks(page.controls, reports.capture, ui_lock=ui_lock)
 

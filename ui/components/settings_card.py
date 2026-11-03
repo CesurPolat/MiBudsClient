@@ -90,19 +90,21 @@ class SettingsCard(ft.Container):
 
         self.connection_panel = ConnectionPanel()
         self.battery_item = SettingItem(ft.Icons.REFRESH, "grey700", t("battery.check"), on_click=on_check_battery)
+        self.battery_item.dense = True
+        self.battery_item.content_padding = ft.Padding.symmetric(horizontal=8)
 
         def home_card(control):
             return ft.Container(content=control, bgcolor=COLOR_CARD_BG,
-                                border_radius=CARD_BORDER_RADIUS, padding=10)
+                                border_radius=CARD_BORDER_RADIUS, padding=6)
 
         self.connection_card = home_card(self.connection_panel)
         self.connected_controls = ft.Column(
-            spacing=12, visible=False, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
+            spacing=8, visible=False, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.home_controls_card = ft.Container(
             content=ft.Column([
                 self.connection_card,
                 self.connected_controls,
-            ], spacing=12, horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
+            ], spacing=8, horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
         )
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)

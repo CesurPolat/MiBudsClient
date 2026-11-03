@@ -4,7 +4,7 @@ import flet as ft
 from controllers.bluetooth.equalizer import EqBand, PROFILE_KEYS
 from utils.i18n import t, render
 from .setting_items import SettingItem
-from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BUTTON_SIZE, ICON_BORDER_RADIUS
+from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
 
 
 class EqualizerSettings(ft.Column):
@@ -36,16 +36,18 @@ class EqualizerSettings(ft.Column):
             on_click=lambda _: self._act("read"))
         self.quick_controls = ft.Column([
             ft.ListTile(
+                dense=True, min_height=44,
+                content_padding=ft.Padding.symmetric(horizontal=8),
                 leading=ft.Container(
-                    content=ft.Icon(ft.Icons.GRAPHIC_EQ, color=COLOR_TEXT_PRIMARY),
+                    content=ft.Icon(ft.Icons.GRAPHIC_EQ, size=20, color=COLOR_TEXT_PRIMARY),
                     bgcolor="blue_700", border_radius=ICON_BORDER_RADIUS,
-                    width=ICON_BUTTON_SIZE, height=ICON_BUTTON_SIZE),
-                title=ft.Text(t("eq.title"), color=COLOR_TEXT_PRIMARY, weight="medium"),
+                    width=32, height=32),
+                title=ft.Text(t("eq.title"), size=14, color=COLOR_TEXT_PRIMARY, weight="medium"),
                 trailing=self.quick_refresh_button),
             ft.Container(
                 content=ft.Column([self.quick_profiles, self.quick_status], spacing=4,
                                   horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
-                padding=ft.Padding.only(left=12, right=12, bottom=8)),
+                padding=ft.Padding.only(left=8, right=8, bottom=6)),
         ], spacing=0, visible=False,
             horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.sliders = []

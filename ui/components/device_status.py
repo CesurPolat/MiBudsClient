@@ -20,16 +20,18 @@ class DeviceStatusCard(ft.Container):
         self.device_image = DeviceImage()
         self.device_name = ft.Text(size=13, color="white", weight="w500", visible=False,
                                    text_align=ft.TextAlign.CENTER)
+        self._battery_spacer = ft.Container(expand=True, visible=False)
         super().__init__(
             content=ft.Column(
                 controls=[
                     self.device_image,
                     self.device_name,
                     self.status_bar,
+                    self._battery_spacer,
                     ft.Container(content=self.battery_panel,
                                  alignment=ft.Alignment.CENTER),
                 ],
-                spacing=12,
+                spacing=5,
                 tight=True,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
@@ -37,6 +39,11 @@ class DeviceStatusCard(ft.Container):
             bgcolor=COLOR_BG,
             border_radius=18,
         )
+
+    def set_wide_layout(self, wide: bool) -> None:
+        self._battery_spacer.visible = wide
+        self.content.tight = not wide
+        self.padding = ft.Padding.only(left=8, right=8, top=6, bottom=0 if wide else 6)
 
     def update_catalog_device(self, name: str, image_path: str = "") -> None:
         self.device_name.value = name

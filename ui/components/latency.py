@@ -8,7 +8,6 @@ from typing import Callable, Optional
 from ..constants import (
     COLOR_DISABLED,
     COLOR_TEXT_PRIMARY,
-    ICON_BUTTON_SIZE,
     ICON_BORDER_RADIUS,
 )
 
@@ -40,17 +39,17 @@ class LowLatencyModeSettingItem(ft.Column):
             mode: ft.Container(
                 content=ft.Column(
                     controls=[
-                        ft.Icon(self._mode_icons[mode], size=22),
-                        ft.Text(self._mode_labels[mode], size=13, weight="w500",
+                        ft.Icon(self._mode_icons[mode], size=20),
+                        ft.Text(self._mode_labels[mode], size=12, weight="w500",
                                 text_align=ft.TextAlign.CENTER),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     tight=True,
-                    spacing=6,
+                    spacing=4,
                 ),
                 border_radius=10,
-                padding=ft.padding.symmetric(vertical=10),
+                padding=ft.padding.symmetric(vertical=8),
                 alignment=ft.Alignment.CENTER,
                 expand=True,
                 ink=True,
@@ -77,16 +76,18 @@ class LowLatencyModeSettingItem(ft.Column):
         super().__init__(
             controls=[
                 ft.ListTile(
+                    dense=True, min_height=44,
+                    content_padding=ft.Padding.symmetric(horizontal=8),
                     leading=ft.Container(
-                        content=ft.Icon(icon, color=COLOR_TEXT_PRIMARY),
+                        content=ft.Icon(icon, size=20, color=COLOR_TEXT_PRIMARY),
                         bgcolor=icon_bg_color,
                         border_radius=ICON_BORDER_RADIUS,
-                        width=ICON_BUTTON_SIZE,
-                        height=ICON_BUTTON_SIZE,
+                        width=32,
+                        height=32,
                     ),
-                    title=ft.Text(title, color=COLOR_TEXT_PRIMARY, weight="medium"),
+                    title=ft.Text(title, size=14, color=COLOR_TEXT_PRIMARY, weight="medium"),
                 ),
-                ft.Container(content=self._buttons_row, padding=ft.padding.only(left=12, right=12, bottom=8)),
+                ft.Container(content=self._buttons_row, padding=ft.Padding.only(left=8, right=8, bottom=6)),
             ],
             spacing=0,
         )

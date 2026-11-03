@@ -8,7 +8,7 @@ import flet as ft
 from utils.i18n import t
 from utils.sound import play_exit_melody
 from utils.window_geometry import fit_window_size, get_work_area_size
-from .constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT
+from .constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, PAGE_PADDING
 import subprocess
 import threading
 import time
@@ -97,7 +97,7 @@ class WindowManager:
             if not self.page.height or not window.height:
                 return
             frame_height = max(0, window.height - self.page.height)
-            target = math.ceil(content_height + 40 + frame_height)
+            target = math.ceil(content_height + 2 * PAGE_PADDING + frame_height)
             _, target, _, _ = fit_window_size(
                 (window.width, target), (WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT),
                 self._work_area,

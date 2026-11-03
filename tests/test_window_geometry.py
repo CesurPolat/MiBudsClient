@@ -21,9 +21,9 @@ class WindowGeometryTests(unittest.TestCase):
         )
         with patch("ui.window_manager.get_work_area_size") as work_area:
             manager = WindowManager(page)
-        self.assertEqual((page.window.width, page.window.height), (1100, 560))
-        self.assertEqual((page.window.min_height, page.window.max_height), (560, 560))
-        self.assertEqual((page.window.min_width, page.window.max_width), (1100, 1100))
+        self.assertEqual((page.window.width, page.window.height), (800, 500))
+        self.assertEqual((page.window.min_height, page.window.max_height), (500, 500))
+        self.assertEqual((page.window.min_width, page.window.max_width), (800, 800))
         self.assertFalse(page.window.resizable)
         self.assertFalse(page.window.maximizable)
         manager.set_content_measurement(Mock())
@@ -66,7 +66,7 @@ class WindowGeometryTests(unittest.TestCase):
         )
 
     def test_content_height_includes_padding_and_native_title_bar(self):
-        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=529, update=Mock())
+        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=469, update=Mock())
         with patch(
             "ui.window_manager.get_work_area_size", return_value=(1920, 1080)
         ):
@@ -76,8 +76,8 @@ class WindowGeometryTests(unittest.TestCase):
         measurement = SimpleNamespace(capture=AsyncMock(return_value=png))
         manager.set_content_measurement(measurement)
         asyncio.run(manager._fit_content_after_layout(manager._fit_revision))
-        self.assertEqual(page.window.height, 521)
-        self.assertEqual(page.window.width, 1100)
+        self.assertEqual(page.window.height, 509)
+        self.assertEqual(page.window.width, 800)
         self.assertGreater(page.update.call_count, 1)
 
     def test_new_layout_cancels_an_in_flight_height_transition(self):
@@ -91,12 +91,12 @@ class WindowGeometryTests(unittest.TestCase):
             manager._fit_revision += 1
 
         page.update.side_effect = supersede_transition
-        asyncio.run(manager._animate_height(500, manager._fit_revision))
+        asyncio.run(manager._animate_height(450, manager._fit_revision))
         self.assertEqual(len(heights), 1)
-        self.assertGreater(page.window.height, 500)
+        self.assertGreater(page.window.height, 450)
 
     def test_stale_measurement_and_maximized_window_are_ignored(self):
-        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=529, update=Mock())
+        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=469, update=Mock())
         with patch("ui.window_manager.get_work_area_size", return_value=(1280, 720)):
             manager = WindowManager(page, auto_resize=True)
         measurement = SimpleNamespace(capture=AsyncMock())

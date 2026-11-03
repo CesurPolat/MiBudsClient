@@ -7,7 +7,7 @@ from typing import Callable
 import flet as ft
 from ui.localization import refresh_translations
 
-from ..constants import APP_VERSION, GITHUB_URL
+from ..constants import APP_VERSION, GITHUB_URL, WINDOW_WIDTH, PAGE_PADDING, HOME_WIDE_BREAKPOINT
 from .common import AppTitle, Spacer, Footer
 from .device_status import DeviceStatusCard
 from .settings_card import SettingsCard
@@ -17,22 +17,17 @@ class AppLayout(ft.Column):
     """Keep both screens mounted so callbacks and form state survive navigation."""
 
     def __init__(self, device_status_card: DeviceStatusCard,
-                 settings_card: SettingsCard, on_update: Callable[[], None]):
+                 settings_card: SettingsCard, on_update: Callable[[], None],
+                 viewport_width: float | None = None):
         self._on_update = on_update
+        self._device_status_card = device_status_card
+        self._home_controls = settings_card.home_controls_card
+        self._connected_controls = settings_card.connected_controls
+        self._wide = None
         self.title = AppTitle(t("nav.settings"))
         self.title.visible = False
-        device_status_card.col = {"compact": 10, "wide": 4}
-        settings_card.home_controls_card.col = {"compact": 10, "wide": 6}
         transition = ft.Animation(280, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
         self.home_content = ft.Container(
-            content=ft.ResponsiveRow(
-                controls=[device_status_card, settings_card.home_controls_card],
-                columns=10,
-                breakpoints={"compact": 0, "wide": 1000},
-                spacing=16,
-                run_spacing=16,
-                vertical_alignment=ft.CrossAxisAlignment.START,
-            ),
             opacity=1,
             offset=ft.Offset(0, 0),
             animate_opacity=transition,
@@ -87,13 +82,37 @@ class AppLayout(ft.Column):
                 self.navigation_header,
                 self.header_spacer,
                 self.page_content,
-                Spacer(height=5),
+                Spacer(height=2),
                 self.footer,
             ],
-            spacing=10,
+            spacing=8,
             tight=True,
             horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
         )
+        self.set_viewport_width(viewport_width)
+
+    def set_viewport_width(self, width: float | None) -> bool:
+        width = width if isinstance(width, (int, float)) else WINDOW_WIDTH
+        wide = width - 2 * PAGE_PADDING >= HOME_WIDE_BREAKPOINT
+        if wide == self._wide:
+            return False
+        self._wide = wide
+        device, controls = self._device_status_card, self._home_controls
+        device.set_wide_layout(wide)
+        device.expand = 2 if wide else False
+        controls.expand = 3 if wide else False
+        self._connected_controls.expand = wide
+        self._connected_controls.alignment = (
+            ft.MainAxisAlignment.SPACE_BETWEEN if wide else ft.MainAxisAlignment.START)
+        if wide:
+            self.home_content.content = ft.Row(
+                [device, controls], spacing=12, intrinsic_height=True,
+                vertical_alignment=ft.CrossAxisAlignment.STRETCH)
+        else:
+            self.home_content.content = ft.Column(
+                [device, controls], spacing=12, tight=True,
+                horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
+        return True
 
     def show_settings(self, open_settings: bool) -> None:
         # Only the active screen contributes to the Stack's natural height.

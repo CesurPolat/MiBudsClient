@@ -17,9 +17,9 @@ class AppLayoutTests(unittest.TestCase):
         screens = list(layout.page_content.controls)
 
         self.assertEqual(layout.home_content.opacity, 1)
-        self.assertEqual(layout.home_content.content.breakpoints, {"compact": 0, "wide": 1000})
-        self.assertEqual(device.col, {"compact": 10, "wide": 4})
-        self.assertEqual(settings.home_controls_card.col, {"compact": 10, "wide": 6})
+        self.assertTrue(layout.home_content.content.intrinsic_height)
+        self.assertEqual(device.expand, 2)
+        self.assertEqual(settings.home_controls_card.expand, 3)
         self.assertEqual(layout.settings_content.opacity, 0)
         self.assertTrue(layout.settings_content.ignore_interactions)
         self.assertFalse(layout.back_button.visible)
@@ -59,6 +59,21 @@ class AppLayoutTests(unittest.TestCase):
         self.assertEqual(settings.identity_item.subtitle.value, "Redmi Buds 6 Play")
         self.assertEqual(device.battery_panel._left._value_text.value, "%70")
         self.assertEqual(update.call_count, 2)
+
+    def test_resize_preserves_controls_and_moves_battery_to_bottom_only_when_wide(self):
+        device = DeviceStatusCard()
+        settings = SettingsCard()
+        layout = AppLayout(device, settings, on_update=Mock(), viewport_width=1100)
+        self.assertTrue(device._battery_spacer.visible)
+        self.assertFalse(device.content.tight)
+        self.assertTrue(layout.set_viewport_width(550))
+        self.assertFalse(device._battery_spacer.visible)
+        self.assertTrue(device.content.tight)
+        self.assertEqual(layout.home_content.content.controls, [device, settings.home_controls_card])
+        self.assertFalse(layout.set_viewport_width(600))
+        self.assertTrue(layout.set_viewport_width(1100))
+        self.assertTrue(device._battery_spacer.visible)
+        self.assertEqual(layout.home_content.content.controls, [device, settings.home_controls_card])
 
 
 if __name__ == "__main__":
