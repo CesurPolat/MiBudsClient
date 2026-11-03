@@ -4,7 +4,6 @@ import unittest
 from unittest.mock import Mock
 
 from ui.components import AppLayout, DeviceStatusCard, SettingsCard
-from ui.constants import APP_TITLE
 
 
 class AppLayoutTests(unittest.TestCase):
@@ -21,11 +20,17 @@ class AppLayoutTests(unittest.TestCase):
         self.assertEqual(layout.settings_content.opacity, 0)
         self.assertTrue(layout.settings_content.ignore_interactions)
         self.assertFalse(layout.back_button.visible)
+        self.assertFalse(layout.title.visible)
+        self.assertFalse(layout.navigation_header.visible)
+        self.assertIs(layout.footer.controls[0].content, layout.settings_button)
+        self.assertEqual(layout.footer.controls[1].controls[1].value, "|")
         self.assertIsNone(layout.home_content.top)
         self.assertEqual(layout.settings_content.top, 0)
 
         layout.settings_button.on_click(None)
         self.assertEqual(layout.title.value, "Settings")
+        self.assertTrue(layout.title.visible)
+        self.assertTrue(layout.navigation_header.visible)
         self.assertTrue(layout.home_content.ignore_interactions)
         self.assertFalse(layout.settings_content.ignore_interactions)
         self.assertEqual(layout.home_content.opacity, 0)
@@ -36,7 +41,7 @@ class AppLayoutTests(unittest.TestCase):
         self.assertIsNone(layout.settings_content.top)
 
         layout.back_button.on_click(None)
-        self.assertEqual(layout.title.value, APP_TITLE)
+        self.assertFalse(layout.title.visible)
         self.assertFalse(layout.home_content.ignore_interactions)
         self.assertTrue(layout.settings_content.ignore_interactions)
         self.assertEqual(layout.home_content.opacity, 1)

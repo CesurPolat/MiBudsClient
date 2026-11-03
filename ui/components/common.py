@@ -82,24 +82,29 @@ class Spacer(ft.Container):
         super().__init__(height=height, expand=expand)
 
 
-class Footer(ft.Column):
-    """Footer containing version and GitHub link."""
+class Footer(ft.Row):
+    """Settings on the left; version and GitHub link on the right."""
 
-    def __init__(self, version: str, github_url: str):
+    def __init__(self, version: str, github_url: str, settings_button=None):
         super().__init__(
             controls=[
-                ft.Text(t("footer.version", version=version), color=COLOR_DISABLED, size=10),
-                ft.TextButton(
-                    content=ft.Text(
-                        github_url.replace("https://", ""),
-                        color=COLOR_DISABLED,
-                        size=10,
-                        italic=True
+                ft.Container(content=settings_button, expand=True,
+                             alignment=ft.Alignment.CENTER_LEFT),
+                ft.Row(controls=[
+                    ft.Text(version, color=COLOR_DISABLED, size=10),
+                    ft.Text("|", color=COLOR_DISABLED, size=10),
+                    ft.TextButton(
+                        content=ft.Text(
+                            github_url.replace("https://", ""),
+                            color=COLOR_DISABLED,
+                            size=10,
+                            italic=True
+                        ),
+                        url=github_url,
+                        style=ft.ButtonStyle(padding=0)
                     ),
-                    url=github_url,
-                    style=ft.ButtonStyle(padding=0)
-                )
+                ], spacing=6, tight=True, vertical_alignment=ft.CrossAxisAlignment.CENTER),
             ],
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=0
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=8
         )

@@ -7,7 +7,7 @@ from typing import Callable
 import flet as ft
 from ui.localization import refresh_translations
 
-from ..constants import APP_TITLE, APP_VERSION, GITHUB_URL
+from ..constants import APP_VERSION, GITHUB_URL
 from .common import AppTitle, Spacer, Footer
 from .device_status import DeviceStatusCard
 from .settings_card import SettingsCard
@@ -19,7 +19,8 @@ class AppLayout(ft.Column):
     def __init__(self, device_status_card: DeviceStatusCard,
                  settings_card: SettingsCard, on_update: Callable[[], None]):
         self._on_update = on_update
-        self.title = AppTitle(APP_TITLE)
+        self.title = AppTitle(t("nav.settings"))
+        self.title.visible = False
         transition = ft.Animation(280, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
         self.home_content = ft.Container(
             content=ft.Column(
@@ -57,9 +58,10 @@ class AppLayout(ft.Column):
             visible=False,
             on_click=lambda _: self.show_settings(False),
         )
-        self.settings_button = ft.IconButton(
+        self.settings_button = ft.TextButton(
             icon=ft.Icons.SETTINGS_OUTLINED,
-            icon_color="white",
+            content=ft.Text(t("nav.settings"), size=11),
+            style=ft.ButtonStyle(color="white", padding=0, icon_size=18),
             tooltip=t("nav.settings"),
             on_click=lambda _: self.show_settings(True),
         )
@@ -67,18 +69,22 @@ class AppLayout(ft.Column):
             controls=[
                 ft.Container(content=self.back_button, width=48),
                 ft.Container(content=self.title, expand=True, alignment=ft.Alignment.CENTER),
-                ft.Container(content=self.settings_button, width=48),
+                ft.Container(width=48),
             ],
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            visible=False,
         )
+        self.header_spacer = Spacer(height=8)
+        self.header_spacer.visible = False
+        self.footer = Footer(APP_VERSION, GITHUB_URL, self.settings_button)
 
         super().__init__(
             controls=[
                 self.navigation_header,
-                Spacer(height=8),
+                self.header_spacer,
                 self.page_content,
                 Spacer(height=5),
-                Footer(APP_VERSION, GITHUB_URL),
+                self.footer,
             ],
             spacing=10,
             tight=True,
@@ -100,8 +106,10 @@ class AppLayout(ft.Column):
         self.settings_content.offset = ft.Offset(0 if open_settings else 0.06, 0)
         self.settings_content.ignore_interactions = not open_settings
         self.back_button.visible = open_settings
+        self.navigation_header.visible = self.header_spacer.visible = open_settings
         self.settings_button.visible = not open_settings
-        self.title.value = t("nav.settings") if open_settings else APP_TITLE
+        self.title.visible = open_settings
+        self.title.value = t("nav.settings")
         self._on_update()
 
     def refresh_translations(self) -> None:
