@@ -91,10 +91,20 @@ class AppMessageHandler:
         refresh_translations(self._page.overlay)
         self._page.update()
 
+    async def handle_on_ui_loop(self, message) -> None:
+        """Apply PubSub messages on Flet's loop alongside native UI events.
+
+        Flet dispatches synchronous PubSub subscribers to executor threads.
+        An application lock alone cannot protect against Flet's automatic
+        updates on the event loop. Keep this coroutine free of awaits so each
+        control mutation and its update finish before another UI event runs.
+        Background producers should publish messages, never mutate controls.
+        """
+        self.handle(message)
+
     def handle(self, message) -> None:
         """Ignore unrelated messages and dispatch recognized message types."""
-        # Pubsub delivers synchronous callbacks on concurrent executor threads.
-        # Flet control-list diffs must be generated and sent in the same order.
+        # Also serialize direct callers; live PubSub uses handle_on_ui_loop.
         with self._dispatch_lock:
             self._handle_message(message)
 

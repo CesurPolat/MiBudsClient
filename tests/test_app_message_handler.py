@@ -1,6 +1,10 @@
 """Message handling behavior without a running Flet session."""
 
+import asyncio
+import inspect
+import threading
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import ExitStack
 from types import SimpleNamespace
 from unittest.mock import Mock, call, patch
@@ -201,9 +205,11 @@ class AppMessageHandlerTests(unittest.TestCase):
             latency.platform_key = "windows"
             latency.low_latency_exceptions_by_platform = {}
             latency.low_latency_includes_by_platform = {}
-            main.main(self.page)
+            asyncio.run(main.main(self.page))
 
-        handler = self.page.pubsub.subscribe.call_args.args[0].__self__
+        subscriber = self.page.pubsub.subscribe.call_args.args[0]
+        self.assertTrue(inspect.iscoroutinefunction(subscriber))
+        handler = subscriber.__self__
         layout = self.page.add.call_args.args[0]
         home, settings = layout.page_content.controls
         self.assertEqual(home.content.controls, [
@@ -217,6 +223,52 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertIs(settings.content.content.controls[-1], handler._settings_card.identity_item)
         calls = [c[0] for c in self.page.mock_calls]
         self.assertLess(calls.index("add"), calls.index("pubsub.subscribe"))
+
+
+class PubSubUiLoopTests(unittest.IsolatedAsyncioTestCase):
+    async def test_worker_messages_and_native_updates_share_ui_thread(self):
+        from flet.pubsub.pubsub_hub import PubSubHub
+
+        loop = asyncio.get_running_loop()
+        ui_thread = threading.get_ident()
+        handler = AppMessageHandler.__new__(AppMessageHandler)
+        handler._dispatch_lock = threading.RLock()
+        handler._closing = False
+        observed = []
+        finished = asyncio.Event()
+
+        def apply(message):
+            observed.append((message['index'], threading.get_ident()))
+            # Model a native Flet update scheduled while applying a message.
+            loop.call_soon(native_update, message['index'])
+            observed.append(('committed', threading.get_ident()))
+            if message['index'] == 99:
+                finished.set()
+
+        native = []
+
+        def native_update(index):
+            # The entire mutation/update pair must have completed first.
+            self.assertIn((index, ui_thread), observed)
+            self.assertEqual(len(observed) % 2, 0)
+            native.append(threading.get_ident())
+
+        handler._routes = {'test': apply}
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            hub = PubSubHub(loop=loop, executor=executor)
+            hub.subscribe('test', handler.handle_on_ui_loop)
+
+            def produce():
+                for index in range(100):
+                    hub.send_all({'type': 'test', 'index': index})
+
+            await asyncio.to_thread(produce)
+            await asyncio.wait_for(finished.wait(), timeout=3)
+            await asyncio.sleep(0)
+
+        self.assertEqual([index for index, _ in observed[::2]], list(range(100)))
+        self.assertTrue(all(thread == ui_thread for _, thread in observed))
+        self.assertEqual(native, [ui_thread] * 100)
 
 
 if __name__ == "__main__":

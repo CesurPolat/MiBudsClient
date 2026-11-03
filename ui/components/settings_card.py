@@ -90,12 +90,7 @@ class SettingsCard(ft.Container):
 
         self.connection_panel = ConnectionPanel()
         self.battery_item = SettingItem(ft.Icons.REFRESH, "grey700", t("battery.check"), on_click=on_check_battery)
-        self.connected_controls = ft.Column([
-                self.latency_item,
-                self.auto_settings,
-                ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-                self.battery_item,
-            ], spacing=0, visible=False)
+        self.connected_controls = ft.Column(spacing=0, visible=False)
         self.home_controls_card = ft.Container(
             content=ft.Column([
                 self.connection_panel,
@@ -145,17 +140,21 @@ class SettingsCard(ft.Container):
         caps = self._capabilities
         self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
         self.battery_item.visible = self._connected and caps.supports("battery")
-        controls = [self.latency_item, self.auto_settings] if self.latency_item.visible else []
-        if self.battery_item.visible:
-            if controls:
-                controls.append(ft.Divider(color=COLOR_DIVIDER, thickness=0.5))
-            controls.append(self.battery_item)
+        self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
+        controls = []
+        for control in (self.latency_item, self.equalizer.quick_controls, self.battery_item):
+            if control.visible:
+                if controls:
+                    controls.append(ft.Divider(color=COLOR_DIVIDER, thickness=0.5))
+                controls.append(control)
         self.connected_controls.controls = controls
         self.home_controls_card.visible = not self._connected or bool(controls)
         for feature, panel in self.device_components.items():
             panel.visible = self._connected and caps.supports(feature)
             panel.set_connection(panel.visible)
         sections = [self.startup_item, self._language_container]
+        if self.auto_settings.visible:
+            sections.append(self.auto_settings)
         self.noise.capabilities = noise_capabilities(caps)
         self.noise.visible = self._connected and noise_backend_enabled(caps)
         self.noise.set_connection(self.noise.visible)

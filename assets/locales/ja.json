@@ -171,7 +171,7 @@
   "eq.vocal": "Vocal",
   "eq.bass": "Bass boost",
   "eq.treble": "Treble boost",
-  "eq.volume": "Volume boost",
+  "eq.volume": "Boost",
   "eq.current": "Current profile (0x{code})",
   "eq.reading": "Reading EQ...",
   "eq.working": "Applying EQ...",

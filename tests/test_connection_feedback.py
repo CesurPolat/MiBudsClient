@@ -10,6 +10,21 @@ from ui.components.settings_card import SettingsCard
 
 
 class ConnectionFeedbackTests(unittest.TestCase):
+    def test_home_quick_controls_and_settings_automation_placement(self):
+        from controllers.bluetooth.capabilities import resolve_capabilities
+        card = SettingsCard()
+        card.set_capabilities(resolve_capabilities(device_name="Redmi Buds 6 Play"))
+        card.update_connection_state("connected")
+        home_items = [item for item in card.connected_controls.controls
+                      if item in (card.latency_item, card.equalizer.quick_controls, card.battery_item)]
+        self.assertEqual(home_items, [card.latency_item, card.equalizer.quick_controls, card.battery_item])
+        self.assertNotIn(card.auto_settings, card.connected_controls.controls)
+        self.assertIn(card.auto_settings, card.content.controls)
+        self.assertIn(card.equalizer, card.content.controls)
+        card.update_connection_state("failed")
+        self.assertNotIn(card.auto_settings, card.content.controls)
+        self.assertFalse(card.equalizer.quick_controls.visible)
+
     def test_latency_state_survives_detached_selector_and_reconnect(self):
         from controllers.bluetooth.capabilities import resolve_capabilities
         card = SettingsCard()

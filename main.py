@@ -36,7 +36,7 @@ from ui.components.error_report import ErrorReportDialog
 # Temporary manual QA switch: show the report form on every application launch.
 SHOW_STARTUP_TEST_ERROR = False
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
     """Main application entry point."""
     set_language(get_language_preference())
     page.rtl = is_rtl()
@@ -215,7 +215,7 @@ def main(page: ft.Page):
                 reports.capture(exc, 'ui_message')
     message_handler.report_message = handle_message
     message_handler.report_on_show = report_dialog.show_pending
-    page.pubsub.subscribe(message_handler.handle)
+    page.pubsub.subscribe(message_handler.handle_on_ui_loop)
     if SHOW_STARTUP_TEST_ERROR:
         try:
             raise RuntimeError("Test error: application startup error report form")

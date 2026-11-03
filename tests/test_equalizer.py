@@ -225,6 +225,90 @@ class EqUITests(unittest.TestCase):
         self.panel.set_connection(True)
         token = self.panel.begin("read")
         self.panel.complete(token, EqResult(True, state or self.state, m("eq.loaded")), (0, 6, 5, 1, 7), "read")
+        self.action.reset_mock()
+
+    def test_quick_and_settings_share_confirmed_state_and_busy_status(self):
+        self.load()
+        quick = self.panel.quick_profiles
+        self.assertEqual([b.data for b in quick.controls], [0, 6, 5, 1, 7])
+        self.assertTrue(all(b.content.controls[0].icon for b in quick.controls))
+        self.assertFalse(quick.wrap)
+        button = quick.controls[1]
+        button.on_click(SimpleNamespace(control=button))
+        self.assertEqual(self.action.call_args.args, ("profile",))
+        self.assertEqual(self.action.call_args.kwargs["profile"], 6)
+        token = self.panel.begin("profile")
+        self.assertTrue(all(b.disabled for b in quick.controls))
+        self.assertTrue(self.panel.profile.disabled)
+        self.assertTrue(self.panel.quick_refresh_button.disabled)
+        self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
+        self.panel.complete(token, EqResult(True, EqState(6), m("eq.loaded")), (0, 6), "profile")
+        self.assertEqual(self.panel.profile.value, "6")
+        self.assertEqual(quick.controls[1].style.bgcolor, "#1976D2")
+        self.assertEqual(quick.controls[0].style.bgcolor, "#2B2F3A")
+        token = self.panel.begin("profile")
+        self.panel.complete(token, EqResult(False, message=m("eq.timeout")), (), "profile")
+        self.assertTrue(all(b.disabled for b in quick.controls))
+        self.assertFalse(self.panel.quick_refresh_button.disabled)
+        self.assertEqual(self.panel.quick_status.color, "red")
+        self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
+        self.panel.set_connection(False)
+        self.assertEqual(quick.controls, [])
+        self.assertFalse(self.panel.quick_controls.visible)
+
+    def test_connect_reads_once_and_opening_panel_reuses_result(self):
+        def action(operation, **kwargs):
+            self.panel.begin(operation)
+        self.action.side_effect = action
+        self.panel.set_connection(True)
+        self.panel.set_connection(True)
+        self.panel._toggle(None)
+        self.action.assert_called_once()
+        self.panel.complete(self.panel._token, EqResult(True, self.state, m("eq.loaded")), (0, 6), "read")
+        self.panel._toggle(None)
+        self.panel._toggle(None)
+        self.action.assert_called_once()
+        self.panel.set_connection(False)
+        self.panel.set_connection(True)
+        self.assertEqual(self.action.call_count, 2)
+
+    def test_reconnect_waits_for_current_device_read_before_showing_buttons(self):
+        self.load()
+        self.assertFalse(self.panel.quick_status.visible)
+        old_token = self.panel._token
+        self.panel.set_connection(False)
+        self.assertEqual(self.panel.quick_profiles.controls, [])
+        self.panel.set_connection(True)
+        self.assertEqual(self.panel.quick_profiles.controls, [])
+        token = self.panel.begin("read")
+        self.assertTrue(self.panel.quick_status.visible)
+        self.panel.complete(old_token, EqResult(True, self.state, m("eq.loaded")), (0, 6), "read")
+        self.assertEqual(self.panel.quick_profiles.controls, [])
+        self.panel.complete(token, EqResult(True, EqState(1), m("eq.loaded")), (0, 1), "read")
+        self.assertEqual([b.data for b in self.panel.quick_profiles.controls], [0, 1])
+        self.assertEqual(self.panel.profile.value, "1")
+        self.assertFalse(self.panel.quick_status.visible)
+        token = self.panel.begin("read")
+        self.panel.complete(token, EqResult(False, message=m("eq.timeout")), (), "read")
+        self.assertTrue(self.panel.quick_status.visible)
+
+    def test_quick_controls_translate_with_settings_without_losing_selection(self):
+        from ui.components.settings_card import SettingsCard
+        self.load()
+        card = SettingsCard()
+        card.equalizer = self.panel
+        card.content.controls = [self.panel]
+        card.home_controls_card.content.controls = [self.panel.quick_controls]
+        try:
+            set_language("tr")
+            card.refresh_translations()
+            self.assertEqual(self.panel.quick_profiles.controls[0].content.controls[1].value, t("eq.balanced"))
+            self.assertEqual(self.panel.quick_profiles.controls[0].content.controls[1].value, self.panel.profile.options[0].text)
+            self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
+            self.assertEqual(self.panel.quick_refresh_button.tooltip, t("eq.refresh"))
+            self.assertEqual(self.panel.quick_profiles.controls[0].style.bgcolor, "#1976D2")
+        finally:
+            set_language("en")
 
     def test_connect_and_dynamic_bands(self):
         self.assertTrue(self.panel.refresh_button.disabled)

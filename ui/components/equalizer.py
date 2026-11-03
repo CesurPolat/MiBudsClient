@@ -4,7 +4,7 @@ import flet as ft
 from controllers.bluetooth.equalizer import EqBand, PROFILE_KEYS
 from utils.i18n import t, render
 from .setting_items import SettingItem
-from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY
+from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BUTTON_SIZE, ICON_BORDER_RADIUS
 
 
 class EqualizerSettings(ft.Column):
@@ -22,9 +22,28 @@ class EqualizerSettings(ft.Column):
         self.draft = ()
         self.status = ft.Text(t("eq.connect"), size=12, color=COLOR_DISABLED)
         self.refresh_button = ft.IconButton(icon=ft.Icons.REFRESH, tooltip=t("eq.refresh"),
-                                          disabled=True, visible=False, on_click=lambda _: self._act("read"))
+                                          disabled=True, on_click=lambda _: self._act("read"))
         self.profile = ft.Dropdown(label=t("eq.profile"), disabled=True, options=[],
                                    on_select=self._select, color=COLOR_TEXT_PRIMARY, filled=True)
+        self.quick_status = ft.Text(t("eq.connect"), size=12, color=COLOR_DISABLED, visible=False)
+        self.quick_profiles = ft.Row(spacing=8)
+        self.quick_refresh_button = ft.IconButton(
+            icon=ft.Icons.REFRESH, tooltip=t("eq.refresh"), disabled=True, visible=False,
+            on_click=lambda _: self._act("read"))
+        self.quick_controls = ft.Column([
+            ft.ListTile(
+                leading=ft.Container(
+                    content=ft.Icon(ft.Icons.GRAPHIC_EQ, color=COLOR_TEXT_PRIMARY),
+                    bgcolor="blue_700", border_radius=ICON_BORDER_RADIUS,
+                    width=ICON_BUTTON_SIZE, height=ICON_BUTTON_SIZE),
+                title=ft.Text(t("eq.title"), color=COLOR_TEXT_PRIMARY, weight="medium"),
+                trailing=self.quick_refresh_button),
+            ft.Container(
+                content=ft.Column([self.quick_profiles, self.quick_status], spacing=4,
+                                  horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
+                padding=ft.Padding.only(left=12, right=12, bottom=8)),
+        ], spacing=0, visible=False,
+            horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.sliders = []
         self.rows = ft.Column(spacing=4)
         self.save_button = ft.TextButton(t("eq.save"), disabled=True, on_click=lambda _: self._act("save"))
@@ -41,7 +60,7 @@ class EqualizerSettings(ft.Column):
         self._opened = not self._opened
         self.body.visible = self._opened
         self.toggle.trailing.icon = ft.Icons.EXPAND_LESS if self._opened else ft.Icons.CHEVRON_RIGHT
-        if self._opened:
+        if self._opened and self._needs_refresh:
             self._act("read")
         self._on_update()
 
@@ -53,10 +72,13 @@ class EqualizerSettings(ft.Column):
         self._busy = False
         self._needs_refresh = True
         self._state = None
+        self._profiles = ()
         self.draft = ()
         self.status.value = t("eq.open" if connected else "eq.connect")
+        self.status.color = COLOR_DISABLED
+        self.quick_controls.visible = connected
         self._render()
-        if connected and self._opened:
+        if connected:
             self._act("read")
 
     def _act(self, operation, **kwargs):
@@ -72,6 +94,9 @@ class EqualizerSettings(ft.Column):
             profile = int(event.control.value)
         except (TypeError, ValueError):
             return
+        self._select_profile(profile)
+
+    def _select_profile(self, profile):
         if profile in self._profiles and self._state and profile != self._state.profile:
             self._act("profile", profile=profile)
 
@@ -125,6 +150,32 @@ class EqualizerSettings(ft.Column):
             self.profile.options.append(ft.dropdown.Option(str(current), t("eq.current", code=f"{current:02X}"), disabled=True))
         self.profile.value = str(current) if current is not None else None
         self.profile.disabled = not enabled or current is None or not self._profiles
+        icons = {0: ft.Icons.TUNE, 1: ft.Icons.MIC, 5: ft.Icons.SPEAKER,
+                 6: ft.Icons.GRAPHIC_EQ, 7: ft.Icons.VOLUME_UP}
+        self.quick_profiles.controls = [
+            ft.TextButton(
+                content=ft.Column([
+                    ft.Icon(icons.get(int(option.key), ft.Icons.GRAPHIC_EQ),
+                            size=22, color=COLOR_TEXT_PRIMARY),
+                    ft.Text(option.text, size=12, color=COLOR_TEXT_PRIMARY,
+                            text_align=ft.TextAlign.CENTER, max_lines=2,
+                            overflow=ft.TextOverflow.ELLIPSIS),
+                ], spacing=6, alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                expand=True, aspect_ratio=1, tooltip=option.text,
+                data=int(option.key),
+                disabled=self.profile.disabled or option.disabled,
+                style=ft.ButtonStyle(
+                    bgcolor="#1976D2" if option.key == self.profile.value else "#2B2F3A",
+                    color=COLOR_TEXT_PRIMARY,
+                    shape=ft.RoundedRectangleBorder(radius=10),
+                    padding=ft.Padding.symmetric(horizontal=4, vertical=4)),
+                on_click=lambda e: self._select_profile(e.control.data))
+            for option in self.profile.options]
+        self.quick_refresh_button.disabled = self.refresh_button.disabled
+        self.quick_status.value = self.status.value
+        self.quick_status.color = self.status.color
+        self.quick_status.visible = self._connected and (self._busy or self.status.color == "red")
         self.custom_body.visible = bool(self.custom_supported and self._state and self._state.custom)
         self.save_button.disabled = self.reset_button.disabled = not (enabled and self.custom_body.visible)
         self.sliders = []
