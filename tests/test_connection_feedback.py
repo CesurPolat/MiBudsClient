@@ -107,9 +107,19 @@ class ConnectionFeedbackTests(unittest.TestCase):
     def test_failure_survives_status_and_battery_then_retry_resets_controls(self):
         card = ConnectionPanel()
         summary = DeviceStatusCard()
+        summary.update_connection_state("failed", "Test failure")
         card.update_connection_state("failed", "Test failure")
         summary.update_status("Other status")
         summary.update_battery(60, 70, 80)
+        from utils.i18n import t
+        self.assertEqual(summary.status_bar.value, t("device_status.error"))
+        self.assertEqual(summary.status_dot.bgcolor, "orange")
+        for state, label, color in (("connecting", "connecting", "amber"),
+                                    ("connected", "connected", "green"),
+                                    ("disconnected", "disconnected", "grey")):
+            summary.update_connection_state(state)
+            self.assertEqual(summary.status_bar.value, t("device_status." + label))
+            self.assertEqual(summary.status_dot.bgcolor, color)
         self.assertEqual(card.connection_reason.value, "Test failure")
         self.assertTrue(card.retry_button.visible)
         card.update_connection_state("connecting")

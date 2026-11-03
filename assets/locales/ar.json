@@ -169,8 +169,8 @@
   "eq.reset": "Reset",
   "eq.balanced": "Balanced",
   "eq.vocal": "Vocal",
-  "eq.bass": "Bass boost",
-  "eq.treble": "Treble boost",
+  "eq.bass": "جهير",
+  "eq.treble": "حاد",
   "eq.volume": "Boost",
   "eq.current": "Current profile (0x{code})",
   "eq.reading": "Reading EQ...",
@@ -216,5 +216,9 @@
   "noise.rejected": "Device rejected noise command ({code}).",
   "noise.timeout": "Noise control request timed out.",
   "noise.disconnected": "Device session is not ready.",
-  "noise.connection_changed": "Device connection changed."
+  "noise.connection_changed": "Device connection changed.",
+  "device_status.connected": "متصل",
+  "device_status.connecting": "جارٍ الاتصال",
+  "device_status.disconnected": "غير متصل",
+  "device_status.error": "خطأ"
 }

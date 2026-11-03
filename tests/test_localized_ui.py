@@ -102,8 +102,8 @@ class LocalizedUITests(unittest.TestCase):
         self.assertIn("winerror 5", self.settings.connection_panel.connection_reason.value)
         self.assertTrue(self.settings.connection_panel.retry_button.visible)
         self.assertFalse(self.settings.connected_controls.visible)
-        self.assertEqual(self.device.status_bar.value, "Durum: Bağlanılamadı. Yeniden Dene'ye basın.")
-        self.assertEqual(self.device.status_bar.color, "red")
+        self.assertEqual(self.device.status_bar.value, t("device_status.error"))
+        self.assertEqual(self.device.status_dot.bgcolor, "orange")
         self.assertEqual(self.settings.identity_item.subtitle.value, "Cihaz kimliği sorgusu zaman aşımına uğradı.")
         self.assertIs(self.page.overlay[0], notice)
         self.assertTrue(notice.open)
@@ -122,7 +122,7 @@ class LocalizedUITests(unittest.TestCase):
 
     def test_new_components_use_selected_language_without_refresh(self):
         set_language("zh-CN")
-        self.assertEqual(DeviceStatusCard().status_bar.value, "状态：正在启动…")
+        self.assertEqual(DeviceStatusCard().status_bar.value, t("device_status.disconnected"))
         self.assertEqual(SettingsCard().startup_item.title.value, "开机启动")
 
     def test_all_languages_refresh_live_and_arabic_switches_layout_direction(self):

@@ -169,8 +169,8 @@
   "eq.reset": "Reset",
   "eq.balanced": "Balanced",
   "eq.vocal": "Vocal",
-  "eq.bass": "Bass boost",
-  "eq.treble": "Treble boost",
+  "eq.bass": "Graves",
+  "eq.treble": "Agudos",
   "eq.volume": "Boost",
   "eq.current": "Current profile (0x{code})",
   "eq.reading": "Reading EQ...",
@@ -216,5 +216,9 @@
   "noise.rejected": "El dispositivo rechazó el comando ({code}).",
   "noise.timeout": "La solicitud de control de ruido agotó el tiempo de espera.",
   "noise.disconnected": "La sesión del dispositivo no está lista.",
-  "noise.connection_changed": "Cambió la conexión del dispositivo."
+  "noise.connection_changed": "Cambió la conexión del dispositivo.",
+  "device_status.connected": "Conectado",
+  "device_status.connecting": "Conectando",
+  "device_status.disconnected": "Desconectado",
+  "device_status.error": "Error"
 }

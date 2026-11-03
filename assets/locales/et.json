@@ -169,8 +169,8 @@
   "eq.reset": "Reset",
   "eq.balanced": "Balanced",
   "eq.vocal": "Vocal",
-  "eq.bass": "Bass boost",
-  "eq.treble": "Treble boost",
+  "eq.bass": "Bass",
+  "eq.treble": "Kõrged",
   "eq.volume": "Boost",
   "eq.current": "Current profile (0x{code})",
   "eq.reading": "Reading EQ...",
@@ -216,5 +216,9 @@
   "noise.rejected": "Device rejected noise command ({code}).",
   "noise.timeout": "Noise control request timed out.",
   "noise.disconnected": "Device session is not ready.",
-  "noise.connection_changed": "Device connection changed."
+  "noise.connection_changed": "Device connection changed.",
+  "device_status.connected": "Ühendatud",
+  "device_status.connecting": "Ühendamine",
+  "device_status.disconnected": "Ühendamata",
+  "device_status.error": "Viga"
 }

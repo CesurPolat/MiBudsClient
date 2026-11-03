@@ -169,8 +169,8 @@
   "eq.reset": "Sıfırla",
   "eq.balanced": "Dengeli",
   "eq.vocal": "Vokal",
-  "eq.bass": "Bas artırma",
-  "eq.treble": "Tiz artırma",
+  "eq.bass": "Bas",
+  "eq.treble": "Tiz",
   "eq.volume": "Ses yükseltme",
   "eq.current": "Mevcut profil (0x{code})",
   "eq.reading": "EQ okunuyor...",
@@ -216,5 +216,9 @@
   "noise.rejected": "Cihaz gürültü komutunu reddetti ({code}).",
   "noise.timeout": "Gürültü kontrolü isteği zaman aşımına uğradı.",
   "noise.disconnected": "Cihaz oturumu hazır değil.",
-  "noise.connection_changed": "Cihaz bağlantısı değişti."
+  "noise.connection_changed": "Cihaz bağlantısı değişti.",
+  "device_status.connected": "Bağlı",
+  "device_status.connecting": "Bağlanıyor",
+  "device_status.disconnected": "Bağlı değil",
+  "device_status.error": "Hata"
 }

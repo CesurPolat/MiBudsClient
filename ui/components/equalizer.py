@@ -196,6 +196,7 @@ class EqualizerSettings(ft.Column):
                 disabled=self.profile.disabled or option.disabled,
                 style=ft.ButtonStyle(
                     bgcolor="#1976D2" if option.key == self.profile.value else "#2B2F3A",
+                    side=ft.BorderSide(1, "#4FC3F7" if option.key == self.profile.value else "#3B3F4A"),
                     color=COLOR_TEXT_PRIMARY,
                     shape=ft.RoundedRectangleBorder(radius=10),
                     padding=ft.Padding.symmetric(horizontal=2, vertical=2)),

@@ -169,8 +169,8 @@
   "eq.reset": "Reset",
   "eq.balanced": "Balanced",
   "eq.vocal": "Vocal",
-  "eq.bass": "Bass boost",
-  "eq.treble": "Treble boost",
+  "eq.bass": "저음",
+  "eq.treble": "고음",
   "eq.volume": "Boost",
   "eq.current": "Current profile (0x{code})",
   "eq.reading": "Reading EQ...",
@@ -216,5 +216,9 @@
   "noise.rejected": "Device rejected noise command ({code}).",
   "noise.timeout": "Noise control request timed out.",
   "noise.disconnected": "Device session is not ready.",
-  "noise.connection_changed": "Device connection changed."
+  "noise.connection_changed": "Device connection changed.",
+  "device_status.connected": "연결됨",
+  "device_status.connecting": "연결 중",
+  "device_status.disconnected": "연결 안 됨",
+  "device_status.error": "오류"
 }

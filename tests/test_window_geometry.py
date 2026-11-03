@@ -21,9 +21,9 @@ class WindowGeometryTests(unittest.TestCase):
         )
         with patch("ui.window_manager.get_work_area_size") as work_area:
             manager = WindowManager(page)
-        self.assertEqual((page.window.width, page.window.height), (595, 416))
-        self.assertEqual((page.window.min_height, page.window.max_height), (416, 416))
-        self.assertEqual((page.window.min_width, page.window.max_width), (595, 595))
+        self.assertEqual((page.window.width, page.window.height), (655, 424))
+        self.assertEqual((page.window.min_height, page.window.max_height), (424, 424))
+        self.assertEqual((page.window.min_width, page.window.max_width), (655, 655))
         self.assertFalse(page.window.resizable)
         self.assertFalse(page.window.maximizable)
         manager.set_content_measurement(Mock())
@@ -66,7 +66,7 @@ class WindowGeometryTests(unittest.TestCase):
         )
 
     def test_content_height_includes_padding_and_native_title_bar(self):
-        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=385, update=Mock())
+        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=393, update=Mock())
         with patch(
             "ui.window_manager.get_work_area_size", return_value=(1920, 1080)
         ):
@@ -77,7 +77,7 @@ class WindowGeometryTests(unittest.TestCase):
         manager.set_content_measurement(measurement)
         asyncio.run(manager._fit_content_after_layout(manager._fit_revision))
         self.assertEqual(page.window.height, 501)
-        self.assertEqual(page.window.width, 595)
+        self.assertEqual(page.window.width, 655)
         self.assertGreater(page.update.call_count, 1)
 
     def test_new_layout_cancels_an_in_flight_height_transition(self):
@@ -96,7 +96,7 @@ class WindowGeometryTests(unittest.TestCase):
         self.assertGreater(page.window.height, 400)
 
     def test_stale_measurement_and_maximized_window_are_ignored(self):
-        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=385, update=Mock())
+        page = SimpleNamespace(window=ft.Window(), run_task=Mock(), height=393, update=Mock())
         with patch("ui.window_manager.get_work_area_size", return_value=(1280, 720)):
             manager = WindowManager(page, auto_resize=True)
         measurement = SimpleNamespace(capture=AsyncMock())

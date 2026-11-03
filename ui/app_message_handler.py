@@ -147,6 +147,8 @@ class AppMessageHandler:
         self._settings_card.update_connection_state(
             message.get("state", ""), message.get("reason", "")
         )
+        self._device_status_card.update_connection_state(
+            message.get("state", ""), message.get("reason", ""))
         self._update_page()
 
     def _handle_catalog_device(self, message: dict) -> None:

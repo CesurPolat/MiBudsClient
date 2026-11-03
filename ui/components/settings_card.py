@@ -57,7 +57,7 @@ class SettingsCard(ft.Container):
         self._capabilities = DeviceCapabilities()
         self._connected = False
         self.latency_item = LowLatencyModeSettingItem(
-            ft.Icons.SPEED, "blue_700", t("latency.title"),
+            ft.Icons.SPORTS_ESPORTS, "blue_700", t("latency.title"),
             value=low_latency_mode,
             on_change=on_low_latency_mode_change,
         )
