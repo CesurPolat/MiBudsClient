@@ -38,12 +38,15 @@ class LowLatencyModeSettingItem(ft.Column):
         }
         self._mode_buttons = {
             mode: ft.Container(
-                content=ft.Row(
+                content=ft.Column(
                     controls=[
-                        ft.Icon(self._mode_icons[mode], size=16),
-                        ft.Text(self._mode_labels[mode], size=13, weight="w500"),
+                        ft.Icon(self._mode_icons[mode], size=22),
+                        ft.Text(self._mode_labels[mode], size=13, weight="w500",
+                                text_align=ft.TextAlign.CENTER),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    tight=True,
                     spacing=6,
                 ),
                 border_radius=10,
@@ -145,9 +148,9 @@ class LowLatencyModeSettingItem(ft.Column):
                 1,
                 "#4FC3F7" if selected else "#3B3F4A",
             )
-            row = button.content
-            if isinstance(row, ft.Row):
-                for control in row.controls:
+            content = button.content
+            if isinstance(content, ft.Column):
+                for control in content.controls:
                     if isinstance(control, ft.Icon):
                         control.color = "white" if selected else COLOR_DISABLED
                     elif isinstance(control, ft.Text):
