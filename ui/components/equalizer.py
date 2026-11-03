@@ -185,11 +185,11 @@ class EqualizerSettings(ft.Column):
             ft.TextButton(
                 content=ft.Column([
                     ft.Icon(icons.get(int(option.key), ft.Icons.GRAPHIC_EQ),
-                            size=22, color=COLOR_TEXT_PRIMARY),
-                    ft.Text(option.text, size=12, color=COLOR_TEXT_PRIMARY,
+                            size=18, color=COLOR_TEXT_PRIMARY),
+                    ft.Text(option.text, size=10, color=COLOR_TEXT_PRIMARY,
                             text_align=ft.TextAlign.CENTER, max_lines=2,
                             overflow=ft.TextOverflow.ELLIPSIS),
-                ], spacing=6, alignment=ft.MainAxisAlignment.CENTER,
+                ], spacing=2, alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                 expand=True, aspect_ratio=1, tooltip=option.text,
                 data=int(option.key),
@@ -198,7 +198,7 @@ class EqualizerSettings(ft.Column):
                     bgcolor="#1976D2" if option.key == self.profile.value else "#2B2F3A",
                     color=COLOR_TEXT_PRIMARY,
                     shape=ft.RoundedRectangleBorder(radius=10),
-                    padding=ft.Padding.symmetric(horizontal=4, vertical=4)),
+                    padding=ft.Padding.symmetric(horizontal=2, vertical=2)),
                 on_click=lambda e: self._select_profile(e.control.data))
             for option in self.profile.options]
         wrappers = {}

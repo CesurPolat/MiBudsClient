@@ -106,11 +106,11 @@ class AppLayout(ft.Column):
             ft.MainAxisAlignment.SPACE_BETWEEN if wide else ft.MainAxisAlignment.START)
         if wide:
             self.home_content.content = ft.Row(
-                [device, controls], spacing=12, intrinsic_height=True,
+                [device, controls], spacing=8, intrinsic_height=True,
                 vertical_alignment=ft.CrossAxisAlignment.STRETCH)
         else:
             self.home_content.content = ft.Column(
-                [device, controls], spacing=12, tight=True,
+                [device, controls], spacing=8, tight=True,
                 horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         return True
 
