@@ -55,8 +55,18 @@ class LowLatencyModeSettingItem(ft.Column):
             )
             for mode in ("off", "auto", "on")
         }
+        self._ping_mode = None
+        self._mode_feedback = {
+            mode: ft.Container(
+                content=button, expand=True, padding=2, border_radius=14,
+                border=ft.Border.all(1, "transparent"),
+                animate=ft.Animation(180, ft.AnimationCurve.EASE_OUT),
+                on_animation_end=lambda e, selected_mode=mode: self._clear_ping(selected_mode),
+            )
+            for mode, button in self._mode_buttons.items()
+        }
         self._buttons_row = ft.Row(
-            controls=list(self._mode_buttons.values()),
+            controls=list(self._mode_feedback.values()),
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             spacing=8,
         )
@@ -91,6 +101,9 @@ class LowLatencyModeSettingItem(ft.Column):
 
         self._value = mode
         self._apply_styles()
+        self._ping_mode = mode
+        for key, feedback in self._mode_feedback.items():
+            feedback.border = ft.Border.all(1, "#664FC3F7" if key == mode else "transparent")
         self.update()
 
         if self._on_change:
@@ -103,6 +116,17 @@ class LowLatencyModeSettingItem(ft.Column):
                     self.control = MockControl(value)
 
             self._on_change(MockEvent(self._value))
+
+    def _clear_ping(self, mode: str) -> None:
+        if self._ping_mode != mode:
+            return
+        self._ping_mode = None
+        self._mode_feedback[mode].border = ft.Border.all(1, "transparent")
+        try:
+            self.page
+        except RuntimeError:
+            return  # A connection change can detach the selector during the ping.
+        self.update()
 
     def set_mode(self, mode: str) -> None:
         normalized = (mode or "").strip().lower()

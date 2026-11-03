@@ -129,6 +129,22 @@ class LatencyControllerTests(unittest.TestCase):
             card.latency_item._mode_buttons["on"].on_click(None)
         self.assertEqual(self.device.send_command.call_count, 2)
 
+    def test_ping_only_runs_on_manual_mode_selection(self):
+        card = SettingsCard()
+        item = card.latency_item
+        with patch.object(item, "update"):
+            item._mode_buttons["on"].on_click(None)
+        self.assertEqual(item._ping_mode, "on")
+        self.assertEqual(item._mode_feedback["on"].border.top.color, "#664FC3F7")
+        self.assertEqual(item._mode_feedback["off"].border.top.color, "transparent")
+        item._mode_feedback["off"].on_animation_end(None)
+        self.assertEqual(item._ping_mode, "on")
+        item._mode_feedback["on"].on_animation_end(None)
+        self.assertIsNone(item._ping_mode)
+        self.assertEqual(item._mode_feedback["on"].border.top.color, "transparent")
+        item.set_mode("auto")
+        self.assertIsNone(item._ping_mode)
+
     def test_failed_disable_preserves_known_device_state_and_can_retry(self):
         c = self.controller
         c.set_selected_latency_mode("on")
