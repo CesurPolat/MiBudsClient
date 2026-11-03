@@ -17,6 +17,9 @@ class AppLayoutTests(unittest.TestCase):
         screens = list(layout.page_content.controls)
 
         self.assertEqual(layout.home_content.opacity, 1)
+        self.assertEqual(layout.home_content.content.breakpoints, {"compact": 0, "wide": 1000})
+        self.assertEqual(device.col, {"compact": 10, "wide": 4})
+        self.assertEqual(settings.home_controls_card.col, {"compact": 10, "wide": 6})
         self.assertEqual(layout.settings_content.opacity, 0)
         self.assertTrue(layout.settings_content.ignore_interactions)
         self.assertFalse(layout.back_button.visible)

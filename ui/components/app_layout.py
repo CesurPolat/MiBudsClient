@@ -21,13 +21,17 @@ class AppLayout(ft.Column):
         self._on_update = on_update
         self.title = AppTitle(t("nav.settings"))
         self.title.visible = False
+        device_status_card.col = {"compact": 10, "wide": 4}
+        settings_card.home_controls_card.col = {"compact": 10, "wide": 6}
         transition = ft.Animation(280, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
         self.home_content = ft.Container(
-            content=ft.Column(
+            content=ft.ResponsiveRow(
                 controls=[device_status_card, settings_card.home_controls_card],
+                columns=10,
+                breakpoints={"compact": 0, "wide": 1000},
                 spacing=16,
-                tight=True,
-                horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
+                run_spacing=16,
+                vertical_alignment=ft.CrossAxisAlignment.START,
             ),
             opacity=1,
             offset=ft.Offset(0, 0),

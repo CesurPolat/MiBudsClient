@@ -206,6 +206,7 @@ class AppMessageHandlerTests(unittest.TestCase):
             latency.low_latency_exceptions_by_platform = {}
             latency.low_latency_includes_by_platform = {}
             asyncio.run(main.main(self.page))
+            main.WindowManager.assert_called_once_with(self.page, auto_resize=True)
 
         subscriber = self.page.pubsub.subscribe.call_args.args[0]
         self.assertTrue(inspect.iscoroutinefunction(subscriber))

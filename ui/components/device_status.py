@@ -16,22 +16,22 @@ class DeviceStatusCard(ft.Container):
         self.battery_panel = BatteryPanel()
         self.status_bar = StatusBar()
         self.status_bar.size = 11
+        self.status_bar.text_align = ft.TextAlign.CENTER
         self.device_image = DeviceImage()
-        self.device_name = ft.Text(size=13, color="white", weight="w500", visible=False)
+        self.device_name = ft.Text(size=13, color="white", weight="w500", visible=False,
+                                   text_align=ft.TextAlign.CENTER)
         super().__init__(
-            content=ft.Row(
+            content=ft.Column(
                 controls=[
                     self.device_image,
-                    ft.Column(
-                        controls=[self.device_name, self.status_bar, self.battery_panel],
-                        spacing=6,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        horizontal_alignment=ft.CrossAxisAlignment.START,
-                        expand=True,
-                    ),
+                    self.device_name,
+                    self.status_bar,
+                    ft.Container(content=self.battery_panel,
+                                 alignment=ft.Alignment.CENTER),
                 ],
                 spacing=12,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                tight=True,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
             padding=ft.padding.symmetric(horizontal=12, vertical=10),
             bgcolor=COLOR_BG,

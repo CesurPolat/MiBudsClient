@@ -64,7 +64,7 @@ async def main(page: ft.Page):
     
     page.scroll = "auto"
     page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
-    window_mgr = WindowManager(page)
+    window_mgr = WindowManager(page, auto_resize=True)
     update_ui()
 
     # ─────────────────────────────────────────────────────────────────────────
