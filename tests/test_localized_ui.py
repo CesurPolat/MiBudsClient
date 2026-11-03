@@ -166,7 +166,7 @@ class LocalizedUITests(unittest.TestCase):
             set_language("tr")
             tray.refresh_menu()
             self.assertEqual(menu.items[0].text, "Aç")
-            self.assertEqual(menu.items[2].text, "Düşük Gecikme: Kapalı")
+            self.assertEqual(menu.items[2].text, "Oyun Modu: Kapalı")
             tray.notify(message("tray.connected"), silent=False)
             icon.return_value.notify.assert_called_once_with("Kulaklık bağlandı", "Mi Buds Client")
 
