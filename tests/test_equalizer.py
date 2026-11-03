@@ -230,25 +230,25 @@ class EqUITests(unittest.TestCase):
     def test_quick_and_settings_share_confirmed_state_and_busy_status(self):
         self.load()
         quick = self.panel.quick_profiles
-        self.assertEqual([b.data for b in quick.controls], [0, 6, 5, 1, 7])
-        self.assertTrue(all(b.content.controls[0].icon for b in quick.controls))
+        self.assertEqual([b.content.data for b in quick.controls], [0, 6, 5, 1, 7])
+        self.assertTrue(all(b.content.content.controls[0].icon for b in quick.controls))
         self.assertFalse(quick.wrap)
-        button = quick.controls[1]
+        button = quick.controls[1].content
         button.on_click(SimpleNamespace(control=button))
         self.assertEqual(self.action.call_args.args, ("profile",))
         self.assertEqual(self.action.call_args.kwargs["profile"], 6)
         token = self.panel.begin("profile")
-        self.assertTrue(all(b.disabled for b in quick.controls))
+        self.assertTrue(all(b.content.disabled for b in quick.controls))
         self.assertTrue(self.panel.profile.disabled)
         self.assertTrue(self.panel.quick_refresh_button.disabled)
         self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
         self.panel.complete(token, EqResult(True, EqState(6), m("eq.loaded")), (0, 6), "profile")
         self.assertEqual(self.panel.profile.value, "6")
-        self.assertEqual(quick.controls[1].style.bgcolor, "#1976D2")
-        self.assertEqual(quick.controls[0].style.bgcolor, "#2B2F3A")
+        self.assertEqual(quick.controls[1].content.style.bgcolor, "#1976D2")
+        self.assertEqual(quick.controls[0].content.style.bgcolor, "#2B2F3A")
         token = self.panel.begin("profile")
         self.panel.complete(token, EqResult(False, message=m("eq.timeout")), (), "profile")
-        self.assertTrue(all(b.disabled for b in quick.controls))
+        self.assertTrue(all(b.content.disabled for b in quick.controls))
         self.assertFalse(self.panel.quick_refresh_button.disabled)
         self.assertEqual(self.panel.quick_status.color, "red")
         self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
@@ -281,16 +281,40 @@ class EqUITests(unittest.TestCase):
         self.panel.set_connection(True)
         self.assertEqual(self.panel.quick_profiles.controls, [])
         token = self.panel.begin("read")
-        self.assertTrue(self.panel.quick_status.visible)
+        self.assertFalse(self.panel.quick_status.visible)
         self.panel.complete(old_token, EqResult(True, self.state, m("eq.loaded")), (0, 6), "read")
         self.assertEqual(self.panel.quick_profiles.controls, [])
         self.panel.complete(token, EqResult(True, EqState(1), m("eq.loaded")), (0, 1), "read")
-        self.assertEqual([b.data for b in self.panel.quick_profiles.controls], [0, 1])
+        self.assertEqual([b.content.data for b in self.panel.quick_profiles.controls], [0, 1])
         self.assertEqual(self.panel.profile.value, "1")
         self.assertFalse(self.panel.quick_status.visible)
         token = self.panel.begin("read")
         self.panel.complete(token, EqResult(False, message=m("eq.timeout")), (), "read")
         self.assertTrue(self.panel.quick_status.visible)
+
+    def test_applying_shows_one_subtle_ping_only_on_clicked_button(self):
+        self.load()
+        self.panel._select_profile(1)
+        feedback = self.panel._button_feedback[1]
+        token = self.panel.begin("profile")
+        self.assertFalse(self.panel.quick_status.visible)
+        self.assertTrue(self.panel._feedback_active)
+        self.assertIsNone(feedback.shadow)
+        bright_border = feedback.border
+        self.panel._button_feedback[0].on_animation_end(None)
+        self.assertEqual(feedback.border, bright_border)
+        self.panel.complete(token, EqResult(True, EqState(1), m("eq.loaded")), (0, 1), "profile")
+        self.assertTrue(self.panel._feedback_active)
+        feedback.on_animation_end(None)
+        self.assertFalse(self.panel._feedback_active)
+        update = self.panel._on_update
+        update.reset_mock()
+        feedback.on_animation_end(None)
+        update.assert_not_called()
+        self.panel._select_profile(0)
+        self.panel.begin("profile")
+        self.panel.set_connection(False)
+        self.assertFalse(self.panel._feedback_active)
 
     def test_quick_controls_translate_with_settings_without_losing_selection(self):
         from ui.components.settings_card import SettingsCard
@@ -302,11 +326,11 @@ class EqUITests(unittest.TestCase):
         try:
             set_language("tr")
             card.refresh_translations()
-            self.assertEqual(self.panel.quick_profiles.controls[0].content.controls[1].value, t("eq.balanced"))
-            self.assertEqual(self.panel.quick_profiles.controls[0].content.controls[1].value, self.panel.profile.options[0].text)
+            self.assertEqual(self.panel.quick_profiles.controls[0].content.content.controls[1].value, t("eq.balanced"))
+            self.assertEqual(self.panel.quick_profiles.controls[0].content.content.controls[1].value, self.panel.profile.options[0].text)
             self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
             self.assertEqual(self.panel.quick_refresh_button.tooltip, t("eq.refresh"))
-            self.assertEqual(self.panel.quick_profiles.controls[0].style.bgcolor, "#1976D2")
+            self.assertEqual(self.panel.quick_profiles.controls[0].content.style.bgcolor, "#1976D2")
         finally:
             set_language("en")
 

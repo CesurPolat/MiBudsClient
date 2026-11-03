@@ -27,6 +27,10 @@ class EqualizerSettings(ft.Column):
                                    on_select=self._select, color=COLOR_TEXT_PRIMARY, filled=True)
         self.quick_status = ft.Text(t("eq.connect"), size=12, color=COLOR_DISABLED, visible=False)
         self.quick_profiles = ft.Row(spacing=8)
+        self._feedback_active = False
+        self._feedback_started = False
+        self._feedback_profile = None
+        self._button_feedback = {}
         self.quick_refresh_button = ft.IconButton(
             icon=ft.Icons.REFRESH, tooltip=t("eq.refresh"), disabled=True, visible=False,
             on_click=lambda _: self._act("read"))
@@ -81,12 +85,34 @@ class EqualizerSettings(ft.Column):
         if connected:
             self._act("read")
 
+    def _set_feedback(self, active):
+        if active and not self._feedback_started:
+            self._feedback_started = True
+            self._feedback_active = True
+        elif not self._connected or self._needs_refresh:
+            self._feedback_active = False
+        self._paint_feedback()
+
+    def _paint_feedback(self):
+        for profile, feedback in self._button_feedback.items():
+            selected = self._feedback_active and profile == self._feedback_profile
+            feedback.border = ft.Border.all(1, "#664FC3F7" if selected else "transparent")
+
+    def _pulse_feedback(self, _, profile):
+        if profile != self._feedback_profile or not self._feedback_active:
+            return
+        self._feedback_active = False
+        self._paint_feedback()
+        self._on_update()
+
     def _act(self, operation, **kwargs):
         if operation not in ("read", "profile") and not self.custom_supported:
             return
         if not self._connected or self._busy or (operation != "read" and self._needs_refresh):
             return
         if self._on_action:
+            self._feedback_profile = kwargs.get("profile") if operation == "profile" else None
+            self._paint_feedback()
             self._on_action(operation, bands=tuple(self.draft), **kwargs)
 
     def _select(self, event):
@@ -122,6 +148,7 @@ class EqualizerSettings(ft.Column):
             return None
         self._token += 1
         self._busy = True
+        self._feedback_started = False
         self.status.value = t("eq.reading" if operation == "read" else "eq.working")
         self._render()
         self._on_update()
@@ -152,7 +179,7 @@ class EqualizerSettings(ft.Column):
         self.profile.disabled = not enabled or current is None or not self._profiles
         icons = {0: ft.Icons.TUNE, 1: ft.Icons.MIC, 5: ft.Icons.SPEAKER,
                  6: ft.Icons.GRAPHIC_EQ, 7: ft.Icons.VOLUME_UP}
-        self.quick_profiles.controls = [
+        buttons = [
             ft.TextButton(
                 content=ft.Column([
                     ft.Icon(icons.get(int(option.key), ft.Icons.GRAPHIC_EQ),
@@ -172,10 +199,26 @@ class EqualizerSettings(ft.Column):
                     padding=ft.Padding.symmetric(horizontal=4, vertical=4)),
                 on_click=lambda e: self._select_profile(e.control.data))
             for option in self.profile.options]
+        wrappers = {}
+        for button in buttons:
+            profile = button.data
+            feedback = self._button_feedback.get(profile)
+            if feedback is None:
+                feedback = ft.Container(
+                    expand=True, aspect_ratio=1, padding=2, border_radius=14,
+                    border=ft.Border.all(1, "transparent"),
+                    animate=ft.Animation(180, ft.AnimationCurve.EASE_OUT),
+                    on_animation_end=lambda e, p=profile: self._pulse_feedback(e, p))
+            feedback.content = button
+            wrappers[profile] = feedback
+        self._button_feedback = wrappers
+        self.quick_profiles.controls = list(wrappers.values())
         self.quick_refresh_button.disabled = self.refresh_button.disabled
         self.quick_status.value = self.status.value
         self.quick_status.color = self.status.color
-        self.quick_status.visible = self._connected and (self._busy or self.status.color == "red")
+        self.quick_status.visible = self._connected and not self._busy and self.status.color == "red"
+        self._set_feedback(self._connected and self._busy and self._feedback_profile in wrappers)
+        self._paint_feedback()
         self.custom_body.visible = bool(self.custom_supported and self._state and self._state.custom)
         self.save_button.disabled = self.reset_button.disabled = not (enabled and self.custom_body.visible)
         self.sliders = []
