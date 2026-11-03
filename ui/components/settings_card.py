@@ -90,19 +90,26 @@ class SettingsCard(ft.Container):
 
         self.connection_panel = ConnectionPanel()
         self.battery_item = SettingItem(ft.Icons.REFRESH, "grey700", t("battery.check"), on_click=on_check_battery)
-        self.connected_controls = ft.Column(spacing=0, visible=False)
+
+        def home_card(control):
+            return ft.Container(content=control, bgcolor=COLOR_CARD_BG,
+                                border_radius=CARD_BORDER_RADIUS, padding=10)
+
+        self.connection_card = home_card(self.connection_panel)
+        self.connected_controls = ft.Column(
+            spacing=12, visible=False, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.home_controls_card = ft.Container(
             content=ft.Column([
-                self.connection_panel,
+                self.connection_card,
                 self.connected_controls,
-            ], spacing=0, horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
-            bgcolor=COLOR_CARD_BG,
-            border_radius=CARD_BORDER_RADIUS,
-            padding=10,
+            ], spacing=12, horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
         )
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
         self.equalizer = EqualizerSettings(on_eq_action, on_update)
+        self.latency_card = home_card(self.latency_item)
+        self.equalizer_card = home_card(self.equalizer.quick_controls)
+        self.battery_card = home_card(self.battery_item)
         self.noise = NoiseSettings(on_noise_action, on_update)
         self.device_components = {"gestures": self.gestures, "eq": self.equalizer}
         self.language_selector = ft.Dropdown(
@@ -141,12 +148,12 @@ class SettingsCard(ft.Container):
         self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
         self.battery_item.visible = self._connected and caps.supports("battery")
         self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
+        self.connection_card.visible = not self._connected
         controls = []
-        for control in (self.latency_item, self.equalizer.quick_controls, self.battery_item):
-            if control.visible:
-                if controls:
-                    controls.append(ft.Divider(color=COLOR_DIVIDER, thickness=0.5))
-                controls.append(control)
+        for card in (self.latency_card, self.equalizer_card, self.battery_card):
+            card.visible = card.content.visible
+            if card.visible:
+                controls.append(card)
         self.connected_controls.controls = controls
         self.home_controls_card.visible = not self._connected or bool(controls)
         for feature, panel in self.device_components.items():

@@ -15,28 +15,29 @@ class ConnectionFeedbackTests(unittest.TestCase):
         card = SettingsCard()
         card.set_capabilities(resolve_capabilities(device_name="Redmi Buds 6 Play"))
         card.update_connection_state("connected")
-        home_items = [item for item in card.connected_controls.controls
-                      if item in (card.latency_item, card.equalizer.quick_controls, card.battery_item)]
+        home_items = [item.content for item in card.connected_controls.controls]
         self.assertEqual(home_items, [card.latency_item, card.equalizer.quick_controls, card.battery_item])
+        self.assertFalse(card.connection_card.visible)
         self.assertNotIn(card.auto_settings, card.connected_controls.controls)
         self.assertIn(card.auto_settings, card.content.controls)
         self.assertIn(card.equalizer, card.content.controls)
         card.update_connection_state("failed")
         self.assertNotIn(card.auto_settings, card.content.controls)
         self.assertFalse(card.equalizer.quick_controls.visible)
+        self.assertTrue(card.connection_card.visible)
 
     def test_latency_state_survives_detached_selector_and_reconnect(self):
         from controllers.bluetooth.capabilities import resolve_capabilities
         card = SettingsCard()
         caps = resolve_capabilities(device_name='Redmi Buds 6 Play')
         card.set_capabilities(caps)
-        self.assertNotIn(card.latency_item, card.connected_controls.controls)
+        self.assertNotIn(card.latency_card, card.connected_controls.controls)
         with patch.object(card.latency_item, 'update') as update:
             card.set_latency_mode('auto')
             update.assert_not_called()
         self.assertEqual(card.latency_item.value, 'auto')
         card.update_connection_state('connected')
-        self.assertIn(card.latency_item, card.connected_controls.controls)
+        self.assertIn(card.latency_card, card.connected_controls.controls)
         self.assertEqual(card.latency_item.value, 'auto')
         card.update_connection_state('failed')
         card.set_latency_mode('on')
