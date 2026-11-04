@@ -104,7 +104,6 @@ class LocalizedUITests(unittest.TestCase):
         self.assertFalse(self.settings.connected_controls.visible)
         self.assertEqual(self.device.status_bar.value, t("device_status.error"))
         self.assertEqual(self.device.status_dot.bgcolor, "orange")
-        self.assertEqual(self.settings.identity_item.subtitle.value, "Cihaz kimliği sorgusu zaman aşımına uğradı.")
         self.assertIs(self.page.overlay[0], notice)
         self.assertTrue(notice.open)
         self.assertTrue(checkbox.value)

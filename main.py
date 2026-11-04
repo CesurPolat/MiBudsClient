@@ -143,9 +143,16 @@ async def main(page: ft.Page):
     def on_connection_event(event):
         page.pubsub.send_all({"type": "connection_event", "event": event})
         catalog_sync.identity_changed(None)
+        current = controller_ref["instance"]
+        if event == "connected" and current is not None and current.capabilities.model == "miwear.headphone.n79bg":
+            threading.Thread(target=current.request_device_identity, kwargs={"reconnect": False}, daemon=True).start()
+
+    def on_identity(identity):
+        catalog_sync.identity_changed(identity)
+        page.pubsub.send_all({"type": "firmware_info", "identity": identity})
 
     controller = BTController(
-        identity_callback=catalog_sync.identity_changed,
+        identity_callback=on_identity,
         connection_state_callback=lambda state, reason: page.pubsub.send_all(
             {"type": "connection_state", "state": state, "reason": reason}
         ),
@@ -172,6 +179,7 @@ async def main(page: ft.Page):
         ),
     )
     settings_card = settings_controller.card
+    settings_card.set_catalog_device(cached_name, cached_image)
     settings_card.connection_panel.retry_button.on_click = lambda e: device_connection.reconnect_on_show()
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -199,6 +207,7 @@ async def main(page: ft.Page):
         get_game_monitor=lambda: controller_ref["game_monitor"],
         on_catalog_stop=catalog_sync.stop,
         get_capabilities=lambda: controller.capabilities,
+        get_identity=lambda: controller.device_identity if controller.connected else None,
     )
     def handle_message(message):
         try:

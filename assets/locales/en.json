@@ -220,5 +220,7 @@
   "device_status.connected": "Connected",
   "device_status.connecting": "Connecting",
   "device_status.disconnected": "Disconnected",
-  "device_status.error": "Error"
+  "device_status.error": "Error",
+  "settings.general": "General",
+  "settings.device_info": "Device info"
 }

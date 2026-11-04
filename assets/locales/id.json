@@ -220,5 +220,7 @@
   "device_status.connected": "Terhubung",
   "device_status.connecting": "Menghubungkan",
   "device_status.disconnected": "Terputus",
-  "device_status.error": "Galat"
+  "device_status.error": "Galat",
+  "settings.general": "Umum",
+  "settings.device_info": "Info perangkat"
 }

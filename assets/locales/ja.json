@@ -220,5 +220,7 @@
   "device_status.connected": "接続済み",
   "device_status.connecting": "接続中",
   "device_status.disconnected": "未接続",
-  "device_status.error": "エラー"
+  "device_status.error": "エラー",
+  "settings.general": "??",
+  "settings.device_info": "??????"
 }

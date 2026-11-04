@@ -147,8 +147,8 @@ class PlatformExceptionEditor(ft.Column):
         self.update()
 
 
-class AutoModeSettingsAccordion(ft.ExpansionTile):
-    """Accordion for automatic mode per-app rule settings."""
+class AutoModeSettingsAccordion(ft.Container):
+    """Automatic mode per-app rule settings."""
 
     def __init__(
         self,
@@ -230,47 +230,6 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
             color=COLOR_TEXT_PRIMARY,
         )
 
-        header_icon = ft.Container(
-            content=ft.Icon(ft.Icons.AUTO_AWESOME, size=18, color="#9BC7FF"),
-            width=34,
-            height=34,
-            border_radius=12,
-            alignment=ft.Alignment.CENTER,
-            bgcolor="#1B2330",
-            border=ft.border.all(1, "#2D3A4F"),
-        )
-
-        header_text = ft.Column(
-            controls=[
-                ft.Text(
-                    t("auto.title"),
-                    color=COLOR_TEXT_PRIMARY,
-                    size=14,
-                    weight="w600",
-                ),
-                ft.Text(
-                    t("auto.description"),
-                    size=12,
-                    color=COLOR_DISABLED,
-                ),
-            ],
-            spacing=2,
-            expand=True,
-        )
-
-        platform_chip = ft.Container(
-            content=ft.Text(platform_text, size=11, weight="w600", color="#BFD7FF"),
-            bgcolor="#1B2330",
-            border_radius=999,
-            padding=ft.padding.symmetric(horizontal=10, vertical=6),
-            border=ft.border.all(1, "#2D3A4F"),
-        )
-
-        tile_border = ft.RoundedRectangleBorder(
-            radius=18,
-            side=ft.BorderSide(width=1, color="#2A303C"),
-        )
-
         controls_column = ft.Column(
             controls=[
                 self.wait_toggle,
@@ -300,30 +259,8 @@ class AutoModeSettingsAccordion(ft.ExpansionTile):
 
         self._render_rules()
 
-        super().__init__(
-            title=ft.Container(
-                content=ft.Row(
-                    controls=[header_icon, header_text], #, platform_chip
-                    spacing=12,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                ),
-                padding=ft.padding.only(top=4, bottom=4),
-            ),
-            bgcolor="#10141B",
-            collapsed_bgcolor="#10141B",
-            shape=tile_border,
-            collapsed_shape=tile_border,
-            text_color=COLOR_TEXT_PRIMARY,
-            collapsed_text_color=COLOR_TEXT_PRIMARY,
-            icon_color="#9BC7FF",
-            collapsed_icon_color="#9BC7FF",
-            controls=[
-                ft.Container(
-                    content=controls_column,
-                    padding=ft.padding.only(top=6, bottom=2),
-                ),
-            ],
-        )
+        super().__init__(content=controls_column, bgcolor="#10141B", border_radius=18,
+                         border=ft.border.all(1, "#2A303C"), padding=12)
 
     def _normalize(self, value: str) -> str:
         return (value or "").strip().lower()

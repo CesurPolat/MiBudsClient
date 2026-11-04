@@ -21,10 +21,11 @@ class AppMessageHandler:
     def __init__(self, *, page, device_status_card, settings_card, window_manager,
                  latency, tray, debug_console, on_window_show: Callable,
                  get_game_monitor: Callable, on_catalog_stop: Callable | None = None, get_capabilities: Callable | None = None,
-                 ui_lock=None):
+                 ui_lock=None, get_identity: Callable | None = None):
         self._dispatch_lock = ui_lock if ui_lock is not None else threading.RLock()
         self._closing = False
         self._get_capabilities = get_capabilities
+        self._get_identity = get_identity
         self._page = page
         self._device_status_card = device_status_card
         self._settings_card = settings_card
@@ -56,6 +57,7 @@ class AppMessageHandler:
             "status": self._handle_status,
             "battery": self._handle_battery,
             "device_identity": self._handle_device_identity,
+            "firmware_info": self._handle_firmware_info,
             "window": self._handle_window,
             "latency": self._handle_latency,
             "auto_hold_released": self._handle_auto_hold_released,
@@ -153,6 +155,7 @@ class AppMessageHandler:
 
     def _handle_catalog_device(self, message: dict) -> None:
         self._tray.set_device(message.get("name", ""), message.get("image_path", ""))
+        self._settings_card.set_catalog_device(message.get("name", ""), message.get("image_path", ""))
         self._device_status_card.update_catalog_device(
             message.get("name", ""), message.get("image_path", "")
         )
@@ -187,6 +190,12 @@ class AppMessageHandler:
         self._device_status_card.update_battery(left, right, case, transient=transient)
 
         self._update_page()
+
+    def _handle_firmware_info(self, message: dict) -> None:
+        identity = message.get("identity")
+        if identity is not None and self._get_identity is not None and self._get_identity() is identity:
+            self._settings_card.set_firmware_version(identity.firmware_version)
+            self._update_page()
 
     def _handle_device_identity(self, message: dict) -> None:
         self._settings_card.set_device_identity_result(message["text"])

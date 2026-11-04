@@ -220,5 +220,7 @@
   "device_status.connected": "Ligado",
   "device_status.connecting": "A ligar",
   "device_status.disconnected": "Desligado",
-  "device_status.error": "Erro"
+  "device_status.error": "Erro",
+  "settings.general": "Geral",
+  "settings.device_info": "Informa??es do dispositivo"
 }

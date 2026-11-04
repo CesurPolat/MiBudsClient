@@ -220,5 +220,7 @@
   "device_status.connected": "Disambungkan",
   "device_status.connecting": "Menyambung",
   "device_status.disconnected": "Terputus",
-  "device_status.error": "Ralat"
+  "device_status.error": "Ralat",
+  "settings.general": "Umum",
+  "settings.device_info": "Maklumat peranti"
 }

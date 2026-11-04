@@ -13,6 +13,7 @@ class DeviceIdentity:
 
     vid: int
     pid: int
+    firmware_version: Optional[str] = None
 
     @property
     def model_name(self) -> Optional[str]:
@@ -55,16 +56,27 @@ def build_identity_request(counter: int) -> bytes:
     return bytes.fromhex(f"fe dc ba c4 02 00 05 {counter:02x} ff ff ff ff ef")
 
 
+def decode_version(data: bytes) -> str:
+    if len(data) != 2:
+        raise ValueError("Version must contain two bytes")
+    return ".".join(str(nibble) for byte in data for nibble in (byte >> 4, byte & 15))
+
+
 def parse_identity_fields(fields: bytes) -> Optional[DeviceIdentity]:
     """Decode type 03 only after validating the entire TLV field list."""
     pos = 0
     identity = None
+    firmware_version = None
     while pos < len(fields):
         length = fields[pos]
         end = pos + 1 + length
         if length < 1 or end > len(fields):
             return None
-        if fields[pos + 1] == 0x03:
+        if fields[pos + 1] == 0x01:
+            value = fields[pos + 2:end]
+            if len(value) >= 2 and firmware_version is None:
+                firmware_version = decode_version(value[:2])
+        elif fields[pos + 1] == 0x03:
             value = fields[pos + 2:end]
             if len(value) != 4 or identity is not None:
                 return None
@@ -73,6 +85,8 @@ def parse_identity_fields(fields: bytes) -> Optional[DeviceIdentity]:
                 pid=int.from_bytes(value[2:], "big"),
             )
         pos = end
+    if identity is not None:
+        identity = DeviceIdentity(identity.vid, identity.pid, firmware_version)
     return identity
 
 

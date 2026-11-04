@@ -354,6 +354,25 @@ class EqUITests(unittest.TestCase):
         finally:
             set_language("en")
 
+    def test_settings_card_disables_custom_eq_even_if_device_supports_it(self):
+        from dataclasses import replace
+        from controllers.bluetooth.capabilities import DeviceCapabilities
+        from ui.components.settings_card import SettingsCard
+        card = SettingsCard(on_eq_action=self.action)
+        caps = replace(DeviceCapabilities(), available=frozenset({"eq", "custom_eq"}))
+        card.set_capabilities(caps)
+        card.update_connection_state("connected")
+        token = card.equalizer.begin("read")
+        card.equalizer.complete(token, EqResult(True, self.state, m("eq.loaded")), (0, 1), "read")
+        self.assertFalse(card.equalizer.custom_body.visible)
+        self.action.reset_mock()
+        card.equalizer._act("save")
+        card.equalizer._act("preview")
+        card.equalizer._act("reset")
+        self.action.assert_not_called()
+        card.equalizer._select_profile(1)
+        self.assertEqual(self.action.call_args.args, ("profile",))
+
     def test_presets_work_without_custom_eq(self):
         self.load(EqState(0))
         self.assertFalse(self.panel.custom_body.visible)

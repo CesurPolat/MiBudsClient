@@ -73,8 +73,9 @@ class CapabilityTests(unittest.TestCase):
         card = SettingsCard()
         card.set_capabilities(self.resolve([self.play]))
         card.update_connection_state("connected")
-        self.assertTrue(card.gestures.visible)
-        self.assertTrue(card.equalizer.visible)
+        self.assertTrue(card._available_sections["gestures"])
+        self.assertNotIn("eq", card._available_sections)
+        self.assertTrue(card.equalizer.quick_controls.visible)
         self.assertFalse(card.equalizer.custom_supported)
         token = card.equalizer.begin("read")
         card.set_capabilities(resolve_capabilities("REDMI Headphones Neo"))
@@ -83,8 +84,8 @@ class CapabilityTests(unittest.TestCase):
         self.assertFalse(card.gestures.visible)
         self.assertFalse(card.equalizer.visible)
         self.assertEqual(card.connected_controls.controls, [])
-        self.assertTrue(card.noise.visible)  # Noise functions are available independently.
-        self.assertEqual(len(card.content.controls), 7)  # four sections, three dividers
+        self.assertTrue(card._available_sections["noise"])  # Noise is available independently.
+        self.assertEqual(card._selected_section, "general")
         card.update_connection_state("failed")
         self.assertFalse(card.connected_controls.visible)
 

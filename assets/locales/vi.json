@@ -220,5 +220,7 @@
   "device_status.connected": "Đã kết nối",
   "device_status.connecting": "Đang kết nối",
   "device_status.disconnected": "Chưa kết nối",
-  "device_status.error": "Lỗi"
+  "device_status.error": "Lỗi",
+  "settings.general": "Chung",
+  "settings.device_info": "Th?ng tin thi?t b?"
 }

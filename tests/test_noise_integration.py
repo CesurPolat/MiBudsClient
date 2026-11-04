@@ -41,8 +41,9 @@ class NoiseIntegrationTests(unittest.TestCase):
             card = SettingsCard()
             card.set_capabilities(resolve_capabilities("Redmi Buds 5 Pro"))
             card.update_connection_state("connected")
+            self.assertTrue(card._available_sections["noise"])
+            card.select_section("noise")
             self.assertTrue(card.noise.visible)
-            self.assertIn(card.noise, card.content.controls)
             card.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
             self.assertFalse(card.noise.visible)
 

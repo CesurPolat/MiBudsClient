@@ -220,5 +220,7 @@
   "device_status.connected": "Підключено",
   "device_status.connecting": "Підключення",
   "device_status.disconnected": "Не підключено",
-  "device_status.error": "Помилка"
+  "device_status.error": "Помилка",
+  "settings.general": "????????",
+  "settings.device_info": "?????????? ??? ????????"
 }

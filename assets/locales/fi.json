@@ -220,5 +220,7 @@
   "device_status.connected": "Yhdistetty",
   "device_status.connecting": "Yhdistetään",
   "device_status.disconnected": "Ei yhteyttä",
-  "device_status.error": "Virhe"
+  "device_status.error": "Virhe",
+  "settings.general": "Yleiset",
+  "settings.device_info": "Laitteen tiedot"
 }

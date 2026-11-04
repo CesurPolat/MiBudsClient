@@ -60,6 +60,42 @@ class AppLayoutTests(unittest.TestCase):
         self.assertEqual(device.battery_panel._left._value_text.value, "%70")
         self.assertEqual(update.call_count, 2)
 
+    def test_settings_sections_trigger_reads_and_fall_back_on_disconnect(self):
+        from controllers.bluetooth.capabilities import resolve_capabilities
+        gesture_read, eq_action = Mock(), Mock()
+        settings = SettingsCard(on_gesture_refresh=gesture_read, on_eq_action=eq_action)
+        settings.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
+        settings.update_connection_state("connected")
+        self.assertEqual(settings._selected_section, "general")
+        settings.select_section("gestures")
+        self.assertTrue(settings.gestures.body.visible)
+        gesture_read.assert_called_once()
+        self.assertNotIn("eq", settings._sections)
+        self.assertTrue(settings.equalizer.quick_controls.visible)
+        settings.startup_switch.value = True
+        settings.select_section("general")
+        self.assertTrue(settings.startup_switch.value)
+        settings.select_section("gestures")
+        settings.update_connection_state("disconnected")
+        self.assertEqual(settings._selected_section, "general")
+        self.assertTrue(settings._sections["general"].visible)
+
+    def test_device_info_uses_connected_catalog_data_and_clears_on_disconnect(self):
+        from controllers.bluetooth.capabilities import resolve_capabilities
+        settings = SettingsCard()
+        settings.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
+        settings.update_connection_state("connected")
+        settings.set_catalog_device("Redmi Buds 6 Play", "assets/icon.png")
+        settings.select_section("identity")
+        self.assertTrue(settings.identity_image._image_control.src.endswith("icon.png"))
+        self.assertEqual(settings.identity_firmware.value, "?")
+        self.assertNotIn(settings.identity_item, settings.identity_section.content.controls)
+        self.assertIn("Redmi Buds 6 Play", settings.identity_name.value)
+        self.assertIn("miwear.headphone.n79bg", settings.identity_model.value)
+        settings.update_connection_state("disconnected")
+        self.assertNotIn("Redmi Buds 6 Play", settings.identity_name.value)
+        self.assertEqual(settings.identity_image._image_control.src, "")
+
     def test_resize_preserves_controls_and_moves_battery_to_bottom_only_when_wide(self):
         device = DeviceStatusCard()
         settings = SettingsCard()

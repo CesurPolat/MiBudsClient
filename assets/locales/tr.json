@@ -220,5 +220,7 @@
   "device_status.connected": "Bağlı",
   "device_status.connecting": "Bağlanıyor",
   "device_status.disconnected": "Bağlı değil",
-  "device_status.error": "Hata"
+  "device_status.error": "Hata",
+  "settings.general": "Genel",
+  "settings.device_info": "Cihaz bilgisi"
 }

@@ -220,5 +220,7 @@
   "device_status.connected": "कनेक्ट है",
   "device_status.connecting": "कनेक्ट हो रहा है",
   "device_status.disconnected": "कनेक्ट नहीं है",
-  "device_status.error": "त्रुटि"
+  "device_status.error": "त्रुटि",
+  "settings.general": "???????",
+  "settings.device_info": "?????? ???????"
 }

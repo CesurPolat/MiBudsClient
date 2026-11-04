@@ -19,6 +19,7 @@ from controllers.bluetooth.capabilities import DeviceCapabilities
 
 from .auto_mode import AutoModeSettingsAccordion
 from .connection import ConnectionPanel
+from .common import DeviceImage
 from .latency import LowLatencyModeSettingItem
 from .setting_items import SettingItem, ToggleSettingItem
 from .gestures import GestureSettings
@@ -88,6 +89,29 @@ class SettingsCard(ft.Container):
             t("identity.not_queried"), size=12, color=COLOR_DISABLED, selectable=True,
         )
 
+        self._catalog_name = ""
+        self._catalog_image = ""
+        self.identity_image = DeviceImage()
+        self.identity_image.width = self.identity_image.height = 130
+        self.identity_image._image_control.width = self.identity_image._image_control.height = 120
+        self.identity_name = ft.Text("?", size=18, weight="w600", color="white",
+                                     text_align=ft.TextAlign.CENTER)
+        self.identity_model = ft.Text("?", size=13, color="white", selectable=True, expand=True, text_align=ft.TextAlign.END)
+        self.identity_firmware = ft.Text("?", size=13, color="white", selectable=True)
+        self.identity_section = ft.Container(
+            content=ft.Column([
+                ft.Text(t("settings.device_info"), size=16, weight="w600", color="white"),
+                ft.Container(content=self.identity_image, alignment=ft.Alignment.CENTER),
+                self.identity_name,
+                ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
+                ft.Row([ft.Text("Model", color=COLOR_DISABLED, size=12),
+                        self.identity_model], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                ft.Row([ft.Text("Firmware", color=COLOR_DISABLED, size=12),
+                        self.identity_firmware], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+            ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+            bgcolor="#10141B", border_radius=16, padding=14,
+        )
+
         self.connection_panel = ConnectionPanel()
         self.battery_item = SettingItem(ft.Icons.REFRESH, "grey700", t("battery.check"), on_click=on_check_battery)
         self.battery_item.dense = True
@@ -109,6 +133,8 @@ class SettingsCard(ft.Container):
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
         self.equalizer = EqualizerSettings(on_eq_action, on_update)
+        # Temporarily disable custom EQ while keeping presets available.
+        self.equalizer.custom_supported = False
         self.latency_card = home_card(self.latency_item)
         self.equalizer_card = home_card(self.equalizer.quick_controls)
         self.battery_card = home_card(self.battery_item)
@@ -126,7 +152,21 @@ class SettingsCard(ft.Container):
             expand=True,
         )
         self._language_container = ft.Container(content=self.language_selector, padding=10)
-        items = ft.Column(spacing=0)
+        self._on_update = on_update
+        self._selected_section = "general"
+        self._sections = {
+            "general": ft.Column([self.startup_item, self._language_container], spacing=8),
+            "auto": self.auto_settings, "noise": self.noise,
+            "gestures": self.gestures, "identity": self.identity_section,
+        }
+        self.gestures.toggle_button.visible = False
+        self.gestures.controls[0].visible = False
+        self.equalizer.toggle.visible = False
+        self.noise.toggle.visible = False
+        self._menu = ft.Column(spacing=4, width=145)
+        self._section_column = ft.Column(list(self._sections.values()), spacing=0, expand=True)
+        items = ft.Row([self._menu, self._section_column], spacing=10,
+                       vertical_alignment=ft.CrossAxisAlignment.START)
 
         super().__init__(
             content=items,
@@ -142,11 +182,11 @@ class SettingsCard(ft.Container):
             self.equalizer.set_connection(False)
             self.noise.set_connection(False)
         self._capabilities = capabilities
-        self.equalizer.custom_supported = capabilities.supports("custom_eq")
         self._render_capabilities()
 
     def _render_capabilities(self):
         caps = self._capabilities
+        self._render_identity()
         self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
         self.battery_item.visible = self._connected and caps.supports("battery")
         self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
@@ -161,27 +201,73 @@ class SettingsCard(ft.Container):
         for feature, panel in self.device_components.items():
             panel.visible = self._connected and caps.supports(feature)
             panel.set_connection(panel.visible)
-        sections = [self.startup_item, self._language_container]
-        if self.auto_settings.visible:
-            sections.append(self.auto_settings)
         self.noise.capabilities = noise_capabilities(caps)
-        self.noise.visible = self._connected and noise_backend_enabled(caps)
-        self.noise.set_connection(self.noise.visible)
-        if self.noise.visible:
-            sections.append(self.noise)
-        sections.extend(panel for panel in self.device_components.values() if panel.visible)
-        sections.append(self.identity_item)
-        self.content.controls = []
-        for section in sections:
-            if self.content.controls:
-                self.content.controls.append(ft.Divider(color=COLOR_DIVIDER, thickness=0.5))
-            self.content.controls.append(section)
+        self.noise.set_connection(self._connected and noise_backend_enabled(caps))
+        self._available_sections = {
+            "general": True, "auto": self._connected and caps.supports("latency"),
+            "noise": self._connected and noise_backend_enabled(caps),
+            "gestures": self._connected and caps.supports("gestures"),
+            "identity": True,
+        }
+        if not self._available_sections[self._selected_section]:
+            self._selected_section = "general"
+        self._render_sections()
+
+    def _render_sections(self):
+        labels = {
+            "general": (ft.Icons.SETTINGS_OUTLINED, "settings.general"),
+            "auto": (ft.Icons.AUTO_AWESOME, "auto.title"),
+            "noise": (ft.Icons.HEADPHONES, "noise.title"),
+            "gestures": (ft.Icons.TOUCH_APP, "gesture.title"),
+            "identity": (ft.Icons.INFO_OUTLINE, "settings.device_info"),
+        }
+        self._menu.controls = []
+        for key, (icon, label) in labels.items():
+            if not self._available_sections[key]:
+                continue
+            self._menu.controls.append(ft.Container(
+                content=ft.Row([ft.Icon(icon, size=18, color="white"),
+                                ft.Text(t(label), size=12, color="white", expand=True)], spacing=8),
+                padding=10, border_radius=10,
+                bgcolor="#30445F" if key == self._selected_section else "transparent",
+                ink=True, on_click=lambda e, section=key: self.select_section(section),
+            ))
+        for key, panel in self._sections.items():
+            panel.visible = key == self._selected_section and self._available_sections[key]
+        for key, panel in (("noise", self.noise), ("gestures", self.gestures)):
+            active = key == self._selected_section and self._available_sections[key]
+            if panel._opened != active:
+                panel._toggle(None)
+
+    def select_section(self, section):
+        if not self._available_sections.get(section) or section == self._selected_section:
+            return
+        self._selected_section = section
+        self._render_sections()
+        self._on_update()
+
+    def set_firmware_version(self, version: str | None) -> None:
+        self.identity_firmware.value = version or "?"
+
+    def set_catalog_device(self, name: str, image_path: str = "") -> None:
+        self._catalog_name, self._catalog_image = name, image_path
+        self._render_identity()
+
+    def _render_identity(self):
+        caps = self._capabilities
+        self.identity_name.value = caps.name if self._connected and caps.name else "?"
+        self.identity_model.value = caps.model if self._connected and caps.model else "?"
+        image = self._catalog_image if (self._connected and caps.name and
+                 self._catalog_name.casefold() == caps.name.casefold()) else ""
+        self.identity_image.set_catalog_image(image)
 
     def update_connection_state(self, state: str, reason: str = "") -> None:
         """Show device controls only while the earbuds are connected."""
         self.connection_panel.update_connection_state(state, reason)
         connected = state == "connected"
         self._connected = connected
+        if not connected:
+            self.set_firmware_version(None)
         self.connection_panel.visible = not connected
         self.connected_controls.visible = connected
         self._render_capabilities()

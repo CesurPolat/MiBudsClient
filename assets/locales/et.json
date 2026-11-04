@@ -220,5 +220,7 @@
   "device_status.connected": "Ühendatud",
   "device_status.connecting": "Ühendamine",
   "device_status.disconnected": "Ühendamata",
-  "device_status.error": "Viga"
+  "device_status.error": "Viga",
+  "settings.general": "?ldine",
+  "settings.device_info": "Seadme teave"
 }

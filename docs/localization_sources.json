@@ -328,7 +328,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "en": {
@@ -555,7 +557,9 @@
         "tray.quit",
         "update.available",
         "update.download",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "ar": {
@@ -885,7 +889,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "de": {
@@ -1215,7 +1221,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "es": {
@@ -1545,7 +1553,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "et": {
@@ -1779,7 +1789,9 @@
         "tray.quit",
         "update.available",
         "update.download",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "fi": {
@@ -2013,7 +2025,9 @@
         "tray.quit",
         "update.available",
         "update.download",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "fr": {
@@ -2343,7 +2357,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "hi": {
@@ -2577,7 +2593,9 @@
         "tray.quit",
         "update.available",
         "update.download",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "hu": {
@@ -2811,7 +2829,9 @@
         "tray.quit",
         "update.available",
         "update.download",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "id": {
@@ -3141,7 +3161,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "it": {
@@ -3471,7 +3493,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "ja": {
@@ -3801,7 +3825,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "ko": {
@@ -4131,7 +4157,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "ms": {
@@ -4461,7 +4489,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "nl": {
@@ -4791,7 +4821,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "pl": {
@@ -5121,7 +5153,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "pt-BR": {
@@ -5448,7 +5482,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "pt-PT": {
@@ -5775,7 +5811,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "ru": {
@@ -6105,7 +6143,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "sv": {
@@ -6339,7 +6379,9 @@
         "tray.quit",
         "update.available",
         "update.download",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "th": {
@@ -6669,7 +6711,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "uk": {
@@ -6999,7 +7043,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "vi": {
@@ -7329,7 +7375,9 @@
         "tray.off",
         "tray.on",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "zh-CN": {
@@ -7656,7 +7704,9 @@
         "tray.on",
         "tray.open",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "zh-TW": {
@@ -7983,7 +8033,9 @@
         "tray.on",
         "tray.open",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     },
     "zh-HK": {
@@ -8310,7 +8362,9 @@
         "tray.on",
         "tray.open",
         "update.available",
-        "update.hide"
+        "update.hide",
+        "settings.general",
+        "settings.device_info"
       ]
     }
   },

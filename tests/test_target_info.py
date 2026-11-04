@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import Mock
 
 from controllers.bluetooth.controller import BTController
-from controllers.bluetooth.rcsp import build_identity_request
+from controllers.bluetooth.rcsp import build_identity_request, parse_identity_fields, decode_version
 
 
 class TargetInfoTests(unittest.TestCase):
@@ -32,6 +32,14 @@ class TargetInfoTests(unittest.TestCase):
         results = [controller.request_device_identity(timeout=0.1) for _ in range(2)]
         self.assertNotEqual(sent[0][7], sent[1][7])
         return results
+
+    def test_firmware_tlv_decodes_first_two_bytes_and_preserves_identity(self):
+        identity = parse_identity_fields(bytes.fromhex("05 01 20 22 20 22 05 03 27 17 50 9B"))
+        self.assertEqual((identity.vid, identity.pid, identity.firmware_version), (0x2717, 0x509b, "2.0.2.2"))
+        self.assertIsNone(parse_identity_fields(bytes.fromhex("02 01 20 05 03 27 17 50 9B")).firmware_version)
+        self.assertIsNone(parse_identity_fields(bytes.fromhex("05 01 20 22 20")))
+        with self.assertRaises(ValueError):
+            decode_version(b"\x20")
 
     def test_exact_read_only_request(self):
         self.assertEqual(build_identity_request(1), bytes.fromhex("FE DC BA C4 02 00 05 01 FF FF FF FF EF"))

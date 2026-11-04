@@ -220,5 +220,7 @@
   "device_status.connected": "Verbonden",
   "device_status.connecting": "Verbinden",
   "device_status.disconnected": "Niet verbonden",
-  "device_status.error": "Fout"
+  "device_status.error": "Fout",
+  "settings.general": "Algemeen",
+  "settings.device_info": "Apparaatinfo"
 }

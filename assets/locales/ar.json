@@ -220,5 +220,7 @@
   "device_status.connected": "متصل",
   "device_status.connecting": "جارٍ الاتصال",
   "device_status.disconnected": "غير متصل",
-  "device_status.error": "خطأ"
+  "device_status.error": "خطأ",
+  "settings.general": "???",
+  "settings.device_info": "??????? ??????"
 }

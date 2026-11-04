@@ -273,12 +273,13 @@ class BTController:
             self._connection.connected = False
             return False, m("command.request_error", details=str(e))
     
-    def request_device_identity(self, timeout: float = 5.0) -> tuple[bool, str]:
+    def request_device_identity(self, timeout: float = 5.0, *, reconnect: bool = True) -> tuple[bool, str]:
         """Read all target info and return raw hex; run off the UI/listener thread."""
         if timeout <= 0:
             raise ValueError("Identity timeout must be positive")
-        self.resume_reconnect_attempts()
-        if not self._ensure_connected():
+        if reconnect:
+            self.resume_reconnect_attempts()
+        if not (self._ensure_connected() if reconnect else self.connected):
             return False, m("connection.device_failed")
 
         with self._identity_condition:

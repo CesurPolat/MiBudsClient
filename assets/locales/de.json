@@ -220,5 +220,7 @@
   "device_status.connected": "Verbunden",
   "device_status.connecting": "Verbindet",
   "device_status.disconnected": "Getrennt",
-  "device_status.error": "Fehler"
+  "device_status.error": "Fehler",
+  "settings.general": "Allgemein",
+  "settings.device_info": "Ger?teinfo"
 }

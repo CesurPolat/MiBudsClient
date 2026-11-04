@@ -220,5 +220,7 @@
   "device_status.connected": "Ansluten",
   "device_status.connecting": "Ansluter",
   "device_status.disconnected": "Frånkopplad",
-  "device_status.error": "Fel"
+  "device_status.error": "Fel",
+  "settings.general": "Allm?nt",
+  "settings.device_info": "Enhetsinformation"
 }

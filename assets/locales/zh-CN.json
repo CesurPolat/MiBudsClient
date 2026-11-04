@@ -220,5 +220,7 @@
   "device_status.connected": "已连接",
   "device_status.connecting": "连接中",
   "device_status.disconnected": "未连接",
-  "device_status.error": "错误"
+  "device_status.error": "错误",
+  "settings.general": "??",
+  "settings.device_info": "????"
 }

@@ -72,6 +72,15 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.settings.set_device_identity_result.assert_called_once_with("Redmi Buds 6 Play")
         self.assertEqual(self.page.update.call_count, 2)
 
+    def test_firmware_update_rejects_stale_session(self):
+        identity = SimpleNamespace(firmware_version="2.0.2.2")
+        self.handler._get_identity = lambda: identity
+        self.handler.handle({"type": "firmware_info", "identity": identity})
+        self.settings.set_firmware_version.assert_called_once_with("2.0.2.2")
+        self.handler._get_identity = lambda: None
+        self.handler.handle({"type": "firmware_info", "identity": identity})
+        self.settings.set_firmware_version.assert_called_once()
+
     def test_latency_updates_ui_without_sending_another_command(self):
         self.latency.state.update(selected_mode="auto", effective_low_latency=True)
         self.handler.handle({"type": "latency", "mode": "auto", "enabled": True})
@@ -220,8 +229,8 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertEqual(handler._device_status_card.device_name.value, 'Saved earbuds')
         self.assertTrue(handler._device_status_card.device_image._image_control.src.endswith('MiBuds6Play.png'))
         handler._tray.set_device.assert_called_once_with('Saved earbuds', 'assets/images/MiBuds6Play.png')
-        self.assertIs(settings.content.content.controls[0], handler._settings_card.startup_item)
-        self.assertIs(settings.content.content.controls[-1], handler._settings_card.identity_item)
+        self.assertIs(settings.content._sections["general"].controls[0], handler._settings_card.startup_item)
+        self.assertIs(settings.content._sections["identity"], handler._settings_card.identity_section)
         calls = [c[0] for c in self.page.mock_calls]
         self.assertLess(calls.index("add"), calls.index("pubsub.subscribe"))
 
