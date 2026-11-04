@@ -25,25 +25,22 @@ class AppLayout(ft.Column):
         self._home_controls = settings_card.home_controls_card
         self._connected_controls = settings_card.connected_controls
         self._wide = None
+        self._settings_open = False
         self.title = AppTitle(t("nav.settings"))
         self.title.visible = False
-        transition = ft.Animation(280, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
+        transition = ft.Animation(450, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
         self.home_content = ft.Container(
-            opacity=1,
             offset=ft.Offset(0, 0),
-            animate_opacity=transition,
             animate_offset=transition,
+            on_animation_end=lambda e: self._finish_transition(False),
         )
         self.settings_content = ft.Container(
             content=settings_card,
-            top=0,
-            left=0,
-            right=0,
-            opacity=0,
-            offset=ft.Offset(0.06, 0),
+            height=0,
+            offset=ft.Offset(1, 0),
             ignore_interactions=True,
-            animate_opacity=transition,
             animate_offset=transition,
+            on_animation_end=lambda e: self._finish_transition(True),
         )
         self.page_content = ft.Stack(
             controls=[self.home_content, self.settings_content],
@@ -72,21 +69,21 @@ class AppLayout(ft.Column):
                 ft.Container(width=48),
             ],
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            visible=False,
+            height=0,
         )
-        self.header_spacer = Spacer(height=8)
-        self.header_spacer.visible = False
+        self.header_spacer = Spacer(height=0)
         self.footer = Footer(APP_VERSION, GITHUB_URL, self.settings_button)
 
         super().__init__(
             controls=[
                 self.navigation_header,
                 self.header_spacer,
-                self.page_content,
-                Spacer(height=2),
+                ft.Container(content=self.page_content, border_radius=0,
+                             clip_behavior=ft.ClipBehavior.HARD_EDGE),
+                Spacer(height=18),
                 self.footer,
             ],
-            spacing=8,
+            spacing=0,
             tight=True,
             horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
         )
@@ -117,25 +114,31 @@ class AppLayout(ft.Column):
         return True
 
     def show_settings(self, open_settings: bool) -> None:
-        # Only the active screen contributes to the Stack's natural height.
-        # Keep the inactive screen mounted for callbacks and form state.
-        for screen, active in ((self.home_content, not open_settings),
-                               (self.settings_content, open_settings)):
-            screen.top = None if active else 0
-            screen.left = None if active else 0
-            screen.right = None if active else 0
-        self.home_content.opacity = 0 if open_settings else 1
-        self.home_content.offset = ft.Offset(-0.06 if open_settings else 0, 0)
+        self._settings_open = open_settings
+        # Keep both controls in the same Stack layout so their animations survive.
+        # The outgoing screen is collapsed after its animation completes.
+        (self.settings_content if open_settings else self.home_content).height = None
+        self.home_content.offset = ft.Offset(-1 if open_settings else 0, 0)
         self.home_content.ignore_interactions = open_settings
-        self.settings_content.opacity = 1 if open_settings else 0
-        self.settings_content.offset = ft.Offset(0 if open_settings else 0.06, 0)
+        self.settings_content.offset = ft.Offset(0 if open_settings else 1, 0)
         self.settings_content.ignore_interactions = not open_settings
         self.back_button.visible = open_settings
-        self.navigation_header.visible = self.header_spacer.visible = open_settings
+        # Flet removes invisible Column children from the Flutter widget list.
+        # Keep header slots mounted so showing them cannot remount the screens
+        # and reset AnimatedSlide to its destination before it can animate.
+        self.navigation_header.height = None if open_settings else 0
+        self.header_spacer.height = 24 if open_settings else 0
         self.settings_button.visible = not open_settings
         self.title.visible = open_settings
         self.title.value = t("nav.settings")
         self._on_update()
+
+    def _finish_transition(self, is_settings: bool) -> None:
+        if is_settings != self._settings_open:
+            screen = self.settings_content if is_settings else self.home_content
+            if screen.height != 0:
+                screen.height = 0
+                self._on_update()
 
     def refresh_translations(self) -> None:
         refresh_translations(self)
