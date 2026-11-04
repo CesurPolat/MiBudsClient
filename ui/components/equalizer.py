@@ -191,7 +191,7 @@ class EqualizerSettings(ft.Column):
                             overflow=ft.TextOverflow.ELLIPSIS),
                 ], spacing=2, alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                expand=True, aspect_ratio=1, tooltip=option.text,
+                expand=True, aspect_ratio=1,
                 data=int(option.key),
                 disabled=self.profile.disabled or option.disabled,
                 style=ft.ButtonStyle(

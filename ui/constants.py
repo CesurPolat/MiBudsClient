@@ -7,7 +7,7 @@ APP_TITLE = "MiBudsClient"
 APP_VERSION = "v0.2.0"
 GITHUB_URL = "https://github.com/CesurPolat/MiBudsClient"
 WINDOW_WIDTH = 655
-WINDOW_HEIGHT = 424
+WINDOW_HEIGHT = 440
 PAGE_PADDING = 10
 HOME_WIDE_BREAKPOINT = 520
 WINDOW_MIN_WIDTH = 420
@@ -39,6 +39,6 @@ BATTERY_LOW_THRESHOLD = 20
 # UI Dimensions
 # ─────────────────────────────────────────────────────────────────────────────
 ICON_BUTTON_SIZE = 40
-DEVICE_IMAGE_SIZE = 170
+DEVICE_IMAGE_SIZE = 185
 CARD_BORDER_RADIUS = 20
 ICON_BORDER_RADIUS = 10
