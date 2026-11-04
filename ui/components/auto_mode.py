@@ -259,8 +259,7 @@ class AutoModeSettingsAccordion(ft.Container):
 
         self._render_rules()
 
-        super().__init__(content=controls_column, bgcolor="#10141B", border_radius=18,
-                         border=ft.border.all(1, "#2A303C"), padding=12)
+        super().__init__(content=controls_column)
 
     def _normalize(self, value: str) -> str:
         return (value or "").strip().lower()

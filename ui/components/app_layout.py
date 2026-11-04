@@ -21,6 +21,7 @@ class AppLayout(ft.Column):
                  viewport_width: float | None = None):
         self._on_update = on_update
         self._device_status_card = device_status_card
+        self._settings_card = settings_card
         self._home_controls = settings_card.home_controls_card
         self._connected_controls = settings_card.connected_controls
         self._wide = None
@@ -93,9 +94,10 @@ class AppLayout(ft.Column):
 
     def set_viewport_width(self, width: float | None) -> bool:
         width = width if isinstance(width, (int, float)) else WINDOW_WIDTH
+        settings_changed = self._settings_card.set_viewport_width(width)
         wide = width - 2 * PAGE_PADDING >= HOME_WIDE_BREAKPOINT
         if wide == self._wide:
-            return False
+            return settings_changed
         self._wide = wide
         device, controls = self._device_status_card, self._home_controls
         device.set_wide_layout(wide)

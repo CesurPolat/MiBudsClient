@@ -80,6 +80,37 @@ class AppLayoutTests(unittest.TestCase):
         self.assertEqual(settings._selected_section, "general")
         self.assertTrue(settings._sections["general"].visible)
 
+    def test_settings_navigation_resize_keeps_selection_and_tooltips(self):
+        from utils.i18n import set_language
+        from ui.localization import refresh_translations
+        settings = SettingsCard(startup_enabled=True)
+        settings.select_section("identity")
+        settings.set_viewport_width(420)
+        self.assertEqual(settings._selected_section, "identity")
+        self.assertEqual(settings._menu.width, 52)
+        self.assertTrue(all(item.tooltip for item in settings._menu.controls))
+        self.assertTrue(all(not item.content.controls[1].visible for item in settings._menu.controls))
+        settings.set_viewport_width(650)
+        self.assertEqual(settings._selected_section, "identity")
+        self.assertTrue(settings.startup_switch.value)
+        try:
+            set_language("tr")
+            refresh_translations(settings)
+            self.assertEqual(settings._section_title.value, "Cihaz bilgisi")
+            self.assertEqual(settings._menu.controls[0].tooltip, "Genel")
+        finally:
+            set_language("en")
+
+    def test_all_settings_sections_share_one_card_surface(self):
+        settings = SettingsCard()
+        self.assertEqual(settings._section_surface.content.controls, list(settings._sections.values()))
+        surface = settings._section_surface
+        self.assertIsNotNone(surface.border)
+        settings.select_section("identity")
+        self.assertIs(settings._section_column.controls[1], surface)
+        self.assertTrue(settings.identity_section.visible)
+        self.assertFalse(settings._sections["general"].visible)
+
     def test_device_info_uses_connected_catalog_data_and_clears_on_disconnect(self):
         from controllers.bluetooth.capabilities import resolve_capabilities
         settings = SettingsCard()
@@ -88,7 +119,7 @@ class AppLayoutTests(unittest.TestCase):
         settings.set_catalog_device("Redmi Buds 6 Play", "assets/icon.png")
         settings.select_section("identity")
         self.assertTrue(settings.identity_image._image_control.src.endswith("icon.png"))
-        self.assertEqual(settings.identity_firmware.value, "?")
+        self.assertEqual(settings.identity_firmware.value, "\u2014")
         self.assertNotIn(settings.identity_item, settings.identity_section.content.controls)
         self.assertIn("Redmi Buds 6 Play", settings.identity_name.value)
         self.assertIn("miwear.headphone.n79bg", settings.identity_model.value)
@@ -106,7 +137,11 @@ class AppLayoutTests(unittest.TestCase):
         self.assertFalse(device._battery_spacer.visible)
         self.assertTrue(device.content.tight)
         self.assertEqual(layout.home_content.content.controls, [device, settings.home_controls_card])
-        self.assertFalse(layout.set_viewport_width(500))
+        self.assertTrue(settings._compact_navigation)
+        self.assertEqual(settings._menu.width, 52)
+        self.assertTrue(layout.set_viewport_width(500))
+        self.assertFalse(settings._compact_navigation)
+        self.assertEqual(settings._menu.width, 150)
         self.assertTrue(layout.set_viewport_width(1100))
         self.assertTrue(device._battery_spacer.visible)
         self.assertEqual(layout.home_content.content.controls, [device, settings.home_controls_card])

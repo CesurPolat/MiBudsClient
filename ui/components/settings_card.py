@@ -57,6 +57,7 @@ class SettingsCard(ft.Container):
     ):
         self._capabilities = DeviceCapabilities()
         self._connected = False
+        self._compact_navigation = False
         self.latency_item = LowLatencyModeSettingItem(
             ft.Icons.SPORTS_ESPORTS, "blue_700", t("latency.title"),
             value=low_latency_mode,
@@ -94,13 +95,12 @@ class SettingsCard(ft.Container):
         self.identity_image = DeviceImage()
         self.identity_image.width = self.identity_image.height = 130
         self.identity_image._image_control.width = self.identity_image._image_control.height = 120
-        self.identity_name = ft.Text("?", size=18, weight="w600", color="white",
+        self.identity_name = ft.Text("\u2014", size=18, weight="w600", color="white",
                                      text_align=ft.TextAlign.CENTER)
-        self.identity_model = ft.Text("?", size=13, color="white", selectable=True, expand=True, text_align=ft.TextAlign.END)
-        self.identity_firmware = ft.Text("?", size=13, color="white", selectable=True)
+        self.identity_model = ft.Text("\u2014", size=13, color="white", selectable=True, expand=True, text_align=ft.TextAlign.END)
+        self.identity_firmware = ft.Text("\u2014", size=13, color="white", selectable=True)
         self.identity_section = ft.Container(
             content=ft.Column([
-                ft.Text(t("settings.device_info"), size=16, weight="w600", color="white"),
                 ft.Container(content=self.identity_image, alignment=ft.Alignment.CENTER),
                 self.identity_name,
                 ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
@@ -109,7 +109,7 @@ class SettingsCard(ft.Container):
                 ft.Row([ft.Text("Firmware", color=COLOR_DISABLED, size=12),
                         self.identity_firmware], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
             ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            bgcolor="#10141B", border_radius=16, padding=14,
+            padding=6,
         )
 
         self.connection_panel = ConnectionPanel()
@@ -155,7 +155,10 @@ class SettingsCard(ft.Container):
         self._on_update = on_update
         self._selected_section = "general"
         self._sections = {
-            "general": ft.Column([self.startup_item, self._language_container], spacing=8),
+            "general": ft.Container(
+                content=ft.Column([self.startup_item, ft.Divider(height=1, color=COLOR_DIVIDER),
+                                   self._language_container], spacing=6),
+                padding=0),
             "auto": self.auto_settings, "noise": self.noise,
             "gestures": self.gestures, "identity": self.identity_section,
         }
@@ -163,16 +166,26 @@ class SettingsCard(ft.Container):
         self.gestures.controls[0].visible = False
         self.equalizer.toggle.visible = False
         self.noise.toggle.visible = False
-        self._menu = ft.Column(spacing=4, width=145)
-        self._section_column = ft.Column(list(self._sections.values()), spacing=0, expand=True)
-        items = ft.Row([self._menu, self._section_column], spacing=10,
+        self._menu = ft.Column(spacing=4, width=150)
+        self._section_title = ft.Text(size=17, weight="w600", color="white")
+        self._section_surface = ft.Container(
+            content=ft.Column(list(self._sections.values()), spacing=0,
+                              horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
+            bgcolor="#151B24", border_radius=16, padding=12,
+            border=ft.Border.all(1, "#293443"),
+        )
+        self._section_column = ft.Column([self._section_title, self._section_surface],
+                                         spacing=14, expand=True,
+                                         horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
+        items = ft.Row([self._menu, self._section_column], spacing=16,
                        vertical_alignment=ft.CrossAxisAlignment.START)
 
         super().__init__(
             content=items,
-            bgcolor=COLOR_CARD_BG,
+            bgcolor="#0E1218",
+            border=ft.Border.all(1, "#27313D"),
             border_radius=CARD_BORDER_RADIUS,
-            padding=10
+            padding=14
         )
         self._render_capabilities()
 
@@ -221,15 +234,25 @@ class SettingsCard(ft.Container):
             "gestures": (ft.Icons.TOUCH_APP, "gesture.title"),
             "identity": (ft.Icons.INFO_OUTLINE, "settings.device_info"),
         }
+        self._section_title.value = t(labels[self._selected_section][1])
+        self._menu.width = 52 if self._compact_navigation else 150
         self._menu.controls = []
         for key, (icon, label) in labels.items():
             if not self._available_sections[key]:
                 continue
+            selected = key == self._selected_section
             self._menu.controls.append(ft.Container(
-                content=ft.Row([ft.Icon(icon, size=18, color="white"),
-                                ft.Text(t(label), size=12, color="white", expand=True)], spacing=8),
-                padding=10, border_radius=10,
-                bgcolor="#30445F" if key == self._selected_section else "transparent",
+                content=ft.Row([
+                    ft.Icon(icon, size=20, color="#9BC7FF" if selected else "#AEBAC9"),
+                    ft.Text(t(label), size=12, color="white" if selected else "#C4CDDA",
+                            weight="w600" if selected else "w400", expand=True,
+                            max_lines=2, visible=not self._compact_navigation),
+                ], spacing=10, alignment=ft.MainAxisAlignment.CENTER if self._compact_navigation
+                   else ft.MainAxisAlignment.START),
+                tooltip=t(label),
+                padding=ft.Padding.symmetric(horizontal=12, vertical=12), border_radius=12,
+                bgcolor="#23364C" if selected else "transparent",
+                border=ft.Border.all(1, "#436A91" if selected else "transparent"),
                 ink=True, on_click=lambda e, section=key: self.select_section(section),
             ))
         for key, panel in self._sections.items():
@@ -239,6 +262,14 @@ class SettingsCard(ft.Container):
             if panel._opened != active:
                 panel._toggle(None)
 
+    def set_viewport_width(self, width: float) -> bool:
+        compact = width < 500
+        if compact == self._compact_navigation:
+            return False
+        self._compact_navigation = compact
+        self._render_sections()
+        return True
+
     def select_section(self, section):
         if not self._available_sections.get(section) or section == self._selected_section:
             return
@@ -247,7 +278,7 @@ class SettingsCard(ft.Container):
         self._on_update()
 
     def set_firmware_version(self, version: str | None) -> None:
-        self.identity_firmware.value = version or "?"
+        self.identity_firmware.value = version or "\u2014"
 
     def set_catalog_device(self, name: str, image_path: str = "") -> None:
         self._catalog_name, self._catalog_image = name, image_path
@@ -255,8 +286,8 @@ class SettingsCard(ft.Container):
 
     def _render_identity(self):
         caps = self._capabilities
-        self.identity_name.value = caps.name if self._connected and caps.name else "?"
-        self.identity_model.value = caps.model if self._connected and caps.model else "?"
+        self.identity_name.value = caps.name if self._connected and caps.name else "\u2014"
+        self.identity_model.value = caps.model if self._connected and caps.model else "\u2014"
         image = self._catalog_image if (self._connected and caps.name and
                  self._catalog_name.casefold() == caps.name.casefold()) else ""
         self.identity_image.set_catalog_image(image)

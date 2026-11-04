@@ -38,6 +38,20 @@ class GestureSettingsTests(unittest.TestCase):
         self.panel.set_connection(True)
         self.assertEqual(self.refresh.call_count, 3)
 
+    def test_loaded_status_is_hidden_but_loading_errors_and_empty_remain_visible(self):
+        from utils.i18n import message
+        token = self.panel.begin(message("gesture.reading"))
+        self.assertTrue(self.panel.status.visible)
+        self.panel.complete(token, GestureResult(True, {1: (1, 3)}, message("gesture.loaded")), {1: (1, 3)})
+        self.assertFalse(self.panel.status.visible)
+        token = self.panel.begin(message("gesture.reading"))
+        self.assertTrue(self.panel.status.visible)
+        self.panel.complete(token, GestureResult(False, message="Error"), {})
+        self.assertTrue(self.panel.status.visible)
+        token = self.panel.begin(message("gesture.reading"))
+        self.panel.complete(token, GestureResult(True, {}, message("gesture.loaded")), {})
+        self.assertTrue(self.panel.status.visible)
+
     def test_only_intersection_of_returned_gestures_and_capabilities_is_editable(self):
         self.load({1: (1, 3), 2: (2, 3), 4: (1, 1)}, {1: (1, 3), 3: (0, 8)})
         self.assertEqual(set(self.panel.selectors), {(1, "left"), (1, "right")})

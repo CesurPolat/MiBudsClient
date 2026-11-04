@@ -77,7 +77,7 @@ class SettingsControllerTests(unittest.TestCase):
         self.device.request_battery.assert_called_once_with()
         self.assertTrue(card.startup_switch.value)
         self.assertEqual(card.latency_item.value, "auto")
-        self.assertIs(card._sections["general"].controls[0], card.startup_item)
+        self.assertIs(card._sections["general"].content.controls[0], card.startup_item)
         self.assertIs(card._sections["identity"], card.identity_section)
         self.assertNotIn(card.startup_item, card.home_controls_card.content.controls)
 

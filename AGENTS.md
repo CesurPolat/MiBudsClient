@@ -15,6 +15,10 @@
 - **Build succeeds.** Run `flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBudsClient"` and verify executable runs.
 - **Single instance works.** Launch executable twice; second instance should exit silently and focus existing window.
 
+## UI design
+
+- Read `docs/design-system.md` before designing or changing UI. Reuse its shared layout, visual tokens, interaction patterns, and review checklist.
+
 ## Repo-specific conventions
 
 - **Protocol payloads are hex strings.** All Bluetooth command/response data in `controllers/bluetooth/constants.py` and `protocol.py` use `.fromhex()` conversion. Maintain consistency.

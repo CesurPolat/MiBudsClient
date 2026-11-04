@@ -229,7 +229,7 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertEqual(handler._device_status_card.device_name.value, 'Saved earbuds')
         self.assertTrue(handler._device_status_card.device_image._image_control.src.endswith('MiBuds6Play.png'))
         handler._tray.set_device.assert_called_once_with('Saved earbuds', 'assets/images/MiBuds6Play.png')
-        self.assertIs(settings.content._sections["general"].controls[0], handler._settings_card.startup_item)
+        self.assertIs(settings.content._sections["general"].content.controls[0], handler._settings_card.startup_item)
         self.assertIs(settings.content._sections["identity"], handler._settings_card.identity_section)
         calls = [c[0] for c in self.page.mock_calls]
         self.assertLess(calls.index("add"), calls.index("pubsub.subscribe"))

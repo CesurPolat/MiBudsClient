@@ -60,6 +60,7 @@ class GestureSettings(ft.Column):
         self._needs_refresh = True
         self._assignments = {}
         self._capabilities = {}
+        self.status.visible = True
         self.status.value = t("gesture.open") if connected else t("gesture.connect")
         self.status.color = COLOR_DISABLED
         self._render()
@@ -72,6 +73,7 @@ class GestureSettings(ft.Column):
         self._token += 1
         token = self._token
         self._busy = True
+        self.status.visible = True
         self.status.value = render(message)
         self.status.color = COLOR_DISABLED
         self._render()
@@ -88,8 +90,10 @@ class GestureSettings(ft.Column):
             self._capabilities = dict(capabilities)
         self.status.value = render(result.message)
         self.status.color = "green" if result.success else "red"
+        self.status.visible = not (result.success and getattr(result.message, "key", None) == "gesture.loaded")
         if result.success and not (self._assignments.keys() & self._capabilities.keys()):
             self.status.value = t("gesture.empty")
+            self.status.visible = True
         self._render()
 
     def _change(self, gesture, side, event):
