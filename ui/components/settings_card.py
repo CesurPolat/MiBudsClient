@@ -181,7 +181,9 @@ class SettingsCard(ft.Container):
                        vertical_alignment=ft.CrossAxisAlignment.START)
 
         super().__init__(
-            content=items,
+            content=ft.Column(
+                [items], spacing=0, scroll=ft.ScrollMode.AUTO,
+                horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
             bgcolor="#0E1218",
             border=ft.Border.all(1, "#27313D"),
             border_radius=CARD_BORDER_RADIUS,

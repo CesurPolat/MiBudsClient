@@ -40,6 +40,18 @@ class WindowGeometryTests(unittest.TestCase):
         ), patch.object(window_geometry.subprocess, "run", return_value=SimpleNamespace(stdout=output)):
             self.assertEqual(window_geometry.get_work_area_size(), (1280, 680))
 
+    def test_screen_fitting_keeps_native_resize_locked_on_both_platforms(self):
+        for platform in (ft.PagePlatform.WINDOWS, ft.PagePlatform.LINUX):
+            for work_area, expected in (((1920, 1080), (655, 440)),
+                                        ((400, 360), (376, 336))):
+                with self.subTest(platform=platform, work_area=work_area):
+                    page = SimpleNamespace(window=ft.Window(), platform=platform)
+                    with patch("ui.window_manager.get_work_area_size", return_value=work_area):
+                        WindowManager(page, auto_resize=True)
+                    self.assertEqual((page.window.width, page.window.height), expected)
+                    self.assertFalse(page.window.resizable)
+                    self.assertFalse(page.window.maximizable)
+
     def test_linux_missing_display_tool_is_nonfatal(self):
         for error in (FileNotFoundError(), subprocess.TimeoutExpired("xprop", 1)):
             with patch.object(window_geometry.sys, "platform", "linux"), patch.dict(

@@ -39,7 +39,7 @@ class WindowManager:
             self.page.window.min_height = WINDOW_HEIGHT
             self.page.window.max_width = WINDOW_WIDTH
             self.page.window.max_height = WINDOW_HEIGHT
-            self.page.window.resizable = self.page.platform != ft.PagePlatform.WINDOWS
+            self.page.window.resizable = False
             self.page.window.maximizable = False
             return
         width, height, min_width, min_height = fit_window_size(
@@ -52,8 +52,9 @@ class WindowManager:
         self.page.window.min_height = min_height
         self.page.window.max_width = None
         self.page.window.max_height = None
-        self.page.window.resizable = True
-        self.page.window.maximizable = True
+        # Native resizing is locked; application-driven fitting remains available.
+        self.page.window.resizable = False
+        self.page.window.maximizable = False
     
     def _setup_handlers(self) -> None:
         """Setup window event handlers."""

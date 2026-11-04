@@ -83,7 +83,7 @@ class Spacer(ft.Container):
 
 
 class Footer(ft.Row):
-    """Settings on the left; version and GitHub link on the right."""
+    """Screen navigation on the left; version and GitHub link on the right."""
 
     def __init__(self, version: str, github_url: str, settings_button=None):
         super().__init__(

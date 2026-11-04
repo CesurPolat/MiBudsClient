@@ -58,7 +58,7 @@ class LocalizedUITests(unittest.TestCase):
         self.device.update_battery(128 + 67, 42, 90)
         controls = (self.layout.settings_content, self.settings.auto_settings._field, panel.body)
         self.switch("tr")
-        self.assertEqual(self.layout.title.value, "Ayarlar")
+        self.assertEqual(self.layout.navigation_button.content.value, "Geri")
         self.assertEqual(self.settings.startup_item.title.value, "Başlangıçta Çalıştır")
         self.assertEqual(self.device.battery_panel._left._label_text.value, "Sol")
         self.assertEqual(self.device.battery_panel._left._value_text.value, "⚡ %67")
@@ -85,7 +85,7 @@ class LocalizedUITests(unittest.TestCase):
         self.assertIs(callback, selector.on_select)
         self.switch("en")
         self.assertEqual(selector.label, "Left")
-        self.assertEqual(self.layout.title.value, "Settings")
+        self.assertEqual(self.layout.navigation_button.content.value, "Back")
 
     def test_failure_reason_status_identity_and_open_update_translate_in_place(self):
         reason = message("connection.technical", reason=message("connection.permission"), details="winerror 5")
@@ -141,7 +141,7 @@ class LocalizedUITests(unittest.TestCase):
                 self.assertTrue(self.settings.connected_controls.visible)
                 self.assertIs(self.settings.language_selector, selector)
                 self.assertEqual(selector.value, language)
-                self.assertEqual(self.layout.title.value, t("nav.settings"))
+                self.assertEqual(self.layout.navigation_button.content.value, t("nav.back"))
                 self.assertEqual(self.settings.gestures.status.value, t("gesture.reading"))
                 msgpack.packb(self.layout, default=configure_encode_object_for_msgpack(BaseControl))
         self.assign.assert_not_called()

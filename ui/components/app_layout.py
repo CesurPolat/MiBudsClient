@@ -8,7 +8,7 @@ import flet as ft
 from ui.localization import refresh_translations
 
 from ..constants import APP_VERSION, GITHUB_URL, WINDOW_WIDTH, PAGE_PADDING, HOME_WIDE_BREAKPOINT
-from .common import AppTitle, Spacer, Footer
+from .common import Spacer, Footer
 from .device_status import DeviceStatusCard
 from .settings_card import SettingsCard
 
@@ -26,58 +26,40 @@ class AppLayout(ft.Column):
         self._connected_controls = settings_card.connected_controls
         self._wide = None
         self._settings_open = False
-        self.title = AppTitle(t("nav.settings"))
-        self.title.visible = False
         transition = ft.Animation(450, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
         self.home_content = ft.Container(
             offset=ft.Offset(0, 0),
             animate_offset=transition,
-            on_animation_end=lambda e: self._finish_transition(False),
         )
         self.settings_content = ft.Container(
             content=settings_card,
-            height=0,
+            top=0,
+            bottom=0,
+            left=0,
+            right=0,
             offset=ft.Offset(1, 0),
             ignore_interactions=True,
             animate_offset=transition,
-            on_animation_end=lambda e: self._finish_transition(True),
         )
+        # Home always determines the shared height. Settings fills that space
+        # without contributing its section's natural height to the Stack.
         self.page_content = ft.Stack(
             controls=[self.home_content, self.settings_content],
             fit=ft.StackFit.PASS_THROUGH,
             clip_behavior=ft.ClipBehavior.HARD_EDGE,
         )
 
-        self.back_button = ft.IconButton(
-            icon=ft.Icons.ARROW_BACK,
-            icon_color="white",
-            tooltip=t("nav.back"),
-            visible=False,
-            on_click=lambda _: self.show_settings(False),
-        )
-        self.settings_button = ft.TextButton(
+        self.navigation_button = ft.TextButton(
             icon=ft.Icons.SETTINGS_OUTLINED,
             content=ft.Text(t("nav.settings"), size=11),
             style=ft.ButtonStyle(color="white", padding=0, icon_size=18),
             tooltip=t("nav.settings"),
-            on_click=lambda _: self.show_settings(True),
+            on_click=lambda _: self.show_settings(not self._settings_open),
         )
-        self.navigation_header = ft.Row(
-            controls=[
-                ft.Container(content=self.back_button, width=48),
-                ft.Container(content=self.title, expand=True, alignment=ft.Alignment.CENTER),
-                ft.Container(width=48),
-            ],
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            height=0,
-        )
-        self.header_spacer = Spacer(height=0)
-        self.footer = Footer(APP_VERSION, GITHUB_URL, self.settings_button)
+        self.footer = Footer(APP_VERSION, GITHUB_URL, self.navigation_button)
 
         super().__init__(
             controls=[
-                self.navigation_header,
-                self.header_spacer,
                 ft.Container(content=self.page_content, border_radius=0,
                              clip_behavior=ft.ClipBehavior.HARD_EDGE),
                 Spacer(height=18),
@@ -115,30 +97,18 @@ class AppLayout(ft.Column):
 
     def show_settings(self, open_settings: bool) -> None:
         self._settings_open = open_settings
-        # Keep both controls in the same Stack layout so their animations survive.
-        # The outgoing screen is collapsed after its animation completes.
-        (self.settings_content if open_settings else self.home_content).height = None
         self.home_content.offset = ft.Offset(-1 if open_settings else 0, 0)
         self.home_content.ignore_interactions = open_settings
         self.settings_content.offset = ft.Offset(0 if open_settings else 1, 0)
         self.settings_content.ignore_interactions = not open_settings
-        self.back_button.visible = open_settings
-        # Flet removes invisible Column children from the Flutter widget list.
-        # Keep header slots mounted so showing them cannot remount the screens
-        # and reset AnimatedSlide to its destination before it can animate.
-        self.navigation_header.height = None if open_settings else 0
-        self.header_spacer.height = 24 if open_settings else 0
-        self.settings_button.visible = not open_settings
-        self.title.visible = open_settings
-        self.title.value = t("nav.settings")
+        # Update the same footer button instead of inserting navigation controls;
+        # the screen's widget position must stay stable for AnimatedSlide.
+        label = t("nav.back" if open_settings else "nav.settings")
+        self.navigation_button.icon = (
+            ft.Icons.ARROW_BACK if open_settings else ft.Icons.SETTINGS_OUTLINED)
+        self.navigation_button.content.value = label
+        self.navigation_button.tooltip = label
         self._on_update()
-
-    def _finish_transition(self, is_settings: bool) -> None:
-        if is_settings != self._settings_open:
-            screen = self.settings_content if is_settings else self.home_content
-            if screen.height != 0:
-                screen.height = 0
-                self._on_update()
 
     def refresh_translations(self) -> None:
         refresh_translations(self)
