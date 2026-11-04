@@ -11,7 +11,7 @@ MiBudsClient is a compact desktop companion: dark, quiet, clear, and centered on
 - Native window resizing and maximizing are disabled on Windows and Linux. Keep automatic screen fitting and scrolling available for smaller displays and display scaling.
 - Settings uses a left navigation rail and one selected section on the right. Use the existing shared section surface in `ui/components/settings_card.py` for every section; do not add an extra outer card or border to only some sections. Inner controls may have their own boundaries when they clarify an interaction.
 - Preserve the selected section and input state when resizing, switching screens, changing language, or receiving unrelated updates. If a device-specific section becomes unavailable, return to General.
-- The default window is 655 ? 440 and the minimum is 420 ? 400. At widths below 500, Settings uses the compact icon rail; preserve translated tooltips and the visible section heading. Ensure long content can be reached by scrolling and controls do not clip or overflow at minimum width.
+- The default window is 655 ? 430 and the minimum is 420 ? 400. At widths below 500, Settings uses the compact icon rail; preserve translated tooltips and the visible section heading. Ensure long content can be reached by scrolling and controls do not clip or overflow at minimum width.
 - Reuse the existing home layout breakpoint and sizing behavior in `ui/components/app_layout.py`; do not introduce a competing breakpoint without a concrete need.
 
 ## Visual tokens
