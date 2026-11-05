@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from controllers.bluetooth.controller import BTController
+from controllers.bluetooth.equalizer import EqResult, EqState
 from ui.components.device_status import DeviceStatusCard
 from ui.components.connection import ConnectionPanel
 from ui.components.settings_card import SettingsCard
@@ -31,6 +32,11 @@ class ConnectionFeedbackTests(unittest.TestCase):
         card.update_connection_state("connected")
         home_items = [item.content for item in card.connected_controls.controls]
         self.assertEqual(home_items, [card.latency_item, card.equalizer.quick_controls, card.battery_item])
+        self.assertTrue(card.connection_card.visible)
+        self.assertFalse(card.connected_controls.visible)
+        token = card.equalizer.begin("read")
+        card.equalizer.complete(token, EqResult(True, EqState(profile=0)), (0, 1, 5, 6, 7), "read")
+        card.refresh_connection_panel()
         self.assertFalse(card.connection_card.visible)
         self.assertNotIn(card.auto_settings, card.connected_controls.controls)
         self.assertTrue(card._available_sections["auto"])
@@ -40,6 +46,48 @@ class ConnectionFeedbackTests(unittest.TestCase):
         self.assertFalse(card._available_sections["auto"])
         self.assertFalse(card.equalizer.quick_controls.visible)
         self.assertTrue(card.connection_card.visible)
+
+    def test_eq_failure_retries_read_and_ignores_old_connection_result(self):
+        from controllers.bluetooth.capabilities import resolve_capabilities
+        card = SettingsCard()
+        card.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
+        card.update_connection_state("connected")
+        token = card.equalizer.begin("read")
+        card.equalizer.complete(token, EqResult(False, message="Read timed out"), (), "read")
+        card.refresh_connection_panel()
+        self.assertTrue(card.connection_panel.retry_button.visible)
+        self.assertEqual(card.connection_panel.connection_reason.value, "Read timed out")
+        def read(operation, **kwargs):
+            self.assertEqual(operation, "read")
+            card.equalizer.begin(operation)
+        card.equalizer._on_action = read
+        reconnect = Mock()
+        card.retry_connection(reconnect)
+        reconnect.assert_not_called()
+        self.assertTrue(card.connection_panel.connection_progress.visible)
+        self.assertFalse(card.connection_panel.retry_button.visible)
+        new_token = card.equalizer._token
+        card.update_connection_state("failed")
+        card.equalizer.complete(new_token, EqResult(True, EqState(profile=0)), (0,), "read")
+        card.refresh_connection_panel()
+        self.assertFalse(card.connected_controls.visible)
+        self.assertEqual(card.connection_card.height, 292)
+
+    def test_listener_publishes_retry_countdown_and_final_failure(self):
+        from utils.i18n import t
+        controller, feedback = self.make_controller()
+        controller.reconnect = Mock(return_value=False)
+        controller._max_reconnect_attempts = 2
+        def sleep(_):
+            if controller._reconnect_paused:
+                controller._running = False
+        with patch("controllers.bluetooth.controller.time.sleep", side_effect=sleep):
+            controller.listen()
+        retries = [call.args for call in feedback.call_args_list if call.args[0] == "retrying"]
+        self.assertEqual(len(retries), 5)
+        self.assertEqual(retries[0][1], t("connection.retrying", attempts=1, maximum=2, delay=5))
+        self.assertEqual(retries[-1][1], t("connection.retrying", attempts=1, maximum=2, delay=1))
+        feedback.assert_called_with("failed", t("connection.retry_limit"))
 
     def test_latency_state_survives_detached_selector_and_reconnect(self):
         from controllers.bluetooth.capabilities import resolve_capabilities

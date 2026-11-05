@@ -21,13 +21,18 @@ class DeviceStatusCard(ft.Container):
                                  vertical_alignment=ft.CrossAxisAlignment.CENTER)
         self.device_image = DeviceImage()
         self.device_name = ft.Text(size=13, color="white", weight="w500", visible=False,
-                                   text_align=ft.TextAlign.CENTER)
+                                   text_align=ft.TextAlign.CENTER, max_lines=1,
+                                   overflow=ft.TextOverflow.ELLIPSIS)
+        # Catalog data arrives asynchronously. Reserve the name row even while
+        # the image placeholder is shown so it cannot grow the home layout.
+        self._device_name_slot = ft.Container(
+            content=self.device_name, height=20, alignment=ft.Alignment.CENTER)
         self._battery_spacer = ft.Container(expand=True, visible=False)
         super().__init__(
             content=ft.Column(
                 controls=[
                     self.device_image,
-                    self.device_name,
+                    self._device_name_slot,
                     self.status_row,
                     self._battery_spacer,
                     ft.Container(content=self.battery_panel,
@@ -49,6 +54,7 @@ class DeviceStatusCard(ft.Container):
 
     def update_catalog_device(self, name: str, image_path: str = "") -> None:
         self.device_name.value = name
+        self.device_name.tooltip = name or None
         self.device_name.visible = bool(name)
         self.device_image.set_catalog_image(image_path)
 
@@ -60,6 +66,7 @@ class DeviceStatusCard(ft.Container):
         label, color = {
             "connected": ("connected", "green"),
             "connecting": ("connecting", "amber"),
+            "retrying": ("connecting", "amber"),
             "failed": ("error", "orange"),
         }.get(state, ("disconnected", "grey"))
         self.status_bar.value = t("device_status." + label)

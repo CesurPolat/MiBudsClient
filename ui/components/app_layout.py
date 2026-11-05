@@ -7,7 +7,7 @@ from typing import Callable
 import flet as ft
 from ui.localization import refresh_translations
 
-from ..constants import APP_VERSION, GITHUB_URL, WINDOW_WIDTH, PAGE_PADDING, HOME_WIDE_BREAKPOINT
+from ..constants import APP_VERSION, GITHUB_URL, WINDOW_WIDTH, PAGE_PADDING, HOME_WIDE_BREAKPOINT, HOME_CONTROLS_HEIGHT
 from .common import Spacer, Footer
 from .device_status import DeviceStatusCard
 from .settings_card import SettingsCard
@@ -82,6 +82,11 @@ class AppLayout(ft.Column):
         device.set_wide_layout(wide)
         device.expand = 2 if wide else False
         controls.expand = 3 if wide else False
+        # The wide row gets its height from the device summary. Let the loading
+        # card fill that height instead of retaining its compact fixed height.
+        self._settings_card.connection_card.height = None if wide else HOME_CONTROLS_HEIGHT
+        self._settings_card.connection_card.expand = wide
+        self._settings_card.connection_panel.height = None if wide else HOME_CONTROLS_HEIGHT - 12
         self._connected_controls.expand = wide
         self._connected_controls.alignment = (
             ft.MainAxisAlignment.SPACE_BETWEEN if wide else ft.MainAxisAlignment.START)

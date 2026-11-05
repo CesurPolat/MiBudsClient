@@ -13,6 +13,7 @@ from ..constants import (
     COLOR_DIVIDER,
     CARD_BORDER_RADIUS,
     COLOR_DISABLED,
+    HOME_CONTROLS_HEIGHT,
 )
 
 from controllers.bluetooth.capabilities import DeviceCapabilities
@@ -122,6 +123,7 @@ class SettingsCard(ft.Container):
                                 border_radius=CARD_BORDER_RADIUS, padding=6)
 
         self.connection_card = home_card(self.connection_panel)
+        self.connection_card.height = HOME_CONTROLS_HEIGHT
         self.connected_controls = ft.Column(
             spacing=8, visible=False, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.home_controls_card = ft.Container(
@@ -206,7 +208,6 @@ class SettingsCard(ft.Container):
         self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
         self.battery_item.visible = self._connected and caps.supports("battery")
         self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
-        self.connection_card.visible = not self._connected
         controls = []
         for card in (self.latency_card, self.equalizer_card, self.battery_card):
             card.visible = card.content.visible
@@ -219,6 +220,7 @@ class SettingsCard(ft.Container):
             panel.set_connection(panel.visible)
         self.noise.capabilities = noise_capabilities(caps)
         self.noise.set_connection(self._connected and noise_backend_enabled(caps))
+        self.refresh_connection_panel()
         self._available_sections = {
             "general": True, "auto": self._connected and caps.supports("latency"),
             "noise": self._connected and noise_backend_enabled(caps),
@@ -308,9 +310,26 @@ class SettingsCard(ft.Container):
         self._connected = connected
         if not connected:
             self.set_firmware_version(None)
-        self.connection_panel.visible = not connected
-        self.connected_controls.visible = connected
         self._render_capabilities()
+
+    def refresh_connection_panel(self):
+        """Keep the home shell in place until the first EQ read succeeds."""
+        waiting = self._connected and self._capabilities.supports("eq") and not self.equalizer.ready
+        ready = self._connected and not waiting
+        self.connection_card.visible = self.connection_panel.visible = not ready
+        self.connected_controls.visible = ready
+        if waiting:
+            failed = self.equalizer.initial_read_failed
+            self.connection_panel.update_connection_state(
+                "failed" if failed else "loading", self.equalizer.status.value if failed else "")
+
+    def retry_connection(self, reconnect):
+        if self._connected and self._capabilities.supports("eq") and not self.equalizer.ready:
+            self.equalizer.retry_initial_read()
+            self.refresh_connection_panel()
+            self._on_update()
+        else:
+            reconnect()
 
     def set_latency_mode(self, mode: str) -> None:
         self.latency_item.set_mode(mode)

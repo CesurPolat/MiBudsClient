@@ -180,7 +180,8 @@ async def main(page: ft.Page):
     )
     settings_card = settings_controller.card
     settings_card.set_catalog_device(cached_name, cached_image)
-    settings_card.connection_panel.retry_button.on_click = lambda e: device_connection.reconnect_on_show()
+    settings_card.connection_panel.retry_button.on_click = lambda e: settings_card.retry_connection(
+        device_connection.reconnect_on_show)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Build Page Layout

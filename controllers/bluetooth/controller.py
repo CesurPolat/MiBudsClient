@@ -495,13 +495,21 @@ class BTController:
                     attempts, reached_limit = self._record_reconnect_failure()
                     if reached_limit:
                         self._update_status(m("connection.retry_limit"), "red")
+                        self._notify_connection_state("failed", m("connection.retry_limit"))
                         self._notify_connection_event("reconnect_failed_limit")
                     else:
                         self._update_status(
                             m("connection.retrying", attempts=attempts, maximum=self._max_reconnect_attempts, delay=RECONNECT_DELAY),
                             "orange"
                         )
-                    time.sleep(RECONNECT_DELAY)
+                    for remaining in range(RECONNECT_DELAY, 0, -1):
+                        if not self._running or self.connected:
+                            break
+                        if not reached_limit:
+                            self._notify_connection_state("retrying", m(
+                                "connection.retrying", attempts=attempts,
+                                maximum=self._max_reconnect_attempts, delay=remaining))
+                        time.sleep(1)
                 else:
                     disconnected_since = None
                     last_data_received_at = time.monotonic()

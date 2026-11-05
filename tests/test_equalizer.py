@@ -405,7 +405,8 @@ class EqUITests(unittest.TestCase):
         self.panel.set_connection(True)
         token = self.panel.begin("read")
         page = SimpleNamespace(controls=[], overlay=[], update=Mock())
-        handler = AppMessageHandler(page=page, device_status_card=Mock(), settings_card=SimpleNamespace(equalizer=self.panel),
+        handler = AppMessageHandler(page=page, device_status_card=Mock(),
+                                    settings_card=SimpleNamespace(equalizer=self.panel, refresh_connection_panel=Mock()),
                                     window_manager=Mock(), latency=Mock(), tray=Mock(), debug_console=Mock(),
                                     on_window_show=Mock(), get_game_monitor=Mock())
         handler.handle({"type": "eq_settings", "token": token, "result": EqResult(True, self.state, "loaded"),

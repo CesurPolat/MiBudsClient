@@ -70,6 +70,17 @@ class EqualizerSettings(ft.Column):
             self._act("read")
         self._on_update()
 
+    @property
+    def ready(self):
+        return self._connected and self._state is not None and bool(self._profiles)
+
+    @property
+    def initial_read_failed(self):
+        return self._connected and not self.ready and not self._busy and self.status.color == "red"
+
+    def retry_initial_read(self):
+        self._act("read")
+
     def set_connection(self, connected):
         if self._connected == connected:
             return

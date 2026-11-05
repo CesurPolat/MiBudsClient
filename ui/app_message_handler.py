@@ -211,6 +211,7 @@ class AppMessageHandler:
         self._settings_card.equalizer.complete(
             message["token"], message["result"], message["profiles"], message["operation"]
         )
+        self._settings_card.refresh_connection_panel()
         self._update_page()
 
     def _handle_noise_settings(self, message):
