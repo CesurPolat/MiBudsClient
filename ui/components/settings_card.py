@@ -167,6 +167,7 @@ class SettingsCard(ft.Container):
         self.equalizer.toggle.visible = False
         self.noise.toggle.visible = False
         self._menu = ft.Column(spacing=4, width=150)
+        self._menu_items = {}
         self._section_title = ft.Text(size=17, weight="w600", color="white")
         self._section_surface = ft.Container(
             content=ft.Column(list(self._sections.values()), spacing=0,
@@ -238,25 +239,31 @@ class SettingsCard(ft.Container):
         }
         self._section_title.value = t(labels[self._selected_section][1])
         self._menu.width = 52 if self._compact_navigation else 150
-        self._menu.controls = []
         for key, (icon, label) in labels.items():
-            if not self._available_sections[key]:
-                continue
             selected = key == self._selected_section
-            self._menu.controls.append(ft.Container(
-                content=ft.Row([
-                    ft.Icon(icon, size=20, color="#9BC7FF" if selected else "#AEBAC9"),
-                    ft.Text(t(label), size=12, color="white" if selected else "#C4CDDA",
-                            weight="w600" if selected else "w400", expand=True,
-                            max_lines=2, visible=not self._compact_navigation),
-                ], spacing=10, alignment=ft.MainAxisAlignment.CENTER if self._compact_navigation
-                   else ft.MainAxisAlignment.START),
-                tooltip=t(label),
-                padding=ft.Padding.symmetric(horizontal=12, vertical=12), border_radius=12,
-                bgcolor="#23364C" if selected else "transparent",
-                border=ft.Border.all(1, "#436A91" if selected else "transparent"),
-                ink=True, on_click=lambda e, section=key: self.select_section(section),
-            ))
+            if key not in self._menu_items:
+                item = ft.Container(
+                    content=ft.Row([ft.Icon(icon, size=20),
+                                    ft.Text(size=12, expand=True, max_lines=2)], spacing=10),
+                    padding=ft.Padding.symmetric(horizontal=12, vertical=12), border_radius=12,
+                    ink=True, on_click=lambda e, section=key: self.select_section(section),
+                )
+                self._menu_items[key] = item
+                self._menu.controls.append(item)
+            item = self._menu_items[key]
+            item.visible = self._available_sections[key]
+            item.tooltip = t(label)
+            item.bgcolor = "#23364C" if selected else "transparent"
+            item.border = ft.Border.all(1, "#436A91" if selected else "transparent")
+            row = item.content
+            row.alignment = (ft.MainAxisAlignment.CENTER if self._compact_navigation
+                             else ft.MainAxisAlignment.START)
+            row.controls[0].color = "#9BC7FF" if selected else "#AEBAC9"
+            text = row.controls[1]
+            text.value = t(label)
+            text.color = "white" if selected else "#C4CDDA"
+            text.weight = "w600" if selected else "w400"
+            text.visible = not self._compact_navigation
         for key, panel in self._sections.items():
             panel.visible = key == self._selected_section and self._available_sections[key]
         for key, panel in (("noise", self.noise), ("gestures", self.gestures)):

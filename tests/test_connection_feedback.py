@@ -10,6 +10,20 @@ from ui.components.settings_card import SettingsCard
 
 
 class ConnectionFeedbackTests(unittest.TestCase):
+    def test_settings_navigation_items_survive_reconnect_without_duplicates(self):
+        from controllers.bluetooth.capabilities import resolve_capabilities
+        card = SettingsCard()
+        items = list(card._menu.controls)
+        caps = resolve_capabilities(device_name="Redmi Buds 6 Play")
+        for _ in range(2):
+            card.set_capabilities(caps)
+            card.update_connection_state("connected")
+            self.assertTrue(card._menu_items["auto"].visible)
+            card.update_connection_state("failed")
+            self.assertFalse(card._menu_items["auto"].visible)
+        self.assertEqual(card._menu.controls, items)
+        self.assertEqual(len(card._menu.controls), len(card._menu_items))
+
     def test_home_quick_controls_and_settings_automation_placement(self):
         from controllers.bluetooth.capabilities import resolve_capabilities
         card = SettingsCard()
