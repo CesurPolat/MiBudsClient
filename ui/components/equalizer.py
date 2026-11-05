@@ -26,7 +26,7 @@ class EqualizerSettings(ft.Column):
         self.profile = ft.Dropdown(label=t("eq.profile"), disabled=True, options=[],
                                    on_select=self._select, color=COLOR_TEXT_PRIMARY, filled=True)
         self.quick_status = ft.Text(t("eq.connect"), size=12, color=COLOR_DISABLED, visible=False)
-        self.quick_profiles = ft.Row(height=72, spacing=4)
+        self.quick_profiles = ft.Row(height=64, spacing=4)
         self._feedback_active = False
         self._feedback_started = False
         self._feedback_profile = None
@@ -203,13 +203,14 @@ class EqualizerSettings(ft.Column):
             ft.TextButton(
                 content=ft.Column([
                     ft.Icon(icons.get(int(option.key), ft.Icons.GRAPHIC_EQ),
-                            size=18, color=COLOR_TEXT_PRIMARY),
+                            size=16, color=COLOR_TEXT_PRIMARY),
                     ft.Text(option.text, size=10, color=COLOR_TEXT_PRIMARY,
-                            text_align=ft.TextAlign.CENTER, max_lines=3,
+                            style=ft.TextStyle(height=1.0),
+                            text_align=ft.TextAlign.CENTER, max_lines=2,
                             overflow=ft.TextOverflow.ELLIPSIS),
                 ], spacing=2, alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                height=68,
+                height=60,
                 data=int(option.key),
                 disabled=self.profile.disabled or option.disabled,
                 style=ft.ButtonStyle(
@@ -226,7 +227,7 @@ class EqualizerSettings(ft.Column):
             feedback = self._button_feedback.get(profile)
             if feedback is None:
                 feedback = ft.Container(
-                    expand=True, height=72, padding=2, border_radius=14,
+                    expand=True, height=64, padding=2, border_radius=14,
                     border=ft.Border.all(1, "transparent"),
                     animate=ft.Animation(180, ft.AnimationCurve.EASE_OUT),
                     on_animation_end=lambda e, p=profile: self._pulse_feedback(e, p))
