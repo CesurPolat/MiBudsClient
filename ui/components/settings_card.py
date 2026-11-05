@@ -141,6 +141,7 @@ class SettingsCard(ft.Container):
         self.equalizer_card = home_card(self.equalizer.quick_controls)
         self.battery_card = home_card(self.battery_item)
         self.noise = NoiseSettings(on_noise_action, on_update)
+        self.noise_card = home_card(self.noise.quick_controls)
         self.device_components = {"gestures": self.gestures, "eq": self.equalizer}
         self.language_selector = ft.Dropdown(
             label=t("language.title"),
@@ -208,8 +209,12 @@ class SettingsCard(ft.Container):
         self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
         self.battery_item.visible = self._connected and caps.supports("battery")
         self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
+        self.noise.capabilities = noise_capabilities(caps)
+        self.noise.quick_controls.visible = self._connected and 1 in self.noise.capabilities.modes
+        self.noise.set_connection(self._connected and bool(self.noise.capabilities.modes),
+                                  noise_backend_enabled(caps))
         controls = []
-        for card in (self.latency_card, self.equalizer_card, self.battery_card):
+        for card in (self.latency_card, self.noise_card, self.equalizer_card, self.battery_card):
             card.visible = card.content.visible
             if card.visible:
                 controls.append(card)
@@ -218,12 +223,10 @@ class SettingsCard(ft.Container):
         for feature, panel in self.device_components.items():
             panel.visible = self._connected and caps.supports(feature)
             panel.set_connection(panel.visible)
-        self.noise.capabilities = noise_capabilities(caps)
-        self.noise.set_connection(self._connected and noise_backend_enabled(caps))
         self.refresh_connection_panel()
         self._available_sections = {
             "general": True, "auto": self._connected and caps.supports("latency"),
-            "noise": self._connected and noise_backend_enabled(caps),
+            "noise": self._connected and bool(self.noise.capabilities.modes),
             "gestures": self._connected and caps.supports("gestures"),
             "identity": True,
         }

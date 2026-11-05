@@ -12,8 +12,8 @@ OLD_ADAPTIVE_MODELS = frozenset(("l76", "l77", "k73", "k73a", "l77s"))
 
 
 def noise_backend_enabled(caps):
-    """Expose noise controls when the device function list supports a mode."""
-    return bool(noise_capabilities(caps).modes)
+    """Catalog capabilities cannot authorize an unvalidated model backend."""
+    return caps.model in VALIDATED_NOISE_MODELS and bool(noise_capabilities(caps).modes)
 
 
 @dataclass(frozen=True)

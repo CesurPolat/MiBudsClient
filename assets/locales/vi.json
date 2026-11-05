@@ -234,5 +234,6 @@
   "eq.harman_master": "Harman Master",
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
-  "eq.underwater": "Underwater"
+  "eq.underwater": "Underwater",
+  "noise.unvalidated": "Khả năng điều khiển mẫu tai nghe này chưa được xác minh."
 }

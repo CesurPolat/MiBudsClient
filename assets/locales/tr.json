@@ -234,5 +234,6 @@
   "eq.harman_master": "Harman Master",
   "eq.standard": "Standart",
   "eq.outdoor": "Dış ortam",
-  "eq.underwater": "Su altı"
+  "eq.underwater": "Su altı",
+  "noise.unvalidated": "Bu model için kontrol desteği henüz doğrulanmadı."
 }

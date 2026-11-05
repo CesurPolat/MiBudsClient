@@ -234,5 +234,6 @@
   "eq.harman_master": "Harman Master",
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
-  "eq.underwater": "Underwater"
+  "eq.underwater": "Underwater",
+  "noise.unvalidated": "Sokongan kawalan untuk model ini belum disahkan."
 }

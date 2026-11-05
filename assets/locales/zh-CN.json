@@ -234,5 +234,6 @@
   "eq.harman_master": "Harman Master",
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
-  "eq.underwater": "Underwater"
+  "eq.underwater": "Underwater",
+  "noise.unvalidated": "尚未验证此型号的控制支持。"
 }

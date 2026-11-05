@@ -234,5 +234,6 @@
   "eq.harman_master": "Harman Master",
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
-  "eq.underwater": "Underwater"
+  "eq.underwater": "Underwater",
+  "noise.unvalidated": "이 모델의 제어 지원은 아직 검증되지 않았습니다."
 }

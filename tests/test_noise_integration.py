@@ -35,9 +35,9 @@ class NoiseIntegrationTests(unittest.TestCase):
 
     def test_function_list_visibility_without_opt_in(self):
         with patch.dict(os.environ, {"MIBUDS_EXPERIMENTAL_ANC": ""}):
-            self.assertTrue(noise_backend_enabled(resolve_capabilities("Redmi Buds 5 Pro")))
+            self.assertFalse(noise_backend_enabled(resolve_capabilities("Redmi Buds 5 Pro")))
             self.assertFalse(noise_backend_enabled(resolve_capabilities("Redmi Buds 6 Play")))
-            self.assertTrue(noise_backend_enabled(resolve_capabilities("Redmi Buds 6 Pro")))
+            self.assertFalse(noise_backend_enabled(resolve_capabilities("Redmi Buds 6 Pro")))
             card = SettingsCard()
             card.set_capabilities(resolve_capabilities("Redmi Buds 5 Pro"))
             card.update_connection_state("connected")
@@ -91,7 +91,7 @@ class NoiseIntegrationTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
 
     def test_ui_requires_read_and_ignores_old_results(self):
-        with patch.dict(os.environ, {"MIBUDS_EXPERIMENTAL_ANC": ""}):
+        with patch("controllers.bluetooth.noise.VALIDATED_NOISE_MODELS", frozenset({MODEL})):
             action = Mock()
             card = SettingsCard(on_noise_action=action)
             card.set_capabilities(resolve_capabilities("Redmi Buds 5 Pro"))
