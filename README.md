@@ -21,6 +21,7 @@ Built with Python and Flet for Windows and Linux.
 
 | Feature | What it offers |
 | --- | --- |
+| Noise control | ANC and transparency controls appear for catalog-supported devices; protocol compatibility and hardware validation are still pending. |
 | Battery monitoring | Separate readings for both earbuds and the charging case, charging indicators, and manual refresh. |
 | Low latency | Switch Game Mode off, on, or automatically based on the active app. |
 | Sound profiles | Read and change the EQ presets offered by your earbuds. |

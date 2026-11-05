@@ -21,6 +21,7 @@ Mit Python und Flet für Windows und Linux entwickelt.
 
 | Funktion | Möglichkeiten |
 | --- | --- |
+| Geräuschkontrolle | ANC- und Transparenzsteuerung wird für laut Katalog unterstützte Geräte angezeigt; Protokollkompatibilität und Hardwareprüfung stehen noch aus. |
 | Akkuüberwachung | Separate Werte für beide Ohrhörer und das Ladecase, Ladeanzeigen und manuelle Aktualisierung. |
 | Niedrige Latenz | Spielmodus aus, ein oder automatisch anhand der aktiven Anwendung. |
 | Klangprofile | EQ-Voreinstellungen des Geräts lesen und ändern. |

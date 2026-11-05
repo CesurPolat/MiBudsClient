@@ -21,6 +21,7 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 
 | Özellik | Neler sunar? |
 | --- | --- |
+| Gürültü kontrolü | Katalogda desteklenen cihazlar için ANC ve şeffaflık kontrolleri gösterilir; protokol uyumluluğu ve donanım doğrulaması henüz tamamlanmadı. |
 | Pil takibi | Sol ve sağ kulaklık ile kutu için ayrı seviyeler, şarj göstergeleri ve elle yenileme. |
 | Düşük gecikme | Oyun modunu kapatma, açma veya etkin uygulamaya göre otomatik değiştirme. |
 | Ses profilleri | Kulaklıkların sunduğu EQ ön ayarlarını okuma ve değiştirme. |

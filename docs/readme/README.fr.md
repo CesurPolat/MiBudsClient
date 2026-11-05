@@ -21,6 +21,7 @@ Développé avec Python et Flet pour Windows et Linux.
 
 | Fonction | Possibilités |
 | --- | --- |
+| Contrôle du bruit | Les commandes ANC et transparence apparaissent pour les appareils pris en charge par le catalogue ; la compatibilité du protocole et la validation matérielle restent à vérifier. |
 | Batterie | Niveaux séparés des deux écouteurs et du boîtier, indicateurs de charge et actualisation manuelle. |
 | Faible latence | Mode jeu désactivé, activé ou automatique selon l’application active. |
 | Profils sonores | Lecture et modification des préréglages EQ proposés par les écouteurs. |

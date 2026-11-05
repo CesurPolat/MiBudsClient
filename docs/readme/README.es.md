@@ -21,6 +21,7 @@ Creado con Python y Flet para Windows y Linux.
 
 | Función | Qué ofrece |
 | --- | --- |
+| Control de ruido | Los controles de ANC y transparencia aparecen para dispositivos compatibles según el catálogo; faltan la compatibilidad del protocolo y la validación con hardware. |
 | Batería | Niveles separados de ambos auriculares y del estuche, indicadores de carga y actualización manual. |
 | Baja latencia | Desactivar, activar o cambiar automáticamente el modo de juego según la aplicación activa. |
 | Perfiles de sonido | Leer y cambiar los ajustes de EQ que ofrece el dispositivo. |
