@@ -126,7 +126,7 @@ class CapabilityTests(unittest.TestCase):
         self.assertFalse(card.equalizer.visible)
         self.assertEqual(card.connected_controls.controls, [card.noise_card])
         self.assertTrue(card.noise.quick_mode.disabled)
-        self.assertTrue(card._available_sections["noise"])
+        self.assertNotIn("noise", card._available_sections)
         self.assertEqual(card._selected_section, "general")
         card.update_connection_state("failed")
         self.assertFalse(card.connected_controls.visible)

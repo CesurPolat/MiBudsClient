@@ -11,7 +11,7 @@ class NoiseSettingsController:
 
     def action(self, operation, **kwargs):
         session = self.controller.eq_session
-        token = self.panel.begin(operation, session)
+        token = self.panel.begin(operation, session, **kwargs)
         if token is None:
             return
 

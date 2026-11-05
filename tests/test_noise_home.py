@@ -27,7 +27,6 @@ class NoiseHomeTests(unittest.TestCase):
         self.assertLess(card.connected_controls.controls.index(card.noise_card),
                         card.connected_controls.controls.index(card.equalizer_card))
         self.assertTrue(card.noise.quick_mode.disabled)
-        self.assertTrue(card.noise.quick_refresh.disabled)
         self.assertEqual(card.noise.quick_status.value, t("noise.unvalidated"))
         card.noise._act("read")
         card.select_section("noise")
@@ -51,8 +50,9 @@ class NoiseHomeTests(unittest.TestCase):
             card.update_connection_state("connected")
             self.assertFalse(card.noise_card.visible)
             self.assertNotIn(card.noise_card, card.connected_controls.controls)
-        # A transparency-only device retains its Settings section.
-        self.assertTrue(card._available_sections["noise"])
+        self.assertNotIn("noise", card._available_sections)
+        self.assertNotIn("noise", card._sections)
+        self.assertNotIn("noise", card._menu_items)
         self.assertEqual([str(v) for v, b in card.noise.quick_mode_buttons.items() if b.visible], ["0", "2"])
 
     def test_validated_connection_reads_once_and_views_share_confirmed_state(self):
@@ -61,7 +61,7 @@ class NoiseHomeTests(unittest.TestCase):
             self.assertTrue(noise_backend_enabled(caps))
             card = SettingsCard()
             panel = card.noise
-            action = Mock(side_effect=lambda operation, **kwargs: panel.begin(operation, 7))
+            action = Mock(side_effect=lambda operation, **kwargs: panel.begin(operation, 7, **kwargs))
             panel._on_action = action
             card.set_capabilities(caps)
             card.update_connection_state("connected")
@@ -73,12 +73,10 @@ class NoiseHomeTests(unittest.TestCase):
             card.update_connection_state("connected")
             action.assert_called_once_with("read")
             panel.complete(token, NoiseState(1, 0))
-            self.assertEqual(self.selected_mode(panel), panel.mode.value)
+            self.assertEqual(self.selected_mode(panel), "1")
             self.assertEqual(panel.quick_level.value, 1)
             self.assertFalse(panel.quick_mode.disabled)
-            self.assertIsNot(panel.quick_mode, panel.mode)
-            self.assertIsNot(panel.quick_mode_buttons[0], panel.mode)
-            self.assertEqual(panel.quick_level.divisions, 2)
+            self.assertIsNone(panel.quick_level.divisions)
             self.assertFalse(panel.quick_status.visible)
 
             panel.quick_mode_buttons[2].on_click(None)
@@ -87,12 +85,12 @@ class NoiseHomeTests(unittest.TestCase):
             self.assertTrue(panel.quick_mode.disabled)
             panel.complete(panel._token, NoiseState(2, 0))
             self.assertEqual(self.selected_mode(panel), "2")
-            panel._select_level(SimpleNamespace(control=SimpleNamespace(value="99")))
+            panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value="99")))
             self.assertEqual(action.call_count, 2)
             panel.notification(7, NoiseState(1, 0))
             panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=2)))
             action.assert_called_with("write", mode=1, level=2)
-            self.assertEqual(panel.quick_level.value, 1)
+            self.assertEqual(panel.quick_level.value, 2)
             panel.complete(panel._token, NoiseState(1, 2))
             panel.notification(6, NoiseState(0))
             self.assertEqual(self.selected_mode(panel), "1")
@@ -104,7 +102,7 @@ class NoiseHomeTests(unittest.TestCase):
             old = panel._token
             panel.complete(old, None, "read failed")
             self.assertEqual(panel.quick_status.value, "read failed")
-            self.assertFalse(panel.quick_refresh.disabled)
+            self.assertTrue(panel.retry_button.visible)
             panel._act("read")
             old = panel._token
             card.update_connection_state("disconnected")
@@ -145,19 +143,118 @@ class NoiseHomeTests(unittest.TestCase):
             panel.complete(token, NoiseState(1, 7))
             action = Mock()
             panel._on_action = action
-            for invalid in (-1, 3, .5, None, "nan", "inf"):
+            for invalid in (-1, 3, None, "nan", "inf"):
                 panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=invalid)))
             action.assert_not_called()
             panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=1)))
             action.assert_called_once_with("write", mode=1, level=0)
             self.assertEqual(panel.quick_level.value, 0)
-            self.assertEqual(panel.quick_level_label.value, t("noise.level_value", value=7))
+            self.assertEqual(panel.quick_level.tooltip, t("noise.level_value", value=7))
             token = panel.begin("write", 1)
             panel.complete(token, NoiseState(1, 255))
             self.assertEqual(panel.quick_level.value, 2)
             panel.notification(1, NoiseState(1, 8))
             self.assertTrue(panel.quick_level.disabled)
-            self.assertEqual(panel.quick_level_label.value, t("noise.unknown", code=8))
+            self.assertEqual(panel.quick_status.value, t("noise.unknown", code=8))
+
+    def test_unmarked_slider_snaps_fractional_and_keyboard_positions_to_model_gears(self):
+        caps = DeviceCapabilities(model="test", functions=frozenset({1002}),
+                                  options={1002: {"tws_gear": [7, 0, 255]}})
+        with patch("controllers.bluetooth.noise.VALIDATED_NOISE_MODELS", frozenset({"test"})):
+            card = SettingsCard()
+            card.set_capabilities(caps)
+            card.update_connection_state("connected")
+            panel = card.noise
+            token = panel.begin("read", 1)
+            panel.complete(token, NoiseState(1, 7))
+            action = Mock(side_effect=lambda op, **kw: panel.begin(op, 1, **kw))
+            panel._on_action = action
+            panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=.1)))
+            action.assert_called_with("write", mode=1, level=0)
+            self.assertEqual(panel.quick_level.value, 1)
+            panel.complete(panel._token, NoiseState(1, 0))
+            panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=1.8)))
+            action.assert_called_with("write", mode=1, level=255)
+            self.assertEqual(panel.quick_level.value, 2)
+            panel.complete(panel._token, NoiseState(1, 255))
+            panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=1.9)))
+            action.assert_called_with("write", mode=1, level=0)
+            self.assertEqual(panel.quick_level.value, 1)
+
+    def test_operations_use_inline_feedback_without_changing_status_or_slider_visibility(self):
+        caps = resolve_capabilities("Redmi Buds 5 Pro")
+        with patch("controllers.bluetooth.noise.VALIDATED_NOISE_MODELS", frozenset({caps.model})):
+            card = self.make_card()
+            panel = card.noise
+            token = panel.begin("read", 1)
+            self.assertTrue(panel._read_progress.visible)
+            self.assertFalse(panel.quick_status.visible)
+            panel.complete(token, NoiseState(1, 0))
+            token = panel.begin("write", 1, mode=2)
+            self.assertTrue(panel._mode_progress[2].visible)
+            self.assertFalse(panel._mode_icons[2].visible)
+            self.assertEqual(self.selected_mode(panel), "1")
+            self.assertTrue(panel.quick_level_controls.visible)
+            self.assertFalse(panel.quick_status.visible)
+            self.assertFalse(panel.retry_button.visible)
+            panel.complete(token, NoiseState(2, 0))
+            self.assertFalse(panel._mode_progress[2].visible)
+            self.assertEqual(self.selected_mode(panel), "2")
+            token = panel.begin("write", 1, mode=2, level=1)
+            self.assertEqual(panel._level_progress.opacity, 1)
+            self.assertFalse(panel.quick_status.visible)
+            self.assertTrue(panel.quick_level_controls.visible)
+            panel.complete(token, None, "timeout")
+            self.assertEqual(panel._level_progress.opacity, 0)
+            self.assertTrue(panel.quick_status.visible)
+            self.assertTrue(panel.retry_button.visible)
+            panel._on_action = Mock(side_effect=lambda op: panel.begin(op, 1))
+            panel.retry_button.on_click(None)
+            self.assertTrue(panel._read_progress.visible)
+            self.assertFalse(panel.quick_status.visible)
+            panel.notification(0, NoiseState(0))
+            self.assertEqual(panel._state, NoiseState(2, 0))
+            card.update_connection_state("disconnected")
+            self.assertFalse(panel._read_progress.visible)
+            self.assertFalse(panel.retry_button.visible)
+
+    def test_slider_holds_pending_position_until_confirmation_and_rolls_back_on_failure(self):
+        caps = resolve_capabilities("Redmi Buds 5 Pro")
+        with patch("controllers.bluetooth.noise.VALIDATED_NOISE_MODELS", frozenset({caps.model})):
+            card = self.make_card()
+            panel = card.noise
+            token = panel.begin("read", 1)
+            panel.complete(token, NoiseState(1, 0))
+            panel._on_action = Mock(side_effect=lambda op, **kwargs: panel.begin(op, 1, **kwargs))
+            panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=2)))
+            token = panel._token
+            self.assertEqual(panel.quick_level.value, 2)
+            self.assertEqual(panel._state, NoiseState(1, 0))
+            self.assertTrue(panel.quick_level.disabled)
+            card._render_capabilities()
+            panel.notification(1, NoiseState(1, 0))
+            self.assertEqual(panel.quick_level.value, 2)
+            panel.complete(token, NoiseState(1, 2))
+            self.assertEqual(panel.quick_level.value, 2)
+            self.assertFalse(panel.quick_level.disabled)
+            panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=0)))
+            self.assertEqual(panel.quick_level.value, 0)
+            panel.complete(panel._token, None, "timeout")
+            self.assertEqual(panel.quick_level.value, 2)
+            self.assertTrue(panel.quick_level_controls.visible)
+            self.assertTrue(panel.quick_level.disabled)
+            self.assertTrue(panel.retry_button.visible)
+            panel.retry_button.on_click(None)
+            panel.complete(panel._token, NoiseState(1, 0))
+            self.assertEqual(panel.quick_level.value, 1)
+            self.assertFalse(panel.quick_level.disabled)
+            panel._select_quick_level(SimpleNamespace(control=SimpleNamespace(value=2)))
+            old_token = panel._token
+            card.update_connection_state("disconnected")
+            card.update_connection_state("connected")
+            panel.complete(old_token, NoiseState(1, 2))
+            self.assertIsNone(panel._state)
+            self.assertEqual(panel.quick_level.value, 0)
 
 
 if __name__ == "__main__":

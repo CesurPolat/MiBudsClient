@@ -9,15 +9,18 @@
 - **Single instance enforcement.** Application forbids multiple running instances via port 65432. Do not remove or change `check_for_existing_instance()` at app startup.
 - **Flet-only UI.** The entire UI layer (including system tray via pystray) depends on Flet. Do not introduce other UI frameworks.
 
-## Validation before finishing
+## User workflow and validation
 
-- **Test with actual device.** Any changes to `controllers/bluetooth/protocol.py` or `controllers/bluetooth/constants.py` must be tested against Redmi Buds 6 Play hardware; unit tests alone are insufficient.
-- **Build succeeds.** Run `flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBudsClient"` and verify executable runs.
-- **Single instance works.** Launch executable twice; second instance should exit silently and focus existing window.
+- **Implement first; the user tests.** Make the requested change and hand it back for the user to try. Do not wait for the user to repeat this preference on each task.
+- **No unsolicited tests.** Do not add or extend tests, run test suites, perform automated UI/screenshot checks, or launch validation sessions unless the user explicitly requests them. A change request alone does not authorize these activities.
+- **No unsolicited builds.** Do not package executables, rebuild demos, or repeat startup/single-instance checks unless explicitly requested. If the user asks to open a demo, prefer running it from source; package it only if necessary to fulfill that request.
+- **Keep work proportional.** Use focused source inspection and edits. Avoid repeated verification loops and lengthy progress updates for small changes. Briefly state what changed and that testing is left to the user; do not ask for permission to run tests after every edit.
+- **Validation references, when requested.** Package with `flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBudsClient"`. For single-instance validation, launch the executable twice; the second instance should exit silently and focus the existing window.
+- **Hardware validation remains a compatibility gate.** Changes to `controllers/bluetooth/protocol.py` or `controllers/bluetooth/constants.py` require Redmi Buds 6 Play hardware validation before being considered validated; unit tests alone are insufficient. Leave hardware testing to the user unless explicitly asked to perform it, and do not claim untested protocol changes or additional model backends are validated.
 
 ## UI design
 
-- Read `docs/design-system.md` before designing or changing UI. Reuse its shared layout, visual tokens, interaction patterns, and review checklist.
+- Read `docs/design-system.md` before designing or changing UI. Reuse its shared layout, visual tokens, and interaction patterns. Apply its validation checklist only when the user requests validation; the workflow above takes precedence over automatic testing/build instructions in other repository docs.
 
 ## Repo-specific conventions
 
@@ -35,6 +38,6 @@
 
 ## Change safety rules
 
-- **Preserve backward compatibility.** Do not change protocol packets or device matching logic without testing on hardware.
+- **Preserve backward compatibility.** Protocol packet or device matching changes must remain explicitly unvalidated until hardware testing is completed; do not expand compatibility claims or backend activation without that validation.
 - **Do not add external Bluetooth libraries.** Current implementation uses Python's `socket` module directly for RFCOMM. Keep it minimal.
 - **GitHub URL is contractual.** Hardcoded in UI constants and used by updater. Changes break update checking and links.

@@ -162,13 +162,12 @@ class SettingsCard(ft.Container):
                 content=ft.Column([self.startup_item, ft.Divider(height=1, color=COLOR_DIVIDER),
                                    self._language_container], spacing=6),
                 padding=0),
-            "auto": self.auto_settings, "noise": self.noise,
+            "auto": self.auto_settings,
             "gestures": self.gestures, "identity": self.identity_section,
         }
         self.gestures.toggle_button.visible = False
         self.gestures.controls[0].visible = False
         self.equalizer.toggle.visible = False
-        self.noise.toggle.visible = False
         self._menu = ft.Column(spacing=4, width=150)
         self._menu_items = {}
         self._section_title = ft.Text(size=17, weight="w600", color="white")
@@ -226,7 +225,6 @@ class SettingsCard(ft.Container):
         self.refresh_connection_panel()
         self._available_sections = {
             "general": True, "auto": self._connected and caps.supports("latency"),
-            "noise": self._connected and bool(self.noise.capabilities.modes),
             "gestures": self._connected and caps.supports("gestures"),
             "identity": True,
         }
@@ -238,7 +236,6 @@ class SettingsCard(ft.Container):
         labels = {
             "general": (ft.Icons.SETTINGS_OUTLINED, "settings.general"),
             "auto": (ft.Icons.AUTO_AWESOME, "auto.title"),
-            "noise": (ft.Icons.HEADPHONES, "noise.title"),
             "gestures": (ft.Icons.TOUCH_APP, "gesture.title"),
             "identity": (ft.Icons.INFO_OUTLINE, "settings.device_info"),
         }
@@ -271,7 +268,7 @@ class SettingsCard(ft.Container):
             text.visible = not self._compact_navigation
         for key, panel in self._sections.items():
             panel.visible = key == self._selected_section and self._available_sections[key]
-        for key, panel in (("noise", self.noise), ("gestures", self.gestures)):
+        for key, panel in (("gestures", self.gestures),):
             active = key == self._selected_section and self._available_sections[key]
             if panel._opened != active:
                 panel._toggle(None)
