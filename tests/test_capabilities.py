@@ -41,7 +41,49 @@ class CapabilityTests(unittest.TestCase):
             self.assertEqual(caps.model, model["model"])
             self.assertEqual(caps.functions, frozenset(f["func_id"] for f in model["func_list"]))
             if model["model"] != self.play["model"]:
-                self.assertFalse(caps.available)
+                self.assertLessEqual(caps.available, {"eq"})
+
+    def test_catalog_effects_enable_only_each_models_profiles(self):
+        expected = {
+            "Redmi Buds 4 Pro": (0, 6, 5, 1), "Redmi Buds 4": (),
+            "Xiaomi Buds 3": (), "Xiaomi Buds 3T Pro": (),
+            "Xiaomi Buds 4 Pro": (0, 6, 5, 1, 11, 12),
+            "Xiaomi Buds 3 Star Wars": (), "Redmi Buds 4 Active": (),
+            "Redmi Buds 5": (0, 6, 5, 1), "Xiaomi Buds 5": (0, 1, 6, 13, 11, 10),
+            "Redmi Buds 5 Pro": (0, 6, 5, 1, 10),
+            "Redmi Buds 6 Active": (0, 6, 5, 1, 7),
+            "Redmi Buds 6 Lite": (0, 6, 5, 1, 10),
+            "Xiaomi OpenWear Stereo": (0, 6, 1), "Redmi Buds 6 Play": (0, 6, 5, 1, 7),
+            "Redmi Buds 6": (0, 6, 5, 1),
+            "Xiaomi Buds 5 Pro Wi-Fi": (14, 15, 13, 6, 1, 12, 10),
+            "Xiaomi Buds 5 Pro": (14, 15, 13, 6, 1, 12, 10),
+            "Redmi Buds 6 Pro": (0, 5, 6, 1, 10), "REDMI Buds 8 Pro": (0, 5, 6, 1, 10),
+            "REDMI Buds 8 Active": (21, 5, 1, 6, 7, 10),
+            "Xiaomi OpenWear Stereo Pro": (21, 14, 15, 1, 6),
+            "Xiaomi Buds 6": (21, 14, 15, 13, 1, 6, 10),
+            "REDMI Headphones Neo": (21, 5, 6, 1, 10),
+            "REDMI Buds 8 Lite": (21, 5, 1, 6, 7, 10),
+            "REDMI Buds 8": (21, 5, 1, 6, 7, 10),
+        }
+        for name, effects in expected.items():
+            with self.subTest(name=name):
+                caps = self.resolve(get_device_models_by_name(name), name)
+                self.assertEqual(caps.catalog_effects, effects)
+                self.assertEqual(caps.profiles, effects)
+                self.assertEqual(caps.supports("eq"), bool(effects))
+
+    def test_controller_limits_profile_writes_to_selected_model(self):
+        controller = BTController()
+        controller._connection.connected = True
+        controller._device_name = "Xiaomi Buds 5 Pro"
+        controller._equalizer.apply = Mock(return_value=EqResult(True))
+        self.assertTrue(controller.apply_eq("profile", profile=14).success)
+        self.assertTrue(controller.apply_eq("profile", profile=10).success)
+        controller._equalizer.apply.reset_mock()
+        for profile in (0, 5, 7, 21, True, 14.0):
+            with self.subTest(profile=profile):
+                self.assertFalse(controller.apply_eq("profile", profile=profile).success)
+        controller._equalizer.apply.assert_not_called()
 
     def test_identity_candidates_are_not_merged(self):
         other = get_device_models_by_name("REDMI Headphones Neo")[0]
@@ -52,7 +94,7 @@ class CapabilityTests(unittest.TestCase):
 
     def test_metadata_limits_and_custom_eq(self):
         caps = self.resolve([self.with_effects([0, 10, 999, True, 0])])
-        self.assertEqual(caps.profiles, (0,))
+        self.assertEqual(caps.profiles, (0, 10))
         self.assertTrue(caps.supports("custom_eq"))
         self.assertFalse(self.resolve([self.play]).supports("custom_eq"))
         model = self.with_effects([])
@@ -78,13 +120,13 @@ class CapabilityTests(unittest.TestCase):
         self.assertTrue(card.equalizer.quick_controls.visible)
         self.assertFalse(card.equalizer.custom_supported)
         token = card.equalizer.begin("read")
-        card.set_capabilities(resolve_capabilities("REDMI Headphones Neo"))
+        card.set_capabilities(resolve_capabilities("Redmi Buds 4"))
         card.equalizer.complete(token, EqResult(True, EqState(0), "old"), (0,), "read")
         self.assertIsNone(card.equalizer._state)
         self.assertFalse(card.gestures.visible)
         self.assertFalse(card.equalizer.visible)
         self.assertEqual(card.connected_controls.controls, [])
-        self.assertTrue(card._available_sections["noise"])  # Noise is available independently.
+        self.assertTrue(card._available_sections["noise"])
         self.assertEqual(card._selected_section, "general")
         card.update_connection_state("failed")
         self.assertFalse(card.connected_controls.visible)
@@ -92,7 +134,7 @@ class CapabilityTests(unittest.TestCase):
     def test_controller_rejects_unsupported_commands(self):
         controller = BTController()
         controller._connection.connected = True
-        controller._device_name = "REDMI Headphones Neo"
+        controller._device_name = "Redmi Buds 4"
         controller._connection.send = Mock()
         self.assertFalse(controller.send_command()[0])
         self.assertFalse(controller.request_battery()[0])

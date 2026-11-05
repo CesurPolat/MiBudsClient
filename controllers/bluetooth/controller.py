@@ -348,7 +348,7 @@ class BTController:
     def apply_eq(self, operation, *, profile=None, bands=(), timeout=5.0, session=None):
         if operation != "profile" and not self.capabilities.supports("custom_eq"):
             return EqResult(False, message=m("eq.unsupported"))
-        if not self.capabilities.supports("eq") or (operation == "profile" and profile not in self.eq_profiles):
+        if not self.capabilities.supports("eq") or (operation == "profile" and (type(profile) is not int or profile not in self.eq_profiles)):
             return EqResult(False, message=m("eq.unsupported"))
         return self._equalizer.apply(operation, profile=profile, bands=bands, timeout=timeout, session=session)
 

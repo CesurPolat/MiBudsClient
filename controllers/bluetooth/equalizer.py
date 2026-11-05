@@ -1,11 +1,16 @@
-"""Redmi Buds 6 Play EQ config codec. Requires hardware validation."""
+"""RCSP EQ config codec; hardware-verified only on Redmi Buds 6 Play."""
 from dataclasses import dataclass
 
 from utils.i18n import message as m
 from .config_transport import parse_config_records
 
 
-PROFILE_KEYS = {0: "balanced", 1: "vocal", 5: "bass", 6: "treble", 7: "volume"}
+# APK labels are catalog metadata, not permission to send these IDs.
+PROFILE_KEYS = {0: "default", 1: "vocal", 2: "rock", 3: "classic_legacy",
+                4: "pop", 5: "bass", 6: "treble", 7: "volume",
+                10: "custom", 11: "classic", 12: "audiophile",
+                13: "decrease_bass", 14: "harman", 15: "harman_master",
+                16: "standard", 17: "outdoor", 18: "underwater", 21: "balanced"}
 
 
 @dataclass(frozen=True)
@@ -70,7 +75,7 @@ def build_profile(counter, profile):
 
 
 def build_custom_mode(counter, mode):
-    if type(mode) is not int or mode not in (*PROFILE_KEYS, 10):
+    if type(mode) is not int or mode not in PROFILE_KEYS:
         raise ValueError(m("eq.unsupported"))
     return _write(counter, 55, bytes([1, mode]))
 

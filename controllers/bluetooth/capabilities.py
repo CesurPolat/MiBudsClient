@@ -1,11 +1,14 @@
 """Catalog UI functions. These IDs are never RFCOMM configuration IDs.
 
-New model backends must be verified on hardware before joining MODEL_BACKENDS.
+EQ is enabled for the explicitly requested catalog models; hardware validation
+is still limited to Redmi Buds 6 Play. Other backends remain model-specific.
 Unknown catalog functions remain metadata and cannot enable commands.
 """
 from dataclasses import dataclass, field
 import json
+import re
 from .device_catalog import get_device_models_by_name
+from .equalizer import PROFILE_KEYS
 
 FUNCTIONS = {
     1006: "FUNC_ANC_NOISE_FOUR",
@@ -80,7 +83,17 @@ FUNCTIONS = {
 
 # Explicit implementation registry; a catalog refresh cannot expand it.
 MODEL_BACKENDS = {"miwear.headphone.n79bg": frozenset(("eq", "gestures", "latency", "battery"))}
-COMPONENT_REGISTRY = {"eq": (2016,), "custom_eq": (2016,),
+# Explicit opt-in for catalog EQ selection. Remote updates cannot register models.
+EQ_MODELS = frozenset({
+    "miwear.headphone.l76g", "miwear.headphone.l71g", "miwear.headphone.n77g",
+    "miwear.headphone.n75g", "miwear.headphone.n76g", "miwear.headphone.n79g",
+    "miwear.headphone.n79ag", "miwear.headphone.n74ag", "miwear.headphone.n79bg",
+    "miwear.headphone.o77g", "miwear.headphone.o71g", "miwear.headphone.o71btg",
+    "miwear.headphone.o76gl", "miwear.headphone.p76gl", "miwear.headphone.p79g",
+    "miwear.headphone.o74g", "miwear.headphone.p75g", "miwear.headphone.o70cg",
+    "miwear.headphone.p79ag", "miwear.headphone.p77g",
+})
+COMPONENT_REGISTRY = {"eq": (2006, 2016), "custom_eq": (2016,),
                       "gestures": (4006, 4001, 4002, 4003), "latency": (3011,)}
 
 
@@ -98,6 +111,7 @@ class DeviceCapabilities:
     available: frozenset = frozenset()
     profiles: tuple = ()
     gestures: dict = field(default_factory=dict)
+    catalog_effects: tuple = ()
 
     def supports(self, feature):
         return feature in self.available
@@ -118,14 +132,27 @@ def resolve_capabilities(device_name="", identity=None):
             try:
                 data = json.loads(function.get("extra_data"))
             except (ValueError, TypeError):
-                continue
+                # The bundled Xiaomi Buds 4 Pro effects array contains a
+                # full-width comma between numeric IDs. Repair only that typo.
+                raw = function.get("extra_data")
+                if fid != 2016 or not isinstance(raw, str):
+                    continue
+                try:
+                    data = json.loads(re.sub(r"(?<=\d)\uff0c(?=\d)", ",", raw))
+                except ValueError:
+                    continue
             if isinstance(data, dict):
                 options[fid] = data
     functions = frozenset(function_ids)
     effects = options.get(2016, {}).get("sound_effect", {})
     effects = effects.get("effects", []) if isinstance(effects, dict) else effects
     effects = tuple(v for v in effects if type(v) is int) if isinstance(effects, list) else ()
-    profiles = tuple(dict.fromkeys(v for v in effects if v in (0, 1, 5, 6, 7)))
+    catalog_effects = effects
+    if not catalog_effects:
+        legacy = options.get(2006, {}).get("sound_effect", [])
+        if isinstance(legacy, list):
+            catalog_effects = tuple(v for v in legacy if type(v) is int)
+    profiles = tuple(dict.fromkeys(v for v in catalog_effects if v in PROFILE_KEYS))
     gestures = {}
     for fid, gesture in ((4006, 4), (4001, 1), (4002, 2), (4003, 3)):
         actions = options.get(fid, {}).get("click_action")
@@ -137,9 +164,9 @@ def resolve_capabilities(device_name="", identity=None):
     # not grant another model the existing backend.
     backend = MODEL_BACKENDS.get(model["model"], frozenset())
     available = set()
-    if "eq" in backend and (profiles or 10 in effects):
+    if model["model"] in EQ_MODELS and profiles:
         available.add("eq")
-        if 10 in effects:
+        if "eq" in backend and 10 in effects:
             available.add("custom_eq")
     if "gestures" in backend and gestures:
         available.add("gestures")
@@ -151,4 +178,5 @@ def resolve_capabilities(device_name="", identity=None):
                  if feature == "battery" or any(fid in functions for fid in COMPONENT_REGISTRY[feature])}
     return DeviceCapabilities(model["model"], model["name"],
                               (model.get("vid"), model.get("pid")), functions,
-                              options, frozenset(available), profiles, gestures)
+                              options, frozenset(available), profiles, gestures,
+                              tuple(dict.fromkeys(catalog_effects)))

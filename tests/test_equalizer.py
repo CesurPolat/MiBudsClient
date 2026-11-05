@@ -1,5 +1,6 @@
 """EQ packet fixtures, shared transactions and Flet state without hardware."""
 import threading
+import flet as ft
 import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -73,13 +74,13 @@ class EqCodecTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_custom_eq(1, (EqBand(1000, 0),) * 82, 10)
         with self.assertRaises(ValueError):
-            build_profile(1, 2)
+            build_profile(1, 999)
         with self.assertRaises(ValueError):
             build_eq_request(256, 7)
 
     def test_model_catalog_limits_profiles(self):
         self.assertEqual(eq_profiles("Redmi Buds 6 Play"), (0, 6, 5, 1, 7))
-        self.assertEqual(eq_profiles("Redmi Buds 6"), ())
+        self.assertEqual(eq_profiles("Redmi Buds 6"), (0, 6, 5, 1))
         self.assertEqual(eq_profiles("Redmi Buds 6 Play", DeviceIdentity(0xffff, 0xffff)), ())
         controller = BTController()
         controller._equalizer.apply = Mock()
@@ -121,6 +122,18 @@ class EqTransactionTests(unittest.TestCase):
         frame = response(opcode, ss, data)
         for byte in frame:
             self.channel.feed(bytes([byte]))
+
+    def test_new_profiles_use_acknowledged_config_7_and_matching_readback(self):
+        self.assertTrue(self.eq.read(custom=False).success)
+        for profile in (10, 11, 12, 13, 14, 15, 21):
+            with self.subTest(profile=profile):
+                self.commands.clear()
+                result = self.eq.apply("profile", profile=profile)
+                self.assertTrue(result.success)
+                self.assertEqual(result.state.profile, profile)
+                self.assertEqual(len(self.commands), 2)
+                self.assertEqual(self.commands[0][9:12], bytes([0, 7, profile]))
+                self.assertEqual(self.commands[1][8:10], bytes.fromhex("0007"))
 
     def test_partial_support_preserves_profiles(self):
         self.custom_data = b""
@@ -227,6 +240,39 @@ class EqUITests(unittest.TestCase):
         self.panel.complete(token, EqResult(True, state or self.state, m("eq.loaded")), (0, 6, 5, 1, 7), "read")
         self.action.reset_mock()
 
+    def test_all_model_specific_buttons_are_selectable(self):
+        from controllers.bluetooth.capabilities import resolve_capabilities
+        from controllers.bluetooth.device_catalog import _APP_CATALOG
+        for model in _APP_CATALOG["result"]["tw_product_list"]:
+            caps = resolve_capabilities(model["name"])
+            if not caps.supports("eq"):
+                continue
+            with self.subTest(model=model["name"]):
+                self.panel.set_connection(False)
+                self.panel.set_connection(True)
+                token = self.panel.begin("read")
+                self.panel.complete(token, EqResult(True, EqState(caps.profiles[0])), caps.profiles, "read")
+                self.assertEqual([b.content.data for b in self.panel.quick_profiles.controls], list(caps.profiles))
+                self.assertIsNone(self.panel.quick_profiles.scroll)
+                for wrapper in self.panel.quick_profiles.controls[1:]:
+                    button = wrapper.content
+                    self.assertFalse(button.disabled)
+                    self.action.reset_mock()
+                    button.on_click(SimpleNamespace(control=button))
+                    self.assertEqual(self.action.call_args.kwargs["profile"], button.data)
+
+    def test_profiles_share_card_width_without_scrolling_or_tooltips(self):
+        self.load()
+        row = self.panel.quick_profiles
+        self.assertIsNone(row.scroll)
+        self.assertGreater(row.height, 0)
+        for wrapper in row.controls:
+            self.assertGreater(wrapper.height, 0)
+            self.assertLessEqual(wrapper.height, row.height)
+            self.assertTrue(wrapper.expand)
+            self.assertIsNone(wrapper.width)
+            self.assertIsNone(wrapper.content.tooltip)
+
     def test_quick_and_settings_share_confirmed_state_and_busy_status(self):
         self.load()
         quick = self.panel.quick_profiles
@@ -326,7 +372,7 @@ class EqUITests(unittest.TestCase):
         try:
             set_language("tr")
             card.refresh_translations()
-            self.assertEqual(self.panel.quick_profiles.controls[0].content.content.controls[1].value, t("eq.balanced"))
+            self.assertEqual(self.panel.quick_profiles.controls[0].content.content.controls[1].value, t("eq.default"))
             self.assertEqual(self.panel.quick_profiles.controls[0].content.content.controls[1].value, self.panel.profile.options[0].text)
             self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
             self.assertEqual(self.panel.quick_refresh_button.tooltip, t("eq.refresh"))

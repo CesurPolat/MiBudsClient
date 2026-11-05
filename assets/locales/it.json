@@ -222,5 +222,17 @@
   "device_status.disconnected": "Disconnesso",
   "device_status.error": "Errore",
   "settings.general": "Generale",
-  "settings.device_info": "Info dispositivo"
+  "settings.device_info": "Info dispositivo",
+  "eq.default": "Default",
+  "eq.rock": "Rock",
+  "eq.classic_legacy": "Classic (legacy)",
+  "eq.pop": "Pop",
+  "eq.classic": "Classic",
+  "eq.audiophile": "Audiophile",
+  "eq.decrease_bass": "Decrease bass",
+  "eq.harman": "Harman",
+  "eq.harman_master": "Harman Master",
+  "eq.standard": "Standard",
+  "eq.outdoor": "Outdoor",
+  "eq.underwater": "Underwater"
 }

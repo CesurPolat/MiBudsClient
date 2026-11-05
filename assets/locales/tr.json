@@ -167,7 +167,7 @@
   "eq.custom": "Özel EQ",
   "eq.save": "Kaydet",
   "eq.reset": "Sıfırla",
-  "eq.balanced": "Dengeli",
+  "eq.balanced": "Dengeli ses",
   "eq.vocal": "Vokal",
   "eq.bass": "Bas",
   "eq.treble": "Tiz",
@@ -222,5 +222,17 @@
   "device_status.disconnected": "Bağlı değil",
   "device_status.error": "Hata",
   "settings.general": "Genel",
-  "settings.device_info": "Cihaz bilgisi"
+  "settings.device_info": "Cihaz bilgisi",
+  "eq.default": "Varsayılan",
+  "eq.rock": "Rock",
+  "eq.classic_legacy": "Klasik (eski)",
+  "eq.pop": "Pop",
+  "eq.classic": "Klasik",
+  "eq.audiophile": "Audiophile",
+  "eq.decrease_bass": "Bas azaltma",
+  "eq.harman": "Harman",
+  "eq.harman_master": "Harman Master",
+  "eq.standard": "Standart",
+  "eq.outdoor": "Dış ortam",
+  "eq.underwater": "Su altı"
 }

@@ -330,7 +330,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "en": {
@@ -559,7 +571,19 @@
         "update.download",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "ar": {
@@ -891,7 +915,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "de": {
@@ -1223,7 +1259,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "es": {
@@ -1555,7 +1603,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "et": {
@@ -1791,7 +1851,19 @@
         "update.download",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "fi": {
@@ -2027,7 +2099,19 @@
         "update.download",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "fr": {
@@ -2359,7 +2443,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "hi": {
@@ -2595,7 +2691,19 @@
         "update.download",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "hu": {
@@ -2831,7 +2939,19 @@
         "update.download",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "id": {
@@ -3163,7 +3283,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "it": {
@@ -3495,7 +3627,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "ja": {
@@ -3827,7 +3971,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "ko": {
@@ -4159,7 +4315,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "ms": {
@@ -4491,7 +4659,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "nl": {
@@ -4823,7 +5003,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "pl": {
@@ -5155,7 +5347,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "pt-BR": {
@@ -5484,7 +5688,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "pt-PT": {
@@ -5813,7 +6029,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "ru": {
@@ -6145,7 +6373,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "sv": {
@@ -6381,7 +6621,19 @@
         "update.download",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "th": {
@@ -6713,7 +6965,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "uk": {
@@ -7045,7 +7309,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "vi": {
@@ -7377,7 +7653,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "zh-CN": {
@@ -7706,7 +7994,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "zh-TW": {
@@ -8035,7 +8335,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     },
     "zh-HK": {
@@ -8364,7 +8676,19 @@
         "update.available",
         "update.hide",
         "settings.general",
-        "settings.device_info"
+        "settings.device_info",
+        "eq.default",
+        "eq.rock",
+        "eq.classic_legacy",
+        "eq.pop",
+        "eq.classic",
+        "eq.audiophile",
+        "eq.decrease_bass",
+        "eq.harman",
+        "eq.harman_master",
+        "eq.standard",
+        "eq.outdoor",
+        "eq.underwater"
       ]
     }
   },

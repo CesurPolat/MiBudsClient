@@ -1,10 +1,21 @@
 # Equalizer
 
-Opening Settings → Equalizer reads config `0007` and `0037` separately on
-every expansion. The separate Refresh button is hidden. Presets come
-from the exact Redmi Buds 6 Play catalog record. The custom editor requires a
-valid version-1, EQ-ID-1 band response; missing or unsupported custom data does
-not disable presets. No default ten-band curve is sent to the device.
+The home EQ controls read config `0007` on connection. The 20 explicitly
+registered catalog models expose their own ordered profile buttons after a
+successful device read. Models without an EQ catalog entry expose no buttons.
+Config `0037` is queried only when the existing custom-band backend gate allows
+it. Profile writes use config `0007` and require acknowledgment plus matching
+readback, including selection of custom profile ID 10 when cataloged.
+
+Multi-model selection is enabled at the user's request using the existing
+codec. It has hardware validation only on Redmi Buds 6 Play. Connection service
+discovery and authentication requirements still apply; catalog support alone
+does not prove a model will accept the packets. Firmware-specific OTA lists
+are not merged into the base list without firmware identification.
+
+The custom band editor is currently hidden in Settings. Selecting profile 10
+activates the stored curve, without uploading a default curve. The following
+band-editing behavior describes the existing codec, not a newly enabled editor.
 
 The local curve is a draft. Releasing a slider sends a preview, while Save
 sends a separate persistence command. Reset requests the device's reset and
