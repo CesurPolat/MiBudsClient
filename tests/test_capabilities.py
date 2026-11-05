@@ -69,7 +69,7 @@ class CapabilityTests(unittest.TestCase):
             with self.subTest(name=name):
                 caps = self.resolve(get_device_models_by_name(name), name)
                 self.assertEqual(caps.catalog_effects, effects)
-                self.assertEqual(caps.profiles, effects)
+                self.assertEqual(caps.profiles, tuple(p for p in effects if p != 10))
                 self.assertEqual(caps.supports("eq"), bool(effects))
 
     def test_controller_limits_profile_writes_to_selected_model(self):
@@ -78,9 +78,8 @@ class CapabilityTests(unittest.TestCase):
         controller._device_name = "Xiaomi Buds 5 Pro"
         controller._equalizer.apply = Mock(return_value=EqResult(True))
         self.assertTrue(controller.apply_eq("profile", profile=14).success)
-        self.assertTrue(controller.apply_eq("profile", profile=10).success)
         controller._equalizer.apply.reset_mock()
-        for profile in (0, 5, 7, 21, True, 14.0):
+        for profile in (0, 5, 7, 10, 21, True, 14.0):
             with self.subTest(profile=profile):
                 self.assertFalse(controller.apply_eq("profile", profile=profile).success)
         controller._equalizer.apply.assert_not_called()
@@ -94,7 +93,7 @@ class CapabilityTests(unittest.TestCase):
 
     def test_metadata_limits_and_custom_eq(self):
         caps = self.resolve([self.with_effects([0, 10, 999, True, 0])])
-        self.assertEqual(caps.profiles, (0, 10))
+        self.assertEqual(caps.profiles, (0,))
         self.assertTrue(caps.supports("custom_eq"))
         self.assertFalse(self.resolve([self.play]).supports("custom_eq"))
         model = self.with_effects([])

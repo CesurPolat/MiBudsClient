@@ -5,7 +5,7 @@ registered catalog models expose their own ordered profile buttons after a
 successful device read. Models without an EQ catalog entry expose no buttons.
 Config `0037` is queried only when the existing custom-band backend gate allows
 it. Profile writes use config `0007` and require acknowledgment plus matching
-readback, including selection of custom profile ID 10 when cataloged.
+readback. Custom profile ID 10 is currently excluded from every model's UI.
 
 Multi-model selection is enabled at the user's request using the existing
 codec. It has hardware validation only on Redmi Buds 6 Play. Connection service
@@ -13,8 +13,8 @@ discovery and authentication requirements still apply; catalog support alone
 does not prove a model will accept the packets. Firmware-specific OTA lists
 are not merged into the base list without firmware identification.
 
-The custom band editor is currently hidden in Settings. Selecting profile 10
-activates the stored curve, without uploading a default curve. The following
+The custom profile button and band editor are currently hidden for every model,
+even when the device reports active profile 10. The following
 band-editing behavior describes the existing codec, not a newly enabled editor.
 
 The local curve is a draft. Releasing a slider sends a preview, while Save

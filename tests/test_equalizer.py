@@ -232,6 +232,8 @@ class EqUITests(unittest.TestCase):
         set_language("en")
         self.action = Mock()
         self.panel = EqualizerSettings(self.action, Mock())
+        # Exercise the dormant band editor explicitly; production defaults to hidden.
+        self.panel.custom_supported = True
         self.state = EqState(0, parse_custom_eq(custom_record()))
 
     def load(self, state=None):
@@ -260,6 +262,31 @@ class EqUITests(unittest.TestCase):
                     self.action.reset_mock()
                     button.on_click(SimpleNamespace(control=button))
                     self.assertEqual(self.action.call_args.kwargs["profile"], button.data)
+
+    def test_custom_profile_is_hidden_even_when_current_or_in_stale_catalog(self):
+        panel = EqualizerSettings(self.action, Mock())
+        self.assertFalse(panel.custom_supported)
+        panel.set_connection(True)
+        token = panel.begin("read")
+        panel.complete(token, EqResult(True, EqState(10, self.state.custom)), (14, 15, 10), "read")
+        self.assertEqual([b.content.data for b in panel.quick_profiles.controls], [14, 15])
+        self.assertEqual([o.key for o in panel.profile.options], ["14", "15"])
+        self.assertIsNone(panel.profile.value)
+        self.assertFalse(panel.custom_body.visible)
+        self.action.reset_mock()
+        panel._select_profile(10)
+        self.action.assert_not_called()
+        panel._select_profile(14)
+        self.assertEqual(self.action.call_args.kwargs["profile"], 14)
+
+    def test_extended_profiles_have_matching_icons(self):
+        profiles = (11, 12, 13, 14, 15, 21)
+        self.panel.set_connection(True)
+        token = self.panel.begin("read")
+        self.panel.complete(token, EqResult(True, EqState(14)), profiles, "read")
+        self.assertEqual([b.content.content.controls[0].icon for b in self.panel.quick_profiles.controls],
+                         [ft.Icons.PIANO, ft.Icons.HEADPHONES, ft.Icons.VOLUME_DOWN,
+                          ft.Icons.WAVES, ft.Icons.WORKSPACE_PREMIUM, ft.Icons.BALANCE])
 
     def test_profiles_share_card_width_without_scrolling_or_tooltips(self):
         self.load()

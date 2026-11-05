@@ -20,16 +20,16 @@ capability because the catalog does not define a battery function ID.
 
 `catalog_effects` retains the ordered IDs from 2016's `sound_effect.effects`
 (or legacy 2006's `sound_effect` list). Selectable `profiles` retain only known
-`PROFILE_KEYS`, including custom (10), from that exact model record. No other
+`PROFILE_KEYS`, excluding hidden custom (10), from that exact model record. No other
 model's list is merged in. The UI creates a button for each of those IDs after
 a successful read; selecting one requires an acknowledgment and matching
 readback. Unsupported IDs are rejected before transport. The buttons share the available
 card width equally, without horizontal scrolling or profile tooltips.
 
-Custom (10) selects a stored custom profile. The band editor remains hidden;
-selecting this profile does not invent or upload a curve. Custom-band config
-55 reads/writes retain their existing backend gate. Preset-only models read
-only config 7.
+Custom (10) remains in raw catalog metadata but is hidden on every model,
+including when it is the device's active profile. It is excluded from selectable
+profiles and controller profile writes. The band editor defaults to hidden too.
+Existing custom-band codec support is retained for future work.
 Gesture choices come from `click_action`, restricted to actions implemented by
 the current codec. Noise control is excluded from the current Play editor.
 

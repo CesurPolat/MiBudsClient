@@ -11,7 +11,7 @@ class EqualizerSettings(ft.Column):
     def __init__(self, on_action=None, on_update=lambda: None):
         self._on_action = on_action
         self._on_update = on_update
-        self.custom_supported = True
+        self.custom_supported = False
         self._connected = False
         self._opened = False
         self._busy = False
@@ -174,7 +174,7 @@ class EqualizerSettings(ft.Column):
         self._needs_refresh = not result.success
         if result.success:
             self._state = result.state
-            self._profiles = tuple(profiles)
+            self._profiles = tuple(p for p in profiles if p in PROFILE_KEYS and p != 10)
             if operation != "preview":
                 self.draft = result.state.custom.bands if result.state.custom else ()
         self.status.value = render(result.message)
@@ -186,12 +186,19 @@ class EqualizerSettings(ft.Column):
         self.refresh_button.disabled = not self._connected or self._busy
         current = self._state.profile if self._state else None
         self.profile.options = [ft.dropdown.Option(str(p), t("eq." + PROFILE_KEYS[p])) for p in self._profiles]
-        if current is not None and current not in self._profiles:
+        if current is not None and current != 10 and current not in self._profiles:
             self.profile.options.append(ft.dropdown.Option(str(current), t("eq.current", code=f"{current:02X}"), disabled=True))
-        self.profile.value = str(current) if current is not None else None
+        self.profile.value = str(current) if current is not None and current != 10 else None
         self.profile.disabled = not enabled or current is None or not self._profiles
-        icons = {0: ft.Icons.TUNE, 1: ft.Icons.MIC, 5: ft.Icons.SPEAKER,
-                 6: ft.Icons.GRAPHIC_EQ, 7: ft.Icons.VOLUME_UP}
+        icons = {
+            0: ft.Icons.TUNE, 1: ft.Icons.MIC, 2: ft.Icons.ELECTRIC_BOLT,
+            3: ft.Icons.PIANO, 4: ft.Icons.MUSIC_NOTE, 5: ft.Icons.SPEAKER,
+            6: ft.Icons.GRAPHIC_EQ, 7: ft.Icons.VOLUME_UP, 11: ft.Icons.PIANO,
+            12: ft.Icons.HEADPHONES, 13: ft.Icons.VOLUME_DOWN,
+            14: ft.Icons.WAVES, 15: ft.Icons.WORKSPACE_PREMIUM,
+            16: ft.Icons.SETTINGS_INPUT_COMPONENT, 17: ft.Icons.PARK,
+            18: ft.Icons.WATER, 21: ft.Icons.BALANCE,
+        }
         buttons = [
             ft.TextButton(
                 content=ft.Column([

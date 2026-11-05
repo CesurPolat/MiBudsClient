@@ -152,7 +152,7 @@ def resolve_capabilities(device_name="", identity=None):
         legacy = options.get(2006, {}).get("sound_effect", [])
         if isinstance(legacy, list):
             catalog_effects = tuple(v for v in legacy if type(v) is int)
-    profiles = tuple(dict.fromkeys(v for v in catalog_effects if v in PROFILE_KEYS))
+    profiles = tuple(dict.fromkeys(v for v in catalog_effects if v in PROFILE_KEYS and v != 10))
     gestures = {}
     for fid, gesture in ((4006, 4), (4001, 1), (4002, 2), (4003, 3)):
         actions = options.get(fid, {}).get("click_action")
