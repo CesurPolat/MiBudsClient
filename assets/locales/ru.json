@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Поддержка управления этой моделью ещё не проверена."
+  "noise.unvalidated": "Поддержка управления этой моделью ещё не проверена.",
+  "noise.anc_light": "Слабое",
+  "noise.anc_balanced": "Сбалансированное",
+  "noise.anc_deep": "Глубокое",
+  "noise.anc_adaptive": "Адаптивное",
+  "noise.anc_wind": "Подавление шума ветра",
+  "noise.anc_deep_plus": "Глубокое+",
+  "noise.trans_standard": "Стандартная прозрачность",
+  "noise.trans_voice": "Усиление голоса",
+  "noise.trans_ambient": "Усиление окружающих звуков",
+  "noise.trans_voice_plus": "Усиление голоса+"
 }

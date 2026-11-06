@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "لم يتم التحقق من دعم التحكم لهذا الطراز بعد."
+  "noise.unvalidated": "لم يتم التحقق من دعم التحكم لهذا الطراز بعد.",
+  "noise.anc_light": "خفيف",
+  "noise.anc_balanced": "متوازن",
+  "noise.anc_deep": "عميق",
+  "noise.anc_adaptive": "تكيفي",
+  "noise.anc_wind": "تقليل ضوضاء الرياح",
+  "noise.anc_deep_plus": "عميق+",
+  "noise.trans_standard": "شفافية قياسية",
+  "noise.trans_voice": "تعزيز الصوت البشري",
+  "noise.trans_ambient": "تعزيز الصوت المحيط",
+  "noise.trans_voice_plus": "تعزيز الصوت البشري+"
 }

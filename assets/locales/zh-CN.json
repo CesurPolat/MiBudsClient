@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "尚未验证此型号的控制支持。"
+  "noise.unvalidated": "尚未验证此型号的控制支持。",
+  "noise.anc_light": "轻度",
+  "noise.anc_balanced": "均衡",
+  "noise.anc_deep": "深度",
+  "noise.anc_adaptive": "自适应",
+  "noise.anc_wind": "抗风噪",
+  "noise.anc_deep_plus": "深度+",
+  "noise.trans_standard": "标准通透",
+  "noise.trans_voice": "人声增强",
+  "noise.trans_ambient": "环境声增强",
+  "noise.trans_voice_plus": "人声增强+"
 }

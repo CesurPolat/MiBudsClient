@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "A modell vezérlésének támogatása még nincs ellenőrizve."
+  "noise.unvalidated": "A modell vezérlésének támogatása még nincs ellenőrizve.",
+  "noise.anc_light": "Enyhe",
+  "noise.anc_balanced": "Kiegyensúlyozott",
+  "noise.anc_deep": "Erős",
+  "noise.anc_adaptive": "Adaptív",
+  "noise.anc_wind": "Szélzajcsökkentés",
+  "noise.anc_deep_plus": "Erős+",
+  "noise.trans_standard": "Normál áteresztés",
+  "noise.trans_voice": "Beszédkiemelés",
+  "noise.trans_ambient": "Környezeti hangok erősítése",
+  "noise.trans_voice_plus": "Beszédkiemelés+"
 }

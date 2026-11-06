@@ -9,6 +9,21 @@ VALIDATED_NOISE_MODELS = frozenset()
 ANC_FUNCTIONS = (1002, 1003, 1006, 1007)
 TRANSPARENCY_FUNCTIONS = (1004, 1005)
 OLD_ADAPTIVE_MODELS = frozenset(("l76", "l77", "k73", "k73a", "l77s"))
+# UI schemas from the supplied Xiaomi Earbuds reference, not backend opt-ins.
+LEGACY_ANC_MODELS = frozenset("miwear.headphone." + code for code in (
+    "l76g", "l77g", "k75g", "k73ag", "k75sg", "n77g", "n75g", "n76g",
+    "n79ag", "o77g", "p75g", "o70cg", "p79ag", "p77g"))
+MULTILEVEL_ANC_MODELS = frozenset("miwear.headphone." + code for code in (
+    "o71g", "o71btg", "o76gl", "p76gl"))
+SPECIAL_ANC_MODEL = "miwear.headphone.l71g"
+ANC_LEVEL_LABELS = {
+    0: "noise.anc_balanced", 1: "noise.anc_light", 2: "noise.anc_deep",
+    3: "noise.anc_adaptive", 4: "noise.anc_wind", 5: "noise.anc_deep_plus",
+}
+TRANSPARENCY_LEVEL_LABELS = {
+    0: "noise.trans_standard", 1: "noise.trans_voice",
+    2: "noise.trans_ambient", 3: "noise.trans_voice_plus",
+}
 
 
 def noise_backend_enabled(caps):
@@ -23,9 +38,29 @@ class NoiseCapabilities:
     transparency_levels: tuple = ()
     adaptive: str | None = None
     wear_type: int | None = None
+    anc_schema: str = "unknown"
+    transparency_schema: str = "unknown"
 
     def levels(self, mode):
         return self.anc_levels if mode == 1 else self.transparency_levels if mode == 2 else ()
+
+    def special_levels(self, mode):
+        if mode == 1 and self.anc_schema == "discrete_legacy":
+            return tuple(value for value in self.anc_levels if value in (3, 4))
+        return ()
+
+    def slider_levels(self, mode):
+        special = self.special_levels(mode)
+        return tuple(value for value in self.levels(mode) if value not in special)
+
+    def level_label_key(self, mode, value):
+        if value not in self.levels(mode):
+            return None
+        if mode == 1 and self.anc_schema == "discrete_legacy":
+            return ANC_LEVEL_LABELS.get(value)
+        if mode == 2 and self.transparency_schema == "discrete_legacy":
+            return TRANSPARENCY_LEVEL_LABELS.get(value)
+        return None
 
 
 def noise_capabilities(caps):
@@ -44,9 +79,21 @@ def noise_capabilities(caps):
     adaptive = "level" if anc and any(code == old or code == old + "g" for old in OLD_ADAPTIVE_MODELS) else (
         "switch" if anc and options.get("auto_fit") == 1 else None)
     wear = options.get("anc_wear_type")
+    anc_levels, trans_levels = gears(anc), gears(trans)
+    anc_schema = "unknown"
+    if caps.model == SPECIAL_ANC_MODEL:
+        anc_schema = "l71_special"
+    elif caps.model in MULTILEVEL_ANC_MODELS and anc_levels == tuple(range(20)):
+        anc_schema = "multilevel_20"
+    elif caps.model in LEGACY_ANC_MODELS and anc_levels and all(v in ANC_LEVEL_LABELS for v in anc_levels):
+        anc_schema = "discrete_legacy"
+    known_model = caps.model in LEGACY_ANC_MODELS | MULTILEVEL_ANC_MODELS | {SPECIAL_ANC_MODEL}
+    trans_schema = ("discrete_legacy" if known_model and trans_levels
+                    and all(v in TRANSPARENCY_LEVEL_LABELS for v in trans_levels) else "unknown")
     return NoiseCapabilities((0,) + ((1,) if anc else ()) + ((2,) if trans else ())
-                             if anc or trans else (), gears(anc), gears(trans), adaptive,
-                             wear if type(wear) is int and wear in (1, 2, 3) else None)
+                             if anc or trans else (), anc_levels, trans_levels, adaptive,
+                             wear if type(wear) is int and wear in (1, 2, 3) else None,
+                             anc_schema, trans_schema)
 
 
 @dataclass(frozen=True)

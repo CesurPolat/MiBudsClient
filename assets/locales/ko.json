@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "이 모델의 제어 지원은 아직 검증되지 않았습니다."
+  "noise.unvalidated": "이 모델의 제어 지원은 아직 검증되지 않았습니다.",
+  "noise.anc_light": "약함",
+  "noise.anc_balanced": "균형",
+  "noise.anc_deep": "강함",
+  "noise.anc_adaptive": "적응형",
+  "noise.anc_wind": "바람 소음 감소",
+  "noise.anc_deep_plus": "강함+",
+  "noise.trans_standard": "표준 주변 소리",
+  "noise.trans_voice": "음성 강화",
+  "noise.trans_ambient": "주변 소리 강화",
+  "noise.trans_voice_plus": "음성 강화+"
 }

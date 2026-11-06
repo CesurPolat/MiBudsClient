@@ -343,7 +343,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "en": {
@@ -585,7 +595,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "ar": {
@@ -930,7 +950,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "de": {
@@ -1275,7 +1305,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "es": {
@@ -1620,7 +1660,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "et": {
@@ -1869,7 +1919,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "fi": {
@@ -2118,7 +2178,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "fr": {
@@ -2463,7 +2533,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "hi": {
@@ -2712,7 +2792,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "hu": {
@@ -2961,7 +3051,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "id": {
@@ -3306,7 +3406,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "it": {
@@ -3651,7 +3761,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "ja": {
@@ -3996,7 +4116,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "ko": {
@@ -4341,7 +4471,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "ms": {
@@ -4686,7 +4826,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "nl": {
@@ -5031,7 +5181,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "pl": {
@@ -5376,7 +5536,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "pt-BR": {
@@ -5718,7 +5888,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "pt-PT": {
@@ -6060,7 +6240,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "ru": {
@@ -6405,7 +6595,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "sv": {
@@ -6654,7 +6854,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "th": {
@@ -6999,7 +7209,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "uk": {
@@ -7344,7 +7564,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "vi": {
@@ -7689,7 +7919,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "zh-CN": {
@@ -8031,7 +8271,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "zh-TW": {
@@ -8373,7 +8623,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     },
     "zh-HK": {
@@ -8715,7 +8975,17 @@
         "eq.standard",
         "eq.outdoor",
         "eq.underwater",
-        "noise.unvalidated"
+        "noise.unvalidated",
+        "noise.anc_light",
+        "noise.anc_balanced",
+        "noise.anc_deep",
+        "noise.anc_adaptive",
+        "noise.anc_wind",
+        "noise.anc_deep_plus",
+        "noise.trans_standard",
+        "noise.trans_voice",
+        "noise.trans_ambient",
+        "noise.trans_voice_plus"
       ]
     }
   },

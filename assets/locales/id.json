@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Dukungan kontrol untuk model ini belum diverifikasi."
+  "noise.unvalidated": "Dukungan kontrol untuk model ini belum diverifikasi.",
+  "noise.anc_light": "Ringan",
+  "noise.anc_balanced": "Seimbang",
+  "noise.anc_deep": "Mendalam",
+  "noise.anc_adaptive": "Adaptif",
+  "noise.anc_wind": "Pengurangan derau angin",
+  "noise.anc_deep_plus": "Mendalam+",
+  "noise.trans_standard": "Transparansi standar",
+  "noise.trans_voice": "Peningkatan suara manusia",
+  "noise.trans_ambient": "Peningkatan suara sekitar",
+  "noise.trans_voice_plus": "Peningkatan suara manusia+"
 }

@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "このモデルの操作対応はまだ確認されていません。"
+  "noise.unvalidated": "このモデルの操作対応はまだ確認されていません。",
+  "noise.anc_light": "ライト",
+  "noise.anc_balanced": "バランス",
+  "noise.anc_deep": "ディープ",
+  "noise.anc_adaptive": "アダプティブ",
+  "noise.anc_wind": "風切り音低減",
+  "noise.anc_deep_plus": "ディープ+",
+  "noise.trans_standard": "標準外音取り込み",
+  "noise.trans_voice": "音声強調",
+  "noise.trans_ambient": "周囲の音を強調",
+  "noise.trans_voice_plus": "音声強調+"
 }

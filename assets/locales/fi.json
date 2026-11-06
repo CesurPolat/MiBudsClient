@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Tämän mallin ohjaustukea ei ole vielä vahvistettu."
+  "noise.unvalidated": "Tämän mallin ohjaustukea ei ole vielä vahvistettu.",
+  "noise.anc_light": "Kevyt",
+  "noise.anc_balanced": "Tasapainoinen",
+  "noise.anc_deep": "Voimakas",
+  "noise.anc_adaptive": "Mukautuva",
+  "noise.anc_wind": "Tuulimelun vaimennus",
+  "noise.anc_deep_plus": "Voimakas+",
+  "noise.trans_standard": "Tavallinen läpikuuluvuus",
+  "noise.trans_voice": "Puheen vahvistus",
+  "noise.trans_ambient": "Ympäristöäänien vahvistus",
+  "noise.trans_voice_plus": "Puheen vahvistus+"
 }

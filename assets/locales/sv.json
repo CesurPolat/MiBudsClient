@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Stöd för styrning av den här modellen har ännu inte verifierats."
+  "noise.unvalidated": "Stöd för styrning av den här modellen har ännu inte verifierats.",
+  "noise.anc_light": "Lätt",
+  "noise.anc_balanced": "Balanserad",
+  "noise.anc_deep": "Djup",
+  "noise.anc_adaptive": "Adaptiv",
+  "noise.anc_wind": "Vindbrusreducering",
+  "noise.anc_deep_plus": "Djup+",
+  "noise.trans_standard": "Standardtransparens",
+  "noise.trans_voice": "Röstförstärkning",
+  "noise.trans_ambient": "Omgivningsförstärkning",
+  "noise.trans_voice_plus": "Röstförstärkning+"
 }

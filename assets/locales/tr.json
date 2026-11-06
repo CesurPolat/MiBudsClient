@@ -235,5 +235,15 @@
   "eq.standard": "Standart",
   "eq.outdoor": "Dış ortam",
   "eq.underwater": "Su altı",
-  "noise.unvalidated": "Bu model için kontrol desteği henüz doğrulanmadı."
+  "noise.unvalidated": "Bu model için kontrol desteği henüz doğrulanmadı.",
+  "noise.anc_light": "Hafif",
+  "noise.anc_balanced": "Dengeli",
+  "noise.anc_deep": "Derin",
+  "noise.anc_adaptive": "Adaptif",
+  "noise.anc_wind": "Rüzgâr karşıtı",
+  "noise.anc_deep_plus": "Derin+",
+  "noise.trans_standard": "Standart şeffaflık",
+  "noise.trans_voice": "İnsan sesi güçlendirme",
+  "noise.trans_ambient": "Ortam güçlendirme",
+  "noise.trans_voice_plus": "İnsan sesi güçlendirme+"
 }

@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Khả năng điều khiển mẫu tai nghe này chưa được xác minh."
+  "noise.unvalidated": "Khả năng điều khiển mẫu tai nghe này chưa được xác minh.",
+  "noise.anc_light": "Nhẹ",
+  "noise.anc_balanced": "Cân bằng",
+  "noise.anc_deep": "Sâu",
+  "noise.anc_adaptive": "Thích ứng",
+  "noise.anc_wind": "Giảm tiếng gió",
+  "noise.anc_deep_plus": "Sâu+",
+  "noise.trans_standard": "Xuyên âm tiêu chuẩn",
+  "noise.trans_voice": "Tăng cường giọng nói",
+  "noise.trans_ambient": "Tăng cường âm thanh xung quanh",
+  "noise.trans_voice_plus": "Tăng cường giọng nói+"
 }

@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Підтримку керування цією моделлю ще не перевірено."
+  "noise.unvalidated": "Підтримку керування цією моделлю ще не перевірено.",
+  "noise.anc_light": "Легке",
+  "noise.anc_balanced": "Збалансоване",
+  "noise.anc_deep": "Глибоке",
+  "noise.anc_adaptive": "Адаптивне",
+  "noise.anc_wind": "Зменшення шуму вітру",
+  "noise.anc_deep_plus": "Глибоке+",
+  "noise.trans_standard": "Стандартна прозорість",
+  "noise.trans_voice": "Підсилення голосу",
+  "noise.trans_ambient": "Підсилення навколишніх звуків",
+  "noise.trans_voice_plus": "Підсилення голосу+"
 }

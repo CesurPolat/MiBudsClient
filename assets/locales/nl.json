@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "De bediening van dit model is nog niet geverifieerd."
+  "noise.unvalidated": "De bediening van dit model is nog niet geverifieerd.",
+  "noise.anc_light": "Licht",
+  "noise.anc_balanced": "Gebalanceerd",
+  "noise.anc_deep": "Diep",
+  "noise.anc_adaptive": "Adaptief",
+  "noise.anc_wind": "Windruisonderdrukking",
+  "noise.anc_deep_plus": "Diep+",
+  "noise.trans_standard": "Standaardtransparantie",
+  "noise.trans_voice": "Stemversterking",
+  "noise.trans_ambient": "Omgevingsversterking",
+  "noise.trans_voice_plus": "Stemversterking+"
 }

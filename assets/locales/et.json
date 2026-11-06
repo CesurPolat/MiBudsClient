@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Selle mudeli juhtimise tuge pole veel kontrollitud."
+  "noise.unvalidated": "Selle mudeli juhtimise tuge pole veel kontrollitud.",
+  "noise.anc_light": "Kerge",
+  "noise.anc_balanced": "Tasakaalustatud",
+  "noise.anc_deep": "Sügav",
+  "noise.anc_adaptive": "Kohanduv",
+  "noise.anc_wind": "Tuulemüra vähendamine",
+  "noise.anc_deep_plus": "Sügav+",
+  "noise.trans_standard": "Tavaline läbipaistvus",
+  "noise.trans_voice": "Hääle võimendus",
+  "noise.trans_ambient": "Ümbritseva heli võimendus",
+  "noise.trans_voice_plus": "Hääle võimendus+"
 }

@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "ยังไม่ได้ตรวจสอบการรองรับการควบคุมสำหรับรุ่นนี้"
+  "noise.unvalidated": "ยังไม่ได้ตรวจสอบการรองรับการควบคุมสำหรับรุ่นนี้",
+  "noise.anc_light": "เบา",
+  "noise.anc_balanced": "สมดุล",
+  "noise.anc_deep": "ลึก",
+  "noise.anc_adaptive": "ปรับอัตโนมัติ",
+  "noise.anc_wind": "ลดเสียงลม",
+  "noise.anc_deep_plus": "ลึก+",
+  "noise.trans_standard": "รับเสียงภายนอกมาตรฐาน",
+  "noise.trans_voice": "เพิ่มเสียงพูด",
+  "noise.trans_ambient": "เพิ่มเสียงรอบข้าง",
+  "noise.trans_voice_plus": "เพิ่มเสียงพูด+"
 }

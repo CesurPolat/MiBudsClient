@@ -235,5 +235,15 @@
   "eq.standard": "Standard",
   "eq.outdoor": "Outdoor",
   "eq.underwater": "Underwater",
-  "noise.unvalidated": "Die Steuerung dieses Modells wurde noch nicht bestätigt."
+  "noise.unvalidated": "Die Steuerung dieses Modells wurde noch nicht bestätigt.",
+  "noise.anc_light": "Leicht",
+  "noise.anc_balanced": "Ausgewogen",
+  "noise.anc_deep": "Stark",
+  "noise.anc_adaptive": "Adaptiv",
+  "noise.anc_wind": "Windgeräuschreduzierung",
+  "noise.anc_deep_plus": "Stark+",
+  "noise.trans_standard": "Standardtransparenz",
+  "noise.trans_voice": "Stimmenverstärkung",
+  "noise.trans_ambient": "Umgebungsverstärkung",
+  "noise.trans_voice_plus": "Stimmenverstärkung+"
 }
