@@ -5,7 +5,13 @@ Functions 1002, 1003, 1006, 1007 enable ANC; 1004, 1005 enable transparency.
 No MIBUDS_EXPERIMENTAL_ANC flag or PowerShell launcher is needed for visibility.
 The experimental UI notice has been removed. Device-confirmed reads and writes
 remain unchanged. Function support does not certify hardware protocol compatibility;
-existing model authentication policies still apply and are not inferred from functions.
+service-based authentication still applies and is not inferred from functions.
+
+Current activation rule: read/write access also follows the selected model's
+ANC/transparency function IDs. The validated-model list has been removed; it is
+not necessary to add models or set experimental flags. Custom EQ remains hidden.
+Auth defaults to service-based AUTO, independently of the function list. Only
+implemented features are activated; this does not claim universal hardware tests.
 
 The following notes describe the earlier opt-in validation workflow and are historical.
 
@@ -81,8 +87,18 @@ Pending before enabling a model:
 Adaptive/smart/immersive writes and wear-state reads are not implemented.
 The existing 6 Play packets, discovery and startup behavior remain unchanged.
 New strings are authored in English, Turkish and Spanish; other locales use
-explicit English fallback entries until translated. ACK success followed by a
-different readback is an error, not a saved setting.
+explicit English fallback entries until translated. After the single write and
+ACK, confirmation waits for a matching F4 notification or F3 readback within one
+shared timeout budget (default 2 seconds, starting when the serialized operation
+begins). An initially different readback is not immediately an error. Only F3
+reads are retried; the write is never repeated by this confirmation loop.
+Polling is paced at 200 ms with up to 400 ms per response attempt, capped by the
+remaining budget; these are application settings, not APK timing guarantees.
+Disconnect/session changes wake and cancel the wait. Rejections and malformed
+responses still fail immediately. Confirmation expiry is not reported as saved.
+
+The confirmation-wait change has not been tested or repackaged; validation below
+describes the older 2026-11-01 build, not the latest source changes.
 
 ## Validation performed on 2026-11-01
 

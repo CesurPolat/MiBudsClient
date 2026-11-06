@@ -3,7 +3,7 @@
 ## Must-follow constraints
 
 - **Windows and Linux support.** Bluetooth discovery can use platform-specific implementations (Windows: PowerShell via `subprocess` + `Get-PnpDevice`, Linux: native Linux-compatible discovery). Keep behavior consistent across supported platforms.
-- **Model-specific support.** Catalog features describe UI capabilities, not protocol compatibility. Existing codecs remain limited to Redmi Buds 6 Play. Enable additional model backends only after model-specific protocol and actual hardware validation.
+- **Function-list support (user decision).** Show and enable implemented controls from the selected device's `func_list` and its own `extra_data` options. Do not require `VALIDATED_NOISE_MODELS`, `MODEL_BACKENDS`, EQ model allowlists, experimental opt-ins or per-model hardware certification to enable these controls. Unknown/unimplemented functions remain metadata. Hide and disable custom EQ for now, including profile 10 and the band editor. Keep model-specific protocol/label exceptions where evidence requires them; those are not permission lists.
 - **Dynamic RFCOMM service discovery.** Resolve the selected device's RFCOMM channel by exact service UUID. `RFCOMM_PORT = 6` in `controllers/bluetooth/constants.py` is only a Redmi Buds 6 Play fallback when no service channel is resolved; record `service_uuid=None` and `resolution_source="profile_fallback"`. Do not infer service/auth from a channel or scan channels blindly.
 - **Assets directory bundling.** Build uses `datas=[('assets', 'assets')]` in PyInstaller spec. All UI assets (icon.ico, images) must stay in `assets/` folder.
 - **Single instance enforcement.** Application forbids multiple running instances via port 65432. Do not remove or change `check_for_existing_instance()` at app startup.
@@ -16,7 +16,7 @@
 - **No unsolicited builds.** Do not package executables, rebuild demos, or repeat startup/single-instance checks unless explicitly requested. If the user asks to open a demo, prefer running it from source; package it only if necessary to fulfill that request.
 - **Keep work proportional.** Use focused source inspection and edits. Avoid repeated verification loops and lengthy progress updates for small changes. Briefly state what changed and that testing is left to the user; do not ask for permission to run tests after every edit.
 - **Validation references, when requested.** Package with `flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBudsClient"`. For single-instance validation, launch the executable twice; the second instance should exit silently and focus the existing window.
-- **Hardware validation remains a compatibility gate.** Changes to `controllers/bluetooth/protocol.py` or `controllers/bluetooth/constants.py` require Redmi Buds 6 Play hardware validation before being considered validated; unit tests alone are insufficient. Leave hardware testing to the user unless explicitly asked to perform it, and do not claim untested protocol changes or additional model backends are validated.
+- **Hardware testing is evidence, not an activation gate.** Leave hardware testing to the user unless explicitly asked. Do not claim that all devices or packet changes were tested, but do not block catalog-supported implemented controls until every model is tested. Auth is selected from the connected service; unsupported raw auth remains an explicit protocol limitation.
 
 ## UI design
 
@@ -38,6 +38,6 @@
 
 ## Change safety rules
 
-- **Preserve backward compatibility.** Protocol packet or device matching changes must remain explicitly unvalidated until hardware testing is completed; do not expand compatibility claims or backend activation without that validation.
+- **Preserve backward compatibility.** Preserve the working connection and packet paths. Enable implemented controls by catalog capability as requested; report concrete protocol failures honestly without adding per-model validation gates.
 - **Do not add external Bluetooth libraries.** Current implementation uses Python's `socket` module directly for RFCOMM. Keep it minimal.
 - **GitHub URL is contractual.** Hardcoded in UI constants and used by updater. Changes break update checking and links.

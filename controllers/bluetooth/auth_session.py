@@ -16,6 +16,7 @@ from .safer_plus import challenge_response
 
 
 class AuthPolicy(str, Enum):
+    AUTO = "auto"
     DIRECT = "direct"
     COMMAND = "command_auth"
     UNKNOWN = "unknown"
@@ -23,10 +24,8 @@ class AuthPolicy(str, Enum):
 
 
 def profile_auth_policy(name):
-    # Explicit model policy after successful 6 Play mutual-auth hardware testing.
-    if " ".join(name.split()).casefold() == "redmi buds 6 play":
-        return AuthPolicy.COMMAND
-    return AuthPolicy.UNKNOWN
+    # Kept for callers of the older API; service selection happens after SDP.
+    return AuthPolicy.AUTO
 
 
 class AuthError(ConnectionError):

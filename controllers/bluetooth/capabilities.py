@@ -1,8 +1,7 @@
-"""Catalog UI functions. These IDs are never RFCOMM configuration IDs.
+"""Implemented controls follow the selected model's catalog function list.
 
-EQ is enabled for the explicitly requested catalog models; hardware validation
-is still limited to Redmi Buds 6 Play. Other backends remain model-specific.
-Unknown catalog functions remain metadata and cannot enable commands.
+Function IDs are UI capabilities, never RFCOMM configuration IDs. Custom EQ
+is intentionally deferred; unknown/unimplemented functions remain metadata.
 """
 from dataclasses import dataclass, field
 import json
@@ -81,20 +80,11 @@ FUNCTIONS = {
     5009: "SUPER_AI",
 }
 
-# Explicit implementation registry; a catalog refresh cannot expand it.
-MODEL_BACKENDS = {"miwear.headphone.n79bg": frozenset(("eq", "gestures", "latency", "battery"))}
-# Explicit opt-in for catalog EQ selection. Remote updates cannot register models.
-EQ_MODELS = frozenset({
-    "miwear.headphone.l76g", "miwear.headphone.l71g", "miwear.headphone.n77g",
-    "miwear.headphone.n75g", "miwear.headphone.n76g", "miwear.headphone.n79g",
-    "miwear.headphone.n79ag", "miwear.headphone.n74ag", "miwear.headphone.n79bg",
-    "miwear.headphone.o77g", "miwear.headphone.o71g", "miwear.headphone.o71btg",
-    "miwear.headphone.o76gl", "miwear.headphone.p76gl", "miwear.headphone.p79g",
-    "miwear.headphone.o74g", "miwear.headphone.p75g", "miwear.headphone.o70cg",
-    "miwear.headphone.p79ag", "miwear.headphone.p77g",
-})
-COMPONENT_REGISTRY = {"eq": (2006, 2016), "custom_eq": (2016,),
-                      "gestures": (4006, 4001, 4002, 4003), "latency": (3011,)}
+# Register implemented features, not model names. A new catalog model can use
+# these controls without requiring a source-code allowlist entry.
+COMPONENT_REGISTRY = {"eq": (2006, 2016),
+                      "gestures": (4006, 4001, 4002, 4003), "latency": (3011,),
+                      "noise": (1002, 1003, 1004, 1005, 1006, 1007)}
 
 
 def normalize(name):
@@ -157,25 +147,14 @@ def resolve_capabilities(device_name="", identity=None):
     for fid, gesture in ((4006, 4), (4001, 1), (4002, 2), (4003, 3)):
         actions = options.get(fid, {}).get("click_action")
         if isinstance(actions, list):
-            allowed = tuple(dict.fromkeys(v for v in actions if type(v) is int and v in range(14) and v != 6))
+            allowed = tuple(dict.fromkeys(v for v in actions if type(v) is int and v in range(14)))
             if allowed:
                 gestures[gesture] = allowed
-    # Current codecs are specific to this model. Names alone in an update must
-    # not grant another model the existing backend.
-    backend = MODEL_BACKENDS.get(model["model"], frozenset())
-    available = set()
-    if model["model"] in EQ_MODELS and profiles:
-        available.add("eq")
-        if "eq" in backend and 10 in effects:
-            available.add("custom_eq")
-    if "gestures" in backend and gestures:
-        available.add("gestures")
-    if "latency" in backend and 3011 in options:
-        available.add("latency")
-    if "battery" in backend:
-        available.add("battery")
-    available = {feature for feature in available
-                 if feature == "battery" or any(fid in functions for fid in COMPONENT_REGISTRY[feature])}
+    available = {feature for feature, ids in COMPONENT_REGISTRY.items()
+                 if any(fid in functions for fid in ids)}
+    # Battery is basic device telemetry and has no func_list feature ID.
+    available.add("battery")
+    # Never grant custom_eq, even when effects contains 10: deferred by request.
     return DeviceCapabilities(model["model"], model["name"],
                               (model.get("vid"), model.get("pid")), functions,
                               options, frozenset(available), profiles, gestures,

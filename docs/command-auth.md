@@ -2,14 +2,19 @@
 
 The optional `command_auth` policy implements mutual RCSP 0x50/0x51
 authentication, separately from SDP, socket connection and model command codecs.
-No new model backend or verified-device entry is enabled.
+Implemented feature access is catalog-driven; no verified-device/model entry
+is required. Runtime auth selection is independent of feature visibility.
 
-## 6 Play default policy (2026-10-31)
+## Current default policy
 
-Redmi Buds 6 Play now defaults to `command_auth` after successful local hardware
-verification and user confirmation. The temporary main.py test switch has been
-removed. Other models remain `unknown`. An explicit `BTController(auth_policy="direct")`
-override retains the legacy path for diagnostics; auth failure never enables it.
+The controller defaults to `auto` for every model. After SDP/socket connection,
+FD2D selects `command_auth`; XiaoAI/standard SPP select `raw_auth` (not implemented,
+so an explicit unsupported-method error is returned). The existing 6 Play
+unknown-UUID `profile_fallback` selects `direct`. This preserves its old path
+without inferring a service from channel 6. An explicit developer API policy
+override is still available; no environment opt-in is required.
+
+## Earlier 6 Play hardware evidence (2026-10-31)
 
 An actual connected Redmi Buds 6 Play was tested on Windows: live SDP resolved
 FD2D to channel 6 and mutual command auth completed with `ready=True` and
@@ -20,20 +25,18 @@ additional models or establish equivalence with the APK native binary.
 
 ## Policy and use
 
-`BTController(auth_policy="command_auth")` explicitly opts into experimental
-command authentication for hardware validation. This is a developer API, not an
-automatic model capability. The default profile resolver selects `command_auth` only
-for the exact normalized Redmi Buds 6 Play name. Other names are `unknown` and
-fail session establishment; they are not silently treated as direct or auth
-devices. `raw_auth` is explicitly unsupported.
+`BTController(auth_policy="auto")` is the normal application path. Explicit
+`command_auth`/`direct` policies remain developer APIs for diagnostics, not model
+permission gates. `profile_auth_policy(name)` is a compatibility alias returning
+AUTO; the name no longer selects authentication. Raw auth remains unsupported.
 
 The low-level `BluetoothConnection.connect(..., session_policy=...)` API accepts
 the same policies. Omitting policy on that low-level API preserves transport-only
 operation for existing transport consumers; it does not report an authenticated
 or ready protocol session. The app controller always supplies an explicit policy.
 
-Command auth requires an SDP-resolved MIUI SPP UUID. An explicit opt-in plus this
-service check permits the exchange; finding FD2D alone never enables auth.
+Command auth requires an SDP-resolved MIUI SPP UUID. AUTO selects it when the
+connected service is FD2D; per-model validation or an extra opt-in is not required.
 XiaoAI, standard SPP and unknown-UUID channel 6 fallback cannot silently substitute
 for this mode. A failed auth closes the selected socket and ends the attempt;
 there is no direct/UUID fallback. A later controller retry starts a fresh socket

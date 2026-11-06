@@ -39,7 +39,7 @@ Use the existing 20-pixel card radius and 10-pixel icon radius where appropriate
 - Keep interactions keyboard accessible with meaningful labels or tooltips, visible focus, and comfortable click targets. Icon-only navigation must have localized tooltips. Avoid hover-only information.
 - Use existing translation helpers (`t`, `message`, `render`, and `refresh_translations`) for user-facing text. Follow `docs/localization.md` when adding keys, including every catalog and its source ledger. Check long translations and RTL layouts.
 - Use `get_resource_path()` for local assets; keep bundled UI assets under `assets/`. Reuse cached device images and provide a graceful placeholder when an image is unavailable.
-- Keep callbacks and asynchronous device operations in the existing controller flow. Do not block the Flet UI thread, reset form state during redraw, or enable a backend solely because a catalog lists a capability.
+- Keep callbacks and asynchronous device operations in the existing controller flow. Do not block the Flet UI thread or reset form state during redraw. Implemented controls follow the selected device's function list and options; no model-validation allowlist is required. Functions without implemented protocol/UI support remain metadata.
 
 ## Review checklist
 

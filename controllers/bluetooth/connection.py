@@ -159,8 +159,18 @@ class BluetoothConnection:
     def _activate_session(self, result, policy, cancel):
         """Single reader handoff: auth here, existing listener after publication."""
         try:
+            if policy == AuthPolicy.AUTO:
+                if result.service_uuid == SERVICE_UUIDS[0]:
+                    policy = AuthPolicy.COMMAND
+                elif result.service_uuid in SERVICE_UUIDS[1:]:
+                    policy = AuthPolicy.RAW
+                elif result.service_uuid is None and result.resolution_source == "profile_fallback":
+                    # The existing fallback is exclusively the legacy 6 Play path.
+                    policy = AuthPolicy.DIRECT
+                else:
+                    raise AuthError("Cannot select authentication without a known service UUID")
             if policy in (AuthPolicy.UNKNOWN, AuthPolicy.RAW):
-                raise AuthError(f"Unsupported session policy: {policy.value}")
+                raise AuthError(f"Unsupported authentication method for selected service: {policy.value}")
             if policy == AuthPolicy.COMMAND:
                 if result.service_uuid != SERVICE_UUIDS[0]:
                     raise AuthError("command_auth requires a resolved MIUI SPP service; raw auth is unsupported")
@@ -234,7 +244,7 @@ class BluetoothConnection:
                 raise ConnectionError("Transport session is not ready")
             if self._sock:
                 self._sock.sendall(data)
-                if os.environ.get("MIBUDS_EXPERIMENTAL_ANC"):
+                if os.environ.get("MIBUDS_ANC_CAPTURE"):
                     from .noise_capture import record
                     record("TX", data)
     

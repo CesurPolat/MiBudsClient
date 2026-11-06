@@ -209,7 +209,7 @@ class SettingsCard(ft.Container):
         self.battery_item.visible = self._connected and caps.supports("battery")
         self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
         self.noise.capabilities = noise_capabilities(caps)
-        self.noise.quick_controls.visible = self._connected and 1 in self.noise.capabilities.modes
+        self.noise.quick_controls.visible = self._connected and bool(self.noise.capabilities.modes)
         self.noise.set_connection(self._connected and bool(self.noise.capabilities.modes),
                                   noise_backend_enabled(caps))
         controls = []

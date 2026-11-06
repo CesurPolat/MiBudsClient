@@ -3,7 +3,6 @@
 from utils.i18n import message as m, error_message
 
 import socket
-import os
 import threading
 import time
 from dataclasses import dataclass
@@ -11,7 +10,7 @@ from typing import Callable, Optional
 
 from .capabilities import resolve_capabilities, DeviceCapabilities
 from .connection import BluetoothConnection
-from .auth_session import AuthPolicy, profile_auth_policy
+from .auth_session import AuthPolicy
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
@@ -196,18 +195,13 @@ class BTController:
                     self._bd_addr = device.address
                     self._device_name = device.name
                 self._reset_identity_state(m("identity.connection_changed"))
-                policy = self._auth_policy or profile_auth_policy(self._device_name)
-                # Test sessions require an explicit model AND explicit auth policy.
-                test_caps = resolve_capabilities(self._device_name)
-                if self._auth_policy is None and noise_backend_enabled(test_caps):
-                    test_policy = os.environ.get("MIBUDS_EXPERIMENTAL_AUTH", "")
-                    if test_policy in (AuthPolicy.COMMAND.value, AuthPolicy.DIRECT.value):
-                        policy = AuthPolicy(test_policy)
+                policy = self._auth_policy or AuthPolicy.AUTO
+                connected_caps = resolve_capabilities(self._device_name)
                 self._connection.connect(self._bd_addr, device_name=self._device_name, session_policy=policy)
-                if noise_backend_enabled(test_caps):
+                if noise_backend_enabled(connected_caps):
                     from .noise_capture import record
                     result = self._connection.result
-                    record("SESSION", model=test_caps.model, device_name=self._device_name,
+                    record("SESSION", model=connected_caps.model, device_name=self._device_name,
                            service_uuid=result.service_uuid, channel=result.channel,
                            resolution_source=result.resolution_source,
                            auth_policy=policy.value, authenticated=self.session_authenticated)
@@ -330,7 +324,7 @@ class BTController:
 
     def _require_noise_backend(self):
         if not self.session_ready or not noise_backend_enabled(self.capabilities):
-            raise ValueError("ANC backend requires model-specific hardware validation")
+            raise ValueError("Device session is not ready or catalog has no ANC/transparency feature")
 
     def request_noise_settings(self, *, session, timeout=2.0):
         self._require_noise_backend()
@@ -402,6 +396,7 @@ class BTController:
         self._battery_parser.reset()
         self._noise_parser.reset()
         self._gestures.reset(m("gesture.connection_changed"))
+        self._noise.reset()
         with self._identity_condition:
             self._identity = None
             self._identity_parser.reset()
@@ -453,7 +448,9 @@ class BTController:
             """Send a sequence of packets on connection."""
             if not self.capabilities.supports("battery"):
                 return
-            packets = [] if self._connection.session_authenticated else [
+            legacy_setup = (not self._connection.session_authenticated and
+                            " ".join(self._device_name.split()).casefold() == "redmi buds 6 play")
+            packets = [] if not legacy_setup else [
                 "fedcba04510003000301ef"
             ]
             for packet_hex in packets:
@@ -547,6 +544,7 @@ class BTController:
                 except ValueError:
                     continue
                 if state is not None:
+                    self._noise.notify(self.eq_session, state)
                     # Respond only if the peer explicitly requests an ACK.
                     if packet.flags & 0x80 and packet.flags & 0x40:
                         self._connection.send(bytes.fromhex("fe dc ba 04 f4 00 02") +

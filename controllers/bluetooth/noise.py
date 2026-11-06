@@ -5,16 +5,11 @@ from .config_transport import parse_config_records
 from .equalizer import _frame
 
 
-VALIDATED_NOISE_MODELS = frozenset()
 ANC_FUNCTIONS = (1002, 1003, 1006, 1007)
 TRANSPARENCY_FUNCTIONS = (1004, 1005)
 OLD_ADAPTIVE_MODELS = frozenset(("l76", "l77", "k73", "k73a", "l77s"))
-# UI schemas from the supplied Xiaomi Earbuds reference, not backend opt-ins.
-LEGACY_ANC_MODELS = frozenset("miwear.headphone." + code for code in (
-    "l76g", "l77g", "k75g", "k73ag", "k75sg", "n77g", "n75g", "n76g",
-    "n79ag", "o77g", "p75g", "o70cg", "p79ag", "p77g"))
-MULTILEVEL_ANC_MODELS = frozenset("miwear.headphone." + code for code in (
-    "o71g", "o71btg", "o76gl", "p76gl"))
+# L71's APK UI explicitly suppresses the generic level names. This is an
+# interpretation exception, not a permission gate for this or other models.
 SPECIAL_ANC_MODEL = "miwear.headphone.l71g"
 ANC_LEVEL_LABELS = {
     0: "noise.anc_balanced", 1: "noise.anc_light", 2: "noise.anc_deep",
@@ -27,8 +22,8 @@ TRANSPARENCY_LEVEL_LABELS = {
 
 
 def noise_backend_enabled(caps):
-    """Catalog capabilities cannot authorize an unvalidated model backend."""
-    return caps.model in VALIDATED_NOISE_MODELS and bool(noise_capabilities(caps).modes)
+    """ANC/transparency access follows func_list, without a model allowlist."""
+    return bool(noise_capabilities(caps).modes)
 
 
 @dataclass(frozen=True)
@@ -83,12 +78,11 @@ def noise_capabilities(caps):
     anc_schema = "unknown"
     if caps.model == SPECIAL_ANC_MODEL:
         anc_schema = "l71_special"
-    elif caps.model in MULTILEVEL_ANC_MODELS and anc_levels == tuple(range(20)):
+    elif anc_levels == tuple(range(20)):
         anc_schema = "multilevel_20"
-    elif caps.model in LEGACY_ANC_MODELS and anc_levels and all(v in ANC_LEVEL_LABELS for v in anc_levels):
+    elif anc_levels and all(v in ANC_LEVEL_LABELS for v in anc_levels):
         anc_schema = "discrete_legacy"
-    known_model = caps.model in LEGACY_ANC_MODELS | MULTILEVEL_ANC_MODELS | {SPECIAL_ANC_MODEL}
-    trans_schema = ("discrete_legacy" if known_model and trans_levels
+    trans_schema = ("discrete_legacy" if trans_levels
                     and all(v in TRANSPARENCY_LEVEL_LABELS for v in trans_levels) else "unknown")
     return NoiseCapabilities((0,) + ((1,) if anc else ()) + ((2,) if trans else ())
                              if anc or trans else (), anc_levels, trans_levels, adaptive,
