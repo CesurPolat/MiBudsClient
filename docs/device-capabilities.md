@@ -57,8 +57,8 @@ their mere presence does not create a control without a codec/UI implementation.
 Custom EQ is explicitly deferred and never granted, even when effects has 10.
 
 Auth uses the connected service, not a model name: AUTO selects command auth
-for FD2D. XiaoAI/standard SPP select raw auth, currently unsupported with an
-explicit error. The existing unknown-UUID 6 Play fallback retains its direct
+for FD2D. XiaoAI/standard SPP select mutual raw auth (see `raw-auth.md`).
+The existing unknown-UUID 6 Play fallback retains its direct
 path. An auth failure never silently switches to direct or another UUID.
 
 The bundled catalog contains the base lists. Xiaomi Buds 5 firmware 3.0.7.6

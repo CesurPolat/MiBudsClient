@@ -10,6 +10,7 @@ from typing import Optional
 
 from .sdp import PlatformBackend, SERVICE_UUIDS, ConnectionCancelled
 from .auth_session import AuthPolicy, AuthError, CommandAuthSession
+from .raw_auth import RawAuthSession
 
 from .constants import RFCOMM_PORT, SOCKET_TIMEOUT, RECV_BUFFER_SIZE
 
@@ -49,7 +50,7 @@ class BluetoothConnection:
 
     @property
     def transport_connected(self) -> bool:
-        """Socket opened, including while command authentication is pending."""
+        """Socket opened, including while authentication is pending."""
         return self._sock is not None and self.result is not None
     
     @connected.setter
@@ -158,6 +159,7 @@ class BluetoothConnection:
 
     def _activate_session(self, result, policy, cancel):
         """Single reader handoff: auth here, existing listener after publication."""
+        prefetched = bytearray()
         try:
             if policy == AuthPolicy.AUTO:
                 if result.service_uuid == SERVICE_UUIDS[0]:
@@ -169,18 +171,21 @@ class BluetoothConnection:
                     policy = AuthPolicy.DIRECT
                 else:
                     raise AuthError("Cannot select authentication without a known service UUID")
-            if policy in (AuthPolicy.UNKNOWN, AuthPolicy.RAW):
+            if policy == AuthPolicy.UNKNOWN:
                 raise AuthError(f"Unsupported authentication method for selected service: {policy.value}")
-            if policy == AuthPolicy.COMMAND:
-                if result.service_uuid != SERVICE_UUIDS[0]:
-                    raise AuthError("command_auth requires a resolved MIUI SPP service; raw auth is unsupported")
+            if policy in (AuthPolicy.COMMAND, AuthPolicy.RAW):
+                if policy == AuthPolicy.COMMAND and result.service_uuid != SERVICE_UUIDS[0]:
+                    raise AuthError("command_auth requires a resolved MIUI SPP service")
+                if policy == AuthPolicy.RAW and result.service_uuid not in SERVICE_UUIDS[1:]:
+                    raise AuthError("raw_auth requires a resolved XiaoAI or standard SPP service")
                 sock = result.socket
-                session = CommandAuthSession(sock.sendall)
+                session_type = CommandAuthSession if policy == AuthPolicy.COMMAND else RawAuthSession
+                session = session_type(sock.sendall)
                 with self._state_lock:
                     if cancel.is_set():
                         raise ConnectionCancelled("Auth cancelled")
                     self.auth_session = session
-                print("[Bluetooth] Auth policy=command_auth state=authenticating")
+                print(f"[Bluetooth] Auth policy={policy.value} state=authenticating")
                 session.start()
                 while not session.authenticated:
                     if cancel.is_set():
@@ -195,13 +200,14 @@ class BluetoothConnection:
                         raise ConnectionCancelled("Auth cancelled")
                     if not data:
                         raise AuthError("Connection closed during authentication")
-                    self._prefetched += b"".join(session.feed(data))
+                    prefetched.extend(b"".join(session.feed(data)))
                 sock.settimeout(SOCKET_TIMEOUT)
             with self._state_lock:
                 if cancel.is_set():
                     raise ConnectionCancelled("Session cancelled")
-                self.session_authenticated = policy == AuthPolicy.COMMAND
-                self.session_ready = policy in (AuthPolicy.COMMAND, AuthPolicy.DIRECT)
+                self._prefetched = bytes(prefetched)
+                self.session_authenticated = policy in (AuthPolicy.COMMAND, AuthPolicy.RAW)
+                self.session_ready = policy in (AuthPolicy.COMMAND, AuthPolicy.RAW, AuthPolicy.DIRECT)
                 self._connected = True
             if policy is not None:
                 print(f"[Bluetooth] Session policy={policy.value} ready={self.session_ready} authenticated={self.session_authenticated}")

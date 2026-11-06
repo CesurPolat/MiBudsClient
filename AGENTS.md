@@ -16,7 +16,7 @@
 - **No unsolicited builds.** Do not package executables, rebuild demos, or repeat startup/single-instance checks unless explicitly requested. If the user asks to open a demo, prefer running it from source; package it only if necessary to fulfill that request.
 - **Keep work proportional.** Use focused source inspection and edits. Avoid repeated verification loops and lengthy progress updates for small changes. Briefly state what changed and that testing is left to the user; do not ask for permission to run tests after every edit.
 - **Validation references, when requested.** Package with `flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBudsClient"`. For single-instance validation, launch the executable twice; the second instance should exit silently and focus the existing window.
-- **Hardware testing is evidence, not an activation gate.** Leave hardware testing to the user unless explicitly asked. Do not claim that all devices or packet changes were tested, but do not block catalog-supported implemented controls until every model is tested. Auth is selected from the connected service; unsupported raw auth remains an explicit protocol limitation.
+- **Hardware testing is evidence, not an activation gate.** Leave hardware testing to the user unless explicitly asked. Do not claim that all devices or packet changes were tested, but do not block catalog-supported implemented controls until every model is tested. Auth is selected from the connected service: command auth for FD2D, raw auth for XiaoAI/standard SPP. An auth failure must not silently fall back to direct commands or another service.
 
 ## UI design
 

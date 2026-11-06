@@ -8,8 +8,8 @@ is required. Runtime auth selection is independent of feature visibility.
 ## Current default policy
 
 The controller defaults to `auto` for every model. After SDP/socket connection,
-FD2D selects `command_auth`; XiaoAI/standard SPP select `raw_auth` (not implemented,
-so an explicit unsupported-method error is returned). The existing 6 Play
+FD2D selects `command_auth`; XiaoAI/standard SPP select mutual `raw_auth`
+(implemented separately in `raw_auth.py`; see [Raw authentication](raw-auth.md)). The existing 6 Play
 unknown-UUID `profile_fallback` selects `direct`. This preserves its old path
 without inferring a service from channel 6. An explicit developer API policy
 override is still available; no environment opt-in is required.
@@ -28,7 +28,8 @@ additional models or establish equivalence with the APK native binary.
 `BTController(auth_policy="auto")` is the normal application path. Explicit
 `command_auth`/`direct` policies remain developer APIs for diagnostics, not model
 permission gates. `profile_auth_policy(name)` is a compatibility alias returning
-AUTO; the name no longer selects authentication. Raw auth remains unsupported.
+AUTO; the name no longer selects authentication. Explicit `raw_auth` requires
+a resolved XiaoAI or standard SPP service.
 
 The low-level `BluetoothConnection.connect(..., session_policy=...)` API accepts
 the same policies. Omitting policy on that low-level API preserves transport-only
@@ -104,8 +105,10 @@ These are software/fake-peer tests, not hardware verification.
 
 Still required: actual Redmi Buds 6 Play direct regression (battery, latency,
 gestures and EQ); a complete direction/timestamped command-auth device capture;
-native libxm_bluetooth equivalence; role/firmware interoperability; real disconnect
-and timeout behavior. The current algorithm matches published vectors, not a
-locally validated APK native binary. Raw auth needs separate native/capture
-evidence and stream handling. No model is promoted to verified by these tests.
+role/firmware interoperability; real disconnect and timeout behavior. Separate
+offline research on 2026-11-06 established native equality for 64 inputs against
+one identified ARM64 libxm_bluetooth reference binary, including the raw JNI
+wrapper. See [Raw authentication](raw-auth.md) for its identity and limits;
+this does not establish equality with every APK version or hardware support.
+No model is promoted to verified by these checks.
 

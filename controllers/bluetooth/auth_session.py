@@ -1,7 +1,7 @@
 """Bounded mutual 50/51 authentication; never owns a socket reader.
 
 Strict validation and total deadline are Python policy, not claims about APK
-behavior. Raw authentication is deliberately unsupported.
+behavior. The alternative raw SPP session lives in raw_auth.py.
 """
 import hmac
 import secrets
