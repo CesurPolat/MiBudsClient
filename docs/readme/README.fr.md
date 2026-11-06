@@ -21,7 +21,7 @@ Développé avec Python et Flet pour Windows et Linux.
 
 | Fonction | Possibilités |
 | --- | --- |
-| Contrôle du bruit | Les commandes ANC et transparence apparaissent pour les appareils pris en charge par le catalogue ; la compatibilité du protocole et la validation matérielle restent à vérifier. |
+| Contrôle du bruit | ANC, transparence et niveaux propres au modèle selon le catalogue. La compatibilité matérielle entre modèles reste à vérifier. |
 | Batterie | Niveaux séparés des deux écouteurs et du boîtier, indicateurs de charge et actualisation manuelle. |
 | Faible latence | Mode jeu désactivé, activé ou automatique selon l’application active. |
 | Profils sonores | Lecture et modification des préréglages EQ proposés par les écouteurs. |
@@ -33,9 +33,20 @@ Développé avec Python et Flet pour Windows et Linux.
 
 ## Compatibilité
 
-**Le modèle pris en charge est Redmi Buds 6 Play.** Le catalogue Xiaomi/Redmi contient des noms, images et capacités d’autres produits. Une entrée au catalogue ne garantit pas leur contrôle.
+**MiBudsClient est développé pour plusieurs modèles Xiaomi et Redmi.** Sous Windows, il tente de connecter les appareils reconnus du catalogue et active les commandes implémentées selon les fonctions et options du modèle. Aucune liste séparée de modèles approuvés n'est nécessaire.
 
-Windows et Linux utilisent une détection Bluetooth propre à chaque plateforme. Sous Linux, la zone de notification et les notifications dépendent du bureau. La détection automatique du plein écran utilise X11 et n’est pas disponible sous Wayland. La validation matérielle et de l’interface sous Linux reste à effectuer.
+- **Commandes :** batterie, ANC/transparence, préréglages EQ, gestes tactiles pris en charge et faible latence. Les choix dépendent du modèle ; la batterie dépend des données transmises par l'appareil.
+- **Windows :** découverte dynamique du canal RFCOMM ; authentification par commandes sur MIUI SPP (FD2D), authentification brute sur XiaoAI/SPP standard.
+- **Linux :** découverte Bluetooth et solution existante sur le canal 6 pour Redmi Buds 6 Play. La découverte dynamique des services est actuellement propre à Windows ; la connexion générale à plusieurs modèles n'est pas encore implémentée sous Linux.
+- **Preuves matérielles :** Redmi Buds 6 Play est l'appareil de référence, avec utilisation documentée de la batterie/faible latence et vérifications EQ/gestes datées ci-dessous. Cela ne valide pas chaque modèle ; ANC/transparence et authentification brute restent à confirmer sur appareil réel.
+
+Noms, identifiants, images et capacités viennent du [catalogue](../../assets/device_catalog.json). Reconnaître un modèle ne garantit pas une session fonctionnelle. Les commandes dépendent du catalogue ; leur réussite dépend de la connexion et des réponses de l'appareil. Firmware et variantes régionales peuvent différer.
+
+L'EQ personnalisé est reporté et masqué, y compris son préréglage. Les autres fonctions du catalogue ne créent pas automatiquement des commandes.
+
+Sous Linux, zone de notification et notifications dépendent du bureau. La détection automatique du plein écran exige X11 et ne fonctionne pas sous Wayland. Les validations matérielles et de l'interface sous Linux restent à effectuer.
+
+Ce README décrit les sources actuelles ; les anciens paquets peuvent ne pas inclure ces changements. Détails techniques : [capacités](../device-capabilities.md), [authentification par commandes](../command-auth.md), [authentification brute](../raw-auth.md) (en anglais).
 
 MiBudsClient est un projet communautaire indépendant, sans affiliation à Xiaomi.
 
@@ -44,7 +55,7 @@ MiBudsClient est un projet communautaire indépendant, sans affiliation à Xiaom
 1. Associez et connectez les écouteurs dans les paramètres Bluetooth de l’ordinateur.
 2. Téléchargez un paquet adapté depuis [Releases](https://github.com/CesurPolat/MiBudsClient/releases) ou [exécutez depuis les sources](#exécuter-depuis-les-sources).
 3. Lancez MiBudsClient. Il recherche les appareils connectés du catalogue et tente automatiquement une connexion de contrôle Bluetooth.
-4. Consultez la batterie et choisissez le mode de latence. Ouvrez **Paramètres** pour les gestes, l’EQ, le démarrage et la langue.
+4. Consultez la batterie et les commandes disponibles pour votre modèle. **Paramètres** contient les gestes pris en charge, l'EQ, le contrôle du bruit, le démarrage et la langue.
 
 L’association est gérée par le système ; l’application exige une connexion Bluetooth existante. Une seule instance fonctionne à la fois. Relancer l’application affiche la fenêtre existante. Utilisez la commande de fermeture de la zone de notification pour quitter complètement.
 
@@ -60,11 +71,11 @@ L’association est gérée par le système ; l’application exige une connexio
 
 ### Égaliseur
 
-Ouvrez **Paramètres → Égaliseur** pour lire le profil et les préréglages. Les changements nécessitent un accusé de réception du périphérique puis une relecture de vérification.
+Ouvrez **Paramètres → Égaliseur** pour lire le profil actuel et choisir les préréglages du catalogue de votre modèle. Les changements sont confirmés puis vérifiés par relecture.
 
-L’éditeur personnalisé apparaît uniquement avec des données de bandes valides. Relâcher un curseur envoie un aperçu ; enregistrer mémorise la courbe et réinitialiser demande une courbe plate. Fermez puis rouvrez la section après une erreur ou pour relire les réglages.
+**L'EQ personnalisé est prévu pour une version ultérieure.** L'éditeur de bandes et le préréglage personnalisé restent masqués même s'ils figurent au catalogue.
 
-Le changement de profil a été vérifié sur Redmi Buds 6 Play le **2026-10-27**. L’appareil testé n’a fourni aucune bande personnalisée : aperçu, enregistrement et réinitialisation personnalisés ne sont donc pas validés sur matériel. [Notes techniques EQ](../equalizer.md) (en anglais).
+Le changement de profil a été vérifié sur Redmi Buds 6 Play le **2026-10-27** ; cela ne valide pas les autres modèles. Historique technique : [notes EQ](../equalizer.md) (en anglais).
 
 ### Gestes tactiles
 
@@ -117,7 +128,7 @@ Linux nécessite `bluetoothctl` de BlueZ pour la détection, et PyGObject (`gi`)
 | Délai dépassé | Gardez les écouteurs allumés et proches. Désactivez Bluetooth sur l’ordinateur, attendez 10 secondes et réactivez-le. Si nécessaire, placez les deux écouteurs dans le boîtier, fermez-le 5 secondes, ressortez-les et réessayez. |
 | Batterie indisponible | Lancez la vérification après connexion. Les données absentes sont considérées comme inconnues. |
 | Erreur de geste ou EQ | Fermez puis rouvrez la section pour relire les données. |
-| EQ personnalisé absent | Des bandes valides sont nécessaires ; l’appareil testé n’en a pas fourni. Les préréglages peuvent rester disponibles. |
+| EQ personnalisé absent | Reporté et masqué dans cette version ; les préréglages pris en charge restent disponibles. |
 | Automatique inactif sous Linux | Vérifiez X11 et les outils indiqués. La détection Wayland est indisponible. |
 | Clic sur une notification Linux sans effet | Vérifiez les actions par défaut du serveur ou ouvrez depuis la zone de notification. |
 
@@ -133,7 +144,7 @@ Depuis la racine du dépôt, dans l’environnement de développement :
 python -m unittest discover -s tests
 ```
 
-Les changements de protocole et de constantes exigent aussi des tests avec de vrais Redmi Buds 6 Play. Les tests synthétiques ne prouvent pas la compatibilité. Lisez [AGENTS.md](../../AGENTS.md) avant de modifier le comportement du périphérique ou le packaging.
+Lors des essais de protocole, notez le modèle, le firmware, le système, la méthode de connexion et la fonction. Les tests synthétiques ne prouvent pas la compatibilité matérielle ; les rapports sont des preuves, pas une condition d'activation par modèle. Lisez [AGENTS.md](../../AGENTS.md) avant de modifier le périphérique ou le packaging.
 
 Les traductions sont dans `assets/locales/`. Le [guide de localisation](../localization.md) (en anglais) décrit clés, paramètres et ressources Xiaomi. Mettez `docs/readme/` à jour avec le README anglais lorsque les fonctions ou l’installation changent.
 

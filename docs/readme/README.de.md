@@ -21,7 +21,7 @@ Mit Python und Flet für Windows und Linux entwickelt.
 
 | Funktion | Möglichkeiten |
 | --- | --- |
-| Geräuschkontrolle | ANC- und Transparenzsteuerung wird für laut Katalog unterstützte Geräte angezeigt; Protokollkompatibilität und Hardwareprüfung stehen noch aus. |
+| Geräuschkontrolle | ANC, Transparenz und modellspezifische Stufen anhand des Gerätekatalogs. Die Hardwarekompatibilität aller Modelle ist noch nicht bestätigt. |
 | Akkuüberwachung | Separate Werte für beide Ohrhörer und das Ladecase, Ladeanzeigen und manuelle Aktualisierung. |
 | Niedrige Latenz | Spielmodus aus, ein oder automatisch anhand der aktiven Anwendung. |
 | Klangprofile | EQ-Voreinstellungen des Geräts lesen und ändern. |
@@ -33,9 +33,20 @@ Mit Python und Flet für Windows und Linux entwickelt.
 
 ## Kompatibilität
 
-**Unterstützt werden Redmi Buds 6 Play.** Der Xiaomi/Redmi-Katalog enthält Namen, Bilder und Funktionsdaten weiterer Modelle. Ein Katalogeintrag bedeutet keine Unterstützung ihrer Steuerung.
+**MiBudsClient wird für mehrere Xiaomi- und Redmi-Modelle entwickelt.** Unter Windows versucht die App, erkannte Kataloggeräte zu verbinden, und aktiviert implementierte Funktionen anhand der Funktionsliste und Optionen des Modells. Eine separate Modellfreigabe ist nicht erforderlich.
 
-Windows und Linux verwenden plattformspezifische Bluetooth-Erkennung. Unter Linux hängen Infobereich und Meldungen von der Desktopumgebung ab. Automatische Vollbilderkennung verwendet X11-Werkzeuge und ist unter Wayland nicht verfügbar. Hardware- und Oberflächenprüfungen unter Linux stehen noch aus.
+- **Funktionen:** Akkuanzeige, ANC/Transparenz, EQ-Voreinstellungen, unterstützte Touch-Gesten und niedrige Latenz. Die verfügbaren Optionen hängen vom Modell ab; Akkudaten vom Gerät.
+- **Windows:** dynamische RFCOMM-Kanalsuche; Befehlsauthentifizierung über MIUI SPP (FD2D), rohe Authentifizierung über XiaoAI/Standard-SPP.
+- **Linux:** Bluetooth-Erkennung und der bestehende Kanal-6-Fallback für Redmi Buds 6 Play. Dynamische Dienstsuche ist derzeit Windows-exklusiv; eine allgemeine Verbindung für mehrere Modelle ist unter Linux noch nicht implementiert.
+- **Hardwarebelege:** Redmi Buds 6 Play ist das Referenzgerät mit dokumentierter Akku-/Latenznutzung und den unten datierten EQ-/Gestenprüfungen. ANC/Transparenz, rohe Authentifizierung und andere Modelle sind damit nicht auf Hardware bestätigt.
+
+Modellnamen, Identitäten, Bilder und Funktionsdaten stammen aus dem [Gerätekatalog](../../assets/device_catalog.json). Ein erkannter Name garantiert keine funktionierende Protokollverbindung. Implementierte Funktionen werden ohne Modellfreigabeliste angeboten; erfolgreiche Vorgänge erfordern eine Verbindung und passende Geräteantworten. Firmware und regionale Varianten können abweichen.
+
+Benutzerdefinierter EQ ist auf eine spätere Version verschoben und einschließlich des eigenen Profils ausgeblendet. Weitere Katalogfunktionen erzeugen nicht automatisch Bedienelemente.
+
+Unter Linux hängen Infobereich und Meldungen vom Desktop ab. Automatische Vollbilderkennung benötigt X11 und ist unter Wayland nicht verfügbar. Hardware- und Oberflächenprüfungen unter Linux stehen noch aus.
+
+Diese README beschreibt den aktuellen Quellcode; ältere Pakete können davon abweichen. Technische Hinweise: [Funktionen](../device-capabilities.md), [Befehlsauthentifizierung](../command-auth.md), [rohe Authentifizierung](../raw-auth.md) (Englisch).
 
 MiBudsClient ist ein unabhängiges Community-Projekt ohne Verbindung zu Xiaomi.
 
@@ -44,7 +55,7 @@ MiBudsClient ist ein unabhängiges Community-Projekt ohne Verbindung zu Xiaomi.
 1. Kopple und verbinde die Ohrhörer in den Bluetooth-Einstellungen des Computers.
 2. Lade ein Paket für deine Plattform unter [Releases](https://github.com/CesurPolat/MiBudsClient/releases) oder [starte aus dem Quellcode](#aus-dem-quellcode-starten).
 3. Starte MiBudsClient. Die App sucht verbundene Kataloggeräte und versucht automatisch eine Bluetooth-Steuerverbindung.
-4. Prüfe die Akkukarten und wähle einen Latenzmodus. Unter **Einstellungen** findest du Gesten, EQ, Autostart und Sprache.
+4. Prüfe nach dem Verbinden die Akkukarten und verfügbaren Funktionen deines Modells. **Einstellungen** enthält unterstützte Gesten, EQ, Geräuschkontrolle, Autostart und Sprache.
 
 Die Kopplung übernimmt das Betriebssystem; die App benötigt eine bestehende Bluetooth-Verbindung. Es läuft nur eine Instanz. Erneutes Starten bringt das vorhandene Fenster nach vorn. Zum vollständigen Beenden verwende den Beenden-Befehl im Infobereich.
 
@@ -60,11 +71,11 @@ Mit **Warten, bis die App geschlossen wird** bleibt niedrige Latenz bis zum Ende
 
 ### Equalizer
 
-Öffne **Einstellungen → Equalizer**, um Profil und Voreinstellungen zu lesen. Profiländerungen werden vom Gerät bestätigt und durch erneutes Lesen überprüft.
+Öffne **Einstellungen → Equalizer**, um das aktuelle Profil zu lesen und die im Modellkatalog angebotenen Voreinstellungen zu wählen. Änderungen werden bestätigt und durch erneutes Lesen überprüft.
 
-Der benutzerdefinierte Editor erscheint nur bei gültigen Banddaten. Das Loslassen eines Reglers überträgt eine Vorschau; Speichern sichert die Kurve, Zurücksetzen fordert eine flache Kurve an. Nach Fehlern oder zum erneuten Einlesen schließe und öffne den Abschnitt.
+**Benutzerdefinierter EQ ist für eine spätere Version geplant.** Bandeditor und eigenes Profil bleiben auch dann ausgeblendet, wenn sie im Katalog stehen.
 
-Der Profilwechsel wurde am **2026-10-27** mit Redmi Buds 6 Play bestätigt. Das getestete Gerät lieferte keine eigenen Banddaten. Vorschau, Speichern und Zurücksetzen eigener Kurven sind daher auf Hardware nicht bestätigt. [Technische EQ-Hinweise](../equalizer.md) (Englisch).
+Der Profilwechsel wurde am **2026-10-27** mit Redmi Buds 6 Play bestätigt; dies bestätigt keine anderen Modelle. Frühere Implementierungs- und Prüfhistorie: [EQ-Hinweise](../equalizer.md) (Englisch).
 
 ### Touch-Gesten
 
@@ -117,7 +128,7 @@ Linux benötigt BlueZs `bluetoothctl` zur Erkennung sowie PyGObject (`gi`) mit A
 | Zeitüberschreitung | Ohrhörer eingeschaltet in der Nähe halten. Computer-Bluetooth ausschalten, 10 Sekunden warten und einschalten. Nötigenfalls beide Ohrhörer ins Case legen, den Deckel 5 Sekunden schließen, dann herausnehmen und erneut versuchen. |
 | Akkudaten fehlen | Nach dem Verbinden die Akkuprüfung verwenden. Fehlende Werte gelten als unbekannt. |
 | Gesten- oder EQ-Fehler | Den Abschnitt schließen und erneut öffnen, um Gerätedaten zu laden. |
-| Eigener EQ fehlt | Gültige Banddaten sind erforderlich; das getestete Gerät lieferte keine. Voreinstellungen können trotzdem verfügbar sein. |
+| Benutzerdefinierter EQ fehlt | In dieser Version verschoben und ausgeblendet; unterstützte Voreinstellungen bleiben verfügbar. |
 | Automatik unter Linux ohne Wirkung | X11-Sitzung und die genannten Werkzeuge prüfen. Wayland-Erkennung ist nicht verfügbar. |
 | Klick auf Linux-Meldung ohne Wirkung | Standardaktionen prüfen oder das Fenster über den Infobereich öffnen. |
 
@@ -133,7 +144,7 @@ Tests in der Entwicklungsumgebung vom Repository-Stamm aus starten:
 python -m unittest discover -s tests
 ```
 
-Protokoll- und Konstantenänderungen müssen auch mit echten Redmi Buds 6 Play getestet werden. Synthetische Tests belegen keine Gerätekompatibilität. Lies vor Änderungen an Geräteverhalten oder Paketierung [AGENTS.md](../../AGENTS.md).
+Dokumentiere bei Protokollprüfungen Modell, Firmware, Betriebssystem, Verbindungsmethode und geprüfte Funktion. Synthetische Tests belegen keine Hardwarekompatibilität; Hardwareberichte sind Belege, keine Freigabebedingung je Modell. Lies vor Änderungen [AGENTS.md](../../AGENTS.md).
 
 Übersetzungen liegen in `assets/locales/`. Der [Lokalisierungsleitfaden](../localization.md) (Englisch) erklärt Schlüssel, Platzhalter und Xiaomi-Quellen. Aktualisiere `docs/readme/` bei Funktions- oder Installationsänderungen zusammen mit der englischen README.
 

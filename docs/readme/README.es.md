@@ -21,7 +21,7 @@ Creado con Python y Flet para Windows y Linux.
 
 | Función | Qué ofrece |
 | --- | --- |
-| Control de ruido | Los controles de ANC y transparencia aparecen para dispositivos compatibles según el catálogo; faltan la compatibilidad del protocolo y la validación con hardware. |
+| Control de ruido | ANC, transparencia y niveles del modelo según el catálogo. La compatibilidad de hardware entre modelos aún no está verificada. |
 | Batería | Niveles separados de ambos auriculares y del estuche, indicadores de carga y actualización manual. |
 | Baja latencia | Desactivar, activar o cambiar automáticamente el modo de juego según la aplicación activa. |
 | Perfiles de sonido | Leer y cambiar los ajustes de EQ que ofrece el dispositivo. |
@@ -33,9 +33,20 @@ Creado con Python y Flet para Windows y Linux.
 
 ## Compatibilidad
 
-**El dispositivo compatible es Redmi Buds 6 Play.** El catálogo Xiaomi/Redmi incluye nombres, imágenes y capacidades de otros modelos. Una entrada en el catálogo no demuestra compatibilidad con su control.
+**MiBudsClient se desarrolla para varios modelos Xiaomi y Redmi.** En Windows intenta conectar los dispositivos reconocidos del catálogo y activa los controles implementados según las funciones y opciones de cada modelo. No hace falta una lista independiente de modelos aprobados.
 
-Windows y Linux usan detección Bluetooth específica para cada plataforma. En Linux, la bandeja y las notificaciones dependen del escritorio. La detección automática de pantalla completa usa X11 y no está disponible en Wayland. La validación de hardware e interfaz en Linux sigue pendiente.
+- **Controles:** batería, ANC/transparencia, perfiles EQ, gestos táctiles compatibles y baja latencia. Las opciones dependen del modelo y la batería de los datos que envíe el dispositivo.
+- **Windows:** descubrimiento dinámico del canal RFCOMM; autenticación por comandos en MIUI SPP (FD2D) y autenticación sin trama RCSP en XiaoAI/SPP estándar.
+- **Linux:** detección Bluetooth y conexión alternativa existente por el canal 6 para Redmi Buds 6 Play. El descubrimiento dinámico de servicios solo está implementado en Windows; Linux aún no tiene conectividad general para varios modelos.
+- **Evidencia de hardware:** Redmi Buds 6 Play es el dispositivo de referencia, con uso registrado de batería/baja latencia y las comprobaciones EQ/gestos fechadas abajo. Esto no confirma todos los modelos; ANC/transparencia y autenticación sin trama RCSP aún necesitan pruebas reales.
+
+Los nombres, identificadores, imágenes y capacidades proceden del [catálogo](../../assets/device_catalog.json). Reconocer un modelo no garantiza una sesión de protocolo funcional. Los controles se ofrecen según el catálogo; completar una operación depende de la conexión y las respuestas del dispositivo. El firmware y las variantes regionales pueden diferir.
+
+El EQ personalizado se pospone y permanece oculto, incluido su perfil. Otras funciones del catálogo no crean controles automáticamente.
+
+En Linux, bandeja y notificaciones dependen del escritorio. La detección automática de pantalla completa necesita X11 y no está disponible en Wayland. La validación de hardware e interfaz en Linux sigue pendiente.
+
+Este README describe el código actual; los paquetes antiguos pueden no incluir estos cambios. Detalles técnicos: [capacidades](../device-capabilities.md), [autenticación por comandos](../command-auth.md), [autenticación sin trama RCSP](../raw-auth.md) (en inglés).
 
 MiBudsClient es un proyecto comunitario independiente sin afiliación con Xiaomi.
 
@@ -44,7 +55,7 @@ MiBudsClient es un proyecto comunitario independiente sin afiliación con Xiaomi
 1. Empareja y conecta los auriculares en los ajustes Bluetooth del ordenador.
 2. Descarga un paquete para tu plataforma desde [Releases](https://github.com/CesurPolat/MiBudsClient/releases) o [ejecuta desde el código fuente](#ejecutar-desde-el-código-fuente).
 3. Abre MiBudsClient. Busca dispositivos conectados del catálogo e intenta establecer automáticamente una conexión de control Bluetooth.
-4. Comprueba las tarjetas de batería y elige el modo de latencia. Abre **Ajustes** para gestos, EQ, inicio e idioma.
+4. Comprueba la batería y los controles disponibles para tu modelo. Abre **Ajustes** para gestos compatibles, EQ, control de ruido, inicio e idioma.
 
 El sistema operativo gestiona el emparejamiento. La aplicación necesita una conexión Bluetooth existente. Solo se ejecuta una instancia; abrirla de nuevo muestra la ventana existente. Usa la opción de salir de la bandeja para cerrarla por completo.
 
@@ -60,11 +71,11 @@ El sistema operativo gestiona el emparejamiento. La aplicación necesita una con
 
 ### Ecualizador
 
-Abre **Ajustes → Ecualizador** para leer el perfil y los ajustes disponibles. Los cambios requieren confirmación del dispositivo y una nueva lectura de verificación.
+Abre **Ajustes → Ecualizador** para leer el perfil actual y elegir los perfiles del catálogo de tu modelo. Los cambios se confirman y se verifican con una nueva lectura.
 
-El editor personalizado aparece solo con datos de bandas válidos. Al soltar un deslizador se envía una vista previa; guardar almacena la curva y restablecer solicita una curva plana. Cierra y vuelve a abrir la sección tras un error o para recargar los datos.
+**El EQ personalizado se reserva para una versión futura.** El editor de bandas y el perfil personalizado permanecen ocultos aunque figuren en el catálogo.
 
-El cambio de perfiles se verificó con Redmi Buds 6 Play el **2026-10-27**. El dispositivo probado no devolvió bandas personalizadas; la vista previa, el guardado y el restablecimiento personalizados no están verificados en hardware. [Notas técnicas de EQ](../equalizer.md) (en inglés).
+El cambio de perfiles se verificó con Redmi Buds 6 Play el **2026-10-27**; no confirma otros modelos. Historial técnico: [notas de EQ](../equalizer.md) (en inglés).
 
 ### Gestos táctiles
 
@@ -117,7 +128,7 @@ Linux requiere `bluetoothctl` de BlueZ para detectar dispositivos y PyGObject (`
 | Tiempo de espera agotado | Mantén los auriculares encendidos y cerca. Desactiva Bluetooth del ordenador, espera 10 segundos y actívalo. Si hace falta, coloca ambos en el estuche, cierra la tapa 5 segundos, sácalos y vuelve a intentar. |
 | Falta la batería | Usa la comprobación de batería tras conectar. Los datos ausentes se consideran desconocidos. |
 | Error de gestos o EQ | Cierra y abre la sección para leer otra vez el estado del dispositivo. |
-| No aparece EQ personalizado | Requiere bandas válidas; el dispositivo probado no las proporcionó. Los perfiles pueden seguir disponibles. |
+| No aparece EQ personalizado | Está pospuesto y oculto en esta versión; los perfiles compatibles siguen disponibles. |
 | El modo automático no funciona en Linux | Comprueba X11 y las herramientas indicadas. No hay detección en Wayland. |
 | Pulsar la notificación en Linux no funciona | Comprueba las acciones predeterminadas del servidor o abre desde la bandeja. |
 
@@ -133,7 +144,7 @@ Ejecuta desde la raíz del repositorio en tu entorno de desarrollo:
 python -m unittest discover -s tests
 ```
 
-Los cambios de protocolo y constantes también deben probarse con Redmi Buds 6 Play reales. Las pruebas sintéticas no demuestran compatibilidad. Lee [AGENTS.md](../../AGENTS.md) antes de cambiar el comportamiento del dispositivo o el empaquetado.
+Al probar cambios de protocolo, registra modelo, firmware, sistema operativo, método de conexión y función. Las pruebas sintéticas no demuestran compatibilidad real; los informes de hardware son evidencia, no un requisito de activación por modelo. Lee [AGENTS.md](../../AGENTS.md) antes de modificar el dispositivo o empaquetado.
 
 Las traducciones están en `assets/locales/`. Consulta la [guía de localización](../localization.md) (en inglés) sobre claves, parámetros y recursos Xiaomi. Actualiza `docs/readme/` junto con la versión inglesa al cambiar funciones o instalación.
 

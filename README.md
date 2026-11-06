@@ -21,7 +21,7 @@ Built with Python and Flet for Windows and Linux.
 
 | Feature | What it offers |
 | --- | --- |
-| Noise control | ANC and transparency controls appear for catalog-supported devices; protocol compatibility and hardware validation are still pending. |
+| Noise control | ANC, transparency and model-specific level options, enabled from the device catalog. Hardware compatibility across models remains unverified. |
 | Battery monitoring | Separate readings for both earbuds and the charging case, charging indicators, and manual refresh. |
 | Low latency | Switch Game Mode off, on, or automatically based on the active app. |
 | Sound profiles | Read and change the EQ presets offered by your earbuds. |
@@ -33,18 +33,30 @@ Built with Python and Flet for Windows and Linux.
 
 ## Compatibility
 
-**Redmi Buds 6 Play is the supported device.** The bundled Xiaomi/Redmi catalog provides model names, images, and capability metadata for other products; a catalog entry does not establish control support for that model.
+**MiBudsClient is built for multiple Xiaomi and Redmi models.** On Windows, it attempts a control connection to recognized catalog devices and enables implemented controls from each model's feature list and options. A separate model approval list is not required.
 
-Windows and Linux have platform-specific Bluetooth discovery. Linux tray and notification behavior depends on the desktop environment. Automatic fullscreen detection uses X11 tools and is unavailable in Wayland sessions. Linux hardware and UI validation remains outstanding.
+| Area | Current scope |
+| --- | --- |
+| Model recognition | Names, VID/PID identities, images and capability data come from the [device catalog](assets/device_catalog.json). Recognition alone does not guarantee a working protocol session. |
+| Implemented controls | Battery monitoring, ANC/transparency, EQ presets, supported touch gestures and low latency. Controls and choices depend on the model; battery readings depend on what the device reports. |
+| Windows connection | Discovers the RFCOMM channel from the device's Bluetooth service. Supports command authentication on MIUI SPP (FD2D) and raw authentication on XiaoAI/standard SPP. |
+| Linux connection | Bluetooth discovery and the existing Redmi Buds 6 Play channel-6 fallback are available. Dynamic RFCOMM service discovery is currently Windows-only; general multi-model connectivity is not yet implemented on Linux. |
+| Hardware evidence | Redmi Buds 6 Play is the project's hardware reference, with recorded battery/low-latency use and dated EQ/gesture checks below. This does not establish every feature on every model; ANC/transparency and raw authentication still need hardware confirmation. |
+
+Custom EQ is deferred and hidden, including the custom preset. Other catalog features do not become app controls automatically. Feature availability comes from the catalog; connection success and the device's replies determine whether an operation can complete. Firmware and regional variants can differ.
+
+Linux tray and notification behavior depends on the desktop environment. Automatic fullscreen detection uses X11 tools and is unavailable in Wayland sessions. Linux hardware and UI validation remains outstanding.
+
+This README describes the current source; older packaged releases may not include these changes. See [device capabilities](docs/device-capabilities.md), [command authentication](docs/command-auth.md) and [raw authentication](docs/raw-auth.md) for technical details.
 
 MiBudsClient is an independent community project and is not affiliated with Xiaomi.
 
 ## Getting started
 
-1. Pair your **Redmi Buds 6 Play** and connect them in your computer's Bluetooth settings.
+1. Pair your Xiaomi or Redmi earbuds and connect them in your computer's Bluetooth settings.
 2. Download a packaged build for your platform from [Releases](https://github.com/CesurPolat/MiBudsClient/releases), or [run from source](#run-from-source).
 3. Launch MiBudsClient. It looks for connected catalog devices and attempts a Bluetooth control connection automatically.
-4. Once connected, check the battery cards and choose a low-latency mode. Open **Settings** for gestures, EQ, startup, and language preferences.
+4. Once connected, check the battery cards and the controls available for your model. Open **Settings** for supported gestures, EQ, noise control, startup, and language preferences.
 
 Pairing is handled by your operating system. MiBudsClient needs an existing Bluetooth connection before it can communicate with the earbuds.
 
@@ -60,13 +72,13 @@ Only one instance runs at a time. Launching the app again brings the existing wi
 
 Enable **Wait until app closes** to keep low latency active until the matched app exits. App rules are stored separately for Windows and Linux.
 
-### Sound profiles and custom EQ
+### Sound profiles
 
-Open **Settings → Equalizer** to read the current profile and available presets. Profile changes are acknowledged by the earbuds and checked with a fresh read.
+Open **Settings → Equalizer** to read the current profile and select the presets listed for your model. Profile changes are acknowledged by the earbuds and checked with a fresh read.
 
-The custom editor appears only when the earbuds return valid custom-band data. When available, releasing a slider previews the draft; **Save** stores it and **Reset** requests a flat curve. Close and reopen the section to recover from a failed operation or reload device settings.
+**Custom EQ is planned for a later version.** The band editor and custom preset are currently hidden, even if the catalog lists them.
 
-Preset switching was verified on Redmi Buds 6 Play on **2026-10-27**. The tested device returned no custom-band data, so custom EQ preview, save, and reset remain unverified on hardware. See [EQ behavior and validation notes](docs/equalizer.md).
+Preset switching was verified on Redmi Buds 6 Play on **2026-10-27**; this is not hardware confirmation for other models. See [EQ technical notes](docs/equalizer.md) for earlier implementation and validation details.
 
 ### Touch gestures
 
@@ -121,7 +133,7 @@ On Linux, Bluetooth discovery requires BlueZ's `bluetoothctl`. Tray integration 
 | Connection times out | Keep the earbuds nearby and powered on. Toggle the computer's Bluetooth off, wait 10 seconds, and turn it back on. If needed, put both earbuds in the case, close it for 5 seconds, then take them out and retry. |
 | Battery reading is unavailable | Use **Check Battery** after connecting. Missing readings are treated as unknown. |
 | Gesture or EQ request fails | Close and reopen the relevant settings section to read the device state again. |
-| Custom EQ is missing | The editor requires valid custom-band data from the earbuds; the tested device did not provide it. Presets can still be available. |
+| Custom EQ is missing | Custom EQ is deferred and hidden in this version. Model-supported presets remain available. |
 | Auto mode does not switch on Linux | Check that you are using X11 and the fullscreen-detection tools above are installed. Wayland detection is unavailable. |
 | Clicking a Linux notification does nothing | Check whether your desktop notification server supports default actions. Restore the window through the tray. |
 
@@ -150,7 +162,7 @@ Run the automated suite from the repository root in your development environment
 python -m unittest discover -s tests
 ```
 
-Protocol and constant changes also require testing with actual Redmi Buds 6 Play hardware. Synthetic packet tests do not establish device compatibility. Read [AGENTS.md](AGENTS.md) before changing device behavior or packaging.
+When testing protocol changes, record the exact model, firmware, OS, connection method and feature exercised. Synthetic packet tests do not establish hardware compatibility; hardware reports are evidence, not a per-model activation gate. Read [AGENTS.md](AGENTS.md) before changing device behavior or packaging.
 
 README translations live in `docs/readme/`. Update them alongside the English README when features or installation instructions change.
 

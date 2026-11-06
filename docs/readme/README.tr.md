@@ -21,7 +21,7 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 
 | Özellik | Neler sunar? |
 | --- | --- |
-| Gürültü kontrolü | Katalogda desteklenen cihazlar için ANC ve şeffaflık kontrolleri gösterilir; protokol uyumluluğu ve donanım doğrulaması henüz tamamlanmadı. |
+| Gürültü kontrolü | ANC, şeffaflık ve modele ait seviye seçenekleri cihaz kataloğuna göre açılır. Modeller genelinde donanım uyumluluğu henüz doğrulanmadı. |
 | Pil takibi | Sol ve sağ kulaklık ile kutu için ayrı seviyeler, şarj göstergeleri ve elle yenileme. |
 | Düşük gecikme | Oyun modunu kapatma, açma veya etkin uygulamaya göre otomatik değiştirme. |
 | Ses profilleri | Kulaklıkların sunduğu EQ ön ayarlarını okuma ve değiştirme. |
@@ -33,9 +33,21 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 
 ## Uyumluluk
 
-**Desteklenen cihaz Redmi Buds 6 Play'dir.** Xiaomi/Redmi kataloğunda başka modellerin adları, görselleri ve yetenek bilgileri bulunur. Katalogda yer almak, o modelin kontrol edilebildiği anlamına gelmez.
+**MiBudsClient birden fazla Xiaomi ve Redmi modeli için geliştiriliyor.** Windows'ta tanınan katalog cihazlarına kontrol bağlantısı kurmayı dener; uygulanmış kontrolleri modelin özellik listesine ve seçeneklerine göre açar. Ayrı bir model onay listesine ihtiyaç yoktur.
 
-Windows ve Linux, platforma özgü Bluetooth keşfi kullanır. Linux'ta tepsi ve bildirim davranışı masaüstüne bağlıdır. Otomatik tam ekran algılama X11 araçlarını kullanır ve Wayland'de kullanılamaz. Linux donanım ve arayüz doğrulaması henüz tamamlanmadı.
+| Alan | Mevcut kapsam |
+| --- | --- |
+| Model tanıma | Adlar, VID/PID kimlikleri, görseller ve yetenekler [cihaz kataloğundan](../../assets/device_catalog.json) gelir. Modelin tanınması tek başına çalışan bir protokol oturumunu garanti etmez. |
+| Uygulanmış kontroller | Pil, ANC/şeffaflık, EQ ön ayarları, desteklenen dokunma hareketleri ve düşük gecikme. Kontroller ve seçenekler modele; pil verisi cihazın bildirdiği değerlere bağlıdır. |
+| Windows bağlantısı | Cihazın Bluetooth servisinden RFCOMM kanalını bulur. MIUI SPP (FD2D) için komutlu, XiaoAI/standart SPP için ham doğrulamayı destekler. |
+| Linux bağlantısı | Bluetooth keşfi ve Redmi Buds 6 Play'in mevcut kanal 6 yedeği vardır. Dinamik RFCOMM servis keşfi şu anda yalnız Windows'tadır; Linux'ta genel çok modelli bağlantı henüz uygulanmadı. |
+| Donanım kanıtı | Redmi Buds 6 Play, projenin donanım referansıdır; pil/düşük gecikme kullanımı ve aşağıdaki tarihli EQ/jest kontrolleri kaydedilmiştir. Bu, her modelin her özelliğini doğrulamaz; ANC/şeffaflık ve ham doğrulama için gerçek cihaz denemesi hâlâ gerekir. |
+
+Custom EQ ileri bir sürüme bırakıldı; özel profil dahil gizlidir. Katalogdaki diğer özellikler kendiliğinden uygulama kontrolüne dönüşmez. Özelliklerin görünürlüğünü katalog, işlemin tamamlanmasını bağlantı ve cihaz yanıtları belirler. Firmware ve bölgesel sürümler farklı davranabilir.
+
+Linux'ta tepsi ve bildirim davranışı masaüstüne bağlıdır. Otomatik tam ekran algılama X11 araçlarını kullanır ve Wayland'de kullanılamaz. Linux donanım ve arayüz doğrulaması henüz tamamlanmadı.
+
+Bu README güncel kaynak kodu anlatır; eski paketlenmiş sürümler bu değişiklikleri içermeyebilir. Teknik ayrıntılar: [cihaz yetenekleri](../device-capabilities.md), [komutlu doğrulama](../command-auth.md), [ham doğrulama](../raw-auth.md) (İngilizce).
 
 MiBudsClient, Xiaomi ile bağlantısı olmayan bağımsız bir topluluk projesidir.
 
@@ -44,7 +56,7 @@ MiBudsClient, Xiaomi ile bağlantısı olmayan bağımsız bir topluluk projesid
 1. Kulaklıklarını bilgisayarının Bluetooth ayarlarından eşleştir ve bağla.
 2. [Sürümler](https://github.com/CesurPolat/MiBudsClient/releases) sayfasından platformuna uygun paketi indir veya [kaynak koddan çalıştır](#kaynak-koddan-çalıştırma).
 3. Uygulamayı aç. Bağlı katalog cihazlarını arar ve Bluetooth kontrol bağlantısını otomatik kurmayı dener.
-4. Pil kartlarını kontrol et ve düşük gecikme modunu seç. Jestler, EQ, başlangıç ve dil tercihleri için **Ayarlar** bölümünü aç.
+4. Bağlanınca pil kartlarını ve modeline sunulan kontrolleri incele. Desteklenen jestler, EQ, gürültü kontrolü, başlangıç ve dil tercihleri için **Ayarlar** bölümünü aç.
 
 Eşleştirmeyi işletim sistemi yapar; uygulama mevcut bir Bluetooth bağlantısı gerektirir. Aynı anda tek örnek çalışır. Tekrar açmak mevcut pencereyi öne getirir. Tamamen kapatmak için tepsideki çıkış komutunu kullan.
 
@@ -60,11 +72,11 @@ Eşleştirmeyi işletim sistemi yapar; uygulama mevcut bir Bluetooth bağlantıs
 
 ### Ekolayzır
 
-**Ayarlar → Ekolayzır** bölümünü açarak profili ve ön ayarları oku. Profil değişiklikleri kulaklık onayı ve yeniden okumayla doğrulanır.
+**Ayarlar → Ekolayzır** bölümünde mevcut profili oku ve modelin katalog kaydındaki ön ayarlardan seçim yap. Profil değişiklikleri kulaklık onayı ve yeniden okumayla doğrulanır.
 
-Özel düzenleyici yalnızca geçerli bant verisi gelirse görünür. Kaydırıcıyı bırakmak taslağı önizler, kaydetme kalıcılaştırır, sıfırlama düz eğri ister. Hata sonrası veya veriyi yenilemek için bölümü kapatıp aç.
+**Custom EQ sonraki bir sürüm için planlanıyor.** Katalogda bulunsa bile bant düzenleyicisi ve özel profil şu anda gizlidir.
 
-Ön ayar değiştirme **2026-10-27** tarihinde doğrulandı. Test edilen cihaz özel bant verisi döndürmedi; özel EQ önizleme, kaydetme ve sıfırlama donanımda doğrulanmadı. [EQ teknik notları](../equalizer.md) (İngilizce).
+Ön ayar değiştirme Redmi Buds 6 Play üzerinde **2026-10-27** tarihinde doğrulandı; bu, diğer modeller için donanım doğrulaması değildir. Önceki uygulama ve doğrulama ayrıntıları için [EQ teknik notlarına](../equalizer.md) (İngilizce) bak.
 
 ### Dokunmatik jestler
 
@@ -117,7 +129,7 @@ Linux'ta keşif için BlueZ'nin `bluetoothctl` aracı; tepsi için PyGObject (`g
 | Bağlantı zaman aşımı | Kulaklıkları yakında ve açık tut. Bilgisayarın Bluetooth'unu kapat, 10 saniye bekle ve aç. Gerekirse iki kulaklığı kutuya koyup kapağı 5 saniye kapat; ardından çıkarıp yeniden dene. |
 | Pil seviyesi yok | Bağlandıktan sonra pil kontrolünü kullan. Eksik veriler bilinmiyor sayılır. |
 | Jest veya EQ hatası | İlgili bölümü kapatıp açarak cihaz verisini yeniden oku. |
-| Özel EQ görünmüyor | Geçerli bant verisi gerekir; test edilen cihaz bunu sağlamadı. Ön ayarlar yine kullanılabilir. |
+| Özel EQ görünmüyor | Custom EQ bu sürümde ertelendi ve gizlendi. Modelin desteklediği ön ayarlar kullanılabilir. |
 | Linux otomatik modu çalışmıyor | X11 oturumunu ve yukarıdaki araçları kontrol et. Wayland algılama kullanılamaz. |
 | Linux bildirimine tıklamak işe yaramıyor | Sunucunun varsayılan eylem desteğini kontrol et; pencereyi tepsiden aç. |
 
@@ -133,7 +145,7 @@ Geliştirme ortamında depo kökünden çalıştır:
 python -m unittest discover -s tests
 ```
 
-Protokol ve sabit değişiklikleri gerçek Redmi Buds 6 Play ile de test edilmelidir. Sentetik testler cihaz uyumluluğunu kanıtlamaz. Cihaz davranışını veya paketlemeyi değiştirmeden önce [AGENTS.md](../../AGENTS.md) dosyasını oku.
+Protokol değişikliklerini denerken tam modeli, firmware sürümünü, işletim sistemini, bağlantı yöntemini ve denenen özelliği kaydet. Sentetik testler donanım uyumluluğunu kanıtlamaz; donanım raporları kanıttır, model bazında özellik açma şartı değildir. Cihaz davranışını veya paketlemeyi değiştirmeden önce [AGENTS.md](../../AGENTS.md) dosyasını oku.
 
 Arayüz çevirileri `assets/locales/` altındadır. Anahtarlar, yer tutucular ve Xiaomi kaynakları için [yerelleştirme rehberine](../localization.md) (İngilizce) bak. `docs/readme/` çevirilerini özellik veya kurulum değişikliklerinde İngilizce README ile birlikte güncelle.
 
