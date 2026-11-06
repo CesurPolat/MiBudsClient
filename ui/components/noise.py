@@ -36,11 +36,11 @@ class NoiseSettings:
                             text_align=ft.TextAlign.CENTER),
                 ], spacing=4, tight=True, alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                height=76, expand=True, disabled=True, tooltip=t("noise.mode_" + str(mode)),
+                height=76, expand=True, disabled=True,
                 on_click=lambda _, value=mode: self._choose_mode(value))
         self.quick_mode = ft.Row(list(self.quick_mode_buttons.values()), spacing=6, disabled=True)
         self.quick_level = ft.Slider(
-            min=0, max=1, value=0, height=40, disabled=True, tooltip=t("noise.level"),
+            min=0, max=1, value=0, height=40, disabled=True,
             active_color="#1976D2", inactive_color="#343A46", thumb_color="#DCEBFF",
             overlay_color="#224FC3F7", year_2023=True,
             padding=ft.Padding.symmetric(horizontal=6),
@@ -48,14 +48,6 @@ class NoiseSettings:
             on_change_end=self._select_quick_level)
         self.quick_level_label = ft.Text(size=11, color=COLOR_DISABLED,
                                          text_align=ft.TextAlign.CENTER)
-        self._drag_tip_text = ft.Text(size=11, color=COLOR_TEXT_PRIMARY)
-        self._drag_tip = ft.Container(
-            content=self._drag_tip_text, top=-18, visible=False, ignore_interactions=True,
-            bgcolor="#23364C", border_radius=6,
-            padding=ft.Padding.symmetric(horizontal=8, vertical=4))
-        self._slider_surface = ft.Stack([self.quick_level, self._drag_tip],
-                                        alignment=ft.Alignment.TOP_CENTER,
-                                        clip_behavior=ft.ClipBehavior.NONE)
         self.special_level_buttons = {}
         self._special_progress = {}
         for value in (3, 4):
@@ -73,7 +65,7 @@ class NoiseSettings:
         self._level_progress = ft.ProgressBar(height=2, color="#4FC3F7", bgcolor="transparent",
                                               opacity=0, semantics_label=t("noise.working"))
         self.quick_level_controls = ft.Container(
-            content=ft.Column([self._slider_surface, self._level_progress, self.quick_level_label],
+            content=ft.Column([self.quick_level, self._level_progress, self.quick_level_label],
                               spacing=0, tight=True,
                               horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
             visible=False, padding=ft.Padding.only(top=4),
@@ -157,8 +149,7 @@ class NoiseSettings:
         position, level = selection
         self._preview = (self._state.mode, position, level)
         text = self._level_text(self._state.mode, level)
-        self.quick_level_label.value = self.quick_level.tooltip = self._drag_tip_text.value = text
-        self._drag_tip.visible = True
+        self.quick_level_label.value = text
         # Flet publishes this event's control changes; no device write on drag.
 
     def _select_quick_level(self, event):
@@ -248,8 +239,7 @@ class NoiseSettings:
         self.quick_level_controls.opacity = 1 if mode in (1, 2) and level in levels else .35
         text = (t("noise.mode_0") if mode == 0 else self._level_text(mode, display_level)
                 if display_level is not None else t("noise.level"))
-        self.quick_level_label.value = self.quick_level.tooltip = self._drag_tip_text.value = text
-        self._drag_tip.visible = preview is not None and not self.quick_level.disabled
+        self.quick_level_label.value = text
         for value, button in self.special_level_buttons.items():
             selected = level == value and value in special_levels
             pending = self._busy and self._pending.get("mode") == 1 and self._pending.get("level") == value

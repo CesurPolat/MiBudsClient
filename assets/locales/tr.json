@@ -11,7 +11,7 @@
   "identity.title": "Cihaz Bilgilerini Sorgula (Ham Hex)",
   "identity.not_queried": "Sorgulanmadı",
   "identity.reading": "Cihaz kimliği okunuyor...",
-  "battery.check": "Pili Sorgula",
+  "battery.check": "Pili kontrol et",
   "battery.left": "Sol",
   "battery.right": "Sağ",
   "battery.case": "Kutu",
