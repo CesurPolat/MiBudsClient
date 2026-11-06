@@ -27,10 +27,12 @@ class DeviceStatusCard(ft.Container):
         # the image placeholder is shown so it cannot grow the home layout.
         self._device_name_slot = ft.Container(
             content=self.device_name, height=20, alignment=ft.Alignment.CENTER)
+        self._product_spacer = ft.Container(expand=True, visible=False)
         self._battery_spacer = ft.Container(expand=True, visible=False)
         super().__init__(
             content=ft.Column(
                 controls=[
+                    self._product_spacer,
                     self.device_image,
                     self._device_name_slot,
                     self.status_row,
@@ -48,6 +50,7 @@ class DeviceStatusCard(ft.Container):
         )
 
     def set_wide_layout(self, wide: bool) -> None:
+        self._product_spacer.visible = wide
         self._battery_spacer.visible = wide
         self.content.tight = not wide
         self.padding = ft.Padding.only(left=8, right=8, top=6, bottom=0 if wide else 6)

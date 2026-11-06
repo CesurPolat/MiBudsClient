@@ -42,12 +42,15 @@ async def main(page: ft.Page):
     page.rtl = is_rtl()
 
     ui_lock = threading.RLock()
+    window_mgr = None
 
     def update_ui():
         with ui_lock:
             refresh_translations(page.controls)
             refresh_translations(page.overlay)
             page.update()
+            if window_mgr is not None:
+                window_mgr.request_content_fit()
 
     debug_console = DebugConsoleManager(publish=page.pubsub.send_all)
     debug_console.install()
@@ -192,7 +195,9 @@ async def main(page: ft.Page):
         if layout.set_viewport_width(page.width):
             update_ui()
     page.on_resize = on_page_resize
-    page.add(layout)
+    content_measurement = ft.Screenshot(content=layout)
+    page.add(content_measurement)
+    window_mgr.set_content_measurement(content_measurement)
     guard_ui_callbacks(page.controls, reports.capture, ui_lock=ui_lock)
 
     message_handler = AppMessageHandler(

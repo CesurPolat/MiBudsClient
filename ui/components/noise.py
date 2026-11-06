@@ -58,6 +58,8 @@ class NoiseSettings:
         self._header_icon = ft.Icon(ft.Icons.HEADPHONES, size=20, color=COLOR_TEXT_PRIMARY)
         self._read_progress = ft.ProgressRing(width=20, height=20, stroke_width=2, visible=False,
                                               color="#9BC7FF", semantics_label=t("noise.working"))
+        self._quick_body = ft.Column([self.quick_mode], spacing=8, tight=True,
+                                     horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.quick_controls = ft.Column([
             ft.ListTile(
                 dense=True, min_height=44, content_padding=ft.Padding.symmetric(horizontal=8),
@@ -66,11 +68,9 @@ class NoiseSettings:
                     bgcolor="blue_700", border_radius=ICON_BORDER_RADIUS, width=32, height=32,
                     alignment=ft.Alignment.CENTER),
                 title=ft.Text(t("noise.title"), size=14, color=COLOR_TEXT_PRIMARY, weight="medium")),
-            ft.Container(content=ft.Column([
-                self.quick_mode, self.quick_level_controls, self.quick_status, self.retry_button,
-            ], spacing=8, horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
+            ft.Container(content=self._quick_body,
                 padding=ft.Padding.only(left=8, right=8, bottom=6)),
-        ], spacing=0, visible=False, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
+        ], spacing=0, tight=True, visible=False, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
 
     def set_connection(self, connected, backend_enabled=False):
         if (self._connected, self._backend_enabled) == (connected, backend_enabled):
@@ -182,3 +182,7 @@ class NoiseSettings:
         self.quick_status.visible = bool(self.quick_status.value)
         self.retry_button.visible = bool(self._error) and self._connected and self._backend_enabled
         self.retry_button.disabled = self._busy
+        self._quick_body.controls = [self.quick_mode] + [
+            control for control in (self.quick_level_controls, self.quick_status, self.retry_button)
+            if control.visible
+        ]

@@ -92,6 +92,7 @@ class AppMessageHandler:
         refresh_translations(self._page.controls)
         refresh_translations(self._page.overlay)
         self._page.update()
+        self._window_manager.request_content_fit()
 
     async def handle_on_ui_loop(self, message) -> None:
         """Apply PubSub messages on Flet's loop alongside native UI events.

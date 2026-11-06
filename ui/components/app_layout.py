@@ -88,8 +88,7 @@ class AppLayout(ft.Column):
         self._settings_card.connection_card.expand = wide
         self._settings_card.connection_panel.height = None if wide else HOME_CONTROLS_HEIGHT - 12
         self._connected_controls.expand = wide
-        self._connected_controls.alignment = (
-            ft.MainAxisAlignment.SPACE_BETWEEN if wide else ft.MainAxisAlignment.START)
+        self._connected_controls.alignment = ft.MainAxisAlignment.START
         if wide:
             self.home_content.content = ft.Row(
                 [device, controls], spacing=8, intrinsic_height=True,
