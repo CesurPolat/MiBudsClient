@@ -44,12 +44,13 @@ class LatencyController:
         self._publish = publish
         self._get_controller = get_controller
         self._device_capabilities = None
+        self._read_session = None
         self._get_tray = get_tray
         self._on_rules_change = on_rules_change
         self._on_ui_update = on_ui_update
         self.state = {
             "selected_mode": get_low_latency_mode(),
-            "effective_low_latency": False,
+            "effective_low_latency": None,
             "latency_hold_app_id": "",
             "hold_watcher_running": False,
             "hold_until_app_close_enabled": get_low_latency_hold_until_app_close(),
@@ -66,13 +67,43 @@ class LatencyController:
             return
         self._device_capabilities = capabilities
         self.clear_latency_hold()
-        self.state["effective_low_latency"] = False
+        self.state["effective_low_latency"] = None
         self._last_error = None
         self._publish_latency("device")
+        self.refresh_device_state()
+
+    def refresh_device_state(self) -> None:
+        """Read once per ready session/capability change without blocking the UI."""
+        controller = self._get_controller()
+        if (controller is None or not controller.session_ready
+                or not controller.capabilities.supports("latency")):
+            return
+        session = controller.gesture_session
+        key = (controller, session, controller.capabilities)
+        if key == self._read_session:
+            return
+        self._read_session = key
+
+        def read():
+            try:
+                controller.request_latency_state(session=session)
+            except (OSError, ValueError):
+                pass  # An unreadable config remains unknown, never assumed off.
+            if (not self._stopped.is_set() and controller is self._get_controller()
+                    and session == controller.gesture_session):
+                self._publish_latency("device_read")
+
+        threading.Thread(target=read, daemon=True).start()
+
+    def _sync_device_state(self):
+        controller = self._get_controller()
+        self.state["effective_low_latency"] = (
+            controller.latency_state if controller is not None else None)
 
     def get_display_state(self) -> dict:
         """Return the current controller-owned state, rather than a queued message."""
         with self._lock:
+            self._sync_device_state()
             return {
                 "mode": self.state["selected_mode"],
                 "enabled": self.state["effective_low_latency"],
@@ -107,6 +138,7 @@ class LatencyController:
 
     @_serialized
     def on_hold_released(self, app_id: str) -> None:
+        self._sync_device_state()
         released_app = (app_id or "").strip().lower()
         active_hold = self.state["latency_hold_app_id"]
         if self.state["selected_mode"] != "auto" or not active_hold:
@@ -114,7 +146,7 @@ class LatencyController:
         if released_app and active_hold != released_app:
             return
         self.clear_latency_hold()
-        if self.state["effective_low_latency"]:
+        if self.state["effective_low_latency"] is not False:
             if self.set_effective_latency_state(False, source="auto_hold_release"):
                 self._status(m("latency.app_closed"), "white")
 
@@ -216,10 +248,11 @@ class LatencyController:
 
     @_serialized
     def apply_monitor_latency_policy(self, is_fullscreen: bool, app_id: str, source: str = "monitor") -> None:
+        self._sync_device_state()
         controller = self._get_controller()
         if controller is not None and not controller.capabilities.supports("latency"):
             self.clear_latency_hold()
-            self.state["effective_low_latency"] = False
+            self.state["effective_low_latency"] = None
             return
         normalized_app = (app_id or "").strip().lower()
         selected_mode = self.state["selected_mode"]
@@ -227,13 +260,13 @@ class LatencyController:
         current_hold = self.state["latency_hold_app_id"]
 
         def enable_low_latency(message: str, color: str = "blue") -> None:
-            if not self.state["effective_low_latency"]:
+            if self.state["effective_low_latency"] is not True:
                 if not self.set_effective_latency_state(True, source=source):
                     return
             self._status(message, color)
 
         def disable_low_latency(message: str = m("latency.standard_restored")) -> None:
-            if self.state["effective_low_latency"]:
+            if self.state["effective_low_latency"] is not False:
                 if not self.set_effective_latency_state(False, source=source):
                     return
             self._status(message, "white")
@@ -292,7 +325,7 @@ class LatencyController:
         controller = self._get_controller()
         if controller is not None and not controller.capabilities.supports("latency"):
             self.clear_latency_hold()
-            self.state["effective_low_latency"] = False
+            self.state["effective_low_latency"] = None
             return False
         try:
             if controller is None:
@@ -302,6 +335,7 @@ class LatencyController:
         except Exception as exc:
             success, message = False, m("latency.failed", details=error_message(exc))
 
+        self._sync_device_state()
         if not success:
             self._last_error = message
             self._status(message, "red")
@@ -309,7 +343,6 @@ class LatencyController:
             return False
 
         self._last_error = None
-        self.state["effective_low_latency"] = bool(new_state)
         tray_inst = self._get_tray()
         if tray_inst:
             tray_inst.refresh_menu()

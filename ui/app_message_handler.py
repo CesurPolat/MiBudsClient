@@ -74,6 +74,7 @@ class AppMessageHandler:
             capabilities = self._get_capabilities()
             self._settings_card.set_capabilities(capabilities)
             self._latency.set_device_capabilities(capabilities)
+            self._latency.refresh_device_state()
             self._tray.refresh_menu()
         self._update_page()
 
@@ -141,6 +142,7 @@ class AppMessageHandler:
             capabilities = self._get_capabilities()
             self._settings_card.set_capabilities(capabilities)
             self._latency.set_device_capabilities(capabilities)
+            self._latency.refresh_device_state()
             self._tray.refresh_menu()
         if message.get("state") in {"connecting", "failed"}:
             with self._notification_lock:
@@ -240,11 +242,12 @@ class AppMessageHandler:
             state = self._latency.get_display_state()
             mode, enabled = state["mode"], state["enabled"]
             self._settings_card.set_latency_mode(mode)
+            self._settings_card.latency_item.set_device_state(enabled)
             if state["error"]:
                 text, color = state["error"], "red"
-            elif mode == "auto":
-                text, color = t("latency.automatic_set"), "blue" if enabled else "white"
-            elif mode == "on":
+            elif enabled is None:
+                text, color = t("latency.unknown"), "white"
+            elif enabled:
                 text, color = t("latency.low_set"), "blue"
             else:
                 text, color = t("latency.standard_set"), "white"

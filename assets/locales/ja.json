@@ -245,5 +245,12 @@
   "noise.trans_standard": "標準外音取り込み",
   "noise.trans_voice": "音声強調",
   "noise.trans_ambient": "周囲の音を強調",
-  "noise.trans_voice_plus": "音声強調+"
+  "noise.trans_voice_plus": "音声強調+",
+  "latency.unknown": "ゲームモードの状態は不明です",
+  "latency.unconfirmed": "The device did not confirm the requested ゲームモード settings.",
+  "latency.rejected": "ゲームモード request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during ゲームモード request.",
+  "latency.timeout": "ゲームモード request timed out.",
+  "latency.invalid": "Invalid or incomplete ゲームモード data."
 }

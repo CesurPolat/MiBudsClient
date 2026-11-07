@@ -61,7 +61,8 @@ class RcspConfigTransport:
                     try:
                         records = parse_config_records(packet.payload[2:])
                     except ValueError as exc:
-                        request.error = str(exc)
+                        request.error = (m("latency.invalid") if request.namespace == "latency"
+                                         else str(exc))
                         request.completed = True
                         self._condition.notify_all()
                         matched = True
@@ -83,7 +84,7 @@ class RcspConfigTransport:
                 raise ConnectionError(m(namespace + ".disconnected"))
             counter = self._counter
             self._counter = (counter + 1) & 255
-            # The legacy latency command always uses 0x90 with opcode F2.
+            # Reserve the counter used by the legacy mode-packet helper.
             if self._counter == 0x90:
                 self._counter = 0x91
             request = _Request(opcode, counter, config_id=config_id, namespace=namespace)

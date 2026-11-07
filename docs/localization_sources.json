@@ -353,7 +353,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "en": {
@@ -605,7 +612,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "ar": {
@@ -960,7 +974,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "de": {
@@ -1315,7 +1336,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "es": {
@@ -1670,7 +1698,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "et": {
@@ -1929,7 +1964,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "fi": {
@@ -2188,7 +2230,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "fr": {
@@ -2543,7 +2592,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "hi": {
@@ -2802,7 +2858,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "hu": {
@@ -3061,7 +3124,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "id": {
@@ -3416,7 +3486,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "it": {
@@ -3771,7 +3848,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "ja": {
@@ -4126,7 +4210,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "ko": {
@@ -4481,7 +4572,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "ms": {
@@ -4836,7 +4934,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "nl": {
@@ -5191,7 +5296,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "pl": {
@@ -5546,7 +5658,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "pt-BR": {
@@ -5898,7 +6017,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "pt-PT": {
@@ -6250,7 +6376,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "ru": {
@@ -6605,7 +6738,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "sv": {
@@ -6864,7 +7004,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "th": {
@@ -7219,7 +7366,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "uk": {
@@ -7574,7 +7728,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "vi": {
@@ -7929,7 +8090,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "zh-CN": {
@@ -8281,7 +8449,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "zh-TW": {
@@ -8633,7 +8808,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     },
     "zh-HK": {
@@ -8985,7 +9167,14 @@
         "noise.trans_standard",
         "noise.trans_voice",
         "noise.trans_ambient",
-        "noise.trans_voice_plus"
+        "noise.trans_voice_plus",
+        "latency.unknown",
+        "latency.unconfirmed",
+        "latency.rejected",
+        "latency.disconnected",
+        "latency.connection_changed",
+        "latency.timeout",
+        "latency.invalid"
       ]
     }
   },

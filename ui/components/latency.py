@@ -73,6 +73,7 @@ class LowLatencyModeSettingItem(ft.Column):
             spacing=8,
         )
 
+        self._device_state = ft.Text(t("latency.unknown"), size=12, color=COLOR_DISABLED)
         super().__init__(
             controls=[
                 ft.ListTile(
@@ -86,6 +87,7 @@ class LowLatencyModeSettingItem(ft.Column):
                         height=32,
                     ),
                     title=ft.Text(title, size=14, color=COLOR_TEXT_PRIMARY, weight="medium"),
+                    subtitle=self._device_state,
                 ),
                 ft.Container(content=self._buttons_row, padding=ft.Padding.only(left=8, right=8, bottom=6)),
             ],
@@ -96,6 +98,10 @@ class LowLatencyModeSettingItem(ft.Column):
     @property
     def value(self) -> str:
         return self._value
+
+    def set_device_state(self, enabled: Optional[bool]) -> None:
+        self._device_state.value = t("latency.unknown") if enabled is None else t(
+            "latency.enabled" if enabled else "latency.standard_set")
 
     def _select_mode(self, mode: str) -> None:
         # Re-selecting a mode retries a failed command. The controller skips

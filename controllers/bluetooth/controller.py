@@ -16,6 +16,7 @@ from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
 from .gesture_transport import GestureTransport
 from .eq_transport import EqTransport
+from .latency_transport import LatencyTransport
 from .noise import noise_capabilities, noise_backend_enabled, parse_noise_notification
 from .noise_transport import NoiseTransport
 from .equalizer import EqResult, eq_profiles
@@ -67,6 +68,7 @@ class BTController:
         self._battery_parser = BatteryStreamParser()
         self._gestures = GestureTransport(self._connection)
         self._equalizer = EqTransport(self._gestures)
+        self._latency = LatencyTransport(self._gestures)
         self._noise = NoiseTransport(self._gestures)
         self._noise_parser = RcspStreamParser()
         self.noise_callback = None
@@ -248,12 +250,22 @@ class BTController:
         try:
             if not self.capabilities.supports("latency"):
                 return False, m("connection.device_failed")
-            payload = self._protocol.build_mode_command(mode)
-            self._connection.send(payload)
+            if not self.session_ready:
+                return False, m("latency.disconnected")
+            self._latency.write(mode == "low")
             return True, m("command.mode_sent", mode=m("mode.low" if mode == "low" else "mode.standard"))
         except Exception as e:
-            self._connection.connected = False
-            return False, m("command.send_error", details=str(e))
+            return False, m("latency.failed", details=error_message(e))
+
+    @property
+    def latency_state(self):
+        return self._latency.state if self.session_ready else None
+
+    def request_latency_state(self, *, session=None, timeout=5.0):
+        """Read off the listener/UI thread, without reconnecting implicitly."""
+        if not self.session_ready or not self.capabilities.supports("latency"):
+            raise ConnectionError(m("latency.disconnected"))
+        return self._latency.read(timeout, session)
     
     def request_battery(self, user_initiated: bool = True) -> tuple[bool, str]:
         """Request battery status from device."""

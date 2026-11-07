@@ -245,5 +245,12 @@
   "noise.trans_standard": "Standardtransparens",
   "noise.trans_voice": "Röstförstärkning",
   "noise.trans_ambient": "Omgivningsförstärkning",
-  "noise.trans_voice_plus": "Röstförstärkning+"
+  "noise.trans_voice_plus": "Röstförstärkning+",
+  "latency.unknown": "Spellägets status är okänd",
+  "latency.unconfirmed": "The device did not confirm the requested Spelläge settings.",
+  "latency.rejected": "Spelläge request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Spelläge request.",
+  "latency.timeout": "Spelläge request timed out.",
+  "latency.invalid": "Invalid or incomplete Spelläge data."
 }

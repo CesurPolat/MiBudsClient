@@ -245,5 +245,12 @@
   "noise.trans_standard": "Transparência padrão",
   "noise.trans_voice": "Realce de voz",
   "noise.trans_ambient": "Realce do ambiente",
-  "noise.trans_voice_plus": "Realce de voz+"
+  "noise.trans_voice_plus": "Realce de voz+",
+  "latency.unknown": "Estado do modo de jogo desconhecido",
+  "latency.unconfirmed": "The device did not confirm the requested Modo de jogo settings.",
+  "latency.rejected": "Modo de jogo request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Modo de jogo request.",
+  "latency.timeout": "Modo de jogo request timed out.",
+  "latency.invalid": "Invalid or incomplete Modo de jogo data."
 }

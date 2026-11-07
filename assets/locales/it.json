@@ -245,5 +245,12 @@
   "noise.trans_standard": "Trasparenza standard",
   "noise.trans_voice": "Amplificazione vocale",
   "noise.trans_ambient": "Amplificazione ambientale",
-  "noise.trans_voice_plus": "Amplificazione vocale+"
+  "noise.trans_voice_plus": "Amplificazione vocale+",
+  "latency.unknown": "Stato della modalità gioco sconosciuto",
+  "latency.unconfirmed": "The device did not confirm the requested Modalità gioco settings.",
+  "latency.rejected": "Modalità gioco request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Modalità gioco request.",
+  "latency.timeout": "Modalità gioco request timed out.",
+  "latency.invalid": "Invalid or incomplete Modalità gioco data."
 }

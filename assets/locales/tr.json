@@ -245,5 +245,12 @@
   "noise.trans_standard": "Standart şeffaflık",
   "noise.trans_voice": "İnsan sesi güçlendirme",
   "noise.trans_ambient": "Ortam güçlendirme",
-  "noise.trans_voice_plus": "İnsan sesi güçlendirme+"
+  "noise.trans_voice_plus": "İnsan sesi güçlendirme+",
+  "latency.unknown": "Oyun modu durumu bilinmiyor",
+  "latency.unconfirmed": "Cihaz istenen Oyun Modu ayarlarını doğrulamadı.",
+  "latency.rejected": "Oyun Modu isteği reddedildi (durum 0x{code}).",
+  "latency.disconnected": "Kulaklık bağlantısı yok.",
+  "latency.connection_changed": "Oyun Modu işlemi sırasında bağlantı değişti.",
+  "latency.timeout": "Oyun Modu isteği zaman aşımına uğradı.",
+  "latency.invalid": "Oyun Modu verisi geçersiz veya eksik."
 }

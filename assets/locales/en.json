@@ -245,5 +245,12 @@
   "noise.trans_standard": "Standard transparency",
   "noise.trans_voice": "Voice enhancement",
   "noise.trans_ambient": "Ambient enhancement",
-  "noise.trans_voice_plus": "Voice enhancement+"
+  "noise.trans_voice_plus": "Voice enhancement+",
+  "latency.unknown": "Game Mode status unknown",
+  "latency.unconfirmed": "The device did not confirm the requested Game Mode settings.",
+  "latency.rejected": "Game Mode request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Game Mode request.",
+  "latency.timeout": "Game Mode request timed out.",
+  "latency.invalid": "Invalid or incomplete Game Mode data."
 }

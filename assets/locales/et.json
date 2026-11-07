@@ -245,5 +245,12 @@
   "noise.trans_standard": "Tavaline läbipaistvus",
   "noise.trans_voice": "Hääle võimendus",
   "noise.trans_ambient": "Ümbritseva heli võimendus",
-  "noise.trans_voice_plus": "Hääle võimendus+"
+  "noise.trans_voice_plus": "Hääle võimendus+",
+  "latency.unknown": "Mängurežiimi olek teadmata",
+  "latency.unconfirmed": "The device did not confirm the requested Mängurežiim settings.",
+  "latency.rejected": "Mängurežiim request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Mängurežiim request.",
+  "latency.timeout": "Mängurežiim request timed out.",
+  "latency.invalid": "Invalid or incomplete Mängurežiim data."
 }

@@ -245,5 +245,12 @@
   "noise.trans_standard": "รับเสียงภายนอกมาตรฐาน",
   "noise.trans_voice": "เพิ่มเสียงพูด",
   "noise.trans_ambient": "เพิ่มเสียงรอบข้าง",
-  "noise.trans_voice_plus": "เพิ่มเสียงพูด+"
+  "noise.trans_voice_plus": "เพิ่มเสียงพูด+",
+  "latency.unknown": "ไม่ทราบสถานะโหมดเกม",
+  "latency.unconfirmed": "The device did not confirm the requested โหมดเกม settings.",
+  "latency.rejected": "โหมดเกม request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during โหมดเกม request.",
+  "latency.timeout": "โหมดเกม request timed out.",
+  "latency.invalid": "Invalid or incomplete โหมดเกม data."
 }

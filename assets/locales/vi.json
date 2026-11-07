@@ -245,5 +245,12 @@
   "noise.trans_standard": "Xuyên âm tiêu chuẩn",
   "noise.trans_voice": "Tăng cường giọng nói",
   "noise.trans_ambient": "Tăng cường âm thanh xung quanh",
-  "noise.trans_voice_plus": "Tăng cường giọng nói+"
+  "noise.trans_voice_plus": "Tăng cường giọng nói+",
+  "latency.unknown": "Chưa rõ trạng thái chế độ trò chơi",
+  "latency.unconfirmed": "The device did not confirm the requested Chế độ trò chơi settings.",
+  "latency.rejected": "Chế độ trò chơi request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Chế độ trò chơi request.",
+  "latency.timeout": "Chế độ trò chơi request timed out.",
+  "latency.invalid": "Invalid or incomplete Chế độ trò chơi data."
 }

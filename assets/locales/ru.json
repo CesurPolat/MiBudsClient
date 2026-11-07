@@ -245,5 +245,12 @@
   "noise.trans_standard": "Стандартная прозрачность",
   "noise.trans_voice": "Усиление голоса",
   "noise.trans_ambient": "Усиление окружающих звуков",
-  "noise.trans_voice_plus": "Усиление голоса+"
+  "noise.trans_voice_plus": "Усиление голоса+",
+  "latency.unknown": "Состояние игрового режима неизвестно",
+  "latency.unconfirmed": "The device did not confirm the requested Игровой режим settings.",
+  "latency.rejected": "Игровой режим request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Игровой режим request.",
+  "latency.timeout": "Игровой режим request timed out.",
+  "latency.invalid": "Invalid or incomplete Игровой режим data."
 }

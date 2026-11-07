@@ -245,5 +245,12 @@
   "noise.trans_standard": "Standardtransparenz",
   "noise.trans_voice": "Stimmenverstärkung",
   "noise.trans_ambient": "Umgebungsverstärkung",
-  "noise.trans_voice_plus": "Stimmenverstärkung+"
+  "noise.trans_voice_plus": "Stimmenverstärkung+",
+  "latency.unknown": "Spielmodus: Status unbekannt",
+  "latency.unconfirmed": "The device did not confirm the requested Spielmodus settings.",
+  "latency.rejected": "Spielmodus request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Spielmodus request.",
+  "latency.timeout": "Spielmodus request timed out.",
+  "latency.invalid": "Invalid or incomplete Spielmodus data."
 }

@@ -245,5 +245,12 @@
   "noise.trans_standard": "Standardowa przejrzystość",
   "noise.trans_voice": "Wzmocnienie głosu",
   "noise.trans_ambient": "Wzmocnienie otoczenia",
-  "noise.trans_voice_plus": "Wzmocnienie głosu+"
+  "noise.trans_voice_plus": "Wzmocnienie głosu+",
+  "latency.unknown": "Stan trybu gry nieznany",
+  "latency.unconfirmed": "The device did not confirm the requested Tryb gry settings.",
+  "latency.rejected": "Tryb gry request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Tryb gry request.",
+  "latency.timeout": "Tryb gry request timed out.",
+  "latency.invalid": "Invalid or incomplete Tryb gry data."
 }

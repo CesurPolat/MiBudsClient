@@ -245,5 +245,12 @@
   "noise.trans_standard": "Tavallinen läpikuuluvuus",
   "noise.trans_voice": "Puheen vahvistus",
   "noise.trans_ambient": "Ympäristöäänien vahvistus",
-  "noise.trans_voice_plus": "Puheen vahvistus+"
+  "noise.trans_voice_plus": "Puheen vahvistus+",
+  "latency.unknown": "Pelitilan tila tuntematon",
+  "latency.unconfirmed": "The device did not confirm the requested Pelitila settings.",
+  "latency.rejected": "Pelitila request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Pelitila request.",
+  "latency.timeout": "Pelitila request timed out.",
+  "latency.invalid": "Invalid or incomplete Pelitila data."
 }

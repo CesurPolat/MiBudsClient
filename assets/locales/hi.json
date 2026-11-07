@@ -245,5 +245,12 @@
   "noise.trans_standard": "मानक पारदर्शिता",
   "noise.trans_voice": "आवाज़ बढ़ाना",
   "noise.trans_ambient": "परिवेश ध्वनि बढ़ाना",
-  "noise.trans_voice_plus": "आवाज़ बढ़ाना+"
+  "noise.trans_voice_plus": "आवाज़ बढ़ाना+",
+  "latency.unknown": "गेम मोड की स्थिति अज्ञात है",
+  "latency.unconfirmed": "The device did not confirm the requested गेम मोड settings.",
+  "latency.rejected": "गेम मोड request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during गेम मोड request.",
+  "latency.timeout": "गेम मोड request timed out.",
+  "latency.invalid": "Invalid or incomplete गेम मोड data."
 }

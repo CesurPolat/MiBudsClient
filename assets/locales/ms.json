@@ -245,5 +245,12 @@
   "noise.trans_standard": "Ketelusan standard",
   "noise.trans_voice": "Peningkatan suara",
   "noise.trans_ambient": "Peningkatan bunyi sekitar",
-  "noise.trans_voice_plus": "Peningkatan suara+"
+  "noise.trans_voice_plus": "Peningkatan suara+",
+  "latency.unknown": "Status Mod Permainan tidak diketahui",
+  "latency.unconfirmed": "The device did not confirm the requested Mod permainan settings.",
+  "latency.rejected": "Mod permainan request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Mod permainan request.",
+  "latency.timeout": "Mod permainan request timed out.",
+  "latency.invalid": "Invalid or incomplete Mod permainan data."
 }

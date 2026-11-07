@@ -245,5 +245,12 @@
   "noise.trans_standard": "표준 주변 소리",
   "noise.trans_voice": "음성 강화",
   "noise.trans_ambient": "주변 소리 강화",
-  "noise.trans_voice_plus": "음성 강화+"
+  "noise.trans_voice_plus": "음성 강화+",
+  "latency.unknown": "게임 모드 상태 알 수 없음",
+  "latency.unconfirmed": "The device did not confirm the requested 게임 모드 settings.",
+  "latency.rejected": "게임 모드 request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during 게임 모드 request.",
+  "latency.timeout": "게임 모드 request timed out.",
+  "latency.invalid": "Invalid or incomplete 게임 모드 data."
 }

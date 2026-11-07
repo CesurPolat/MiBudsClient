@@ -245,5 +245,12 @@
   "noise.trans_standard": "Standaardtransparantie",
   "noise.trans_voice": "Stemversterking",
   "noise.trans_ambient": "Omgevingsversterking",
-  "noise.trans_voice_plus": "Stemversterking+"
+  "noise.trans_voice_plus": "Stemversterking+",
+  "latency.unknown": "Status gamemodus onbekend",
+  "latency.unconfirmed": "The device did not confirm the requested Gamemodus settings.",
+  "latency.rejected": "Gamemodus request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Gamemodus request.",
+  "latency.timeout": "Gamemodus request timed out.",
+  "latency.invalid": "Invalid or incomplete Gamemodus data."
 }

@@ -245,5 +245,12 @@
   "noise.trans_standard": "Стандартна прозорість",
   "noise.trans_voice": "Підсилення голосу",
   "noise.trans_ambient": "Підсилення навколишніх звуків",
-  "noise.trans_voice_plus": "Підсилення голосу+"
+  "noise.trans_voice_plus": "Підсилення голосу+",
+  "latency.unknown": "Стан ігрового режиму невідомий",
+  "latency.unconfirmed": "The device did not confirm the requested Ігровий режим settings.",
+  "latency.rejected": "Ігровий режим request rejected (status 0x{code}).",
+  "latency.disconnected": "Earbuds are disconnected.",
+  "latency.connection_changed": "Connection changed during Ігровий режим request.",
+  "latency.timeout": "Ігровий режим request timed out.",
+  "latency.invalid": "Invalid or incomplete Ігровий режим data."
 }
