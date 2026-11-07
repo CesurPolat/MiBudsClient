@@ -141,6 +141,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -366,6 +367,7 @@
     "en": {
       "imported": {},
       "authored": [
+        "latency.auto_activated",
         "action.assistant",
         "action.game",
         "action.next",
@@ -762,6 +764,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -1124,6 +1127,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -1486,6 +1490,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -1720,6 +1725,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.assistant",
         "action.game",
         "action.next",
@@ -1986,6 +1992,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.assistant",
         "action.game",
         "action.next",
@@ -2380,6 +2387,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -2614,6 +2622,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.assistant",
         "action.game",
         "action.next",
@@ -2880,6 +2889,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.assistant",
         "action.game",
         "action.next",
@@ -3274,6 +3284,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -3636,6 +3647,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -3998,6 +4010,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -4360,6 +4373,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -4722,6 +4736,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -5084,6 +5099,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -5446,6 +5462,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -5804,6 +5821,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.none",
@@ -6163,6 +6181,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.none",
@@ -6526,6 +6545,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -6760,6 +6780,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.assistant",
         "action.game",
         "action.next",
@@ -7154,6 +7175,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -7516,6 +7538,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -7878,6 +7901,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -8236,6 +8260,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -8595,6 +8620,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",
@@ -8954,6 +8980,7 @@
         }
       },
       "authored": [
+        "latency.auto_activated",
         "action.game",
         "action.noise",
         "action.translation",

@@ -261,6 +261,13 @@ class AutoModeSettingsAccordion(ft.Container):
 
         super().__init__(content=controls_column)
 
+    def prefill_app(self, app_id: str) -> None:
+        """Prepare a rule without saving or choosing include/exclude."""
+        self._field.value = self._normalize(app_id)
+
+    async def focus_app_input(self) -> None:
+        await self._field.focus()
+
     def _normalize(self, value: str) -> str:
         return (value or "").strip().lower()
 

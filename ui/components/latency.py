@@ -25,6 +25,8 @@ class LowLatencyModeSettingItem(ft.Column):
         on_change: Optional[Callable] = None,
     ):
         self._on_change = on_change
+        self.on_activation_app_click = None
+        self._activation_app = ""
         self._value = value if value in {"off", "auto", "on"} else "off"
         self._mode_icons = {
             "off": ft.Icons.DO_NOT_DISTURB,
@@ -75,7 +77,8 @@ class LowLatencyModeSettingItem(ft.Column):
             spacing=8,
         )
 
-        self._device_state = ft.Text(t("latency.unknown"), size=12, color=COLOR_DISABLED)
+        self._device_state = ft.Text(t("latency.unknown"), size=12, color=COLOR_DISABLED,
+                                     max_lines=1, overflow=ft.TextOverflow.ELLIPSIS)
         super().__init__(
             controls=[
                 ft.ListTile(
@@ -102,9 +105,25 @@ class LowLatencyModeSettingItem(ft.Column):
     def value(self) -> str:
         return self._value
 
-    def set_device_state(self, enabled: Optional[bool]) -> None:
+    def set_device_state(self, enabled: Optional[bool], activation_app: str = "") -> None:
+        self._activation_app = activation_app if self._value == "auto" and enabled is True else ""
+        self._device_state.spans = []
+        self._device_state.tooltip = self._activation_app or None
+        if self._activation_app:
+            self._device_state.value = ""
+            self._device_state.spans = [
+                ft.TextSpan(self._activation_app,
+                            style=ft.TextStyle(color="#9BC7FF"),
+                            on_click=self._open_activation_app),
+                ft.TextSpan(t("latency.auto_activated")),
+            ]
+            return
         self._device_state.value = t("latency.unknown") if enabled is None else t(
             "latency.enabled" if enabled else "latency.standard_set")
+
+    def _open_activation_app(self, _) -> None:
+        if self._activation_app and self.on_activation_app_click:
+            self.on_activation_app_click(self._activation_app)
 
     def _select_mode(self, mode: str) -> None:
         # Re-selecting a mode retries a failed command. The controller skips

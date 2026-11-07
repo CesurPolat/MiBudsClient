@@ -23,6 +23,9 @@ context review; this does not represent native-speaker review of every language.
 
 ## Context decisions
 
+- `latency.auto_activated` is an authored suffix after the clickable executable
+  name in the automatic Game Mode status. Keep its leading separator space.
+
 - `auto.title` labels the desktop Game Mode Settings section, including its
   automatic-mode rules. It remains authored desktop text in the source ledger.
 

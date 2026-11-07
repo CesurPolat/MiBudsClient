@@ -30,6 +30,8 @@ class AppLayout(ft.Column):
         self._wide = None
         self._settings_open = False
         self._navigation_pending = False
+        self._pending_app_focus = False
+        settings_card.latency_item.on_activation_app_click = self._open_game_app_settings
         transition = ft.Animation(NAVIGATION_TRANSITION_MS, ft.AnimationCurve.EASE_IN_OUT_CUBIC)
         self.home_content = ft.Container(
             offset=ft.Offset(0, 0),
@@ -154,6 +156,17 @@ class AppLayout(ft.Column):
         else:
             self.page_content.height = None
         self._on_update()
+        if self._settings_open and self._pending_app_focus:
+            self._pending_app_focus = False
+            self.page.run_task(self._settings_card.auto_settings.focus_app_input)
+
+    def _open_game_app_settings(self, app_id: str) -> None:
+        if self._navigation_pending or not self._settings_card._available_sections.get("auto"):
+            return
+        self._settings_card.auto_settings.prefill_app(app_id)
+        self._settings_card.select_section("auto")
+        self._pending_app_focus = True
+        self.show_settings(True)
 
     def fit_settings_height(self) -> bool:
         """Use the available client height, leaving room for the shared footer."""

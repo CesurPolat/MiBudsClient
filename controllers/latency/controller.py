@@ -45,6 +45,8 @@ class LatencyController:
         self._get_controller = get_controller
         self._device_capabilities = None
         self._read_session = None
+        self._auto_activation_app = ""
+        self._activation_session = None
         self._get_tray = get_tray
         self._on_rules_change = on_rules_change
         self._on_ui_update = on_ui_update
@@ -66,6 +68,8 @@ class LatencyController:
         if capabilities == self._device_capabilities:
             return
         self._device_capabilities = capabilities
+        self._auto_activation_app = ""
+        self._activation_session = None
         self.clear_latency_hold()
         self.state["effective_low_latency"] = None
         self._last_error = None
@@ -104,10 +108,17 @@ class LatencyController:
         """Return the current controller-owned state, rather than a queued message."""
         with self._lock:
             self._sync_device_state()
+            controller = self._get_controller()
+            activation_app = ""
+            if (controller is not None and self.state["selected_mode"] == "auto"
+                    and self.state["effective_low_latency"] is True and not self._last_error
+                    and self._activation_session == (controller, controller.gesture_session)):
+                activation_app = self._auto_activation_app
             return {
                 "mode": self.state["selected_mode"],
                 "enabled": self.state["effective_low_latency"],
                 "error": self._last_error,
+                "activation_app": activation_app,
             }
 
     def _publish_latency(self, source: str) -> None:
@@ -259,13 +270,24 @@ class LatencyController:
         hold_enabled = bool(self.state["hold_until_app_close_enabled"])
         current_hold = self.state["latency_hold_app_id"]
 
-        def enable_low_latency(message: str, color: str = "blue") -> None:
+        def enable_low_latency(message: str, color: str = "blue", activation_app: str = "") -> None:
             if self.state["effective_low_latency"] is not True:
                 if not self.set_effective_latency_state(True, source=source):
                     return
+            app = activation_app if self.state["effective_low_latency"] is True else ""
+            session = (controller, controller.gesture_session) if app else None
+            if app != self._auto_activation_app or session != self._activation_session:
+                self._auto_activation_app = app
+                self._activation_session = session
+                self._publish_latency(source)
             self._status(message, color)
 
         def disable_low_latency(message: str = m("latency.standard_restored")) -> None:
+            had_activation = bool(self._auto_activation_app)
+            self._auto_activation_app = ""
+            self._activation_session = None
+            if had_activation:
+                self._publish_latency(source)
             if self.state["effective_low_latency"] is not False:
                 if not self.set_effective_latency_state(False, source=source):
                     return
@@ -306,11 +328,11 @@ class LatencyController:
                     self.set_latency_hold(normalized_app)
                 else:
                     self.clear_latency_hold()
-                enable_low_latency(enable_message, "blue")
+                enable_low_latency(enable_message, "blue", normalized_app)
                 return
 
             if hold_enabled and current_hold and self.is_process_running(current_hold):
-                enable_low_latency(m("latency.keeping", app=current_hold), "blue")
+                enable_low_latency(m("latency.keeping", app=current_hold), "blue", current_hold)
                 return
 
             self.clear_latency_hold()

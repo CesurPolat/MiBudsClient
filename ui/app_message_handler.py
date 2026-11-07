@@ -242,7 +242,7 @@ class AppMessageHandler:
             state = self._latency.get_display_state()
             mode, enabled = state["mode"], state["enabled"]
             self._settings_card.set_latency_mode(mode)
-            self._settings_card.latency_item.set_device_state(enabled)
+            self._settings_card.latency_item.set_device_state(enabled, state.get("activation_app", ""))
             if state["error"]:
                 text, color = state["error"], "red"
             elif enabled is None:
