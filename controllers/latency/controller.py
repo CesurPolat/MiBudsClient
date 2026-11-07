@@ -26,6 +26,8 @@ def _serialized(method):
     @wraps(method)
     def call(self, *args, **kwargs):
         with self._lock:
+            if self._stopped.is_set():
+                return
             return method(self, *args, **kwargs)
     return call
 
@@ -37,6 +39,7 @@ class LatencyController:
                  get_tray: Callable, on_rules_change: Callable,
                  on_ui_update: Callable):
         self._lock = threading.RLock()
+        self._stopped = threading.Event()
         self._last_error = None
         self._publish = publish
         self._get_controller = get_controller
@@ -184,7 +187,7 @@ class LatencyController:
 
         def _watcher() -> None:
             try:
-                while True:
+                while not self._stopped.is_set():
                     if self.state["selected_mode"] != "auto":
                         return
 
@@ -199,12 +202,17 @@ class LatencyController:
                         self._publish({"type": "auto_hold_released", "app_id": current_hold})
                         return
 
-                    time.sleep(2)
+                    if self._stopped.wait(2):
+                        return
             finally:
                 with self._lock:
                     self.state["hold_watcher_running"] = False
 
         threading.Thread(target=_watcher, daemon=True).start()
+
+    def stop(self) -> None:
+        """Wake the hold watcher without changing saved latency preferences."""
+        self._stopped.set()
 
     @_serialized
     def apply_monitor_latency_policy(self, is_fullscreen: bool, app_id: str, source: str = "monitor") -> None:

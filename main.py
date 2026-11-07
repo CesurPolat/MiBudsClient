@@ -32,6 +32,9 @@ from utils.user_preferences import get_language_preference
 from ui.localization import refresh_translations
 from utils.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
 from ui.components.error_report import ErrorReportDialog
+from utils.app_shutdown import ApplicationShutdown
+
+application_shutdown = ApplicationShutdown()
 
 # Temporary manual QA switch: show the report form on every application launch.
 SHOW_STARTUP_TEST_ERROR = False
@@ -44,7 +47,13 @@ async def main(page: ft.Page):
     ui_lock = threading.RLock()
     window_mgr = None
 
+    def publish(message):
+        if not application_shutdown.started.is_set():
+            page.pubsub.send_all(message)
+
     def update_ui():
+        if application_shutdown.started.is_set():
+            return
         with ui_lock:
             refresh_translations(page.controls)
             refresh_translations(page.overlay)
@@ -52,7 +61,7 @@ async def main(page: ft.Page):
             if window_mgr is not None:
                 window_mgr.request_content_fit()
 
-    debug_console = DebugConsoleManager(publish=page.pubsub.send_all)
+    debug_console = DebugConsoleManager(publish=publish)
     debug_console.install()
     
     # ─────────────────────────────────────────────────────────────────────────
@@ -67,7 +76,7 @@ async def main(page: ft.Page):
     
     page.scroll = "auto"
     page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
-    window_mgr = WindowManager(page, auto_resize=True)
+    window_mgr = WindowManager(page, auto_resize=True, on_shutdown=application_shutdown.stop)
     update_ui()
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -80,11 +89,13 @@ async def main(page: ft.Page):
         "game_monitor": None,
     }
     reports = ErrorReportManager(
-        publish=page.pubsub.send_all, app_version=APP_VERSION,
+        publish=publish, app_version=APP_VERSION,
         get_device=lambda: getattr(getattr(controller_ref['instance'], 'capabilities', None), 'name', ''),
     )
-    report_queue = ReportQueue(notify=lambda state: page.pubsub.send_all(
+    report_queue = ReportQueue(notify=lambda state: publish(
         {'type': 'error_report_status', 'state': state}))
+    application_shutdown.register("F12 listener", debug_console.stop_f12_hotkey_listener)
+    application_shutdown.register("error reports", report_queue.stop)
     report_dialog = ErrorReportDialog(page, report_queue, ui_lock=ui_lock)
     debug_console.on_exception = reports.capture
     page.on_error = lambda e: reports.capture(RuntimeError(str(getattr(e, 'data', '') or 'Flet error').splitlines()[0]), 'ui')
@@ -94,15 +105,16 @@ async def main(page: ft.Page):
     }
 
     latency = LatencyController(
-        publish=page.pubsub.send_all,
+        publish=publish,
         get_controller=lambda: controller_ref["instance"],
         get_tray=lambda: tray_ref["instance"],
         on_rules_change=lambda *args: settings_card.set_low_latency_rules(*args),
         on_ui_update=update_ui,
     )
+    application_shutdown.register("latency watcher", latency.stop)
 
     def tray_exit_request() -> None:
-        page.pubsub.send_all({"type": "app", "action": "close"})
+        publish({"type": "app", "action": "close"})
 
     tray = SystemTray(
         on_show=window_mgr.show,
@@ -112,6 +124,7 @@ async def main(page: ft.Page):
         latency_available=lambda: controller_ref["instance"] is not None and controller_ref["instance"].capabilities.supports("latency"),
     )
     tray_ref["instance"] = tray
+    application_shutdown.register("system tray", tray.stop)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Create UI Components
@@ -122,19 +135,21 @@ async def main(page: ft.Page):
     # Controller Callbacks
     # ─────────────────────────────────────────────────────────────────────────
     device_connection = DeviceConnection(
-        publish=page.pubsub.send_all,
+        publish=publish,
         get_controller=lambda: controller_ref["instance"],
     )
+    application_shutdown.register("device requests", device_connection.stop)
 
     page.on_keyboard_event = debug_console.handle_keyboard_event
     catalog_sync = CatalogSync(
-        publish=page.pubsub.send_all,
+        publish=publish,
         get_identity=lambda: controller_ref["instance"].device_identity
         if controller_ref["instance"] is not None else None,
         get_device_name=lambda: controller_ref["instance"].device_name
         if controller_ref["instance"] is not None else "",
         app_version=APP_VERSION,
     )
+    application_shutdown.register("catalog sync", catalog_sync.stop)
     cached_name, cached_image = catalog_sync.cached_device
     tray.set_device(cached_name, cached_image)
     if cached_image:
@@ -144,7 +159,7 @@ async def main(page: ft.Page):
     # Initialize Bluetooth Controller
     # ─────────────────────────────────────────────────────────────────────────
     def on_connection_event(event):
-        page.pubsub.send_all({"type": "connection_event", "event": event})
+        publish({"type": "connection_event", "event": event})
         catalog_sync.identity_changed(None)
         current = controller_ref["instance"]
         if event == "connected" and current is not None and current.capabilities.model == "miwear.headphone.n79bg":
@@ -152,11 +167,11 @@ async def main(page: ft.Page):
 
     def on_identity(identity):
         catalog_sync.identity_changed(identity)
-        page.pubsub.send_all({"type": "firmware_info", "identity": identity})
+        publish({"type": "firmware_info", "identity": identity})
 
     controller = BTController(
         identity_callback=on_identity,
-        connection_state_callback=lambda state, reason: page.pubsub.send_all(
+        connection_state_callback=lambda state, reason: publish(
             {"type": "connection_state", "state": state, "reason": reason}
         ),
         status_callback=device_connection.update_status,
@@ -167,6 +182,7 @@ async def main(page: ft.Page):
     
     # Set controller reference for tray callbacks
     controller_ref["instance"] = controller
+    application_shutdown.register("Bluetooth", controller.stop)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Build Settings Card with Controller Actions
@@ -175,9 +191,9 @@ async def main(page: ft.Page):
         controller=controller,
         latency=latency,
         device_connection=device_connection,
-        publish=page.pubsub.send_all,
+        publish=publish,
         on_update=update_ui,
-        on_language_change=lambda e: page.pubsub.send_all(
+        on_language_change=lambda e: publish(
             {"type": "language", "language": e.control.value}
         ),
     )
@@ -215,6 +231,7 @@ async def main(page: ft.Page):
         get_capabilities=lambda: controller.capabilities,
         get_identity=lambda: controller.device_identity if controller.connected else None,
     )
+    application_shutdown.register("UI notifications", message_handler.begin_shutdown)
     def handle_message(message):
         try:
             if isinstance(message, dict):
@@ -250,13 +267,13 @@ async def main(page: ft.Page):
     # Update Checker
     # ─────────────────────────────────────────────────────────────────────────
     start_update_check(
-        on_update_available=lambda version: page.pubsub.send_all(
+        on_update_available=lambda version: publish(
             {"type": "update_notification", "latest_ver": version}
         )
     )
 
     def on_fullscreen_change(is_fullscreen: bool, app_id: str):
-        page.pubsub.send_all(
+        publish(
             {"type": "fullscreen_state", "is_fullscreen": is_fullscreen, "app_id": app_id}
         )
 
@@ -265,9 +282,10 @@ async def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     game_monitor = FullscreenGameMonitor(
         on_fullscreen_change=on_fullscreen_change,
-        on_log=lambda msg: page.pubsub.send_all({"type": "status", "text": msg, "color": "orange"})
+        on_log=lambda msg: publish({"type": "status", "text": msg, "color": "orange"})
     )
     controller_ref["game_monitor"] = game_monitor
+    application_shutdown.register("game monitor", game_monitor.stop)
     game_monitor.start()
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -286,4 +304,7 @@ if __name__ == "__main__":
     try:
         ft.app(target=main, assets_dir="assets")
     finally:
-        release_instance_port()
+        try:
+            application_shutdown.stop()
+        finally:
+            release_instance_port()

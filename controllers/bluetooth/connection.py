@@ -37,6 +37,7 @@ class BluetoothConnection:
         self._state_lock = threading.Lock()
         self._connect_lock = threading.Lock()
         self._cancel = threading.Event()
+        self._stopped = False
         self.result: ConnectionResult | None = None
         self.session_ready = False
         self.session_authenticated = False
@@ -73,6 +74,8 @@ class BluetoothConnection:
             self.disconnect()
             cancel = threading.Event()
             with self._state_lock:
+                if self._stopped:
+                    raise ConnectionCancelled("Controller stopped")
                 self._cancel = cancel
             deadline = time.monotonic() + timeout
             last_error = None
@@ -217,6 +220,12 @@ class BluetoothConnection:
             self.disconnect()
             raise
 
+    def stop(self) -> None:
+        """Permanently reject queued connects and cancel the current session."""
+        with self._state_lock:
+            self._stopped = True
+        self.disconnect()
+
     def disconnect(self) -> None:
         """Cancel pending work and close the current transport."""
         with self._state_lock:
@@ -229,6 +238,10 @@ class BluetoothConnection:
             session, self.auth_session = self.auth_session, None
             sock, self._sock = self._sock, None
         if sock is not None:
+            try:
+                sock.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
             try:
                 sock.close()
             except OSError:

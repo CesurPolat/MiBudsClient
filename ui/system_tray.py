@@ -33,12 +33,15 @@ class SystemTray:
         self.on_latency_mode_select = on_latency_mode_select
         self.get_latency_mode = get_latency_mode
         self.icon = None
+        self._stopped = threading.Event()
         self._device = ("Redmi Buds 6 Play", "")
         self._device_lock = threading.Lock()
         self._image_notifications = ImageNotifications(on_activate=self.on_show)
     
     def run(self) -> None:
         """Start the system tray icon."""
+        if self._stopped.is_set():
+            return
         try:
             # Tray uses default icon.png
             tray_image = load_pil_image(TRAY_ICON_PATH, TRAY_ICON_SIZE)
@@ -80,7 +83,13 @@ class SystemTray:
             
             self.icon = pystray.Icon("MiBudsClient", tray_image, "Mi Buds Client", menu)
             self._image_notifications.bind(self.icon)
-            self.icon.run()
+            def setup(icon):
+                if self._stopped.is_set():
+                    icon.stop()
+                else:
+                    icon.visible = True
+
+            self.icon.run(setup=setup)
         except Exception as e:
             print(f"Tray error: {e}")
         finally:
@@ -150,7 +159,11 @@ class SystemTray:
         plain()
     
     def _exit(self) -> None:
-        """Stop tray and exit application."""
+        """Request application cleanup outside the native tray callback."""
+        self.on_exit()
+
+    def stop(self) -> None:
+        """Stop the native loop; run() releases notification resources."""
+        self._stopped.set()
         if self.icon:
             self.icon.stop()
-        self.on_exit()

@@ -16,13 +16,14 @@ import time
 class WindowManager:
     """Handles window visibility and events."""
     
-    def __init__(self, page: ft.Page, *, auto_resize: bool = False):
+    def __init__(self, page: ft.Page, *, auto_resize: bool = False, on_shutdown=None):
         self.page = page
         self._auto_resize = auto_resize
         self._is_closing = False
         self._session_closed = False
         self._close_lock = threading.Lock()
         self._force_exit_armed = False
+        self._on_shutdown = on_shutdown
         self._fit_revision = 0
         self._content_measurement = None
         self._work_area = get_work_area_size() if auto_resize else None
@@ -155,7 +156,7 @@ class WindowManager:
         self._force_exit_after_delay()
 
         self.show_closing_screen()
-        self._run_window_async(self._close_window)
+        self._run_window_async(self._close_window, timeout_sec=9.0)
 
     def _run_window_async(self, handler, timeout_sec: float = 1.5) -> bool:
         """Run async Flet window API calls from sync handlers."""
@@ -189,6 +190,9 @@ class WindowManager:
         return False
 
     async def _close_window(self) -> None:
+        if self._on_shutdown is not None:
+            # Native tray shutdown may wait for its thread; keep Flet responsive.
+            await asyncio.to_thread(self._on_shutdown)
         if self._session_closed:
             return
         try:
@@ -201,7 +205,7 @@ class WindowManager:
             print(f"Window close failed, trying destroy: {error}")
             await self.page.window.destroy()
 
-    def _force_exit_after_delay(self, delay_sec: float = 2.0) -> None:
+    def _force_exit_after_delay(self, delay_sec: float = 10.0) -> None:
         """Force process exit only if graceful close gets stuck."""
         with self._close_lock:
             if self._force_exit_armed:
@@ -210,8 +214,18 @@ class WindowManager:
 
         def _killer() -> None:
             time.sleep(delay_sec)
+            # This daemon disappears on normal process exit. Reaching here means
+            # cleanup/window shutdown (or interpreter shutdown) is still stuck.
+            print("Application shutdown timed out; forcing process exit")
             if os.name == "nt":
-                subprocess.call(["taskkill", "/F", "/T", "/PID", str(os.getpid())])
+                try:
+                    subprocess.run(
+                        ["taskkill", "/F", "/T", "/PID", str(os.getpid())],
+                        creationflags=subprocess.CREATE_NO_WINDOW, timeout=2,
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                    )
+                finally:
+                    os._exit(0)
             else:
                 os._exit(0)
 
@@ -224,6 +238,8 @@ class WindowManager:
             self._is_closing = True
         # No UI updates or window RPCs are valid at this point.
         self._force_exit_after_delay()
+        if self._on_shutdown is not None:
+            threading.Thread(target=self._on_shutdown, daemon=True).start()
         
     def show_closing_screen(self) -> None:
         """Displays a simple closing screen."""

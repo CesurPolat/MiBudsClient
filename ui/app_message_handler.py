@@ -260,17 +260,15 @@ class AppMessageHandler:
     def _handle_app(self, message: dict) -> None:
         if message.get("action") != "close":
             return
+        self.begin_shutdown()
+        self._window_manager.close()
+
+    def begin_shutdown(self) -> None:
+        """Discard late UI messages and cancel pending notifications."""
         self._closing = True
         with self._notification_lock:
             self._cancel_connection_notification()
             self._battery_notifications.reset()
-        if self._on_catalog_stop:
-            self._on_catalog_stop()
-        game_monitor = self._get_game_monitor()
-        if game_monitor:
-            game_monitor.stop()
-        self._debug_console.stop_f12_hotkey_listener()
-        self._window_manager.close()
 
     def _handle_debug_console(self, message: dict) -> None:
         action = message.get("action")

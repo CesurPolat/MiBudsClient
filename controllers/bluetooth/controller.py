@@ -180,6 +180,8 @@ class BTController:
     def connect(self) -> bool:
         """Connect to the Mi Buds device."""
         with self._connect_lock:
+            if not self._running:
+                return False
             if self._connection.connected:
                 return True
 
@@ -198,6 +200,9 @@ class BTController:
                 policy = self._auth_policy or AuthPolicy.AUTO
                 connected_caps = resolve_capabilities(self._device_name)
                 self._connection.connect(self._bd_addr, device_name=self._device_name, session_policy=policy)
+                if not self._running:
+                    self._connection.disconnect()
+                    return False
                 if noise_backend_enabled(connected_caps):
                     from .noise_capture import record
                     result = self._connection.result
@@ -212,6 +217,8 @@ class BTController:
                 self.on_connect_setup()
                 return True
             except Exception as e:
+                if not self._running:
+                    return False
                 self._connection.connected = False
                 self._update_status(m("connection.failure_details", details=str(e)), "red")
                 if isinstance(e, (TimeoutError, socket.timeout)):
@@ -427,11 +434,13 @@ class BTController:
     
     def _ensure_connected(self) -> bool:
         """Ensure connected, attempting to connect if not."""
-        return self._connection.connected or self.connect()
+        return self._running and (self._connection.connected or self.connect())
 
     def reconnect(self, force_rediscovery: bool = False) -> bool:
         """Reconnect to the device, optionally forcing MAC rediscovery."""
         with self._connect_lock:
+            if not self._running:
+                return False
             # A queued UI retry must not disconnect a connection just established
             # by the listener (or another command).
             if self._connection.connected:
@@ -567,6 +576,8 @@ class BTController:
     
     def _handle_disconnect(self) -> None:
         """Handle connection loss."""
+        if not self._running:
+            return
         self._reset_identity_state(m("identity.disconnected"))
         self._connection.disconnect()
         self._update_status(m("connection.lost"), "red")
@@ -582,5 +593,7 @@ class BTController:
     def stop(self) -> None:
         """Stop the controller."""
         self._running = False
-        self._reset_identity_state(m("identity.stopped"))
-        self._connection.disconnect()
+        try:
+            self._connection.stop()
+        finally:
+            self._reset_identity_state(m("identity.stopped"))

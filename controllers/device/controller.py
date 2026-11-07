@@ -3,7 +3,6 @@
 from utils.i18n import message as m
 
 import threading
-import time
 from typing import Callable
 
 from .battery_updates import BatteryUpdates
@@ -18,11 +17,19 @@ class DeviceConnection:
         self._battery_updates = BatteryUpdates(publish)
         self._reconnect_lock = threading.Lock()
         self._reconnect_in_progress = False
+        self._stopped = threading.Event()
+
+    def stop(self) -> None:
+        self._stopped.set()
 
     def update_status(self, text: str, color: str = "white") -> None:
+        if self._stopped.is_set():
+            return
         self._publish({"type": "status", "text": text, "color": color})
 
     def update_battery(self, left: int, right: int, case: int) -> None:
+        if self._stopped.is_set():
+            return
         self._battery_updates.update(left, right, case)
 
     def request_battery_delayed(self) -> None:
@@ -30,7 +37,8 @@ class DeviceConnection:
         threading.Thread(target=self._request_battery_delayed, daemon=True).start()
 
     def _request_battery_delayed(self) -> None:
-        time.sleep(1)
+        if self._stopped.wait(1):
+            return
         controller = self._get_controller()
         if controller is not None:
             controller.resume_reconnect_attempts()
@@ -39,7 +47,7 @@ class DeviceConnection:
     def reconnect_on_show(self) -> None:
         """Reconnect when the window is shown, allowing only one worker at a time."""
         controller = self._get_controller()
-        if controller is None or controller.connected:
+        if self._stopped.is_set() or controller is None or controller.connected:
             return
         with self._reconnect_lock:
             if self._reconnect_in_progress:
@@ -48,6 +56,8 @@ class DeviceConnection:
 
         def reconnect_worker() -> None:
             try:
+                if self._stopped.is_set():
+                    return
                 controller.resume_reconnect_attempts()
                 self.update_status(m("connection.reconnecting"), "orange")
                 controller.reconnect(force_rediscovery=True)
