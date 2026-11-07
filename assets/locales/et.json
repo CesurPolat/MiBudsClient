@@ -80,7 +80,7 @@
   "auto.exclude_add": "Lisa: Välista",
   "auto.include_add": "Lisa: Kaasa",
   "auto.wait": "Oota rakenduse sulgemiseni",
-  "auto.title": "Automaatrežiimi seaded",
+  "auto.title": "Mängurežiimi seaded",
   "auto.description": "Täisekraanirakendused lülitavad mängurežiimi sisse; kaasatud rakendused sunnivad selle sisse, välistatud jäetakse vahele.",
   "auto.wait_description": "Kui see on lubatud, jääb mängurežiim aktiivseks vastava rakenduse sulgemiseni.",
   "auto.empty": "Kirjeid pole.",

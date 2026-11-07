@@ -80,7 +80,7 @@
   "auto.exclude_add": "Hinzufügen: Ausschließen",
   "auto.include_add": "Hinzufügen: Einschließen",
   "auto.wait": "Bis zum Schließen der App warten",
-  "auto.title": "Einstellungen für den automatischen Modus",
+  "auto.title": "Spielmodus-Einstellungen",
   "auto.description": "Vollbild-Apps aktivieren den Spielmodus; eingeschlossene Apps erzwingen ihn, ausgeschlossene Apps werden übersprungen.",
   "auto.wait_description": "Bei Aktivierung bleibt der Spielmodus bis zum Schließen der passenden App aktiv.",
   "auto.empty": "Keine Einträge.",

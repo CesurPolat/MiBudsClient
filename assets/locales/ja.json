@@ -80,7 +80,7 @@
   "auto.exclude_add": "追加: 除外",
   "auto.include_add": "追加: 対象に含める",
   "auto.wait": "アプリが終了するまで待機",
-  "auto.title": "自動モードの設定",
+  "auto.title": "ゲームモードの設定",
   "auto.description": "全画面アプリでゲームモードを有効にします。対象アプリでは強制的に有効にし、除外アプリではスキップします。",
   "auto.wait_description": "有効にすると、該当するアプリが終了するまでゲームモードが維持されます。",
   "auto.empty": "項目がありません。",

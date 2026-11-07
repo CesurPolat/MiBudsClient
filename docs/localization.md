@@ -23,6 +23,9 @@ context review; this does not represent native-speaker review of every language.
 
 ## Context decisions
 
+- `auto.title` labels the desktop Game Mode Settings section, including its
+  automatic-mode rules. It remains authored desktop text in the source ledger.
+
 - Android `in` is normalized to standard Indonesian `id`.
 - Portuguese uses separate `pt-BR` and `pt-PT` catalogs. Chinese uses `zh-CN`,
   `zh-TW` and `zh-HK`; script and region are respected during locale detection.

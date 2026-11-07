@@ -80,7 +80,7 @@
   "auto.exclude_add": "Añadir: Excluir",
   "auto.include_add": "Añadir: Incluir",
   "auto.wait": "Esperar hasta que se cierre la aplicación",
-  "auto.title": "Ajustes del modo automático",
+  "auto.title": "Ajustes del modo de juego",
   "auto.description": "Las aplicaciones a pantalla completa activan el modo de juego; las incluidas lo fuerzan y las excluidas se omiten.",
   "auto.wait_description": "Al activarlo, el modo de juego permanece activo hasta que se cierre la aplicación correspondiente.",
   "auto.empty": "No hay entradas.",

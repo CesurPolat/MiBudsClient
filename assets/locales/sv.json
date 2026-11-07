@@ -80,7 +80,7 @@
   "auto.exclude_add": "Lägg till: Exkludera",
   "auto.include_add": "Lägg till: Inkludera",
   "auto.wait": "Vänta tills appen stängs",
-  "auto.title": "Inställningar för automatiskt läge",
+  "auto.title": "Inställningar för spelläge",
   "auto.description": "Helskärmsappar aktiverar spelläge; inkluderade appar tvingar på det och exkluderade appar hoppas över.",
   "auto.wait_description": "När detta är aktiverat förblir spelläget aktivt tills den matchande appen stängs.",
   "auto.empty": "Inga poster.",

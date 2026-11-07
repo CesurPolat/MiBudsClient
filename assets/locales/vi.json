@@ -80,7 +80,7 @@
   "auto.exclude_add": "Thêm: Loại trừ",
   "auto.include_add": "Thêm: Bao gồm",
   "auto.wait": "Chờ đến khi ứng dụng đóng",
-  "auto.title": "Cài đặt chế độ tự động",
+  "auto.title": "Cài đặt chế độ trò chơi",
   "auto.description": "Ứng dụng toàn màn hình bật chế độ trò chơi; ứng dụng được bao gồm buộc bật, còn ứng dụng bị loại trừ được bỏ qua.",
   "auto.wait_description": "Khi bật, chế độ trò chơi được duy trì đến khi ứng dụng tương ứng đóng.",
   "auto.empty": "Không có mục nào.",

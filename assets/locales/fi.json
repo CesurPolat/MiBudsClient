@@ -80,7 +80,7 @@
   "auto.exclude_add": "Lisää: Sulje pois",
   "auto.include_add": "Lisää: Sisällytä",
   "auto.wait": "Odota sovelluksen sulkemista",
-  "auto.title": "Automaattitilan asetukset",
+  "auto.title": "Pelitilan asetukset",
   "auto.description": "Koko näytön sovellukset ottavat pelitilan käyttöön; sisällytetyt sovellukset pakottavat sen päälle, pois suljetut ohitetaan.",
   "auto.wait_description": "Kun tämä on käytössä, pelitila pysyy aktiivisena vastaavan sovelluksen sulkemiseen asti.",
   "auto.empty": "Ei merkintöjä.",

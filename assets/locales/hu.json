@@ -80,7 +80,7 @@
   "auto.exclude_add": "Hozzáadás: Kizárás",
   "auto.include_add": "Hozzáadás: Bevonás",
   "auto.wait": "Várakozás az alkalmazás bezárásáig",
-  "auto.title": "Automatikus mód beállításai",
+  "auto.title": "Játékmód beállításai",
   "auto.description": "A teljes képernyős alkalmazások bekapcsolják a játékmódot; a bevont alkalmazások kényszerítik, a kizártak kimaradnak.",
   "auto.wait_description": "Bekapcsolva a játékmód az érintett alkalmazás bezárásáig aktív marad.",
   "auto.empty": "Nincsenek bejegyzések.",

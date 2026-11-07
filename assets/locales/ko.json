@@ -80,7 +80,7 @@
   "auto.exclude_add": "추가: 제외",
   "auto.include_add": "추가: 포함",
   "auto.wait": "앱이 종료될 때까지 대기",
-  "auto.title": "자동 모드 설정",
+  "auto.title": "게임 모드 설정",
   "auto.description": "전체 화면 앱에서 게임 모드를 켭니다. 포함된 앱은 항상 켜고 제외된 앱은 건너뜁니다.",
   "auto.wait_description": "사용하면 해당 앱이 종료될 때까지 게임 모드가 유지됩니다.",
   "auto.empty": "항목이 없습니다.",

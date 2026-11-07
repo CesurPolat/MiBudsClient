@@ -80,7 +80,7 @@
   "auto.exclude_add": "Aggiungi: Escludi",
   "auto.include_add": "Aggiungi: Includi",
   "auto.wait": "Attendi la chiusura dell’app",
-  "auto.title": "Impostazioni della modalità automatica",
+  "auto.title": "Impostazioni della modalità gioco",
   "auto.description": "Le app a schermo intero attivano la modalità gioco; le app incluse la forzano, quelle escluse vengono ignorate.",
   "auto.wait_description": "Se attiva, la modalità gioco rimane abilitata fino alla chiusura dell’app corrispondente.",
   "auto.empty": "Nessuna voce.",

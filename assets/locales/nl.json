@@ -80,7 +80,7 @@
   "auto.exclude_add": "Toevoegen: Uitsluiten",
   "auto.include_add": "Toevoegen: Opnemen",
   "auto.wait": "Wachten tot de app sluit",
-  "auto.title": "Instellingen voor automatische modus",
+  "auto.title": "Instellingen voor gamemodus",
   "auto.description": "Apps op volledig scherm activeren gamemodus; opgenomen apps schakelen deze altijd in, uitgesloten apps worden overgeslagen.",
   "auto.wait_description": "Als dit is ingeschakeld, blijft gamemodus actief tot de bijbehorende app sluit.",
   "auto.empty": "Geen vermeldingen.",

@@ -80,7 +80,7 @@
   "auto.exclude_add": "新增: 排除",
   "auto.include_add": "新增: 包含",
   "auto.wait": "等待應用程式關閉",
-  "auto.title": "自動模式設定",
+  "auto.title": "遊戲模式設定",
   "auto.description": "全螢幕應用程式會開啟遊戲模式；包含的應用程式強制開啟，排除的應用程式則會略過。",
   "auto.wait_description": "啟用後，遊戲模式會保持開啟，直到符合的應用程式關閉。",
   "auto.empty": "尚無項目。",

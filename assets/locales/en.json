@@ -80,7 +80,7 @@
   "auto.exclude_add": "Add as exclude",
   "auto.include_add": "Add as include",
   "auto.wait": "Wait until app closes",
-  "auto.title": "Automatic Mode Settings",
+  "auto.title": "Game Mode Settings",
   "auto.description": "Auto: fullscreen apps open Game Mode; includes force open, excludes skip.",
   "auto.wait_description": "When enabled, Game Mode stays active until the matched app closes.",
   "auto.empty": "No entries.",

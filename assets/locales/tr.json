@@ -80,7 +80,7 @@
   "auto.exclude_add": "Hariç tutulan olarak ekle",
   "auto.include_add": "Dahil edilen olarak ekle",
   "auto.wait": "Uygulama kapanana kadar bekle",
-  "auto.title": "Otomatik Mod Ayarları",
+  "auto.title": "Oyun Modu Ayarları",
   "auto.description": "Otomatik: Tam ekran uygulamalar oyun modunu açar; dahil edilenlerde açılır, hariç tutulanlar atlanır.",
   "auto.wait_description": "Etkinleştirildiğinde oyun modu, eşleşen uygulama kapanana kadar açık kalır.",
   "auto.empty": "Henüz kayıt yok.",

@@ -80,7 +80,7 @@
   "auto.exclude_add": "添加为排除项",
   "auto.include_add": "添加为包含项",
   "auto.wait": "等待应用关闭",
-  "auto.title": "自动模式设置",
+  "auto.title": "游戏模式设置",
   "auto.description": "自动：全屏应用开启游戏模式；包含项强制开启，排除项跳过。",
   "auto.wait_description": "启用后，游戏模式将保持开启，直到匹配的应用关闭。",
   "auto.empty": "暂无条目。",

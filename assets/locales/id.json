@@ -80,7 +80,7 @@
   "auto.exclude_add": "Tambah: Kecualikan",
   "auto.include_add": "Tambah: Sertakan",
   "auto.wait": "Tunggu hingga aplikasi ditutup",
-  "auto.title": "Setelan mode otomatis",
+  "auto.title": "Setelan mode game",
   "auto.description": "Aplikasi layar penuh mengaktifkan mode game; aplikasi yang disertakan selalu mengaktifkannya, yang dikecualikan dilewati.",
   "auto.wait_description": "Jika diaktifkan, mode game tetap aktif hingga aplikasi terkait ditutup.",
   "auto.empty": "Belum ada entri.",

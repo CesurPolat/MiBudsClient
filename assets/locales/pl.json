@@ -80,7 +80,7 @@
   "auto.exclude_add": "Dodaj: Wyklucz",
   "auto.include_add": "Dodaj: Uwzględnij",
   "auto.wait": "Czekaj na zamknięcie aplikacji",
-  "auto.title": "Ustawienia trybu automatycznego",
+  "auto.title": "Ustawienia trybu gry",
   "auto.description": "Aplikacje pełnoekranowe włączają tryb gry; uwzględnione aplikacje wymuszają go, a wykluczone są pomijane.",
   "auto.wait_description": "Po włączeniu tryb gry pozostaje aktywny do zamknięcia odpowiedniej aplikacji.",
   "auto.empty": "Brak wpisów.",

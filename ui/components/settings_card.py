@@ -230,7 +230,7 @@ class SettingsCard(ft.Container):
     def _render_sections(self):
         labels = {
             "general": (ft.Icons.SETTINGS_OUTLINED, "settings.general"),
-            "auto": (ft.Icons.AUTO_AWESOME, "auto.title"),
+            "auto": (ft.Icons.SPORTS_ESPORTS, "auto.title"),
             "gestures": (ft.Icons.TOUCH_APP, "gesture.title"),
             "identity": (ft.Icons.INFO_OUTLINE, "settings.device_info"),
         }
