@@ -9,6 +9,7 @@ from utils.i18n import t
 from utils.sound import play_exit_melody
 from utils.window_geometry import fit_window_size, get_work_area_size
 from .constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, PAGE_PADDING
+from .constants import SETTINGS_WINDOW_HEIGHT, NAVIGATION_TRANSITION_MS
 import subprocess
 import threading
 import time
@@ -26,6 +27,9 @@ class WindowManager:
         self._on_shutdown = on_shutdown
         self._fit_revision = 0
         self._content_measurement = None
+        self._settings_open = False
+        self._resize_not_before = 0.0
+        self._on_resize_complete = None
         self._work_area = get_work_area_size() if auto_resize else None
         self._setup_window()
         self._setup_handlers()
@@ -80,8 +84,16 @@ class WindowManager:
             self._fit_revision += 1
             self.page.run_task(self._fit_content_after_layout, self._fit_revision)
 
+    def set_settings_open(self, opened: bool, on_resized=None) -> None:
+        self._settings_open = opened
+        self._on_resize_complete = on_resized
+        # Enter Settings after sliding; return Home after resizing.
+        self._resize_not_before = (
+            time.monotonic() + NAVIGATION_TRANSITION_MS / 1000 + 0.05 if opened else 0.0)
+        self.request_content_fit()
+
     async def _fit_content_after_layout(self, revision: int) -> None:
-        await asyncio.sleep(0.04)
+        await asyncio.sleep(max(0.04, self._resize_not_before - time.monotonic()))
         window = self.page.window
         if (revision != self._fit_revision or self._is_closing
                 or window.maximized or window.minimized or window.full_screen
@@ -90,47 +102,35 @@ class WindowManager:
         try:
             # Flet has no control-size query. Capture only this shrink-wrapped
             # Column at 1x and read PNG dimensions in memory; no image is saved.
-            png = await self._content_measurement.capture(pixel_ratio=1.0)
-            if revision != self._fit_revision or self._is_closing:
-                return
-            if png[:8] != b"\x89PNG\r\n\x1a\n":
-                return
-            content_height = struct.unpack(">I", png[20:24])[0]
-            if not self.page.height or not window.height:
-                return
-            frame_height = max(0, window.height - self.page.height)
-            target = math.ceil(content_height + 2 * PAGE_PADDING + frame_height)
+            if self._settings_open:
+                target = SETTINGS_WINDOW_HEIGHT
+            else:
+                png = await self._content_measurement.capture(pixel_ratio=1.0)
+                if revision != self._fit_revision or self._is_closing:
+                    return
+                if png[:8] != b"\x89PNG\r\n\x1a\n":
+                    return
+                content_height = struct.unpack(">I", png[20:24])[0]
+                if not self.page.height or not window.height:
+                    return
+                frame_height = max(0, window.height - self.page.height)
+                target = math.ceil(content_height + 2 * PAGE_PADDING + frame_height)
             _, target, _, _ = fit_window_size(
                 (window.width, target), (WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT),
                 self._work_area,
             )
             if abs(window.height - target) > 1:
-                await self._animate_height(target, revision)
+                window.height = target
+                self.page.update()
+                # Let the native window apply its new bounds before sliding.
+                await asyncio.sleep(0.04)
         except Exception as error:
             print(f"Content size measurement unavailable: {error}")
-
-    async def _animate_height(self, target: int, revision: int) -> None:
-        """Ease the native window to its content height without blocking Flet."""
-        window = self.page.window
-        initial_height = window.height
-        started = time.monotonic()
-        duration = 0.28
-        while True:
-            # A newer layout takes over from the current interpolated height.
-            if (revision != self._fit_revision or self._is_closing
-                    or window.maximized or window.minimized or window.full_screen
-                    or not window.visible):
-                return
-            progress = min(1.0, (time.monotonic() - started) / duration)
-            eased = (4 * progress ** 3 if progress < 0.5
-                     else 1 - (-2 * progress + 2) ** 3 / 2)
-            height = round(initial_height + (target - initial_height) * eased)
-            if height != window.height:
-                window.height = height
-                self.page.update()
-            if progress >= 1:
-                return
-            await asyncio.sleep(1 / 60)
+        finally:
+            # A failed measurement must not leave navigation disabled.
+            if revision == self._fit_revision and self._on_resize_complete:
+                callback, self._on_resize_complete = self._on_resize_complete, None
+                callback()
     
     def show(self) -> None:
         """Show and bring window to front via pubsub."""

@@ -7,7 +7,8 @@ This guide is the shared reference for UI changes. Follow the existing Flet comp
 MiBudsClient is a compact desktop companion: dark, quiet, clear, and centered on the connected earbuds. Prefer familiar controls, short labels, and useful feedback over decoration. Avoid adding dense dashboards, unnecessary animations, or technical protocol details to normal user flows.
 
 - Keep the home screen focused on device status and frequently used controls. Put less frequent configuration in Settings.
-- Home determines the shared screen height. Settings fills the same area so the footer stays in place during navigation; long Settings content scrolls inside its shell.
+- Home uses its natural content height. Opening Settings grows the window to 600 px, limited by the available desktop area; its shell fills the client area above the footer and scrolls internally. Returning Home restores content-based window sizing.
+- Enter Settings by sliding first, then resizing. Return Home by resizing first, then sliding. Native height changes are immediate.
 - Native window resizing and maximizing are disabled on Windows and Linux. Keep automatic screen fitting and scrolling available for smaller displays and display scaling.
 - Settings uses a left navigation rail and one selected section on the right. Use the existing shared section surface in `ui/components/settings_card.py` for every section; do not add an extra outer card or border to only some sections. Inner controls may have their own boundaries when they clarify an interaction.
 - Preserve the selected section and input state when resizing, switching screens, changing language, or receiving unrelated updates. If a device-specific section becomes unavailable, return to General.

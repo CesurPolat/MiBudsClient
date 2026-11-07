@@ -206,10 +206,13 @@ async def main(page: ft.Page):
     # Build Page Layout
     # ─────────────────────────────────────────────────────────────────────────
     layout = AppLayout(device_status_card, settings_card, on_update=update_ui,
-                       viewport_width=page.width)
+                       viewport_width=page.width,
+                       on_settings_change=window_mgr.set_settings_open)
     async def on_page_resize(_):
         if layout.set_viewport_width(page.width):
             update_ui()
+        if layout.fit_settings_height():
+            page.update()
     page.on_resize = on_page_resize
     content_measurement = ft.Screenshot(content=layout)
     page.add(content_measurement)
