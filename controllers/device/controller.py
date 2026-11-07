@@ -40,9 +40,8 @@ class DeviceConnection:
         if self._stopped.wait(1):
             return
         controller = self._get_controller()
-        if controller is not None:
-            controller.resume_reconnect_attempts()
-            controller.request_battery()
+        if controller is not None and controller.connected:
+            controller.request_battery(user_initiated=False)
 
     def reconnect_on_show(self) -> None:
         """Reconnect when the window is shown, allowing only one worker at a time."""

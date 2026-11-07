@@ -50,6 +50,10 @@ class BTController:
     """High-level controller for Mi Buds communication."""
 
     _STALE_CONNECTION_TIMEOUT = 12
+    _BATTERY_REFRESH_INTERVAL = 60
+    _BATTERY_RESPONSE_TIMEOUT = 10
+    _BATTERY_MAX_ATTEMPTS = 3
+    _RECONNECT_COOLDOWN = 120
     
     def __init__(
         self,
@@ -86,6 +90,13 @@ class BTController:
         self._max_reconnect_attempts = 5
         self._reconnect_attempts = 0
         self._reconnect_paused = False
+        self._reconnect_retry_at = 0.0
+        self._battery_requested_at = None
+        self._battery_probe_started_at = None
+        self._battery_attempts = 0
+        self._battery_next_check_at = 0.0
+        self._battery_has_value = False
+        self._last_received_at = time.monotonic()
         self._last_connection_event: Optional[str] = None
         
         # Callbacks
@@ -164,12 +175,14 @@ class BTController:
         with self._state_lock:
             self._reconnect_attempts = 0
             self._reconnect_paused = False
+            self._reconnect_retry_at = 0.0
 
     def _record_reconnect_failure(self) -> tuple[int, bool]:
         with self._state_lock:
             self._reconnect_attempts += 1
             if self._reconnect_attempts >= self._max_reconnect_attempts:
                 self._reconnect_paused = True
+                self._reconnect_retry_at = time.monotonic() + self._RECONNECT_COOLDOWN
             return self._reconnect_attempts, self._reconnect_paused
 
     def resume_reconnect_attempts(self) -> None:
@@ -213,6 +226,8 @@ class BTController:
                            resolution_source=result.resolution_source,
                            auth_policy=policy.value, authenticated=self.session_authenticated)
                 self._update_status(m("connection.connected"), "blue")
+                with self._state_lock:
+                    self._last_received_at = time.monotonic()
                 self._reset_reconnect_state()
                 self._notify_connection_state("connected")
                 self._notify_connection_event("connected")
@@ -280,11 +295,56 @@ class BTController:
             if not self.capabilities.supports("battery"):
                 return False, m("connection.device_failed")
             payload = self._protocol.build_battery_request()
-            self._connection.send(payload)
+            # Record before sending so a fast response cannot race this state.
+            with self._state_lock:
+                now = time.monotonic()
+                if self._battery_requested_at is None:
+                    self._battery_requested_at = now
+                    self._battery_probe_started_at = now
+                    self._battery_attempts = 1
+                self._connection.send(payload)
             return True, m("battery.sent")
         except Exception as e:
             self._connection.connected = False
             return False, m("command.request_error", details=str(e))
+
+    def _check_connection_health(self) -> None:
+        """Run from the sole listener, on both incoming data and idle timeouts."""
+        if not self._running or not self.connected or not self.capabilities.supports("battery"):
+            return
+        invalidate = False
+        unresponsive = False
+        exhausted = False
+        with self._state_lock:
+            now = time.monotonic()
+            requested_at = self._battery_requested_at
+            if requested_at is None:
+                if now < self._battery_next_check_at:
+                    return
+            elif now - requested_at < self._BATTERY_RESPONSE_TIMEOUT:
+                return
+            elif self._battery_attempts < self._BATTERY_MAX_ATTEMPTS:
+                self._battery_attempts += 1
+                self._battery_requested_at = now
+            else:
+                # Missing battery data alone does not prove a dead transport.
+                exhausted = True
+                unresponsive = self._last_received_at <= self._battery_probe_started_at
+                invalidate = self._battery_has_value
+                self._battery_has_value = False
+                self._battery_requested_at = None
+                self._battery_probe_started_at = None
+                self._battery_attempts = 0
+                self._battery_next_check_at = now + self._BATTERY_REFRESH_INTERVAL
+        if invalidate:
+            self._notify_battery(255, 255, 255)
+        if unresponsive:
+            raise ConnectionError("No response to repeated battery health probes")
+        if exhausted:
+            return
+        success, reason = self.request_battery(user_initiated=False)
+        if not success:
+            raise ConnectionError(reason)
     
     def request_device_identity(self, timeout: float = 5.0, *, reconnect: bool = True) -> tuple[bool, str]:
         """Read all target info and return raw hex; run off the UI/listener thread."""
@@ -412,6 +472,15 @@ class BTController:
             self._identity_callback(identity)
 
     def _reset_identity_state(self, reason: str) -> None:
+        with self._state_lock:
+            invalidate = self._battery_has_value
+            self._battery_has_value = False
+            self._battery_requested_at = None
+            self._battery_probe_started_at = None
+            self._battery_attempts = 0
+            self._battery_next_check_at = 0.0
+        if invalidate:
+            self._notify_battery(255, 255, 255)
         self._battery_parser.reset()
         self._noise_parser.reset()
         self._gestures.reset(m("gesture.connection_changed"))
@@ -488,16 +557,19 @@ class BTController:
     def listen(self) -> None:
         """Main listener loop for incoming data."""
         last_packet_size = 0
-        last_data_received_at = time.monotonic()
         disconnected_since: Optional[float] = None
         
         while self._running:
             if not self._connection.connected:
                 with self._state_lock:
                     reconnect_paused = self._reconnect_paused
+                    retry_at = self._reconnect_retry_at
 
                 if reconnect_paused:
-                    time.sleep(RECONNECT_DELAY)
+                    if time.monotonic() >= retry_at:
+                        self._reset_reconnect_state()
+                    else:
+                        time.sleep(1)
                     continue
 
                 if disconnected_since is None:
@@ -530,16 +602,15 @@ class BTController:
                         time.sleep(1)
                 else:
                     disconnected_since = None
-                    last_data_received_at = time.monotonic()
+                    last_packet_size = 0
                 continue
             
             try:
+                self._check_connection_health()
                 last_packet_size = self._process_data(last_packet_size)
-                last_data_received_at = time.monotonic()
                 disconnected_since = None
             except socket.timeout:
-                # Keep idle connections without forcing periodic battery probes.
-                # Reconnect is handled only on explicit send/receive failures.
+                # The next loop checks the health deadline even on idle sockets.
                 continue
             except Exception:
                 self._handle_disconnect()
@@ -549,6 +620,8 @@ class BTController:
         data = self._connection.receive()
         if not data:
             raise ConnectionError("Received zero bytes from RFCOMM socket")
+        with self._state_lock:
+            self._last_received_at = time.monotonic()
 
         packet_size = len(data)
         print(f"Received data size: {packet_size}")
@@ -576,6 +649,12 @@ class BTController:
         # Check for battery data
         statuses = self._battery_parser.feed(data)
         if statuses:
+            with self._state_lock:
+                self._battery_requested_at = None
+                self._battery_probe_started_at = None
+                self._battery_attempts = 0
+                self._battery_has_value = True
+                self._battery_next_check_at = time.monotonic() + self._BATTERY_REFRESH_INTERVAL
             for status in statuses:
                 self._notify_battery(status.left, status.right, status.case)
         

@@ -261,11 +261,12 @@ class BluetoothConnection:
         with self._lock:
             if not self._connected:
                 raise ConnectionError("Transport session is not ready")
-            if self._sock:
-                self._sock.sendall(data)
-                if os.environ.get("MIBUDS_ANC_CAPTURE"):
-                    from .noise_capture import record
-                    record("TX", data)
+            if self._sock is None:
+                raise ConnectionError("RFCOMM socket is unavailable")
+            self._sock.sendall(data)
+            if os.environ.get("MIBUDS_ANC_CAPTURE"):
+                from .noise_capture import record
+                record("TX", data)
     
     def receive(self) -> bytes:
         """Receive data from device.

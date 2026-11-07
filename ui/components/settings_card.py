@@ -114,9 +114,6 @@ class SettingsCard(ft.Container):
         )
 
         self.connection_panel = ConnectionPanel()
-        self.battery_item = SettingItem(ft.Icons.REFRESH, "grey700", t("battery.check"), on_click=on_check_battery)
-        self.battery_item.dense = True
-        self.battery_item.content_padding = ft.Padding.symmetric(horizontal=8)
 
         def home_card(control):
             return ft.Container(content=control, bgcolor=COLOR_CARD_BG,
@@ -139,7 +136,6 @@ class SettingsCard(ft.Container):
         self.equalizer.custom_supported = False
         self.latency_card = home_card(self.latency_item)
         self.equalizer_card = home_card(self.equalizer.quick_controls)
-        self.battery_card = home_card(self.battery_item)
         self.noise = NoiseSettings(on_noise_action, on_update)
         self.noise_card = home_card(self.noise.quick_controls)
         self.device_components = {"gestures": self.gestures, "eq": self.equalizer}
@@ -206,14 +202,13 @@ class SettingsCard(ft.Container):
         caps = self._capabilities
         self._render_identity()
         self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
-        self.battery_item.visible = self._connected and caps.supports("battery")
         self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
         self.noise.capabilities = noise_capabilities(caps)
         self.noise.quick_controls.visible = self._connected and bool(self.noise.capabilities.modes)
         self.noise.set_connection(self._connected and bool(self.noise.capabilities.modes),
                                   noise_backend_enabled(caps))
         controls = []
-        for card in (self.latency_card, self.noise_card, self.equalizer_card, self.battery_card):
+        for card in (self.latency_card, self.noise_card, self.equalizer_card):
             card.visible = card.content.visible
             if card.visible:
                 controls.append(card)
