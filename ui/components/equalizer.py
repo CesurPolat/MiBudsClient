@@ -5,6 +5,7 @@ from controllers.bluetooth.equalizer import EqBand, PROFILE_KEYS
 from utils.i18n import t, render
 from .setting_items import SettingItem
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
+from ..constants import HOME_CONTROL_HEADER_HEIGHT
 
 
 class EqualizerSettings(ft.Column):
@@ -36,7 +37,7 @@ class EqualizerSettings(ft.Column):
             on_click=lambda _: self._act("read"))
         self.quick_controls = ft.Column([
             ft.ListTile(
-                dense=True, min_height=44,
+                dense=True, min_height=44, height=HOME_CONTROL_HEADER_HEIGHT,
                 content_padding=ft.Padding.symmetric(horizontal=8),
                 leading=ft.Container(
                     content=ft.Icon(ft.Icons.GRAPHIC_EQ, size=20, color=COLOR_TEXT_PRIMARY),
@@ -48,7 +49,7 @@ class EqualizerSettings(ft.Column):
                 content=ft.Column([self.quick_profiles, self.quick_status], spacing=4,
                                   horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
                 padding=ft.Padding.only(left=8, right=8, bottom=6)),
-        ], spacing=0, visible=False,
+        ], spacing=0, tight=True, visible=False,
             horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.sliders = []
         self.rows = ft.Column(spacing=4)

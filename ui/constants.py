@@ -40,6 +40,7 @@ BATTERY_LOW_THRESHOLD = 20
 # UI Dimensions
 # ─────────────────────────────────────────────────────────────────────────────
 ICON_BUTTON_SIZE = 40
+HOME_CONTROL_HEADER_HEIGHT = 56
 DEVICE_IMAGE_SIZE = 185
 CARD_BORDER_RADIUS = 20
 ICON_BORDER_RADIUS = 10

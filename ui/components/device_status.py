@@ -4,7 +4,7 @@ from utils.i18n import t, render
 
 import flet as ft
 
-from ..constants import COLOR_BG
+from ..constants import COLOR_BG, DEVICE_IMAGE_SIZE
 from .battery import BatteryPanel
 from .common import DeviceImage
 
@@ -50,8 +50,10 @@ class DeviceStatusCard(ft.Container):
         )
 
     def set_wide_layout(self, wide: bool) -> None:
-        self._product_spacer.visible = wide
-        self._battery_spacer.visible = wide
+        self._product_spacer.visible = False
+        self._battery_spacer.visible = False
+        self.device_image.expand = wide
+        self.device_image.height = None if wide else DEVICE_IMAGE_SIZE + 12
         self.content.tight = not wide
         self.padding = ft.Padding.only(left=8, right=8, top=6, bottom=0 if wide else 6)
 

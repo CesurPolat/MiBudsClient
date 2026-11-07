@@ -9,6 +9,7 @@ from ..constants import (
     COLOR_DISABLED,
     COLOR_TEXT_PRIMARY,
     ICON_BORDER_RADIUS,
+    HOME_CONTROL_HEADER_HEIGHT,
 )
 
 
@@ -69,6 +70,7 @@ class LowLatencyModeSettingItem(ft.Column):
         }
         self._buttons_row = ft.Row(
             controls=list(self._mode_feedback.values()),
+            height=64,
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             spacing=8,
         )
@@ -77,7 +79,7 @@ class LowLatencyModeSettingItem(ft.Column):
         super().__init__(
             controls=[
                 ft.ListTile(
-                    dense=True, min_height=44,
+                    dense=True, min_height=44, height=HOME_CONTROL_HEADER_HEIGHT,
                     content_padding=ft.Padding.symmetric(horizontal=8),
                     leading=ft.Container(
                         content=ft.Icon(icon, size=20, color=COLOR_TEXT_PRIMARY),
@@ -92,6 +94,7 @@ class LowLatencyModeSettingItem(ft.Column):
                 ft.Container(content=self._buttons_row, padding=ft.Padding.only(left=8, right=8, bottom=6)),
             ],
             spacing=0,
+            tight=True,
         )
         self._apply_styles()
 

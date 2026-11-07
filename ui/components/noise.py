@@ -6,6 +6,7 @@ import flet as ft
 from controllers.bluetooth.noise import NoiseCapabilities
 from utils.i18n import t, render
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
+from ..constants import HOME_CONTROL_HEADER_HEIGHT
 
 
 class NoiseSettings:
@@ -83,7 +84,8 @@ class NoiseSettings:
                                      horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         self.quick_controls = ft.Column([
             ft.ListTile(
-                dense=True, min_height=44, content_padding=ft.Padding.symmetric(horizontal=8),
+                dense=True, min_height=44, height=HOME_CONTROL_HEADER_HEIGHT,
+                content_padding=ft.Padding.symmetric(horizontal=8),
                 leading=ft.Container(
                     content=ft.Stack([self._header_icon, self._read_progress], width=20, height=20),
                     bgcolor="blue_700", border_radius=ICON_BORDER_RADIUS, width=32, height=32,

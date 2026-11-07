@@ -80,18 +80,23 @@ class AppLayout(ft.Column):
         self._wide = wide
         device, controls = self._device_status_card, self._home_controls
         device.set_wide_layout(wide)
-        device.expand = 2 if wide else False
+        device.expand = False
         controls.expand = 3 if wide else False
-        # The wide row gets its height from the device summary. Let the loading
-        # card fill that height instead of retaining its compact fixed height.
-        self._settings_card.connection_card.height = None if wide else HOME_CONTROLS_HEIGHT
-        self._settings_card.connection_card.expand = wide
+        # The controls determine the height; the device summary fills that area.
+        self._settings_card.connection_card.height = HOME_CONTROLS_HEIGHT
+        self._settings_card.connection_card.expand = False
         self._settings_card.connection_panel.height = None if wide else HOME_CONTROLS_HEIGHT - 12
-        self._connected_controls.expand = wide
+        # Flex children distort the intrinsic height used by the shared row.
+        # Measure the complete card stack, including its bottom padding.
+        self._connected_controls.expand = False
+        controls.content.tight = True
         self._connected_controls.alignment = ft.MainAxisAlignment.START
         if wide:
+            device_slot = ft.Stack([
+                ft.Container(content=device, top=0, bottom=0, left=0, right=0),
+            ], expand=2)
             self.home_content.content = ft.Row(
-                [device, controls], spacing=8, intrinsic_height=True,
+                [device_slot, controls], spacing=8, intrinsic_height=True,
                 vertical_alignment=ft.CrossAxisAlignment.STRETCH)
         else:
             self.home_content.content = ft.Column(
