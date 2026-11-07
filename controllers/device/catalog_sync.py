@@ -89,10 +89,15 @@ class CatalogSync:
         while not self._stopped.is_set():
             self._wake.clear()
             identity = self._get_identity()
-            changed = self.client.refresh(
-                identity.vid if identity else None,
-                identity.pid if identity else None,
-            )
+            if identity is not None:
+                vid, pid = identity.vid, identity.pid
+            else:
+                models = get_device_models_by_name(self._get_device_name())
+                identities = {(int(model["vid"], 16), int(model["pid"], 16))
+                              for model in models}
+                # Name variants may share one identity; conflicting IDs are ambiguous.
+                vid, pid = next(iter(identities)) if len(identities) == 1 else (None, None)
+            changed = self.client.refresh(vid, pid)
             if self._stopped.is_set():
                 return
             if changed:

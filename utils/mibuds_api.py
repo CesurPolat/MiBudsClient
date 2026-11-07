@@ -94,6 +94,20 @@ class CatalogClient:
         self._terminal_error = False
         self.last_error = ""
         self._load_cache()
+        if self.catalog is None:
+            self._load_bundled_catalog()
+
+    def _load_bundled_catalog(self) -> None:
+        """Seed the first check with the bundled catalog's exact UTF-8 hash."""
+        root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[1]))
+        try:
+            # Preserve BOM and line endings, just as for downloaded catalogs.
+            text = (root / "assets" / "device_catalog.json").read_bytes().decode("utf-8")
+            version = "sha256-" + hashlib.sha256(text.encode("utf-8")).hexdigest()
+            catalog = self._verified_catalog(text, version)
+        except (OSError, ValueError, TypeError, AttributeError):
+            return
+        self.catalog, self.version, self._catalog_text = catalog, version, text
 
     def _load_or_create_install_id(self) -> str | None:
         """Reuse a random installation UUID independently of the catalog cache."""
