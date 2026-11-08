@@ -188,11 +188,7 @@ class SettingsCard(ft.Container):
         self._section_surface = ft.Container(
             content=ft.Column(list(self._sections.values()), spacing=0,
                               horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
-            bgcolor=COLOR_HOME_SURFACE, border_radius=16, padding=12,
-            gradient=ft.LinearGradient(
-                begin=ft.Alignment.TOP_LEFT, end=ft.Alignment.BOTTOM_RIGHT,
-                colors=[COLOR_HOME_SURFACE_TOP, COLOR_HOME_SURFACE]),
-            border=ft.Border.all(1, COLOR_HOME_BORDER),
+            padding=0,
         )
         self._section_column = ft.Column([self._section_title, self._section_surface],
                                          spacing=14, expand=True,

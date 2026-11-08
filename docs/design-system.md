@@ -10,7 +10,7 @@ MiBudsClient is a compact desktop companion: dark, quiet, clear, and centered on
 - Home uses its natural content height. Opening Settings grows the window to 600 px, limited by the available desktop area; its shell fills the client area above the footer and scrolls internally. Returning Home restores content-based window sizing.
 - Enter Settings by sliding first, then resizing. Return Home by resizing first, then sliding. Native height changes are immediate.
 - Native window resizing and maximizing are disabled on Windows and Linux. Keep automatic screen fitting and scrolling available for smaller displays and display scaling.
-- Settings uses a left navigation rail and one selected section on the right. Use the existing shared section surface in `ui/components/settings_card.py` for every section; do not add an extra outer card or border to only some sections. Inner controls may have their own boundaries when they clarify an interaction.
+- Settings uses a left navigation rail and one selected section on the right. Keep the shared section container in `ui/components/settings_card.py` transparent, borderless, and without card padding so content integrates with the Settings shell. Inner controls may have their own boundaries when they clarify an interaction.
 - Preserve the selected section and input state when resizing, switching screens, changing language, or receiving unrelated updates. If a device-specific section becomes unavailable, return to General.
 - The default window is 655 ? 430 and the minimum is 420 ? 400. At widths below 500, Settings uses the compact icon rail; preserve translated tooltips and the visible section heading. Ensure long content can be reached by scrolling and controls do not clip or overflow at minimum width.
 - Reuse the existing home layout breakpoint and sizing behavior in `ui/components/app_layout.py`; do not introduce a competing breakpoint without a concrete need.
@@ -25,13 +25,13 @@ Use `ui/constants.py` as the source for shared application tokens, and reuse the
 | Home cards | `COLOR_HOME_SURFACE_TOP` to `COLOR_HOME_SURFACE`, graphite gradient with `COLOR_HOME_BORDER` |
 | Home selected controls | `COLOR_HOME_SELECTED` / `#2463FF`, border `COLOR_HOME_SELECTED_BORDER` |
 | Settings shell | `COLOR_BG`, border `COLOR_HOME_BORDER` |
-| Settings section surface | Same graphite gradient as Home, border `COLOR_HOME_BORDER`, radius 16 |
+| Settings section surface | Transparent and borderless, integrated with the Settings shell |
 | Selected navigation item | Blue gradient from `COLOR_HOME_SELECTED_BORDER` to `COLOR_HOME_SELECTED`, white icon and text |
 | Primary / secondary text | `COLOR_TEXT_PRIMARY` / `COLOR_TEXT_SECONDARY` |
 | Dividers | `COLOR_DIVIDER` |
 | Charging / battery / low battery | `COLOR_CHARGING`, `COLOR_BATTERY`, `COLOR_BATTERY_LOW` |
 
-Use the existing 20-pixel card radius and 10-pixel icon radius where appropriate; the shared settings surface uses 16 pixels. Favor spacing in the existing 4, 8, 12, 16 rhythm. Section titles are currently 17 px semibold; ordinary labels are typically 12?14 px. Let translated labels wrap when needed. Status colors are supplemental: include text or an icon so meaning is not conveyed by color alone.
+Use the existing 20-pixel card radius and 10-pixel icon radius where appropriate. Favor spacing in the existing 4, 8, 12, 16 rhythm. Section titles are currently 17 px semibold; ordinary labels are typically 12?14 px. Let translated labels wrap when needed. Status colors are supplemental: include text or an icon so meaning is not conveyed by color alone.
 
 Home presents the device without an outer card, with a soft circular halo behind its image. Battery summaries have fixed icon slots above single-line percentages; charging is drawn inside the icon so it cannot shift the value. Keep the graphite treatment and bright blue selection consistent across the current home controls.
 
