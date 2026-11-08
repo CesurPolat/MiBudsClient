@@ -21,6 +21,12 @@ earbud-specific strings for Estonian, Finnish, Hindi, Hungarian or Swedish, so
 those app terms are authored too. These translations have had structural and
 context review; this does not represent native-speaker review of every language.
 
+Previously English-only EQ, error-report, and noise-control entries have been
+authored in the selectable languages. Existing localized terms are preserved,
+and profile names such as Harman and Harman Master remain unchanged. Device-info
+model and firmware labels are also authored desktop strings. These additions
+are recorded as authored entries in the source ledger, not Android imports.
+
 ## Context decisions
 
 - `latency.auto_activated` is an authored suffix after the clickable executable

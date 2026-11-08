@@ -253,5 +253,7 @@
   "latency.disconnected": "Earbuds are disconnected.",
   "latency.connection_changed": "Connection changed during Game Mode request.",
   "latency.timeout": "Game Mode request timed out.",
-  "latency.invalid": "Invalid or incomplete Game Mode data."
+  "latency.invalid": "Invalid or incomplete Game Mode data.",
+  "identity.model": "Model",
+  "identity.firmware": "Firmware"
 }

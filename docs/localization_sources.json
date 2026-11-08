@@ -361,7 +361,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "en": {
@@ -621,7 +623,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "ar": {
@@ -984,7 +988,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "de": {
@@ -1347,7 +1353,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "es": {
@@ -1710,7 +1718,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "et": {
@@ -1977,7 +1987,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "fi": {
@@ -2244,7 +2256,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "fr": {
@@ -2607,7 +2621,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "hi": {
@@ -2874,7 +2890,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "hu": {
@@ -3141,7 +3159,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "id": {
@@ -3504,7 +3524,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "it": {
@@ -3867,7 +3889,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "ja": {
@@ -4230,7 +4254,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "ko": {
@@ -4593,7 +4619,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "ms": {
@@ -4956,7 +4984,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "nl": {
@@ -5319,7 +5349,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "pl": {
@@ -5682,7 +5714,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "pt-BR": {
@@ -6042,7 +6076,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "pt-PT": {
@@ -6402,7 +6438,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "ru": {
@@ -6765,7 +6803,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "sv": {
@@ -7032,7 +7072,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "th": {
@@ -7395,7 +7437,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "uk": {
@@ -7758,7 +7802,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "vi": {
@@ -8121,7 +8167,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "zh-CN": {
@@ -8481,7 +8529,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "zh-TW": {
@@ -8841,7 +8891,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     },
     "zh-HK": {
@@ -9201,7 +9253,9 @@
         "latency.disconnected",
         "latency.connection_changed",
         "latency.timeout",
-        "latency.invalid"
+        "latency.invalid",
+        "identity.model",
+        "identity.firmware"
       ]
     }
   },

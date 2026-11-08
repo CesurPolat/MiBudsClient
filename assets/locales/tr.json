@@ -1,5 +1,5 @@
 {
-  "latency.auto_activated": " etkinleştirdi",
+  "latency.auto_activated": " Oyun Modu'nu etkinleştirdi",
   "language.title": "Dil",
   "language.system": "Sistem dili",
   "nav.back": "Geri",
@@ -229,7 +229,7 @@
   "eq.classic_legacy": "Klasik (eski)",
   "eq.pop": "Pop",
   "eq.classic": "Klasik",
-  "eq.audiophile": "Audiophile",
+  "eq.audiophile": "Odyofil",
   "eq.decrease_bass": "Bas azaltma",
   "eq.harman": "Harman",
   "eq.harman_master": "Harman Master",
@@ -253,5 +253,7 @@
   "latency.disconnected": "Kulaklık bağlantısı yok.",
   "latency.connection_changed": "Oyun Modu işlemi sırasında bağlantı değişti.",
   "latency.timeout": "Oyun Modu isteği zaman aşımına uğradı.",
-  "latency.invalid": "Oyun Modu verisi geçersiz veya eksik."
+  "latency.invalid": "Oyun Modu verisi geçersiz veya eksik.",
+  "identity.model": "Model",
+  "identity.firmware": "Donanım yazılımı"
 }
