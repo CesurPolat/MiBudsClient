@@ -7,6 +7,10 @@ from controllers.bluetooth.noise import NoiseCapabilities
 from utils.i18n import t, render
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
 from ..constants import HOME_CONTROL_HEADER_HEIGHT
+from ..constants import (
+    COLOR_HOME_CONTROL, COLOR_HOME_BORDER, COLOR_HOME_SELECTED,
+    COLOR_HOME_SELECTED_BORDER,
+)
 
 
 class NoiseSettings:
@@ -88,7 +92,7 @@ class NoiseSettings:
                 content_padding=ft.Padding.symmetric(horizontal=8),
                 leading=ft.Container(
                     content=ft.Stack([self._header_icon, self._read_progress], width=20, height=20),
-                    bgcolor="blue_700", border_radius=ICON_BORDER_RADIUS, width=32, height=32,
+                    bgcolor=COLOR_HOME_CONTROL, border_radius=ICON_BORDER_RADIUS, width=32, height=32,
                     alignment=ft.Alignment.CENTER),
                 title=ft.Text(t("noise.title"), size=14, color=COLOR_TEXT_PRIMARY, weight="medium")),
             ft.Container(content=self._quick_body,
@@ -218,8 +222,8 @@ class NoiseSettings:
             self._mode_icons[value].visible = not pending
             self._mode_progress[value].visible = pending
             button.style = ft.ButtonStyle(
-                bgcolor="#1976D2" if selected else "#2B2F3A", color=COLOR_TEXT_PRIMARY,
-                side=ft.BorderSide(1, "#4FC3F7" if selected or pending else "#3B3F4A"),
+                bgcolor=COLOR_HOME_SELECTED if selected else COLOR_HOME_CONTROL, color=COLOR_TEXT_PRIMARY,
+                side=ft.BorderSide(1, COLOR_HOME_SELECTED_BORDER if selected or pending else COLOR_HOME_BORDER),
                 shape=ft.RoundedRectangleBorder(radius=ICON_BORDER_RADIUS), padding=8, elevation=0)
         all_levels = self.capabilities.levels(mode)
         levels = self.capabilities.slider_levels(mode)
@@ -249,8 +253,8 @@ class NoiseSettings:
             button.disabled = not enabled
             self._special_progress[value].visible = pending
             button.style = ft.ButtonStyle(
-                bgcolor="#1976D2" if selected else "#2B2F3A", color=COLOR_TEXT_PRIMARY,
-                side=ft.BorderSide(1, "#4FC3F7" if selected or pending else "#3B3F4A"),
+                bgcolor=COLOR_HOME_SELECTED if selected else COLOR_HOME_CONTROL, color=COLOR_TEXT_PRIMARY,
+                side=ft.BorderSide(1, COLOR_HOME_SELECTED_BORDER if selected or pending else COLOR_HOME_BORDER),
                 shape=ft.RoundedRectangleBorder(radius=ICON_BORDER_RADIUS), padding=8, elevation=0)
         self.special_level_controls.visible = bool(special_levels)
         self._level_progress.opacity = 1 if self._busy and "level" in self._pending else 0

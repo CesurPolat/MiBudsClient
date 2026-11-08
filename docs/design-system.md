@@ -21,8 +21,9 @@ Use `ui/constants.py` as the source for shared application tokens, and reuse the
 
 | Role | Current reference |
 | --- | --- |
-| Application background | `COLOR_BG` / `#000000` |
-| Home cards | `COLOR_CARD_BG` / `#1A1A1A` |
+| Application background | `COLOR_BG` / `#080B0E` |
+| Home cards | `COLOR_HOME_SURFACE_TOP` to `COLOR_HOME_SURFACE`, graphite gradient with `COLOR_HOME_BORDER` |
+| Home selected controls | `COLOR_HOME_SELECTED` / `#2463FF`, border `COLOR_HOME_SELECTED_BORDER` |
 | Settings shell | `#0E1218`, border `#27313D` |
 | Settings section surface | `#151B24`, border `#293443`, radius 16 |
 | Selected navigation item | `#23364C`, border `#436A91`, icon `#9BC7FF` |
@@ -31,6 +32,8 @@ Use `ui/constants.py` as the source for shared application tokens, and reuse the
 | Charging / battery / low battery | `COLOR_CHARGING`, `COLOR_BATTERY`, `COLOR_BATTERY_LOW` |
 
 Use the existing 20-pixel card radius and 10-pixel icon radius where appropriate; the shared settings surface uses 16 pixels. Favor spacing in the existing 4, 8, 12, 16 rhythm. Section titles are currently 17 px semibold; ordinary labels are typically 12?14 px. Let translated labels wrap when needed. Status colors are supplemental: include text or an icon so meaning is not conveyed by color alone.
+
+Home presents the device without an outer card, with a soft circular halo behind its image. Battery summaries have fixed icon slots above single-line percentages; charging is drawn inside the icon so it cannot shift the value. Keep the graphite treatment and bright blue selection consistent across the current home controls.
 
 ## Controls and interaction
 

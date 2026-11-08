@@ -103,11 +103,11 @@ class AppLayout(ft.Column):
                 ft.Container(content=device, top=0, bottom=0, left=0, right=0),
             ], expand=2)
             self.home_content.content = ft.Row(
-                [device_slot, controls], spacing=8, intrinsic_height=True,
+                [device_slot, controls], spacing=12, intrinsic_height=True,
                 vertical_alignment=ft.CrossAxisAlignment.STRETCH)
         else:
             self.home_content.content = ft.Column(
-                [device, controls], spacing=8, tight=True,
+                [device, controls], spacing=12, tight=True,
                 horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
         return True
 

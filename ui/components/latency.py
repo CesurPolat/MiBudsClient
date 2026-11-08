@@ -10,6 +10,13 @@ from ..constants import (
     COLOR_TEXT_PRIMARY,
     ICON_BORDER_RADIUS,
     HOME_CONTROL_HEADER_HEIGHT,
+    COLOR_HOME_CONTROL,
+    COLOR_HOME_BORDER,
+    COLOR_HOME_SELECTED,
+    COLOR_HOME_SELECTED_BORDER,
+    COLOR_HOME_ACCENT,
+    COLOR_HOME_MUTED,
+    COLOR_HOME_SURFACE_TOP,
 )
 
 
@@ -86,10 +93,11 @@ class LowLatencyModeSettingItem(ft.Column):
                     content_padding=ft.Padding.symmetric(horizontal=8),
                     leading=ft.Container(
                         content=ft.Icon(icon, size=20, color=COLOR_TEXT_PRIMARY),
-                        bgcolor=icon_bg_color,
+                        bgcolor=COLOR_HOME_CONTROL,
                         border_radius=ICON_BORDER_RADIUS,
                         width=32,
                         height=32,
+                        alignment=ft.Alignment.CENTER,
                     ),
                     title=ft.Text(title, size=14, color=COLOR_TEXT_PRIMARY, weight="medium"),
                     subtitle=self._device_state,
@@ -172,15 +180,22 @@ class LowLatencyModeSettingItem(ft.Column):
     def _apply_styles(self) -> None:
         for mode, button in self._mode_buttons.items():
             selected = mode == self._value
-            button.bgcolor = "#1976D2" if selected else "#2B2F3A"
+            button.bgcolor = COLOR_HOME_SELECTED if selected else COLOR_HOME_CONTROL
+            button.gradient = ft.LinearGradient(
+                begin=ft.Alignment.TOP_LEFT, end=ft.Alignment.BOTTOM_RIGHT,
+                colors=([COLOR_HOME_SELECTED_BORDER, COLOR_HOME_SELECTED] if selected
+                        else [COLOR_HOME_CONTROL, COLOR_HOME_SURFACE_TOP]))
+            button.shadow = (ft.BoxShadow(
+                blur_radius=12, spread_radius=0, color="#402463FF",
+                offset=ft.Offset(0, 3)) if selected else None)
             button.border = ft.border.all(
                 1,
-                "#4FC3F7" if selected else "#3B3F4A",
+                COLOR_HOME_SELECTED_BORDER if selected else COLOR_HOME_BORDER,
             )
             content = button.content
             if isinstance(content, ft.Column):
                 for control in content.controls:
                     if isinstance(control, ft.Icon):
-                        control.color = "white" if selected else COLOR_DISABLED
+                        control.color = COLOR_HOME_ACCENT if selected else COLOR_HOME_MUTED
                     elif isinstance(control, ft.Text):
                         control.color = "white" if selected else COLOR_TEXT_PRIMARY

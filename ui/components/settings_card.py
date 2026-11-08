@@ -9,7 +9,9 @@ from utils.user_preferences import get_language_preference
 from typing import Callable, Optional
 
 from ..constants import (
-    COLOR_CARD_BG,
+    COLOR_HOME_SURFACE,
+    COLOR_HOME_SURFACE_TOP,
+    COLOR_HOME_BORDER,
     COLOR_DIVIDER,
     CARD_BORDER_RADIUS,
     COLOR_DISABLED,
@@ -116,7 +118,11 @@ class SettingsCard(ft.Container):
         self.connection_panel = ConnectionPanel()
 
         def home_card(control):
-            return ft.Container(content=control, bgcolor=COLOR_CARD_BG,
+            return ft.Container(content=control, bgcolor=COLOR_HOME_SURFACE,
+                                gradient=ft.LinearGradient(
+                                    begin=ft.Alignment.TOP_LEFT, end=ft.Alignment.BOTTOM_RIGHT,
+                                    colors=[COLOR_HOME_SURFACE_TOP, COLOR_HOME_SURFACE]),
+                                border=ft.Border.all(1, COLOR_HOME_BORDER),
                                 border_radius=CARD_BORDER_RADIUS, padding=6)
 
         self.connection_card = home_card(self.connection_panel)

@@ -4,7 +4,10 @@ from utils.i18n import t, render
 
 import flet as ft
 
-from ..constants import COLOR_BG, DEVICE_IMAGE_SIZE
+from ..constants import (
+    DEVICE_IMAGE_SIZE, CARD_BORDER_RADIUS, COLOR_HOME_MUTED,
+    COLOR_HOME_HALO, COLOR_BG,
+)
 from .battery import BatteryPanel
 from .common import DeviceImage
 
@@ -14,19 +17,24 @@ class DeviceStatusCard(ft.Container):
 
     def __init__(self):
         self.battery_panel = BatteryPanel()
-        self.status_bar = ft.Text(t("device_status.disconnected"), size=11, color="white")
+        self.status_bar = ft.Text(t("device_status.disconnected"), size=11, color=COLOR_HOME_MUTED)
         self.status_dot = ft.Container(width=7, height=7, border_radius=4, bgcolor="grey")
         self.status_row = ft.Row([self.status_dot, self.status_bar], spacing=6, tight=True,
                                  alignment=ft.MainAxisAlignment.CENTER,
                                  vertical_alignment=ft.CrossAxisAlignment.CENTER)
+        self.status_badge = ft.Container(
+            content=self.status_row,
+            padding=ft.Padding.symmetric(horizontal=8, vertical=4))
         self.device_image = DeviceImage()
-        self.device_name = ft.Text(size=13, color="white", weight="w500", visible=False,
+        self.device_image.content.gradient = ft.RadialGradient(
+            colors=[COLOR_HOME_HALO, COLOR_BG], radius=0.65)
+        self.device_name = ft.Text(size=18, color="white", weight="w600", visible=False,
                                    text_align=ft.TextAlign.CENTER, max_lines=1,
                                    overflow=ft.TextOverflow.ELLIPSIS)
         # Catalog data arrives asynchronously. Reserve the name row even while
         # the image placeholder is shown so it cannot grow the home layout.
         self._device_name_slot = ft.Container(
-            content=self.device_name, height=20, alignment=ft.Alignment.CENTER)
+            content=self.device_name, height=28, alignment=ft.Alignment.CENTER)
         self._product_spacer = ft.Container(expand=True, visible=False)
         self._battery_spacer = ft.Container(expand=True, visible=False)
         super().__init__(
@@ -35,18 +43,18 @@ class DeviceStatusCard(ft.Container):
                     self._product_spacer,
                     self.device_image,
                     self._device_name_slot,
-                    self.status_row,
+                    self.status_badge,
                     self._battery_spacer,
                     ft.Container(content=self.battery_panel,
                                  alignment=ft.Alignment.CENTER),
                 ],
-                spacing=5,
+                spacing=8,
                 tight=True,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
             padding=ft.padding.symmetric(horizontal=12, vertical=10),
             bgcolor=COLOR_BG,
-            border_radius=18,
+            border_radius=CARD_BORDER_RADIUS,
         )
 
     def set_wide_layout(self, wide: bool) -> None:
@@ -55,7 +63,7 @@ class DeviceStatusCard(ft.Container):
         self.device_image.expand = wide
         self.device_image.height = None if wide else DEVICE_IMAGE_SIZE + 12
         self.content.tight = not wide
-        self.padding = ft.Padding.only(left=8, right=8, top=6, bottom=0 if wide else 6)
+        self.padding = ft.Padding.only(left=4, right=4, top=8, bottom=0 if wide else 8)
 
     def update_catalog_device(self, name: str, image_path: str = "") -> None:
         self.device_name.value = name

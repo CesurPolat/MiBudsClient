@@ -22,7 +22,7 @@ TRAY_ICON_SIZE = (64, 64)
 # ─────────────────────────────────────────────────────────────────────────────
 # Colors
 # ─────────────────────────────────────────────────────────────────────────────
-COLOR_BG = "#000000"
+COLOR_BG = "#080B0E"
 COLOR_CARD_BG = "#1A1A1A"
 COLOR_CHARGING = "#4CAF50"
 COLOR_BATTERY = "#2196F3"
@@ -31,6 +31,18 @@ COLOR_DISABLED = "grey"
 COLOR_TEXT_PRIMARY = "white"
 COLOR_TEXT_SECONDARY = "grey"
 COLOR_DIVIDER = "white10"
+
+# Home: graphite surfaces with electric blue selected controls.
+COLOR_HOME_SURFACE = "#101417"
+COLOR_HOME_SURFACE_TOP = "#191F24"
+COLOR_HOME_BORDER = "#252D36"
+COLOR_HOME_CONTROL = "#1B2127"
+COLOR_HOME_SELECTED = "#2463FF"
+COLOR_HOME_SELECTED_BORDER = "#5085FF"
+COLOR_HOME_ACCENT = "#FFFFFF"
+COLOR_HOME_MUTED = "#A5AFBD"
+COLOR_HOME_HALO = "#182330"
+COLOR_HOME_BATTERY = "#87E6AA"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Battery

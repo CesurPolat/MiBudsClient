@@ -6,6 +6,10 @@ from utils.i18n import t, render
 from .setting_items import SettingItem
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
 from ..constants import HOME_CONTROL_HEADER_HEIGHT
+from ..constants import (
+    COLOR_HOME_CONTROL, COLOR_HOME_BORDER, COLOR_HOME_SELECTED,
+    COLOR_HOME_SELECTED_BORDER,
+)
 
 
 class EqualizerSettings(ft.Column):
@@ -41,8 +45,8 @@ class EqualizerSettings(ft.Column):
                 content_padding=ft.Padding.symmetric(horizontal=8),
                 leading=ft.Container(
                     content=ft.Icon(ft.Icons.GRAPHIC_EQ, size=20, color=COLOR_TEXT_PRIMARY),
-                    bgcolor="blue_700", border_radius=ICON_BORDER_RADIUS,
-                    width=32, height=32),
+                    bgcolor=COLOR_HOME_CONTROL, border_radius=ICON_BORDER_RADIUS,
+                    width=32, height=32, alignment=ft.Alignment.CENTER),
                 title=ft.Text(t("eq.title"), size=14, color=COLOR_TEXT_PRIMARY, weight="medium"),
                 trailing=self.quick_refresh_button),
             ft.Container(
@@ -215,8 +219,8 @@ class EqualizerSettings(ft.Column):
                 data=int(option.key),
                 disabled=self.profile.disabled or option.disabled,
                 style=ft.ButtonStyle(
-                    bgcolor="#1976D2" if option.key == self.profile.value else "#2B2F3A",
-                    side=ft.BorderSide(1, "#4FC3F7" if option.key == self.profile.value else "#3B3F4A"),
+                    bgcolor=COLOR_HOME_SELECTED if option.key == self.profile.value else COLOR_HOME_CONTROL,
+                    side=ft.BorderSide(1, COLOR_HOME_SELECTED_BORDER if option.key == self.profile.value else COLOR_HOME_BORDER),
                     color=COLOR_TEXT_PRIMARY,
                     shape=ft.RoundedRectangleBorder(radius=10),
                     padding=ft.Padding.symmetric(horizontal=2, vertical=2)),
