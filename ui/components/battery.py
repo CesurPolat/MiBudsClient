@@ -25,9 +25,9 @@ class BatteryIndicator(ft.Column):
     """Displays battery level for a single device (left/right/case)."""
 
     def __init__(self, label: str):
-        self._label_text = ft.Text(label, color=COLOR_HOME_MUTED, size=10, weight="w500",
+        self._label_text = ft.Text(label, color=COLOR_HOME_MUTED, size=9, weight="w500",
                                    text_align=ft.TextAlign.CENTER)
-        self._value_text = ft.Text("--", color=COLOR_TEXT_PRIMARY, size=15, weight="w600",
+        self._value_text = ft.Text("--", color=COLOR_TEXT_PRIMARY, size=13, weight="w600",
                                    no_wrap=True, text_align=ft.TextAlign.CENTER)
         self._battery_fill = ft.Container(
             left=3, top=4, width=0, height=8, border_radius=2,
@@ -49,7 +49,7 @@ class BatteryIndicator(ft.Column):
         super().__init__(
             controls=[self._label_text, battery_icon, self._value_text],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=6,
+            spacing=3,
             tight=True,
         )
 
@@ -103,16 +103,16 @@ class BatteryPanel(ft.Container):
             content=ft.Row(
                 controls=[
                     ft.Container(content=self._left, expand=True, alignment=ft.Alignment.CENTER),
-                    ft.Container(width=1, height=44, bgcolor=COLOR_HOME_BORDER),
+                    ft.Container(width=1, height=36, bgcolor=COLOR_HOME_BORDER),
                     ft.Container(content=self._right, expand=True, alignment=ft.Alignment.CENTER),
-                    ft.Container(width=1, height=44, bgcolor=COLOR_HOME_BORDER),
+                    ft.Container(width=1, height=36, bgcolor=COLOR_HOME_BORDER),
                     ft.Container(content=self._case, expand=True, alignment=ft.Alignment.CENTER),
                 ],
                 alignment=ft.MainAxisAlignment.START,
                 spacing=4,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.symmetric(horizontal=8, vertical=10),
+            padding=ft.padding.symmetric(horizontal=8, vertical=6),
             border_radius=16,
             bgcolor=COLOR_HOME_SURFACE,
             gradient=ft.LinearGradient(

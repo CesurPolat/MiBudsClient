@@ -48,7 +48,7 @@ class DeviceStatusCard(ft.Container):
                     ft.Container(content=self.battery_panel,
                                  alignment=ft.Alignment.CENTER),
                 ],
-                spacing=8,
+                spacing=4,
                 tight=True,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
@@ -63,7 +63,7 @@ class DeviceStatusCard(ft.Container):
         self.device_image.expand = wide
         self.device_image.height = None if wide else DEVICE_IMAGE_SIZE + 12
         self.content.tight = not wide
-        self.padding = ft.Padding.only(left=4, right=4, top=8, bottom=0 if wide else 8)
+        self.padding = ft.Padding.only(left=4, right=4, top=4, bottom=0 if wide else 8)
 
     def update_catalog_device(self, name: str, image_path: str = "") -> None:
         self.device_name.value = name
