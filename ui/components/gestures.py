@@ -3,6 +3,10 @@
 from utils.i18n import t, render
 
 import flet as ft
+from ..constants import (
+    COLOR_HOME_CONTROL, COLOR_HOME_SURFACE, COLOR_HOME_BORDER,
+    COLOR_HOME_SELECTED, COLOR_HOME_SELECTED_BORDER,
+)
 
 GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long")}
 ACTION_NAMES = dict(enumerate(t("action." + key) for key in (
@@ -130,8 +134,9 @@ class GestureSettings(ft.Column):
                 selector = ft.Dropdown(
                     label=t("side." + side), value=str(current), options=options,
                     disabled=self._busy or not self._connected or self._needs_refresh, expand=True,
-                    color=COLOR_TEXT_PRIMARY, bgcolor="#151922", filled=True,
-                    fill_color="#151922", border_color="#2A303C",
+                    color=COLOR_TEXT_PRIMARY, bgcolor=COLOR_HOME_CONTROL, filled=True,
+                    fill_color=COLOR_HOME_CONTROL, border_color=COLOR_HOME_BORDER,
+                    focused_border_color=COLOR_HOME_SELECTED_BORDER, border_radius=10,
                     label_style=ft.TextStyle(color=COLOR_DISABLED), text_size=13,
                     on_select=lambda e, g=gesture, s=side: self._change(g, s, e),
                 )

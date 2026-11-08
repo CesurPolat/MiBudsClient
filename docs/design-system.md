@@ -24,9 +24,9 @@ Use `ui/constants.py` as the source for shared application tokens, and reuse the
 | Application background | `COLOR_BG` / `#080B0E` |
 | Home cards | `COLOR_HOME_SURFACE_TOP` to `COLOR_HOME_SURFACE`, graphite gradient with `COLOR_HOME_BORDER` |
 | Home selected controls | `COLOR_HOME_SELECTED` / `#2463FF`, border `COLOR_HOME_SELECTED_BORDER` |
-| Settings shell | `#0E1218`, border `#27313D` |
-| Settings section surface | `#151B24`, border `#293443`, radius 16 |
-| Selected navigation item | `#23364C`, border `#436A91`, icon `#9BC7FF` |
+| Settings shell | `COLOR_BG`, border `COLOR_HOME_BORDER` |
+| Settings section surface | Same graphite gradient as Home, border `COLOR_HOME_BORDER`, radius 16 |
+| Selected navigation item | Blue gradient from `COLOR_HOME_SELECTED_BORDER` to `COLOR_HOME_SELECTED`, white icon and text |
 | Primary / secondary text | `COLOR_TEXT_PRIMARY` / `COLOR_TEXT_SECONDARY` |
 | Dividers | `COLOR_DIVIDER` |
 | Charging / battery / low battery | `COLOR_CHARGING`, `COLOR_BATTERY`, `COLOR_BATTERY_LOW` |

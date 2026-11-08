@@ -5,7 +5,10 @@ from typing import Callable, Optional
 
 from ..constants import (
     COLOR_DISABLED,
-    COLOR_BATTERY,
+    COLOR_HOME_CONTROL,
+    COLOR_HOME_BORDER,
+    COLOR_HOME_SELECTED,
+    COLOR_HOME_MUTED,
     COLOR_TEXT_PRIMARY,
     ICON_BUTTON_SIZE,
     ICON_BORDER_RADIUS,
@@ -24,14 +27,16 @@ class SettingItem(ft.ListTile):
     ):
         super().__init__(
             leading=ft.Container(
-                content=ft.Icon(icon, color=COLOR_TEXT_PRIMARY),
-                bgcolor=icon_bg_color,
+                content=ft.Icon(icon, size=20, color=COLOR_TEXT_PRIMARY),
+                bgcolor=COLOR_HOME_CONTROL,
+                border=ft.Border.all(1, COLOR_HOME_BORDER),
                 border_radius=ICON_BORDER_RADIUS,
                 width=ICON_BUTTON_SIZE,
-                height=ICON_BUTTON_SIZE
+                height=ICON_BUTTON_SIZE,
+                alignment=ft.Alignment.CENTER,
             ),
-            title=ft.Text(title, color=COLOR_TEXT_PRIMARY, weight="medium"),
-            trailing=ft.Icon(ft.Icons.CHEVRON_RIGHT, color=COLOR_DISABLED),
+            title=ft.Text(title, size=14, color=COLOR_TEXT_PRIMARY, weight="w500"),
+            trailing=ft.Icon(ft.Icons.CHEVRON_RIGHT, color=COLOR_HOME_MUTED),
             on_click=on_click
         )
 
@@ -50,18 +55,22 @@ class ToggleSettingItem(ft.ListTile):
         self.switch = ft.Switch(
             value=value,
             on_change=on_change,
-            active_color=COLOR_BATTERY
+            active_color=COLOR_TEXT_PRIMARY,
+            active_track_color=COLOR_HOME_SELECTED,
+            inactive_track_color=COLOR_HOME_CONTROL,
         )
 
         super().__init__(
             leading=ft.Container(
-                content=ft.Icon(icon, color=COLOR_TEXT_PRIMARY),
-                bgcolor=icon_bg_color,
+                content=ft.Icon(icon, size=20, color=COLOR_TEXT_PRIMARY),
+                bgcolor=COLOR_HOME_CONTROL,
+                border=ft.Border.all(1, COLOR_HOME_BORDER),
                 border_radius=ICON_BORDER_RADIUS,
                 width=ICON_BUTTON_SIZE,
-                height=ICON_BUTTON_SIZE
+                height=ICON_BUTTON_SIZE,
+                alignment=ft.Alignment.CENTER,
             ),
-            title=ft.Text(title, color=COLOR_TEXT_PRIMARY, weight="medium"),
+            title=ft.Text(title, size=14, color=COLOR_TEXT_PRIMARY, weight="w500"),
             trailing=self.switch,
             on_click=self._toggle_switch
         )

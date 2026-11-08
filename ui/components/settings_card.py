@@ -12,6 +12,12 @@ from ..constants import (
     COLOR_HOME_SURFACE,
     COLOR_HOME_SURFACE_TOP,
     COLOR_HOME_BORDER,
+    COLOR_HOME_CONTROL,
+    COLOR_HOME_SELECTED,
+    COLOR_HOME_SELECTED_BORDER,
+    COLOR_HOME_MUTED,
+    COLOR_HOME_HALO,
+    COLOR_BG,
     COLOR_DIVIDER,
     CARD_BORDER_RADIUS,
     COLOR_DISABLED,
@@ -98,6 +104,8 @@ class SettingsCard(ft.Container):
         self.identity_image = DeviceImage()
         self.identity_image.width = self.identity_image.height = 130
         self.identity_image._image_control.width = self.identity_image._image_control.height = 120
+        self.identity_image.content.gradient = ft.RadialGradient(
+            colors=[COLOR_HOME_HALO, COLOR_HOME_SURFACE], radius=0.65)
         self.identity_name = ft.Text("\u2014", size=18, weight="w600", color="white",
                                      text_align=ft.TextAlign.CENTER)
         self.identity_model = ft.Text("\u2014", size=13, color="white", selectable=True, expand=True, text_align=ft.TextAlign.END)
@@ -154,6 +162,10 @@ class SettingsCard(ft.Container):
             on_select=on_language_change,
             color="white",
             filled=True,
+            fill_color=COLOR_HOME_CONTROL,
+            border_color=COLOR_HOME_BORDER,
+            focused_border_color=COLOR_HOME_SELECTED_BORDER,
+            border_radius=12,
             expand=True,
         )
         self._language_container = ft.Container(content=self.language_selector, padding=10)
@@ -176,8 +188,11 @@ class SettingsCard(ft.Container):
         self._section_surface = ft.Container(
             content=ft.Column(list(self._sections.values()), spacing=0,
                               horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
-            bgcolor="#151B24", border_radius=16, padding=12,
-            border=ft.Border.all(1, "#293443"),
+            bgcolor=COLOR_HOME_SURFACE, border_radius=16, padding=12,
+            gradient=ft.LinearGradient(
+                begin=ft.Alignment.TOP_LEFT, end=ft.Alignment.BOTTOM_RIGHT,
+                colors=[COLOR_HOME_SURFACE_TOP, COLOR_HOME_SURFACE]),
+            border=ft.Border.all(1, COLOR_HOME_BORDER),
         )
         self._section_column = ft.Column([self._section_title, self._section_surface],
                                          spacing=14, expand=True,
@@ -189,8 +204,8 @@ class SettingsCard(ft.Container):
             content=ft.Column(
                 [items], spacing=0, scroll=ft.ScrollMode.AUTO,
                 horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
-            bgcolor="#0E1218",
-            border=ft.Border.all(1, "#27313D"),
+            bgcolor=COLOR_BG,
+            border=ft.Border.all(1, COLOR_HOME_BORDER),
             border_radius=CARD_BORDER_RADIUS,
             padding=14
         )
@@ -256,15 +271,20 @@ class SettingsCard(ft.Container):
             item = self._menu_items[key]
             item.visible = self._available_sections[key]
             item.tooltip = t(label)
-            item.bgcolor = "#23364C" if selected else "transparent"
-            item.border = ft.Border.all(1, "#436A91" if selected else "transparent")
+            item.bgcolor = COLOR_HOME_SELECTED if selected else "transparent"
+            item.gradient = (ft.LinearGradient(
+                begin=ft.Alignment.TOP_LEFT, end=ft.Alignment.BOTTOM_RIGHT,
+                colors=[COLOR_HOME_SELECTED_BORDER, COLOR_HOME_SELECTED]) if selected else None)
+            item.border = ft.Border.all(1, COLOR_HOME_SELECTED_BORDER if selected else "transparent")
+            item.shadow = (ft.BoxShadow(blur_radius=10, color="#302463FF",
+                                       offset=ft.Offset(0, 3)) if selected else None)
             row = item.content
             row.alignment = (ft.MainAxisAlignment.CENTER if self._compact_navigation
                              else ft.MainAxisAlignment.START)
-            row.controls[0].color = "#9BC7FF" if selected else "#AEBAC9"
+            row.controls[0].color = "white" if selected else COLOR_HOME_MUTED
             text = row.controls[1]
             text.value = t(label)
-            text.color = "white" if selected else "#C4CDDA"
+            text.color = "white" if selected else COLOR_HOME_MUTED
             text.weight = "w600" if selected else "w400"
             text.visible = not self._compact_navigation
         for key, panel in self._sections.items():

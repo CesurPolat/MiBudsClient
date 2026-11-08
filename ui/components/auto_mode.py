@@ -3,6 +3,10 @@
 from utils.i18n import t
 
 import flet as ft
+from ..constants import (
+    COLOR_HOME_CONTROL, COLOR_HOME_SURFACE, COLOR_HOME_BORDER,
+    COLOR_HOME_SELECTED, COLOR_HOME_SELECTED_BORDER,
+)
 from typing import Callable, Optional
 
 from ..constants import (
@@ -33,6 +37,9 @@ class PlatformExceptionEditor(ft.Column):
         self._list_column = ft.Column(spacing=4)
         self._field = ft.TextField(
             hint_text=placeholder,
+            color=COLOR_TEXT_PRIMARY, filled=True, fill_color=COLOR_HOME_CONTROL,
+            border_color=COLOR_HOME_BORDER, focused_border_color=COLOR_HOME_SELECTED_BORDER,
+            border_radius=10,
             dense=True,
             expand=True,
             on_submit=self._add_value,
@@ -51,10 +58,10 @@ class PlatformExceptionEditor(ft.Column):
                 spacing=8,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            bgcolor="#151922",
+            bgcolor=COLOR_HOME_CONTROL,
             border_radius=14,
             padding=ft.padding.symmetric(horizontal=10, vertical=8),
-            border=ft.border.all(1, "#2A303C"),
+            border=ft.border.all(1, COLOR_HOME_BORDER),
         )
 
         self._render_rows()
@@ -114,9 +121,9 @@ class PlatformExceptionEditor(ft.Column):
                 ft.Container(
                     content=ft.Text(t("auto.empty"), size=12, color=COLOR_DISABLED),
                     padding=ft.padding.symmetric(horizontal=10, vertical=8),
-                    bgcolor="#12161E",
+                    bgcolor=COLOR_HOME_SURFACE,
                     border_radius=12,
-                    border=ft.border.all(1, "#2A303C"),
+                    border=ft.border.all(1, COLOR_HOME_BORDER),
                 )
             ]
             return
@@ -133,10 +140,10 @@ class PlatformExceptionEditor(ft.Column):
                         on_click=lambda e, name=item: self._remove_value(name),
                     ),
                 ),
-                bgcolor="#12161E",
+                bgcolor=COLOR_HOME_SURFACE,
                 border_radius=12,
                 padding=ft.padding.only(left=6, right=4),
-                border=ft.border.all(1, "#2A303C"),
+                border=ft.border.all(1, COLOR_HOME_BORDER),
             )
             for item in self._values
         ]
@@ -183,6 +190,9 @@ class AutoModeSettingsAccordion(ft.Container):
         self._list_column = ft.Column(spacing=6)
         self._field = ft.TextField(
             hint_text="example.exe" if self._active_platform == "windows" else "example-binary",
+            color=COLOR_TEXT_PRIMARY, filled=True, fill_color=COLOR_HOME_CONTROL,
+            border_color=COLOR_HOME_BORDER, focused_border_color=COLOR_HOME_SELECTED_BORDER,
+            border_radius=10,
             dense=True,
             expand=True,
             on_submit=self._add_exclude,
@@ -208,10 +218,10 @@ class AutoModeSettingsAccordion(ft.Container):
                 spacing=8,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            bgcolor="#151922",
+            bgcolor=COLOR_HOME_CONTROL,
             border_radius=14,
             padding=ft.padding.symmetric(horizontal=10, vertical=8),
-            border=ft.border.all(1, "#2A303C"),
+            border=ft.border.all(1, COLOR_HOME_BORDER),
         )
 
         self.wait_toggle = ToggleSettingItem(
@@ -241,7 +251,7 @@ class AutoModeSettingsAccordion(ft.Container):
                     ),
                     padding=ft.padding.only(left=14, right=10, bottom=2),
                 ),
-                ft.Divider(height=1, color="#24303D"),
+                ft.Divider(height=1, color=COLOR_HOME_BORDER),
                 ft.Container(
                     content=ft.Column(
                         controls=[
@@ -316,8 +326,8 @@ class AutoModeSettingsAccordion(ft.Container):
     def _build_mode_chip(self, value: str, mode: str, selected: bool) -> ft.Container:
         return ft.Container(
             content=ft.Text(t("auto." + mode), size=11, weight="w600", color="white" if selected else COLOR_TEXT_PRIMARY),
-            bgcolor="#1976D2" if selected else "#2B2F3A",
-            border=ft.border.all(1, "#4FC3F7" if selected else "#3B3F4A"),
+            bgcolor=COLOR_HOME_SELECTED if selected else COLOR_HOME_CONTROL,
+            border=ft.border.all(1, COLOR_HOME_SELECTED_BORDER if selected else COLOR_HOME_BORDER),
             border_radius=999,
             padding=ft.padding.symmetric(horizontal=10, vertical=5),
             ink=True,
@@ -330,9 +340,9 @@ class AutoModeSettingsAccordion(ft.Container):
                 ft.Container(
                     content=ft.Text(t("auto.empty"), size=12, color=COLOR_DISABLED),
                     padding=ft.padding.symmetric(horizontal=10, vertical=8),
-                    bgcolor="#12161E",
+                    bgcolor=COLOR_HOME_SURFACE,
                     border_radius=12,
-                    border=ft.border.all(1, "#2A303C"),
+                    border=ft.border.all(1, COLOR_HOME_BORDER),
                 )
             ]
             return
@@ -358,10 +368,10 @@ class AutoModeSettingsAccordion(ft.Container):
             controls.append(
                 ft.Container(
                     content=row,
-                    bgcolor="#12161E",
+                    bgcolor=COLOR_HOME_SURFACE,
                     border_radius=12,
                     padding=ft.padding.only(left=10, right=6, top=4, bottom=4),
-                    border=ft.border.all(1, "#2A303C"),
+                    border=ft.border.all(1, COLOR_HOME_BORDER),
                 )
             )
 

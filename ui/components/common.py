@@ -94,12 +94,17 @@ class Footer(ft.Row):
                     ft.Text(version, color=COLOR_DISABLED, size=10),
                     ft.Text("|", color=COLOR_DISABLED, size=10),
                     ft.TextButton(
-                        content=ft.Text(
-                            github_url.replace("https://", ""),
-                            color=COLOR_DISABLED,
-                            size=10,
-                            italic=True
-                        ),
+                        content=ft.Row([
+                            ft.Image(src=get_resource_path("assets/images/github.svg"),
+                                     width=14, height=14, fit="contain"),
+                            ft.Text(
+                                github_url.replace("https://", ""),
+                                color=COLOR_DISABLED,
+                                size=10,
+                                italic=True,
+                            ),
+                        ], spacing=4, tight=True,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER),
                         url=github_url,
                         style=ft.ButtonStyle(padding=0)
                     ),
