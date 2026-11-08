@@ -51,7 +51,7 @@ class BatteryIndicator(ft.Column):
 
         text = f"%{actual_val}"
         if is_charging:
-            return f"⚡ {text}", COLOR_CHARGING
+            return f"⚡{text}", COLOR_CHARGING
 
         if actual_val <= BATTERY_LOW_THRESHOLD:
             return text, COLOR_BATTERY_LOW
