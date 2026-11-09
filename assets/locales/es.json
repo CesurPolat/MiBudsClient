@@ -192,7 +192,7 @@
   "eq.timeout": "La solicitud del ecualizador agotó el tiempo de espera.",
   "report.title": "Se produjo un error",
   "report.consent": "¿Quieres compartir información del error con el desarrollador?",
-  "report.description": "¿Qué estabas haciendo cuando se produjo el error?",
+  "report.description": "Por favor, describa qué estaba haciendo cuando se produjo el error.",
   "report.privacy": "Opcional. No incluyas contraseñas, tokens ni información personal. Los informes aprobados pueden guardarse localmente hasta 7 días y volver a enviarse; los informes del servidor no se eliminan automáticamente.",
   "report.preview": "Detalles técnicos",
   "report.send": "Enviar",

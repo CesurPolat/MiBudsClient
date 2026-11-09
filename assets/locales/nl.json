@@ -192,7 +192,7 @@
   "eq.timeout": "Time-out bij het EQ-verzoek.",
   "report.title": "Er is een fout opgetreden",
   "report.consent": "Wil je foutinformatie delen met de ontwikkelaar?",
-  "report.description": "Wat deed je toen de fout optrad?",
+  "report.description": "Beschrijf alstublieft wat u aan het doen was toen de fout optrad.",
   "report.privacy": "Optioneel. Voeg geen wachtwoorden, tokens of persoonlijke informatie toe. Goedgekeurde rapporten kunnen maximaal 7 dagen lokaal worden bewaard en opnieuw verzonden; rapporten op de server worden niet automatisch verwijderd.",
   "report.preview": "Technische details",
   "report.send": "Verzenden",

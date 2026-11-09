@@ -192,7 +192,7 @@
   "eq.timeout": "Zeitüberschreitung bei der EQ-Anfrage.",
   "report.title": "Ein Fehler ist aufgetreten",
   "report.consent": "Möchtest du Fehlerinformationen mit dem Entwickler teilen?",
-  "report.description": "Was hast du getan, als der Fehler auftrat?",
+  "report.description": "Bitte beschreiben Sie, was Sie beim Auftreten des Fehlers getan haben.",
   "report.privacy": "Optional. Keine Passwörter, Tokens oder persönlichen Daten angeben. Freigegebene Berichte können bis zu 7 Tage lokal gespeichert und erneut gesendet werden; Berichte auf dem Server werden nicht automatisch gelöscht.",
   "report.preview": "Technische Details",
   "report.send": "Senden",

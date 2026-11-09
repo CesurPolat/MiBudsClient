@@ -192,7 +192,7 @@
   "eq.timeout": "EQ isteği zaman aşımına uğradı.",
   "report.title": "Bir hata oluştu",
   "report.consent": "Hata bilgilerini geliştiriciyle paylaşmak ister misiniz?",
-  "report.description": "Hata oluştuğunda ne yapıyordunuz?",
+  "report.description": "Lütfen hata oluştuğunda ne yaptığınızı açıklayın.",
   "report.privacy": "İsteğe bağlı. Şifre, token veya kişisel bilgi yazmayın. Onaylı raporlar en fazla 7 gün yerelde saklanıp yeniden gönderilebilir; sunucudaki raporlar otomatik silinmez.",
   "report.preview": "Teknik bilgiler",
   "report.send": "Gönder",

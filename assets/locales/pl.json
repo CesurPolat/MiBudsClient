@@ -192,7 +192,7 @@
   "eq.timeout": "Upłynął limit czasu żądania korektora.",
   "report.title": "Wystąpił błąd",
   "report.consent": "Czy chcesz udostępnić programiście informacje o błędzie?",
-  "report.description": "Co robiono w chwili wystąpienia błędu?",
+  "report.description": "Prosimy opisać czynności wykonywane w chwili wystąpienia błędu.",
   "report.privacy": "Opcjonalne. Nie podawaj haseł, tokenów ani danych osobowych. Zatwierdzone raporty mogą być przechowywane lokalnie do 7 dni i wysyłane ponownie; raporty na serwerze nie są automatycznie usuwane.",
   "report.preview": "Szczegóły techniczne",
   "report.send": "Wyślij",

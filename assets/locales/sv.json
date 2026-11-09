@@ -192,7 +192,7 @@
   "eq.timeout": "Tidsgränsen för EQ-begäran överskreds.",
   "report.title": "Ett fel inträffade",
   "report.consent": "Vill du dela felinformation med utvecklaren?",
-  "report.description": "Vad gjorde du när felet inträffade?",
+  "report.description": "Beskriv gärna vad du gjorde när felet inträffade.",
   "report.privacy": "Valfritt. Ange inte lösenord, token eller personuppgifter. Godkända rapporter kan lagras lokalt i upp till 7 dagar och skickas igen; rapporter på servern raderas inte automatiskt.",
   "report.preview": "Tekniska detaljer",
   "report.send": "Skicka",

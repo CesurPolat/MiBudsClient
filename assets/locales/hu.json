@@ -192,7 +192,7 @@
   "eq.timeout": "A hangszínszabályzó kérésének időtúllépése.",
   "report.title": "Hiba történt",
   "report.consent": "Megosztod a hiba adatait a fejlesztővel?",
-  "report.description": "Mit csináltál a hiba bekövetkezésekor?",
+  "report.description": "Kérjük, írja le, mit csinált a hiba bekövetkezésekor.",
   "report.privacy": "Nem kötelező. Ne adj meg jelszavakat, tokeneket vagy személyes adatokat. A jóváhagyott jelentések legfeljebb 7 napig tárolhatók helyben és újraküldhetők; a szerveren lévő jelentések nem törlődnek automatikusan.",
   "report.preview": "Műszaki részletek",
   "report.send": "Küldés",

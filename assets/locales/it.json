@@ -192,7 +192,7 @@
   "eq.timeout": "Richiesta dell’equalizzatore scaduta.",
   "report.title": "Si è verificato un errore",
   "report.consent": "Vuoi condividere le informazioni sull’errore con lo sviluppatore?",
-  "report.description": "Cosa stavi facendo quando si è verificato l’errore?",
+  "report.description": "Descriva cosa stava facendo quando si è verificato l’errore.",
   "report.privacy": "Facoltativo. Non includere password, token o informazioni personali. I rapporti approvati possono essere salvati localmente per un massimo di 7 giorni e inviati di nuovo; quelli sul server non vengono eliminati automaticamente.",
   "report.preview": "Dettagli tecnici",
   "report.send": "Invia",

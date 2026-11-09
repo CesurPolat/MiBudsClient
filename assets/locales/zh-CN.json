@@ -192,7 +192,7 @@
   "eq.timeout": "均衡器请求超时。",
   "report.title": "发生错误",
   "report.consent": "是否向开发者分享错误信息？",
-  "report.description": "错误发生时您在做什么？",
+  "report.description": "请描述错误发生时您正在进行的操作。",
   "report.privacy": "可选。请勿包含密码、令牌或个人信息。经同意的报告可能在本地保存最多7天并重试发送；服务器上的报告不会自动删除。",
   "report.preview": "技术详情",
   "report.send": "发送",

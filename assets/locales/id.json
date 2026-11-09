@@ -192,7 +192,7 @@
   "eq.timeout": "Waktu permintaan EQ habis.",
   "report.title": "Terjadi kesalahan",
   "report.consent": "Ingin membagikan informasi kesalahan kepada pengembang?",
-  "report.description": "Apa yang sedang Anda lakukan saat kesalahan terjadi?",
+  "report.description": "Mohon jelaskan apa yang sedang Anda lakukan saat kesalahan terjadi.",
   "report.privacy": "Opsional. Jangan sertakan kata sandi, token, atau informasi pribadi. Laporan yang disetujui dapat disimpan secara lokal hingga 7 hari dan dikirim ulang; laporan di server tidak dihapus secara otomatis.",
   "report.preview": "Detail teknis",
   "report.send": "Kirim",

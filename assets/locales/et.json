@@ -192,7 +192,7 @@
   "eq.timeout": "EQ päring aegus.",
   "report.title": "Ilmnes viga",
   "report.consent": "Kas soovid veateavet arendajaga jagada?",
-  "report.description": "Mida tegid vea ilmnemise ajal?",
+  "report.description": "Palun kirjeldage, mida tegite vea ilmnemise ajal.",
   "report.privacy": "Valikuline. Ära lisa paroole, pääsutõendeid ega isikuandmeid. Heakskiidetud aruandeid võidakse hoida kohalikult kuni 7 päeva ja uuesti saata; serveris olevaid aruandeid ei kustutata automaatselt.",
   "report.preview": "Tehnilised üksikasjad",
   "report.send": "Saada",

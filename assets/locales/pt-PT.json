@@ -192,7 +192,7 @@
   "eq.timeout": "O pedido do equalizador excedeu o tempo limite.",
   "report.title": "Ocorreu um erro",
   "report.consent": "Pretende partilhar informações do erro com o programador?",
-  "report.description": "O que estava a fazer quando ocorreu o erro?",
+  "report.description": "Por favor, descreva o que estava a fazer quando ocorreu o erro.",
   "report.privacy": "Opcional. Não inclua palavras-passe, tokens ou informações pessoais. Os relatórios aprovados podem ser guardados localmente até 7 dias e reenviados; os relatórios no servidor não são eliminados automaticamente.",
   "report.preview": "Detalhes técnicos",
   "report.send": "Enviar",

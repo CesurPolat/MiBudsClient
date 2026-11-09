@@ -192,7 +192,7 @@
   "eq.timeout": "Taajuuskorjainpyyntö aikakatkaistiin.",
   "report.title": "Tapahtui virhe",
   "report.consent": "Haluatko jakaa virhetiedot kehittäjän kanssa?",
-  "report.description": "Mitä teit virheen tapahtuessa?",
+  "report.description": "Kuvaile, mitä olit tekemässä virheen ilmetessä.",
   "report.privacy": "Valinnainen. Älä sisällytä salasanoja, tunnisteita tai henkilötietoja. Hyväksyttyjä raportteja voidaan säilyttää paikallisesti enintään 7 päivää ja lähettää uudelleen; palvelimen raportteja ei poisteta automaattisesti.",
   "report.preview": "Tekniset tiedot",
   "report.send": "Lähetä",

@@ -192,7 +192,7 @@
   "eq.timeout": "Permintaan EQ tamat masa.",
   "report.title": "Ralat berlaku",
   "report.consent": "Adakah anda mahu berkongsi maklumat ralat dengan pembangun?",
-  "report.description": "Apakah yang anda lakukan semasa ralat berlaku?",
+  "report.description": "Sila terangkan perkara yang anda lakukan semasa ralat berlaku.",
   "report.privacy": "Pilihan. Jangan sertakan kata laluan, token atau maklumat peribadi. Laporan yang diluluskan boleh disimpan secara setempat sehingga 7 hari dan dihantar semula; laporan pada pelayan tidak dipadam secara automatik.",
   "report.preview": "Butiran teknikal",
   "report.send": "Hantar",

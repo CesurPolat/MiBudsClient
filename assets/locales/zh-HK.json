@@ -192,7 +192,7 @@
   "eq.timeout": "均衡器要求逾時。",
   "report.title": "發生錯誤",
   "report.consent": "是否與開發者分享錯誤資訊？",
-  "report.description": "錯誤發生時你正在做甚麼？",
+  "report.description": "請描述錯誤發生時您正在進行的操作。",
   "report.privacy": "選填。請勿包含密碼、權杖或個人資料。經同意的報告可能在本機儲存最多7天並重試傳送；伺服器上的報告不會自動刪除。",
   "report.preview": "技術詳情",
   "report.send": "傳送",

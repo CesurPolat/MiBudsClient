@@ -192,7 +192,7 @@
   "eq.timeout": "La demande d’égaliseur a expiré.",
   "report.title": "Une erreur est survenue",
   "report.consent": "Souhaitez-vous partager les informations sur l’erreur avec le développeur ?",
-  "report.description": "Que faisiez-vous lorsque l’erreur est survenue ?",
+  "report.description": "Veuillez décrire ce que vous faisiez lorsque l’erreur est survenue.",
   "report.privacy": "Facultatif. N’indiquez aucun mot de passe, jeton ou renseignement personnel. Les rapports approuvés peuvent être conservés localement jusqu’à 7 jours et renvoyés ; les rapports sur le serveur ne sont pas supprimés automatiquement.",
   "report.preview": "Détails techniques",
   "report.send": "Envoyer",
