@@ -19,7 +19,7 @@ from uuid import UUID, uuid4
 from PIL import Image
 
 
-API_BASE_URL = os.getenv("MIBUDS_API_URL", "http://mibuds-api.cesurpolat.dev").rstrip("/")
+API_BASE_URL = os.getenv("MIBUDS_API_URL", "https://mibuds-api.cesurpolat.dev").rstrip("/")
 _VERSION = re.compile(r"sha256-[0-9a-f]{64}\Z")
 
 
