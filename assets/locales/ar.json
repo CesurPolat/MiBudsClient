@@ -255,5 +255,8 @@
   "latency.timeout": "وضع الألعاب request timed out.",
   "latency.invalid": "Invalid or incomplete وضع الألعاب data.",
   "identity.model": "الطراز",
-  "identity.firmware": "البرنامج الثابت"
+  "identity.firmware": "البرنامج الثابت",
+  "auto.wayland_relogin": "تم تثبيت دعم وضع الألعاب في Wayland. سجّل الخروج ثم الدخول لتفعيله.",
+  "auto.wayland_disabled": "دعم وضع الألعاب في Wayland معطّل في إعدادات GNOME.",
+  "auto.wayland_unavailable": "وضع الألعاب التلقائي غير متاح في جلسة Wayland هذه. يظل الوضع اليدوي متاحًا."
 }

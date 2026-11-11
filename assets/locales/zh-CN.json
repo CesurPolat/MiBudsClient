@@ -255,5 +255,8 @@
   "latency.timeout": "游戏模式 request timed out.",
   "latency.invalid": "Invalid or incomplete 游戏模式 data.",
   "identity.model": "型号",
-  "identity.firmware": "固件"
+  "identity.firmware": "固件",
+  "auto.wayland_relogin": "已安装 Wayland 游戏模式支持。请注销并重新登录以启用。",
+  "auto.wayland_disabled": "Wayland 游戏模式支持已在 GNOME 设置中禁用。",
+  "auto.wayland_unavailable": "此 Wayland 会话不支持自动游戏模式，仍可手动切换。"
 }

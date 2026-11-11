@@ -255,5 +255,8 @@
   "latency.timeout": "Oyun Modu isteği zaman aşımına uğradı.",
   "latency.invalid": "Oyun Modu verisi geçersiz veya eksik.",
   "identity.model": "Model",
-  "identity.firmware": "Donanım yazılımı"
+  "identity.firmware": "Donanım yazılımı",
+  "auto.wayland_relogin": "Wayland oyun modu desteği kuruldu. Etkinleştirmek için oturumdan çıkıp tekrar giriş yapın.",
+  "auto.wayland_disabled": "Wayland oyun modu desteği GNOME ayarlarında devre dışı.",
+  "auto.wayland_unavailable": "Bu Wayland oturumunda otomatik oyun modu kullanılamıyor. Elle seçim çalışmaya devam eder."
 }

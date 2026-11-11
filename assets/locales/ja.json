@@ -255,5 +255,8 @@
   "latency.timeout": "ゲームモード request timed out.",
   "latency.invalid": "Invalid or incomplete ゲームモード data.",
   "identity.model": "モデル",
-  "identity.firmware": "ファームウェア"
+  "identity.firmware": "ファームウェア",
+  "auto.wayland_relogin": "Wayland ゲームモードのサポートをインストールしました。有効にするにはログアウトして再ログインしてください。",
+  "auto.wayland_disabled": "Wayland ゲームモードのサポートは GNOME の設定で無効になっています。",
+  "auto.wayland_unavailable": "この Wayland セッションでは自動ゲームモードを利用できません。手動モードは引き続き利用できます。"
 }

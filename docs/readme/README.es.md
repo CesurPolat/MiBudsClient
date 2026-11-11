@@ -44,7 +44,7 @@ Los nombres, identificadores, imágenes y capacidades proceden del [catálogo](.
 
 El EQ personalizado se pospone y permanece oculto, incluido su perfil. Otras funciones del catálogo no crean controles automáticamente.
 
-En Wayland, la detección automática de pantalla completa admite GNOME Shell 46 mediante la extensión opcional de MiBudsClient; consulta la [configuración](../wayland.md). Otros escritorios Wayland aún no están admitidos.
+La detección de pantalla completa se configura automáticamente en GNOME Shell 46 con Wayland. Cierra la sesión y vuelve a entrar si se solicita; no hacen falta comandos. X11 no necesita extensión. Otros escritorios Wayland aún no están admitidos. [Detalles](../wayland.md).
 
 Este README describe el código actual; los paquetes antiguos pueden no incluir estos cambios. Detalles técnicos: [capacidades](../device-capabilities.md), [autenticación por comandos](../command-auth.md), [autenticación sin trama RCSP](../raw-auth.md) (en inglés).
 
@@ -131,7 +131,7 @@ El descubrimiento dinámico de servicios RFCOMM también requiere `sdptool` de B
 | Falta la batería | Usa la comprobación de batería tras conectar. Los datos ausentes se consideran desconocidos. |
 | Error de gestos o EQ | Cierra y abre la sección para leer otra vez el estado del dispositivo. |
 | No aparece EQ personalizado | Está pospuesto y oculto en esta versión; los perfiles compatibles siguen disponibles. |
-| El modo automático no funciona en Linux  | En Wayland, la detección automática de pantalla completa admite GNOME Shell 46 mediante la extensión opcional de MiBudsClient; consulta la [configuración](../wayland.md). Otros escritorios Wayland aún no están admitidos. |
+| El modo automático no funciona en Linux | La detección de pantalla completa se configura automáticamente en GNOME Shell 46 con Wayland. Cierra la sesión y vuelve a entrar si se solicita; no hacen falta comandos. X11 no necesita extensión. Otros escritorios Wayland aún no están admitidos. [Detalles](../wayland.md). |
 | Pulsar la notificación en Linux no funciona | Comprueba las acciones predeterminadas del servidor o abre desde la bandeja. |
 
 Al [informar de un problema](https://github.com/CesurPolat/MiBudsClient/issues), incluye versión, sistema operativo y sesión de escritorio, modelo, pasos para reproducirlo y detalles del error.

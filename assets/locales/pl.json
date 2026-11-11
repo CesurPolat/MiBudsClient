@@ -255,5 +255,8 @@
   "latency.timeout": "Tryb gry request timed out.",
   "latency.invalid": "Invalid or incomplete Tryb gry data.",
   "identity.model": "Model",
-  "identity.firmware": "Oprogramowanie sprzętowe"
+  "identity.firmware": "Oprogramowanie sprzętowe",
+  "auto.wayland_relogin": "Zainstalowano obsługę trybu gry Wayland. Wyloguj się i zaloguj ponownie, aby ją włączyć.",
+  "auto.wayland_disabled": "Obsługa trybu gry Wayland jest wyłączona w ustawieniach GNOME.",
+  "auto.wayland_unavailable": "Automatyczny tryb gry jest niedostępny w tej sesji Wayland. Tryb ręczny nadal działa."
 }

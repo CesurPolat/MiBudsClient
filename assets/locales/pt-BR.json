@@ -255,5 +255,8 @@
   "latency.timeout": "Modo de jogo request timed out.",
   "latency.invalid": "Invalid or incomplete Modo de jogo data.",
   "identity.model": "Modelo",
-  "identity.firmware": "Firmware"
+  "identity.firmware": "Firmware",
+  "auto.wayland_relogin": "Suporte ao modo de jogo Wayland instalado. Saia da sessão e entre novamente para ativá-lo.",
+  "auto.wayland_disabled": "O suporte ao modo de jogo Wayland está desativado nas configurações do GNOME.",
+  "auto.wayland_unavailable": "O modo de jogo automático não está disponível nesta sessão Wayland. O modo manual continua funcionando."
 }

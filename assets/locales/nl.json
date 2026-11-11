@@ -255,5 +255,8 @@
   "latency.timeout": "Gamemodus request timed out.",
   "latency.invalid": "Invalid or incomplete Gamemodus data.",
   "identity.model": "Model",
-  "identity.firmware": "Firmware"
+  "identity.firmware": "Firmware",
+  "auto.wayland_relogin": "Ondersteuning voor de Wayland-gamemodus is geïnstalleerd. Meld af en weer aan om deze te activeren.",
+  "auto.wayland_disabled": "Ondersteuning voor de Wayland-gamemodus is uitgeschakeld in de GNOME-instellingen.",
+  "auto.wayland_unavailable": "De automatische gamemodus is niet beschikbaar in deze Wayland-sessie. Handmatige bediening blijft werken."
 }

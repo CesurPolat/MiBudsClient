@@ -9,6 +9,8 @@ import threading
 import time
 from typing import Callable, Optional
 from utils.wayland import detect_gnome_fullscreen
+from utils.wayland_setup import ensure_gnome_bridge
+from utils.i18n import message as m
 
 
 class FullscreenGameMonitor:
@@ -46,6 +48,12 @@ class FullscreenGameMonitor:
         self._running = False
 
     def _run_loop(self) -> None:
+        # Setup runs on this existing worker, never on Flet's UI thread.
+        setup_state = ensure_gnome_bridge()
+        if setup_state == "relogin":
+            self._log(m("auto.wayland_relogin"))
+        elif setup_state == "disabled":
+            self._log(m("auto.wayland_disabled"))
         while self._running:
             raw_state, app_id = self._detect_fullscreen_state()
             if raw_state is None:
@@ -54,7 +62,8 @@ class FullscreenGameMonitor:
                 if not self._unsupported_logged:
                     self._unsupported_logged = True
                     if os.getenv("WAYLAND_DISPLAY") or os.getenv("XDG_SESSION_TYPE") == "wayland":
-                        self._log("Wayland fullscreen detection unavailable. On GNOME 46, install and enable the MiBudsClient Fullscreen Bridge; see docs/wayland.md.")
+                        if setup_state not in {"relogin", "disabled"}:
+                            self._log(m("auto.wayland_unavailable"))
                     else:
                         self._log("Fullscreen detection unavailable on this desktop session.")
                 time.sleep(self._poll_interval)

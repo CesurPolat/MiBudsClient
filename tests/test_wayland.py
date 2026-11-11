@@ -113,7 +113,7 @@ class MonitorRoutingTests(unittest.TestCase):
             if len(seen) == 4:
                 monitor._running = False
         monitor._running = True
-        with patch.object(monitor, '_detect_fullscreen_state', side_effect=detect), patch('utils.game_monitor.time.sleep', side_effect=sleep):
+        with patch.object(monitor, '_detect_fullscreen_state', side_effect=detect), patch('utils.game_monitor.time.sleep', side_effect=sleep), patch('utils.game_monitor.ensure_gnome_bridge', return_value='ready'):
             monitor._run_loop()
         self.assertEqual(seen, [0, 0, 0, 0])
         monitor._on_fullscreen_change.assert_called_once_with(True, 'game')

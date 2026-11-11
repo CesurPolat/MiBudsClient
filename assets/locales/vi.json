@@ -255,5 +255,8 @@
   "latency.timeout": "Chế độ trò chơi request timed out.",
   "latency.invalid": "Invalid or incomplete Chế độ trò chơi data.",
   "identity.model": "Mẫu",
-  "identity.firmware": "Phần sụn"
+  "identity.firmware": "Phần sụn",
+  "auto.wayland_relogin": "Đã cài đặt hỗ trợ chế độ trò chơi Wayland. Đăng xuất rồi đăng nhập lại để kích hoạt.",
+  "auto.wayland_disabled": "Hỗ trợ chế độ trò chơi Wayland bị tắt trong cài đặt GNOME.",
+  "auto.wayland_unavailable": "Chế độ trò chơi tự động không khả dụng trong phiên Wayland này. Chế độ thủ công vẫn hoạt động."
 }

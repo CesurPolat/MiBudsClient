@@ -255,5 +255,8 @@
   "latency.timeout": "Pelitila request timed out.",
   "latency.invalid": "Invalid or incomplete Pelitila data.",
   "identity.model": "Malli",
-  "identity.firmware": "Laiteohjelmisto"
+  "identity.firmware": "Laiteohjelmisto",
+  "auto.wayland_relogin": "Wayland-pelitilan tuki asennettu. Aktivoi kirjautumalla ulos ja takaisin sisään.",
+  "auto.wayland_disabled": "Wayland-pelitilan tuki on poistettu käytöstä GNOMEn asetuksissa.",
+  "auto.wayland_unavailable": "Automaattinen pelitila ei ole käytettävissä tässä Wayland-istunnossa. Manuaalinen tila toimii edelleen."
 }

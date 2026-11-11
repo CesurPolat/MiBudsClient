@@ -10,30 +10,37 @@ the focused application's identity, process ID and fullscreen state on the user
 session bus. It does not collect window titles, images, keyboard input or window
 history. No Shell unsafe mode or `org.gnome.Shell.Eval` workaround is used.
 
-## Install from source
+## Automatic setup
 
-Run from the repository root, as your normal desktop user:
+On application startup, the monitor's background worker detects the desktop
+session. X11 and Windows do not install a Shell extension. On GNOME Shell 46
+Wayland, MiBudsClient automatically copies its two bundled extension files from
+`assets/gnome-extension/fullscreen@mibudsclient` into the current user's extension
+directory, then enables the bridge. This also works from the PyInstaller bundle;
+no source checkout, terminal command or administrator access is required.
+
+The destination is `$XDG_DATA_HOME/gnome-shell/extensions/fullscreen@mibudsclient`
+(default `~/.local/share/gnome-shell/extensions/fullscreen@mibudsclient`). Only
+changed files are replaced. Other extensions and their preferences are preserved.
+
+If GNOME has not discovered the new extension in the current session, the app
+registers it for the next login and displays a localized instruction to **log out
+and back in**. No activation command is needed after login. Updates to an already
+loaded bridge can also require a new desktop session. The app does not restart
+the desktop or close the user's applications.
+
+If the user subsequently disables the bridge, or disables extensions globally,
+automatic setup preserves that preference. Re-enable it in GNOME's Extensions app
+when desired. Unsupported GNOME versions, other Wayland compositors, missing
+system tools and read-only user directories do not prevent application startup;
+manual game mode remains available. This setup does not install OS packages.
+
+Developers can run the same setup manually using the application's Python
+environment, from the repository root:
 
 ```sh
-python3 tools/install_gnome_bridge.py
+python tools/install_gnome_bridge.py
 ```
-
-The helper installs only the two bundled extension files under
-`$XDG_DATA_HOME/gnome-shell/extensions/fullscreen@mibudsclient` (by default
-`~/.local/share/gnome-shell/extensions/fullscreen@mibudsclient`) and attempts to
-enable the extension. If GNOME does not discover a newly installed extension
-until the next session, **log out and back in**, then run:
-
-```sh
-gnome-extensions enable fullscreen@mibudsclient
-```
-
-For a packaged application, obtain `assets/gnome-extension/fullscreen@mibudsclient`
-from the source checkout and copy it to the same extension location, then follow
-the activation steps above. The extension is optional and installed separately
-from the executable.
-After updating a loaded extension, log out and back in to load its new code.
-The application never installs or enables Shell extensions automatically.
 
 Choose **Automatic** in MiBudsClient and start a fullscreen application. Detection
 uses the existing polling and stabilization interval. With **Wait until app

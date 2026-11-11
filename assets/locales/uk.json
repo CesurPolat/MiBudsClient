@@ -255,5 +255,8 @@
   "latency.timeout": "Ігровий режим request timed out.",
   "latency.invalid": "Invalid or incomplete Ігровий режим data.",
   "identity.model": "Модель",
-  "identity.firmware": "Мікропрограма"
+  "identity.firmware": "Мікропрограма",
+  "auto.wayland_relogin": "Підтримку ігрового режиму Wayland встановлено. Для активації вийдіть із сеансу та увійдіть знову.",
+  "auto.wayland_disabled": "Підтримку ігрового режиму Wayland вимкнено в налаштуваннях GNOME.",
+  "auto.wayland_unavailable": "Автоматичний ігровий режим недоступний у цьому сеансі Wayland. Ручний режим працює."
 }

@@ -255,5 +255,8 @@
   "latency.timeout": "Játékmód request timed out.",
   "latency.invalid": "Invalid or incomplete Játékmód data.",
   "identity.model": "Modell",
-  "identity.firmware": "Firmware"
+  "identity.firmware": "Firmware",
+  "auto.wayland_relogin": "A Wayland játékmód támogatása telepítve. Az aktiváláshoz jelentkezzen ki, majd vissza.",
+  "auto.wayland_disabled": "A Wayland játékmód támogatása le van tiltva a GNOME beállításaiban.",
+  "auto.wayland_unavailable": "Az automatikus játékmód nem érhető el ebben a Wayland-munkamenetben. A kézi mód továbbra is működik."
 }

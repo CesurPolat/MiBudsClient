@@ -44,7 +44,7 @@ Modellnamen, Identitäten, Bilder und Funktionsdaten stammen aus dem [Gerätekat
 
 Benutzerdefinierter EQ ist auf eine spätere Version verschoben und einschließlich des eigenen Profils ausgeblendet. Weitere Katalogfunktionen erzeugen nicht automatisch Bedienelemente.
 
-Unter Wayland wird die automatische Vollbilderkennung mit der optionalen GNOME-Shell-46-Erweiterung unterstützt; siehe [Einrichtung](../wayland.md). Andere Wayland-Desktops werden noch nicht unterstützt.
+Unter GNOME Shell 46 mit Wayland wird die Vollbilderkennung automatisch eingerichtet. Bei Aufforderung ab- und wieder anmelden; kein Terminalbefehl erforderlich. X11 benötigt keine Erweiterung. Andere Wayland-Desktops werden noch nicht unterstützt. [Details](../wayland.md).
 
 Diese README beschreibt den aktuellen Quellcode; ältere Pakete können davon abweichen. Technische Hinweise: [Funktionen](../device-capabilities.md), [Befehlsauthentifizierung](../command-auth.md), [rohe Authentifizierung](../raw-auth.md) (Englisch).
 
@@ -131,7 +131,7 @@ Die dynamische RFCOMM-Dienstsuche benötigt außerdem BlueZs `sdptool`, das manc
 | Akkudaten fehlen | Nach dem Verbinden die Akkuprüfung verwenden. Fehlende Werte gelten als unbekannt. |
 | Gesten- oder EQ-Fehler | Den Abschnitt schließen und erneut öffnen, um Gerätedaten zu laden. |
 | Benutzerdefinierter EQ fehlt | In dieser Version verschoben und ausgeblendet; unterstützte Voreinstellungen bleiben verfügbar. |
-| Automatik unter Linux ohne Wirkung  | Unter Wayland wird die automatische Vollbilderkennung mit der optionalen GNOME-Shell-46-Erweiterung unterstützt; siehe [Einrichtung](../wayland.md). Andere Wayland-Desktops werden noch nicht unterstützt. |
+| Automatik unter Linux ohne Wirkung | Unter GNOME Shell 46 mit Wayland wird die Vollbilderkennung automatisch eingerichtet. Bei Aufforderung ab- und wieder anmelden; kein Terminalbefehl erforderlich. X11 benötigt keine Erweiterung. Andere Wayland-Desktops werden noch nicht unterstützt. [Details](../wayland.md). |
 | Klick auf Linux-Meldung ohne Wirkung | Standardaktionen prüfen oder das Fenster über den Infobereich öffnen. |
 
 Gib bei einer [Fehlermeldung](https://github.com/CesurPolat/MiBudsClient/issues) App-Version, Betriebssystem und Desktopsitzung, Modell, Schritte zur Reproduktion und Fehlerdetails an.

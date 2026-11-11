@@ -255,5 +255,8 @@
   "latency.timeout": "Mod permainan request timed out.",
   "latency.invalid": "Invalid or incomplete Mod permainan data.",
   "identity.model": "Model",
-  "identity.firmware": "Perisian tegar"
+  "identity.firmware": "Perisian tegar",
+  "auto.wayland_relogin": "Sokongan mod permainan Wayland dipasang. Log keluar dan masuk semula untuk mengaktifkannya.",
+  "auto.wayland_disabled": "Sokongan mod permainan Wayland dinyahdayakan dalam tetapan GNOME.",
+  "auto.wayland_unavailable": "Mod permainan automatik tidak tersedia dalam sesi Wayland ini. Mod manual masih berfungsi."
 }

@@ -363,7 +363,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "en": {
@@ -625,7 +628,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "ar": {
@@ -990,7 +996,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "de": {
@@ -1355,7 +1364,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "es": {
@@ -1720,7 +1732,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "et": {
@@ -1989,7 +2004,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "fi": {
@@ -2258,7 +2276,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "fr": {
@@ -2623,7 +2644,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "hi": {
@@ -2892,7 +2916,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "hu": {
@@ -3161,7 +3188,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "id": {
@@ -3526,7 +3556,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "it": {
@@ -3891,7 +3924,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "ja": {
@@ -4256,7 +4292,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "ko": {
@@ -4621,7 +4660,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "ms": {
@@ -4986,7 +5028,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "nl": {
@@ -5351,7 +5396,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "pl": {
@@ -5716,7 +5764,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "pt-BR": {
@@ -6078,7 +6129,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "pt-PT": {
@@ -6440,7 +6494,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "ru": {
@@ -6805,7 +6862,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "sv": {
@@ -7074,7 +7134,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "th": {
@@ -7439,7 +7502,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "uk": {
@@ -7804,7 +7870,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "vi": {
@@ -8169,7 +8238,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "zh-CN": {
@@ -8531,7 +8603,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "zh-TW": {
@@ -8893,7 +8968,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     },
     "zh-HK": {
@@ -9255,7 +9333,10 @@
         "latency.timeout",
         "latency.invalid",
         "identity.model",
-        "identity.firmware"
+        "identity.firmware",
+        "auto.wayland_relogin",
+        "auto.wayland_disabled",
+        "auto.wayland_unavailable"
       ]
     }
   },

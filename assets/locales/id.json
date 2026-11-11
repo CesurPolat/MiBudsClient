@@ -255,5 +255,8 @@
   "latency.timeout": "Mode game request timed out.",
   "latency.invalid": "Invalid or incomplete Mode game data.",
   "identity.model": "Model",
-  "identity.firmware": "Firmware"
+  "identity.firmware": "Firmware",
+  "auto.wayland_relogin": "Dukungan mode game Wayland terpasang. Keluar lalu masuk kembali untuk mengaktifkannya.",
+  "auto.wayland_disabled": "Dukungan mode game Wayland dinonaktifkan di pengaturan GNOME.",
+  "auto.wayland_unavailable": "Mode game otomatis tidak tersedia dalam sesi Wayland ini. Mode manual tetap berfungsi."
 }
