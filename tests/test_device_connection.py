@@ -19,18 +19,19 @@ class DeviceConnectionTests(unittest.TestCase):
             self.connection.update_battery(188, 70, 80)
         update.assert_called_once_with(188, 70, 80)
 
-    def test_battery_request_waits_in_background_then_resumes_connection(self):
-        with patch("controllers.device.controller.threading.Thread") as thread, patch(
-            "controllers.device.controller.time.sleep",
-        ) as sleep:
+    def test_battery_request_waits_in_background_and_reads_connected_device(self):
+        self.controller.connected = True
+        with patch("controllers.device.controller.threading.Thread") as thread, patch.object(
+            self.connection._stopped, "wait", return_value=False,
+        ) as wait:
             self.connection.request_battery_delayed()
             self.controller.request_battery.assert_not_called()
             thread.return_value.start.assert_called_once_with()
             self.assertTrue(thread.call_args.kwargs["daemon"])
             thread.call_args.kwargs["target"]()
-        sleep.assert_called_once_with(1)
+        wait.assert_called_once_with(1)
         self.assertEqual(self.controller.mock_calls, [
-            call.resume_reconnect_attempts(), call.request_battery(),
+            call.request_battery(user_initiated=False),
         ])
 
     def test_show_only_starts_one_reconnect_until_worker_finishes(self):

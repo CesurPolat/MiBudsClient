@@ -112,6 +112,7 @@ class ImageNotificationTests(unittest.TestCase):
     def test_tray_connection_uses_model_and_cached_picture_without_changing_icon(self):
         tray = SystemTray(Mock(), Mock())
         tray.icon = Mock()
+        tray._ready.set()
         tray._image_notifications = Mock()
         tray.set_device("Redmi Buds 6 Play", str(self.path))
         tray.set_device("", "")  # disconnect presentation does not erase the cache
@@ -128,6 +129,7 @@ class ImageNotificationTests(unittest.TestCase):
     def test_tray_falls_back_when_image_fails_or_is_absent(self):
         tray = SystemTray(Mock(), Mock())
         tray.icon = Mock()
+        tray._ready.set()
         tray._image_notifications = Mock()
         tray._image_notifications.show.return_value = False
         tray.set_device("Redmi Buds 6 Play", str(self.path))
@@ -143,6 +145,7 @@ class ImageNotificationTests(unittest.TestCase):
     def test_every_default_notification_and_image_fallback_stay_silent(self):
         tray = SystemTray(Mock(), Mock())
         tray.icon = Mock()
+        tray._ready.set()
         tray._image_notifications = Mock()
         tray._image_notifications.show.return_value = True
         for body in ("Connected", "Disconnected", "Placed in case", "Removed from case"):

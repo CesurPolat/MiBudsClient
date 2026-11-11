@@ -61,7 +61,7 @@ class LocalizedUITests(unittest.TestCase):
         self.assertEqual(self.layout.navigation_button.content.value, "Geri")
         self.assertEqual(self.settings.startup_item.title.value, "Başlangıçta Çalıştır")
         self.assertEqual(self.device.battery_panel._left._label_text.value, "Sol")
-        self.assertEqual(self.device.battery_panel._left._value_text.value, "⚡ %67")
+        self.assertEqual(self.device.battery_panel._left._value_text.value, "%67")
         self.assertEqual(panel.status.value, "Hareket ayarları okunuyor...")
         self.assertEqual(panel._token, token)
         self.assertTrue(panel._busy)
@@ -99,7 +99,7 @@ class LocalizedUITests(unittest.TestCase):
         self.switch("tr")
         self.assertEqual(self.settings.connection_panel.connection_label.value, "Bağlanılamadı")
         self.assertIn("Bluetooth erişimi reddedildi", self.settings.connection_panel.connection_reason.value)
-        self.assertIn("winerror 5", self.settings.connection_panel.connection_reason.value)
+        self.assertIn("winerror 5", self.settings.connection_panel.connection_reason.tooltip)
         self.assertTrue(self.settings.connection_panel.retry_button.visible)
         self.assertFalse(self.settings.connected_controls.visible)
         self.assertEqual(self.device.status_bar.value, t("device_status.error"))
@@ -158,18 +158,23 @@ class LocalizedUITests(unittest.TestCase):
         self.assertEqual(get_language(), "en")
 
     def test_tray_menu_labels_and_notifications_follow_current_language(self):
+        from tray_fakes import fake_tray_api
+        api = fake_tray_api()
         tray = SystemTray(Mock(), Mock())
-        with patch("ui.system_tray.pystray.Icon") as icon:
-            icon.HAS_MENU = True
-            tray.run()
-            menu = icon.call_args.args[3]
+        def run(setup):
+            setup(api.Icon.return_value)
+            menu = api.Icon.call_args.args[3]
             self.assertEqual(menu.items[0].text, "Open")
             set_language("tr")
             tray.refresh_menu()
             self.assertEqual(menu.items[0].text, "Aç")
             self.assertEqual(menu.items[2].text, "Oyun Modu: Kapalı")
             tray.notify(message("tray.connected"), silent=False)
-            icon.return_value.notify.assert_called_once_with("Kulaklık bağlandı", "Mi Buds Client")
+            api.Icon.return_value.notify.assert_called_once_with("Kulaklık bağlandı", "Mi Buds Client")
+        api.Icon.return_value.run.side_effect = run
+        with patch("ui.system_tray.pystray", api):
+            tray.run()
+        self.assertFalse(tray.available)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """Screen navigation preserves component state and routes interactions correctly."""
 
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from ui.components import AppLayout, DeviceStatusCard, SettingsCard
 
@@ -19,7 +19,8 @@ class AppLayoutTests(unittest.TestCase):
 
         self.assertEqual(layout.home_content.offset.x, 0)
         self.assertTrue(layout.home_content.content.intrinsic_height)
-        self.assertEqual(device.expand, 2)
+        self.assertFalse(device.expand)
+        self.assertEqual(layout.home_content.content.controls[0].expand, 2)
         self.assertEqual(settings.home_controls_card.expand, 3)
         self.assertEqual(layout.settings_content.offset.x, 1)
         self.assertTrue(layout.settings_content.ignore_interactions)
@@ -31,6 +32,8 @@ class AppLayoutTests(unittest.TestCase):
                           layout.settings_content.left, layout.settings_content.right), (0, 0, 0, 0))
 
         layout.navigation_button.on_click(None)
+        with patch.object(layout, "fit_settings_height"):
+            layout._finish_navigation(None)
         self.assertEqual(
             [control for control in layout.controls if control.visible], mounted_slots)
         self.assertEqual(layout.navigation_button.content.value, "Back")
@@ -44,6 +47,8 @@ class AppLayoutTests(unittest.TestCase):
         self.assertIsNone(layout.settings_content.height)
 
         layout.navigation_button.on_click(None)
+        with patch.object(layout, "fit_settings_height"):
+            layout._finish_navigation(None)
         self.assertEqual(
             [control for control in layout.controls if control.visible], mounted_slots)
         self.assertIsNone(layout.settings_content.height)
@@ -56,13 +61,14 @@ class AppLayoutTests(unittest.TestCase):
         self.assertTrue(layout.navigation_button.visible)
         self.assertEqual(layout.navigation_button.content.value, "Settings")
         self.assertEqual(layout.page_content.controls, screens)
-        self.assertEqual(layout.home_content.content.controls, [device, settings.home_controls_card])
+        self.assertIs(layout.home_content.content.controls[0].controls[0].content, device)
+        self.assertIs(layout.home_content.content.controls[1], settings.home_controls_card)
         self.assertIs(layout.settings_content.content, settings)
         self.assertTrue(settings.startup_switch.value)
         self.assertEqual(settings.latency_item.value, "auto")
         self.assertEqual(settings.identity_item.subtitle.value, "Redmi Buds 6 Play")
         self.assertEqual(device.battery_panel._left._value_text.value, "%70")
-        self.assertEqual(update.call_count, 2)
+        self.assertEqual(update.call_count, 4)
 
     def test_settings_sections_trigger_reads_and_fall_back_on_disconnect(self):
         from controllers.bluetooth.capabilities import resolve_capabilities
@@ -109,7 +115,8 @@ class AppLayoutTests(unittest.TestCase):
         settings = SettingsCard()
         self.assertEqual(settings._section_surface.content.controls, list(settings._sections.values()))
         surface = settings._section_surface
-        self.assertIsNotNone(surface.border)
+        self.assertIsNone(surface.border)
+        self.assertIsNone(surface.bgcolor)
         settings.select_section("identity")
         self.assertIs(settings._section_column.controls[1], surface)
         self.assertTrue(settings.identity_section.visible)
@@ -131,11 +138,11 @@ class AppLayoutTests(unittest.TestCase):
         self.assertNotIn("Redmi Buds 6 Play", settings.identity_name.value)
         self.assertEqual(settings.identity_image._image_control.src, "")
 
-    def test_resize_preserves_controls_and_moves_battery_to_bottom_only_when_wide(self):
+    def test_resize_preserves_controls_and_intrinsic_battery_layout(self):
         device = DeviceStatusCard()
         settings = SettingsCard()
         layout = AppLayout(device, settings, on_update=Mock(), viewport_width=1100)
-        self.assertTrue(device._battery_spacer.visible)
+        self.assertFalse(device._battery_spacer.visible)
         self.assertFalse(device.content.tight)
         self.assertTrue(layout.set_viewport_width(480))
         self.assertFalse(device._battery_spacer.visible)
@@ -147,8 +154,9 @@ class AppLayoutTests(unittest.TestCase):
         self.assertFalse(settings._compact_navigation)
         self.assertEqual(settings._menu.width, 150)
         self.assertTrue(layout.set_viewport_width(1100))
-        self.assertTrue(device._battery_spacer.visible)
-        self.assertEqual(layout.home_content.content.controls, [device, settings.home_controls_card])
+        self.assertFalse(device._battery_spacer.visible)
+        self.assertIs(layout.home_content.content.controls[0].controls[0].content, device)
+        self.assertIs(layout.home_content.content.controls[1], settings.home_controls_card)
 
 
 if __name__ == "__main__":

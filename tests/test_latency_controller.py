@@ -31,7 +31,14 @@ class LatencyControllerTests(unittest.TestCase):
         }
         self.stack.enter_context(patch("controllers.latency.controller.threading.Thread"))
         self.device = Mock()
+        self.device.latency_state = None
         self.device.send_command.return_value = (True, "OK")
+        def send(mode):
+            result = self.device.send_command.return_value
+            if result[0]:
+                self.device.latency_state = mode == "low"
+            return result
+        self.device.send_command.side_effect = send
         self.publish = Mock()
         self.rules_changed = Mock()
         self.controller = LatencyController(
@@ -109,7 +116,7 @@ class LatencyControllerTests(unittest.TestCase):
         self.device.send_command.return_value = (False, "Disconnected")
         self.controller.set_selected_latency_mode("on")
         self.publish.assert_any_call({"type": "status", "text": "Disconnected", "color": "red"})
-        self.assertFalse(self.controller.state["effective_low_latency"])
+        self.assertIsNone(self.controller.state["effective_low_latency"])
         self.assertEqual(self.controller.get_display_state()["error"], "Disconnected")
         self.device.send_command.return_value = (True, "OK")
         self.controller.set_selected_latency_mode("on")
@@ -122,7 +129,7 @@ class LatencyControllerTests(unittest.TestCase):
         self.device.send_command.return_value = (False, "Disconnected")
         with patch.object(card.latency_item, "update"):
             card.latency_item._mode_buttons["on"].on_click(None)
-            self.assertFalse(self.controller.state["effective_low_latency"])
+            self.assertIsNone(self.controller.state["effective_low_latency"])
             self.device.send_command.return_value = (True, "OK")
             card.latency_item._mode_buttons["on"].on_click(None)
             self.assertTrue(self.controller.state["effective_low_latency"])
@@ -158,7 +165,7 @@ class LatencyControllerTests(unittest.TestCase):
     def test_missing_controller_does_not_mark_mode_as_applied(self):
         self.device = None
         self.controller.set_selected_latency_mode("on")
-        self.assertFalse(self.controller.state["effective_low_latency"])
+        self.assertIsNone(self.controller.state["effective_low_latency"])
         self.assertIsNotNone(self.controller.get_display_state()["error"])
 
     def test_removing_included_foreground_app_immediately_reapplies_policy(self):
@@ -202,6 +209,7 @@ class LatencyControllerTests(unittest.TestCase):
                 entered.set()
                 if not release.wait(2):
                     raise TimeoutError("Test did not release command")
+            self.device.latency_state = mode == "low"
             return True, "OK"
 
         def select(mode):
@@ -229,7 +237,7 @@ class LatencyControllerTests(unittest.TestCase):
         self.assertFalse(second.is_alive())
         self.assertEqual(errors, [])
         self.assertEqual([call.args[0] for call in self.device.send_command.call_args_list], ["low", "std"])
-        self.assertEqual(self.controller.get_display_state(), {"mode": "off", "enabled": False, "error": None})
+        self.assertEqual(self.controller.get_display_state(), {"mode": "off", "enabled": False, "error": None, "activation_app": ""})
 
     def test_watcher_publishes_release_and_clears_running_flag(self):
         c = self.controller

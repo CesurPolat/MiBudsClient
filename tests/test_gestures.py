@@ -78,7 +78,7 @@ class GestureProtocolTests(unittest.TestCase):
         capabilities = gesture_capabilities("Redmi Buds 6 Play")
         self.assertEqual(capabilities, {4: (8, 1, 4, 5, 2, 3, 9), 1: (1, 4, 5, 2, 3, 8),
                                        2: (3, 2, 1, 4, 5, 8), 3: (0, 9, 8)})
-        self.assertEqual(gesture_capabilities("Redmi Buds 6"), {})
+        self.assertTrue(gesture_capabilities("Redmi Buds 6"))
         self.assertEqual(gesture_capabilities("Redmi Buds 6 Play", DeviceIdentity(0x2717, 20634)), {})
         self.assertEqual(gesture_capabilities("Redmi Buds 6 Play", DeviceIdentity(0xFFFF, 0xFFFF)), {})
 

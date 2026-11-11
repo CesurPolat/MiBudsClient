@@ -19,7 +19,7 @@ class SettingsControllerTests(unittest.TestCase):
         latency.platform_key = "windows"
         latency.low_latency_exceptions_by_platform = {"windows": ["excluded.exe"]}
         latency.low_latency_includes_by_platform = {"linux": ["included"]}
-        with patch("controllers.settings.controller.is_startup_enabled", return_value=True):
+        with patch("controllers.settings.controller.reconcile_startup", return_value=True):
             self.settings = SettingsController(
                 controller=self.device, latency=latency, device_connection=self.connection,
                 publish=self.publish, on_update=self.update,
@@ -69,12 +69,12 @@ class SettingsControllerTests(unittest.TestCase):
                 self.publish.assert_called_with({"type": "device_identity", "text": expected})
                 self.connection.update_status.assert_called_with(expected, "red")
 
-    def test_home_battery_button_and_initial_settings_remain_wired(self):
+    def test_initial_settings_and_automatic_battery_layout_remain_wired(self):
         card = self.settings.card
         card.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
         card.update_connection_state("connected")
-        card.battery_item.on_click(None)
-        self.device.request_battery.assert_called_once_with()
+        self.assertFalse(hasattr(card, "battery_item"))
+        self.device.request_battery.assert_not_called()
         self.assertTrue(card.startup_switch.value)
         self.assertEqual(card.latency_item.value, "auto")
         self.assertIs(card._sections["general"].content.controls[0], card.startup_item)

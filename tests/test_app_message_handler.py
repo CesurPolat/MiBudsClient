@@ -88,7 +88,7 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertTrue(self.latency.state["effective_low_latency"])
         self.settings.set_latency_mode.assert_called_once_with("auto")
         self.page.pubsub.send_all.assert_called_once_with(
-            {"type": "status", "text": "Automatic mode set", "color": "blue"},
+            {"type": "status", "text": "Game Mode set", "color": "blue"},
         )
         self.latency.set_selected_latency_mode.assert_not_called()
 
@@ -169,7 +169,7 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.handler.handle({"type": "app", "action": "other"})
         self.assertEqual(order.mock_calls, [])
         self.handler.handle({"type": "app", "action": "close"})
-        self.assertEqual(order.mock_calls, [call.monitor(), call.hotkey(), call.close()])
+        self.assertEqual(order.mock_calls, [call.close()])
 
     def test_late_messages_after_close_do_not_update_detached_controls(self):
         self.handler.handle({'type': 'app', 'action': 'close'})
@@ -195,7 +195,7 @@ class AppMessageHandlerTests(unittest.TestCase):
             suppress.assert_called_once_with("v1.2.3")
         with patch("ui.components.update_notification.webbrowser.open") as open_url:
             download.on_click(None)
-            open_url.assert_called_once_with(GITHUB_URL)
+            open_url.assert_called_once_with(GITHUB_URL + "/releases")
         self.assertFalse(snack.open)
 
     def test_startup_mounts_home_controls_before_subscribing(self):
@@ -204,27 +204,29 @@ class AppMessageHandlerTests(unittest.TestCase):
         with ExitStack() as stack:
             for name in ("WindowManager", "SystemTray", "DebugConsoleManager",
                          "BTController", "FullscreenGameMonitor", "start_instance_listener",
-                         "start_update_check", "CatalogSync"):
+                         "start_update_check", "CatalogSync", "ReportQueue", "ErrorReportManager",
+                         "ErrorReportDialog"):
                 stack.enter_context(patch.object(main, name))
-            stack.enter_context(patch.object(main.threading, "Thread"))
+            stack.enter_context(patch.object(main, "threading", SimpleNamespace(
+                Thread=Mock(), RLock=threading.RLock)))
             main.CatalogSync.return_value.cached_device = ('Saved earbuds', 'assets/images/MiBuds6Play.png')
-            stack.enter_context(patch("controllers.settings.controller.is_startup_enabled", return_value=False))
+            stack.enter_context(patch("controllers.settings.controller.reconcile_startup", return_value=False))
             latency = stack.enter_context(patch.object(main, "LatencyController")).return_value
             latency.state = {"selected_mode": "off", "hold_until_app_close_enabled": False}
             latency.platform_key = "windows"
             latency.low_latency_exceptions_by_platform = {}
             latency.low_latency_includes_by_platform = {}
             asyncio.run(main.main(self.page))
-            main.WindowManager.assert_called_once_with(self.page, auto_resize=True)
+            main.WindowManager.assert_called_once_with(
+                self.page, auto_resize=True, on_shutdown=main.application_shutdown.stop)
 
         subscriber = self.page.pubsub.subscribe.call_args.args[0]
         self.assertTrue(inspect.iscoroutinefunction(subscriber))
         handler = subscriber.__self__
-        layout = self.page.add.call_args.args[0]
+        layout = self.page.add.call_args.args[0].content
         home, settings = layout.page_content.controls
-        self.assertEqual(home.content.controls, [
-            handler._device_status_card, handler._settings_card.home_controls_card,
-        ])
+        self.assertIs(home.content.controls[0].controls[0].content, handler._device_status_card)
+        self.assertIs(home.content.controls[1], handler._settings_card.home_controls_card)
         self.assertIs(settings.content, handler._settings_card)
         self.assertEqual(handler._device_status_card.device_name.value, 'Saved earbuds')
         self.assertTrue(handler._device_status_card.device_image._image_control.src.endswith('MiBuds6Play.png'))

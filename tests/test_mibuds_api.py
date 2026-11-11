@@ -34,6 +34,7 @@ class MiBudsApiTests(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.clock = Mock(return_value=1000)
         self.client = CatalogClient(cache_dir=self.directory.name, clock=self.clock, app_version='v0.2.0')
+        self.bundled_version = self.client.version
         self.catalog = _load_app_catalog()
         self.body = json.dumps(self.catalog, ensure_ascii=False).encode()
         self.version = 'sha256-' + hashlib.sha256(self.body).hexdigest()
@@ -140,7 +141,7 @@ class MiBudsApiTests(unittest.TestCase):
         request = self.populate()
         first = request.call_args_list[0].args[0]
         query = parse_qs(urlsplit(first.full_url).query)
-        self.assertEqual(query, {'vid': ['2717'], 'pid': ['509b']})
+        self.assertEqual(query, {'vid': ['2717'], 'pid': ['509b'], 'version': [self.bundled_version]})
         self.assertEqual(first.get_header('X-mibuds-app-version'), '0.2.0')
         self.assertEqual(first.get_header('X-mibuds-install-id'), self.client.install_id)
         self.assertIsNone(request.call_args_list[1].args[0].get_header('X-mibuds-install-id'))
@@ -160,7 +161,7 @@ class MiBudsApiTests(unittest.TestCase):
         self.client.cache_file.unlink()
         restarted = CatalogClient(cache_dir=self.directory.name, clock=self.clock)
         self.assertEqual(restarted.install_id, install_id)
-        self.assertIsNone(restarted.catalog)
+        self.assertEqual(restarted.catalog, self.catalog)
 
     def test_invalid_saved_install_id_is_replaced_with_valid_uuid4(self):
         self.client.install_id_file.write_text('invalid', encoding='ascii')
@@ -228,10 +229,10 @@ class MiBudsApiTests(unittest.TestCase):
     def test_offline_start_preserves_bundled_catalog_and_corrupt_cache_is_ignored(self):
         with patch('utils.mibuds_api.urlopen', side_effect=URLError('offline')):
             self.assertFalse(self.client.refresh())
-        self.assertIsNone(self.client.catalog)
+        self.assertEqual(self.client.catalog, self.catalog)
         Path(self.directory.name, 'catalog.json').write_text('{broken', encoding='utf-8')
         client = CatalogClient(cache_dir=self.directory.name)
-        self.assertIsNone(client.catalog)
+        self.assertEqual(client.catalog, self.catalog)
         sync = CatalogSync(publish=Mock(), get_identity=lambda: None, app_version='v0.2.0', client=client,
                            get_device_name=lambda: 'Redmi Buds 6')
         sync._publish_device()

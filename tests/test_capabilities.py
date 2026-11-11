@@ -35,13 +35,21 @@ class CapabilityTests(unittest.TestCase):
     def test_registry_and_all_bundled_models(self):
         self.assertNotIn(1001, FUNCTIONS)
         self.assertEqual(FUNCTIONS[4018], "FUNC_ONCE_MFB")
+        # Independent contract: adding a metadata-only function must not grant
+        # controls simply because it was added to the production registry.
+        implemented = {
+            "eq": {2006, 2016}, "gestures": {4006, 4001, 4002, 4003},
+            "latency": {3011}, "noise": {1002, 1003, 1004, 1005, 1006, 1007},
+        }
         from controllers.bluetooth.device_catalog import _APP_CATALOG
         for model in _APP_CATALOG["result"]["tw_product_list"]:
             caps = self.resolve([model], model["name"])
             self.assertEqual(caps.model, model["model"])
             self.assertEqual(caps.functions, frozenset(f["func_id"] for f in model["func_list"]))
-            if model["model"] != self.play["model"]:
-                self.assertLessEqual(caps.available, {"eq"})
+            expected = {"battery"} | {feature for feature, ids in implemented.items()
+                                        if caps.functions.intersection(ids)}
+            self.assertEqual(caps.available, expected)
+            self.assertFalse(caps.supports("custom_eq"))
 
     def test_catalog_effects_enable_only_each_models_profiles(self):
         expected = {
@@ -94,21 +102,23 @@ class CapabilityTests(unittest.TestCase):
     def test_metadata_limits_and_custom_eq(self):
         caps = self.resolve([self.with_effects([0, 10, 999, True, 0])])
         self.assertEqual(caps.profiles, (0,))
-        self.assertTrue(caps.supports("custom_eq"))
+        self.assertFalse(caps.supports("custom_eq"))
         self.assertFalse(self.resolve([self.play]).supports("custom_eq"))
         model = self.with_effects([])
         for func in model["func_list"]:
             if func["func_id"] in (2016, 4001, 4002, 4003, 4006, 3011):
                 func["extra_data"] = "broken JSON"
         caps = self.resolve([model])
-        self.assertFalse(caps.supports("eq"))
-        self.assertFalse(caps.supports("gestures"))
-        self.assertFalse(caps.supports("latency"))
+        self.assertTrue(caps.supports("eq"))
+        self.assertEqual(caps.profiles, ())
+        self.assertTrue(caps.supports("gestures"))
+        self.assertEqual(caps.gestures, {})
+        self.assertTrue(caps.supports("latency"))
 
-    def test_unknown_model_cannot_copy_play_backend(self):
+    def test_new_catalog_model_uses_implemented_functions(self):
         model = deepcopy(self.play)
         model["model"] = "new.model"
-        self.assertFalse(self.resolve([model]).available)
+        self.assertEqual(self.resolve([model]).available, self.resolve([self.play]).available)
 
     def test_ui_filters_sections_and_rejects_old_completion(self):
         card = SettingsCard()
@@ -137,10 +147,15 @@ class CapabilityTests(unittest.TestCase):
         controller._device_name = "Redmi Buds 4"
         controller._connection.send = Mock()
         self.assertFalse(controller.send_command()[0])
-        self.assertFalse(controller.request_battery()[0])
+        self.assertTrue(controller.request_battery()[0])
+        controller._connection.send.reset_mock()
         self.assertFalse(controller.request_eq_settings().success)
-        self.assertFalse(controller.request_gesture_settings().success)
-        controller.on_connect_setup()
+        controller._connection.send.assert_not_called()
+        with patch.object(controller, "request_battery") as battery, patch(
+            "controllers.bluetooth.controller.time.sleep",
+        ):
+            controller.on_connect_setup()
+        battery.assert_called_once_with(user_initiated=False)
         controller._connection.send.assert_not_called()
 
     def test_play_cannot_write_custom_eq_without_effect_10(self):
@@ -181,14 +196,14 @@ class CapabilityTests(unittest.TestCase):
         tray = SystemTray(Mock(), Mock(), callback, latency_available=lambda: False)
         tray._on_mode_select("on")
         callback.assert_not_called()
-        device = SimpleNamespace(capabilities=DeviceCapabilities(), send_command=Mock())
+        device = SimpleNamespace(capabilities=DeviceCapabilities(), latency_state=None, session_ready=False, send_command=Mock())
         with patch("controllers.latency.controller.get_low_latency_mode", return_value="off"):
             latency = LatencyController(Mock(), lambda: device, lambda: None, Mock(), Mock())
         self.assertFalse(latency.set_effective_latency_state(True))
         latency.apply_monitor_latency_policy(True, "game.exe")
         latency.state["effective_low_latency"] = True
         latency.set_device_capabilities(DeviceCapabilities())
-        self.assertFalse(latency.state["effective_low_latency"])
+        self.assertIsNone(latency.state["effective_low_latency"])
         device.send_command.assert_not_called()
 
 

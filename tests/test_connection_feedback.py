@@ -31,7 +31,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         card.set_capabilities(resolve_capabilities(device_name="Redmi Buds 6 Play"))
         card.update_connection_state("connected")
         home_items = [item.content for item in card.connected_controls.controls]
-        self.assertEqual(home_items, [card.latency_item, card.equalizer.quick_controls, card.battery_item])
+        self.assertEqual(home_items, [card.latency_item, card.equalizer.quick_controls])
         self.assertTrue(card.connection_card.visible)
         self.assertFalse(card.connected_controls.visible)
         token = card.equalizer.begin("read")
@@ -188,7 +188,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         card.update_connection_state("connecting")
         self.assertTrue(card.connection_progress.visible)
         self.assertFalse(card.retry_button.visible)
-        self.assertFalse(card.connection_reason.visible)
+        self.assertTrue(card.connection_reason.visible)
         card.update_connection_state("connected")
         self.assertFalse(card.connection_progress.visible)
         self.assertFalse(card.retry_button.visible)

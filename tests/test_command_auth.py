@@ -220,9 +220,9 @@ class AuthConnectionTests(unittest.TestCase):
         self.assertFalse(connection.session_authenticated)
         self.sock.sendall.assert_not_called()
 
-    def test_no_implicit_model_auth_and_raw_is_unsupported(self):
-        self.assertEqual(profile_auth_policy('Redmi Buds 6 Play'), AuthPolicy.COMMAND)
-        self.assertEqual(profile_auth_policy('Redmi Buds 5 Pro'), AuthPolicy.UNKNOWN)
+    def test_auth_policy_is_selected_from_service_not_model(self):
+        self.assertEqual(profile_auth_policy('Redmi Buds 6 Play'), AuthPolicy.AUTO)
+        self.assertEqual(profile_auth_policy('Redmi Buds 5 Pro'), AuthPolicy.AUTO)
         for policy in ('raw_auth', 'unknown'):
             backend = self.backend()
             with self.assertRaises(AuthError):
@@ -233,8 +233,8 @@ class AuthConnectionTests(unittest.TestCase):
     def test_controller_supplies_explicit_or_model_policy(self):
         from controllers.bluetooth.controller import BTController
         for name, override, expected in (
-            ('Redmi Buds 6 Play', None, AuthPolicy.COMMAND),
-            ('Redmi Buds 5 Pro', None, AuthPolicy.UNKNOWN),
+            ('Redmi Buds 6 Play', None, AuthPolicy.AUTO),
+            ('Redmi Buds 5 Pro', None, AuthPolicy.AUTO),
             ('Redmi Buds 5 Pro', 'command_auth', AuthPolicy.COMMAND),
             ('Redmi Buds 6 Play', 'direct', AuthPolicy.DIRECT),
         ):

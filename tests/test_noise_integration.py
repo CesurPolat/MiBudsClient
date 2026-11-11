@@ -35,9 +35,9 @@ class NoiseIntegrationTests(unittest.TestCase):
 
     def test_function_list_visibility_without_opt_in(self):
         with patch.dict(os.environ, {"MIBUDS_EXPERIMENTAL_ANC": ""}):
-            self.assertFalse(noise_backend_enabled(resolve_capabilities("Redmi Buds 5 Pro")))
+            self.assertTrue(noise_backend_enabled(resolve_capabilities("Redmi Buds 5 Pro")))
             self.assertFalse(noise_backend_enabled(resolve_capabilities("Redmi Buds 6 Play")))
-            self.assertFalse(noise_backend_enabled(resolve_capabilities("Redmi Buds 6 Pro")))
+            self.assertTrue(noise_backend_enabled(resolve_capabilities("Redmi Buds 6 Pro")))
             card = SettingsCard()
             card.set_capabilities(resolve_capabilities("Redmi Buds 5 Pro"))
             card.update_connection_state("connected")
@@ -91,22 +91,21 @@ class NoiseIntegrationTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
 
     def test_ui_requires_read_and_ignores_old_results(self):
-        with patch("controllers.bluetooth.noise.VALIDATED_NOISE_MODELS", frozenset({MODEL})):
-            action = Mock()
-            card = SettingsCard(on_noise_action=action)
-            card.set_capabilities(resolve_capabilities("Redmi Buds 5 Pro"))
-            card.update_connection_state("connected")
-            panel = card.noise
-            self.assertTrue(panel.quick_mode.disabled)
-            token = panel.begin("read", 4)
-            panel.complete(token, NoiseState(1, 0))
-            self.assertFalse(panel.quick_mode.disabled)
-            self.assertIsNone(panel.quick_level.divisions)
-            panel.notification(3, NoiseState(2, 0))
-            self.assertEqual(str(panel._state.mode), "1")
-            panel.notification(4, NoiseState(2, 0))
-            self.assertEqual(str(panel._state.mode), "2")
-            old = panel.begin("write", 4)
-            card.update_connection_state("disconnected")
-            panel.complete(old, NoiseState(1, 2))
-            self.assertIsNone(panel._state)
+        action = Mock()
+        card = SettingsCard(on_noise_action=action)
+        card.set_capabilities(resolve_capabilities("Redmi Buds 5 Pro"))
+        card.update_connection_state("connected")
+        panel = card.noise
+        self.assertTrue(panel.quick_mode.disabled)
+        token = panel.begin("read", 4)
+        panel.complete(token, NoiseState(1, 0))
+        self.assertFalse(panel.quick_mode.disabled)
+        self.assertIsNone(panel.quick_level.divisions)
+        panel.notification(3, NoiseState(2, 0))
+        self.assertEqual(str(panel._state.mode), "1")
+        panel.notification(4, NoiseState(2, 0))
+        self.assertEqual(str(panel._state.mode), "2")
+        old = panel.begin("write", 4)
+        card.update_connection_state("disconnected")
+        panel.complete(old, NoiseState(1, 2))
+        self.assertIsNone(panel._state)

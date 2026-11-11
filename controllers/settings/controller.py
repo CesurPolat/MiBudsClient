@@ -6,7 +6,7 @@ from utils.i18n import message as m, error_message
 import threading
 from typing import Callable
 
-from utils.startup_manager import is_startup_enabled, set_startup
+from utils.startup_manager import reconcile_startup, set_startup
 from ui.components.settings_card import SettingsCard
 from .gestures import GestureSettingsController
 from .equalizer import EqSettingsController
@@ -39,7 +39,7 @@ class SettingsController:
             on_wait_until_app_close_change=latency.on_wait_until_app_close_change,
             on_check_battery=lambda _: controller.request_battery(),
             on_startup_toggle=self.on_startup_change,
-            startup_enabled=is_startup_enabled(),
+            startup_enabled=reconcile_startup(),
             low_latency_mode=latency.state["selected_mode"],
             active_platform=latency.platform_key,
             low_latency_exclusions_by_platform={

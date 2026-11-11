@@ -317,8 +317,8 @@ class EqUITests(unittest.TestCase):
         self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
         self.panel.complete(token, EqResult(True, EqState(6), m("eq.loaded")), (0, 6), "profile")
         self.assertEqual(self.panel.profile.value, "6")
-        self.assertEqual(quick.controls[1].content.style.bgcolor, "#1976D2")
-        self.assertEqual(quick.controls[0].content.style.bgcolor, "#2B2F3A")
+        self.assertEqual(quick.controls[1].content.style.bgcolor, "#2463FF")
+        self.assertEqual(quick.controls[0].content.style.bgcolor, "#1B2127")
         token = self.panel.begin("profile")
         self.panel.complete(token, EqResult(False, message=m("eq.timeout")), (), "profile")
         self.assertTrue(all(b.content.disabled for b in quick.controls))
@@ -403,7 +403,7 @@ class EqUITests(unittest.TestCase):
             self.assertEqual(self.panel.quick_profiles.controls[0].content.content.controls[1].value, self.panel.profile.options[0].text)
             self.assertEqual(self.panel.quick_status.value, self.panel.status.value)
             self.assertEqual(self.panel.quick_refresh_button.tooltip, t("eq.refresh"))
-            self.assertEqual(self.panel.quick_profiles.controls[0].content.style.bgcolor, "#1976D2")
+            self.assertEqual(self.panel.quick_profiles.controls[0].content.style.bgcolor, "#2463FF")
         finally:
             set_language("en")
 
