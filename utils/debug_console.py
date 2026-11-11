@@ -61,6 +61,7 @@ class DebugConsoleManager:
 
         self._console_visible = False
         self._console_stream = None
+        self._ui_console_toggle = None
         self._hotkey_thread: Optional[threading.Thread] = None
         self._hotkey_running = False
         self._hotkey_thread_id: Optional[int] = None
@@ -74,14 +75,11 @@ class DebugConsoleManager:
         """Publish a toggle request without opening a console on the input thread."""
         if self._publish is None:
             return
-        if not sys.platform.startswith("win"):
-            self._publish({
-                "type": "status",
-                "text": "Debug console is currently supported on Windows",
-                "color": "orange",
-            })
-            return
         self._publish({"type": "debug_console", "action": "toggle"})
+
+    def set_ui_console(self, toggle) -> None:
+        """Bind a Flet console without coupling stream capture to the UI layer."""
+        self._ui_console_toggle = toggle
 
     def start_f12_hotkey_listener(self, on_hotkey: Callable[[], None]) -> bool:
         """Start a Windows hotkey listener for F12 as a reliable fallback."""
@@ -127,9 +125,9 @@ class DebugConsoleManager:
         self._installed = True
 
     def toggle_console(self) -> str:
-        """Toggle native console and return one of: opened, closed, failed."""
+        """Toggle platform console and return one of: opened, closed, failed."""
         if not os.name == "nt":
-            return "failed"
+            return self._ui_console_toggle() if self._ui_console_toggle else "failed"
 
         if self._console_visible:
             self._close_windows_console()
@@ -143,6 +141,10 @@ class DebugConsoleManager:
         with self._lock:
             lines = list(self._logs)[-max_lines:]
         return "".join(lines)
+
+    def clear_logs(self) -> None:
+        with self._lock:
+            self._logs.clear()
 
     def _append_log(self, text: str, stream_name: str) -> None:
         """Store logs in memory and optionally notify callback."""

@@ -258,5 +258,9 @@
   "identity.firmware": "البرنامج الثابت",
   "auto.wayland_relogin": "تم تثبيت دعم وضع الألعاب في Wayland. سجّل الخروج ثم الدخول لتفعيله.",
   "auto.wayland_disabled": "دعم وضع الألعاب في Wayland معطّل في إعدادات GNOME.",
-  "auto.wayland_unavailable": "وضع الألعاب التلقائي غير متاح في جلسة Wayland هذه. يظل الوضع اليدوي متاحًا."
+  "auto.wayland_unavailable": "وضع الألعاب التلقائي غير متاح في جلسة Wayland هذه. يظل الوضع اليدوي متاحًا.",
+  "debug.title": "وحدة التصحيح",
+  "debug.clear": "مسح",
+  "debug.close": "إغلاق",
+  "debug.empty": "لا توجد سجلات بعد."
 }

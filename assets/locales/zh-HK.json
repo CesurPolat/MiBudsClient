@@ -258,5 +258,9 @@
   "identity.firmware": "韌體",
   "auto.wayland_relogin": "已安裝 Wayland 遊戲模式支援。請登出再登入以啟用。",
   "auto.wayland_disabled": "Wayland 遊戲模式支援已在 GNOME 設定中停用。",
-  "auto.wayland_unavailable": "此 Wayland 工作階段不支援自動遊戲模式，仍可手動切換。"
+  "auto.wayland_unavailable": "此 Wayland 工作階段不支援自動遊戲模式，仍可手動切換。",
+  "debug.title": "偵錯主控台",
+  "debug.clear": "清除",
+  "debug.close": "關閉",
+  "debug.empty": "暫無日誌。"
 }

@@ -258,5 +258,9 @@
   "identity.firmware": "Firmware",
   "auto.wayland_relogin": "Supporto modalità gioco Wayland installato. Esci dalla sessione e accedi di nuovo per attivarlo.",
   "auto.wayland_disabled": "Il supporto alla modalità gioco Wayland è disattivato nelle impostazioni GNOME.",
-  "auto.wayland_unavailable": "La modalità gioco automatica non è disponibile in questa sessione Wayland. La modalità manuale funziona ancora."
+  "auto.wayland_unavailable": "La modalità gioco automatica non è disponibile in questa sessione Wayland. La modalità manuale funziona ancora.",
+  "debug.title": "Console di debug",
+  "debug.clear": "Cancella",
+  "debug.close": "Chiudi",
+  "debug.empty": "Nessun log disponibile."
 }

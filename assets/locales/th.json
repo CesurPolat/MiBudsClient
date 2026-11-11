@@ -258,5 +258,9 @@
   "identity.firmware": "เฟิร์มแวร์",
   "auto.wayland_relogin": "ติดตั้งการรองรับโหมดเกม Wayland แล้ว ออกจากระบบและเข้าสู่ระบบอีกครั้งเพื่อเปิดใช้งาน",
   "auto.wayland_disabled": "การรองรับโหมดเกม Wayland ถูกปิดในตั้งค่า GNOME",
-  "auto.wayland_unavailable": "โหมดเกมอัตโนมัติไม่พร้อมใช้งานในเซสชัน Wayland นี้ โหมดแมนนวลยังคงใช้งานได้"
+  "auto.wayland_unavailable": "โหมดเกมอัตโนมัติไม่พร้อมใช้งานในเซสชัน Wayland นี้ โหมดแมนนวลยังคงใช้งานได้",
+  "debug.title": "คอนโซลดีบัก",
+  "debug.clear": "ล้าง",
+  "debug.close": "ปิด",
+  "debug.empty": "ยังไม่มีบันทึก"
 }

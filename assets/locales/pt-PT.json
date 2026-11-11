@@ -258,5 +258,9 @@
   "identity.firmware": "Firmware",
   "auto.wayland_relogin": "Suporte ao modo de jogo Wayland instalado. Termine a sessão e volte a entrar para o ativar.",
   "auto.wayland_disabled": "O suporte ao modo de jogo Wayland está desativado nas definições do GNOME.",
-  "auto.wayland_unavailable": "O modo de jogo automático não está disponível nesta sessão Wayland. O modo manual continua a funcionar."
+  "auto.wayland_unavailable": "O modo de jogo automático não está disponível nesta sessão Wayland. O modo manual continua a funcionar.",
+  "debug.title": "Consola de depuração",
+  "debug.clear": "Limpar",
+  "debug.close": "Fechar",
+  "debug.empty": "Ainda não há registos."
 }

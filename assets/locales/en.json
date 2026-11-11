@@ -258,5 +258,9 @@
   "identity.firmware": "Firmware",
   "auto.wayland_relogin": "Wayland game mode support installed. Log out and back in to activate it.",
   "auto.wayland_disabled": "Wayland game mode support is disabled in GNOME settings.",
-  "auto.wayland_unavailable": "Automatic game mode is unavailable in this Wayland session. Manual mode still works."
+  "auto.wayland_unavailable": "Automatic game mode is unavailable in this Wayland session. Manual mode still works.",
+  "debug.title": "Debug Console",
+  "debug.clear": "Clear",
+  "debug.close": "Close",
+  "debug.empty": "No logs yet."
 }

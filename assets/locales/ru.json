@@ -258,5 +258,9 @@
   "identity.firmware": "Прошивка",
   "auto.wayland_relogin": "Поддержка игрового режима Wayland установлена. Для активации выйдите из сеанса и войдите снова.",
   "auto.wayland_disabled": "Игровой режим Wayland отключён в настройках GNOME.",
-  "auto.wayland_unavailable": "Автоматический игровой режим недоступен в этом сеансе Wayland. Ручной режим работает."
+  "auto.wayland_unavailable": "Автоматический игровой режим недоступен в этом сеансе Wayland. Ручной режим работает.",
+  "debug.title": "Консоль отладки",
+  "debug.clear": "Очистить",
+  "debug.close": "Закрыть",
+  "debug.empty": "Записей пока нет."
 }

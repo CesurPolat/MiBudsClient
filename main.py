@@ -32,6 +32,7 @@ from utils.user_preferences import get_language_preference
 from ui.localization import refresh_translations
 from utils.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
 from ui.components.error_report import ErrorReportDialog
+from ui.components.debug_console import DebugConsoleDialog
 from utils.app_shutdown import ApplicationShutdown
 
 application_shutdown = ApplicationShutdown()
@@ -142,6 +143,10 @@ async def main(page: ft.Page):
     application_shutdown.register("device requests", device_connection.stop)
 
     page.on_keyboard_event = debug_console.handle_keyboard_event
+    if page.platform == ft.PagePlatform.LINUX:
+        debug_dialog = DebugConsoleDialog(page, debug_console, ui_lock=ui_lock)
+        debug_console.set_ui_console(debug_dialog.toggle)
+        application_shutdown.register("debug console", debug_dialog.stop)
     catalog_sync = CatalogSync(
         publish=publish,
         get_identity=lambda: controller_ref["instance"].device_identity

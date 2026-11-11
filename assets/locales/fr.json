@@ -258,5 +258,9 @@
   "identity.firmware": "Micrologiciel",
   "auto.wayland_relogin": "Prise en charge du mode jeu Wayland installée. Déconnectez-vous puis reconnectez-vous pour l’activer.",
   "auto.wayland_disabled": "Le mode jeu Wayland est désactivé dans les paramètres GNOME.",
-  "auto.wayland_unavailable": "Le mode jeu automatique est indisponible dans cette session Wayland. Le mode manuel reste disponible."
+  "auto.wayland_unavailable": "Le mode jeu automatique est indisponible dans cette session Wayland. Le mode manuel reste disponible.",
+  "debug.title": "Console de débogage",
+  "debug.clear": "Effacer",
+  "debug.close": "Fermer",
+  "debug.empty": "Aucun journal pour le moment."
 }

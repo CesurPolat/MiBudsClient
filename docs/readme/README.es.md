@@ -59,6 +59,8 @@ MiBudsClient es un proyecto comunitario independiente sin afiliación con Xiaomi
 
 El sistema operativo gestiona el emparejamiento. La aplicación necesita una conexión Bluetooth existente. Solo se ejecuta una instancia; abrirla de nuevo muestra la ventana existente. Usa la opción de salir de la bandeja para cerrarla por completo.
 
+Pulsa **F12** para ver los registros. En Linux, enfoca MiBudsClient para abrir la consola integrada; puedes seleccionar, copiar o borrar los registros. F12 vuelve a cerrarla. Windows conserva su consola separada. Los registros se siguen recopilando con la consola cerrada.
+
 ## Uso
 
 ### Baja latencia

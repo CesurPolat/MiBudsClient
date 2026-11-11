@@ -258,5 +258,9 @@
   "identity.firmware": "Püsivara",
   "auto.wayland_relogin": "Waylandi mängurežiimi tugi on paigaldatud. Aktiveerimiseks logi välja ja uuesti sisse.",
   "auto.wayland_disabled": "Waylandi mängurežiimi tugi on GNOME seadetes keelatud.",
-  "auto.wayland_unavailable": "Automaatne mängurežiim pole selles Waylandi seansis saadaval. Käsitsi valimine töötab endiselt."
+  "auto.wayland_unavailable": "Automaatne mängurežiim pole selles Waylandi seansis saadaval. Käsitsi valimine töötab endiselt.",
+  "debug.title": "Silumiskonsool",
+  "debug.clear": "Tühjenda",
+  "debug.close": "Sulge",
+  "debug.empty": "Logisid veel pole."
 }

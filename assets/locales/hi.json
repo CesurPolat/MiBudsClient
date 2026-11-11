@@ -258,5 +258,9 @@
   "identity.firmware": "फ़र्मवेयर",
   "auto.wayland_relogin": "Wayland गेम मोड समर्थन इंस्टॉल हो गया। सक्रिय करने के लिए लॉग आउट करके फिर लॉग इन करें।",
   "auto.wayland_disabled": "GNOME सेटिंग में Wayland गेम मोड समर्थन बंद है।",
-  "auto.wayland_unavailable": "इस Wayland सत्र में स्वचालित गेम मोड उपलब्ध नहीं है। मैन्युअल मोड काम करता रहेगा।"
+  "auto.wayland_unavailable": "इस Wayland सत्र में स्वचालित गेम मोड उपलब्ध नहीं है। मैन्युअल मोड काम करता रहेगा।",
+  "debug.title": "डिबग कंसोल",
+  "debug.clear": "साफ़ करें",
+  "debug.close": "बंद करें",
+  "debug.empty": "अभी कोई लॉग नहीं है।"
 }

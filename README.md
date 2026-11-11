@@ -62,6 +62,8 @@ Pairing is handled by your operating system. MiBudsClient needs an existing Blue
 
 Only one instance runs at a time. Launching the app again brings the existing window forward. Use the tray's **Quit** command to exit completely.
 
+Press **F12** for runtime logs. On Linux, focus MiBudsClient to open its in-app console, select/copy logs or clear the buffer; F12 closes it again. Windows retains its separate native console. Log capture continues while the console is closed.
+
 ## Make it yours
 
 ### Low-latency mode

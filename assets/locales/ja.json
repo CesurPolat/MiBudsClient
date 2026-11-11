@@ -258,5 +258,9 @@
   "identity.firmware": "ファームウェア",
   "auto.wayland_relogin": "Wayland ゲームモードのサポートをインストールしました。有効にするにはログアウトして再ログインしてください。",
   "auto.wayland_disabled": "Wayland ゲームモードのサポートは GNOME の設定で無効になっています。",
-  "auto.wayland_unavailable": "この Wayland セッションでは自動ゲームモードを利用できません。手動モードは引き続き利用できます。"
+  "auto.wayland_unavailable": "この Wayland セッションでは自動ゲームモードを利用できません。手動モードは引き続き利用できます。",
+  "debug.title": "デバッグコンソール",
+  "debug.clear": "クリア",
+  "debug.close": "閉じる",
+  "debug.empty": "ログはまだありません。"
 }

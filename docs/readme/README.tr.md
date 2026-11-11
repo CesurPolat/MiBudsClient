@@ -60,6 +60,8 @@ MiBudsClient, Xiaomi ile bağlantısı olmayan bağımsız bir topluluk projesid
 
 Eşleştirmeyi işletim sistemi yapar; uygulama mevcut bir Bluetooth bağlantısı gerektirir. Aynı anda tek örnek çalışır. Tekrar açmak mevcut pencereyi öne getirir. Tamamen kapatmak için tepsideki çıkış komutunu kullan.
 
+Çalışma logları için **F12** tuşuna bas. Linux’ta MiBudsClient odaktayken uygulama içi konsol açılır; logları seçip kopyalayabilir veya temizleyebilirsin. F12 tekrar kapatır. Windows ayrı konsol penceresini kullanmaya devam eder. Konsol kapalıyken log toplama sürer.
+
 ## Kullanım
 
 ### Düşük gecikme

@@ -59,6 +59,8 @@ MiBudsClient est un projet communautaire indépendant, sans affiliation à Xiaom
 
 L’association est gérée par le système ; l’application exige une connexion Bluetooth existante. Une seule instance fonctionne à la fois. Relancer l’application affiche la fenêtre existante. Utilisez la commande de fermeture de la zone de notification pour quitter complètement.
 
+Appuyez sur **F12** pour consulter les journaux. Sous Linux, MiBudsClient doit avoir le focus ; sa console intégrée permet de sélectionner, copier ou effacer les journaux. F12 la referme. Windows conserve sa console séparée. Les journaux restent collectés quand la console est fermée.
+
 ## Utilisation
 
 ### Faible latence

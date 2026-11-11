@@ -59,6 +59,8 @@ MiBudsClient ist ein unabhängiges Community-Projekt ohne Verbindung zu Xiaomi.
 
 Die Kopplung übernimmt das Betriebssystem; die App benötigt eine bestehende Bluetooth-Verbindung. Es läuft nur eine Instanz. Erneutes Starten bringt das vorhandene Fenster nach vorn. Zum vollständigen Beenden verwende den Beenden-Befehl im Infobereich.
 
+Mit **F12** öffnest du die Laufzeitprotokolle. Unter Linux muss MiBudsClient fokussiert sein; die integrierte Konsole erlaubt das Auswählen, Kopieren und Leeren der Protokolle. F12 schließt sie wieder. Windows behält seine separate Konsole. Die Protokollierung läuft bei geschlossener Konsole weiter.
+
 ## Bedienung
 
 ### Niedrige Latenz

@@ -258,5 +258,9 @@
   "identity.firmware": "Fast programvara",
   "auto.wayland_relogin": "Stöd för Wayland-spelläge har installerats. Logga ut och in igen för att aktivera det.",
   "auto.wayland_disabled": "Stöd för Wayland-spelläge är inaktiverat i GNOME-inställningarna.",
-  "auto.wayland_unavailable": "Automatiskt spelläge är inte tillgängligt i denna Wayland-session. Manuellt läge fungerar fortfarande."
+  "auto.wayland_unavailable": "Automatiskt spelläge är inte tillgängligt i denna Wayland-session. Manuellt läge fungerar fortfarande.",
+  "debug.title": "Felsökningskonsol",
+  "debug.clear": "Rensa",
+  "debug.close": "Stäng",
+  "debug.empty": "Inga loggar ännu."
 }

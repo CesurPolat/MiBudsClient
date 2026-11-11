@@ -258,5 +258,9 @@
   "identity.firmware": "펌웨어",
   "auto.wayland_relogin": "Wayland 게임 모드 지원이 설치되었습니다. 활성화하려면 로그아웃한 후 다시 로그인하세요.",
   "auto.wayland_disabled": "GNOME 설정에서 Wayland 게임 모드 지원이 비활성화되어 있습니다.",
-  "auto.wayland_unavailable": "이 Wayland 세션에서는 자동 게임 모드를 사용할 수 없습니다. 수동 모드는 계속 작동합니다."
+  "auto.wayland_unavailable": "이 Wayland 세션에서는 자동 게임 모드를 사용할 수 없습니다. 수동 모드는 계속 작동합니다.",
+  "debug.title": "디버그 콘솔",
+  "debug.clear": "지우기",
+  "debug.close": "닫기",
+  "debug.empty": "아직 로그가 없습니다."
 }

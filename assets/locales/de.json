@@ -258,5 +258,9 @@
   "identity.firmware": "Firmware",
   "auto.wayland_relogin": "Wayland-Spielmodus installiert. Zum Aktivieren ab- und wieder anmelden.",
   "auto.wayland_disabled": "Wayland-Spielmodus ist in den GNOME-Einstellungen deaktiviert.",
-  "auto.wayland_unavailable": "Der automatische Spielmodus ist in dieser Wayland-Sitzung nicht verfügbar. Manuelle Auswahl funktioniert weiterhin."
+  "auto.wayland_unavailable": "Der automatische Spielmodus ist in dieser Wayland-Sitzung nicht verfügbar. Manuelle Auswahl funktioniert weiterhin.",
+  "debug.title": "Debug-Konsole",
+  "debug.clear": "Leeren",
+  "debug.close": "Schließen",
+  "debug.empty": "Noch keine Protokolle."
 }
