@@ -57,8 +57,9 @@ class WindowManager:
         self.page.window.min_height = min_height
         self.page.window.max_width = None
         self.page.window.max_height = None
-        # Native resizing is locked; application-driven fitting remains available.
-        self.page.window.resizable = False
+        # GTK's non-resizable windows can reject programmatic size changes too.
+        # Keep Linux resizable so Home/Settings content fitting can take effect.
+        self.page.window.resizable = self.page.platform == ft.PagePlatform.LINUX
         self.page.window.maximizable = False
     
     def _setup_handlers(self) -> None:
