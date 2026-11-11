@@ -37,7 +37,7 @@
 
 - **已实现功能：** 电量、ANC/通透、EQ 预设、支持的触控手势和低延迟。选项取决于型号，电量取决于设备实际返回的数据。
 - **Windows：** 动态发现 RFCOMM 通道；MIUI SPP（FD2D）使用命令认证，XiaoAI/标准 SPP 使用原始认证。
-- **Linux：** 提供蓝牙发现和 Redmi Buds 6 Play 现有的通道 6 回退连接。动态服务发现目前仅在 Windows 实现；Linux 尚未实现通用的多型号连接。
+- **Linux：** 通过 BlueZ SDP 记录按完整服务 UUID 动态发现 RFCOMM 通道，并根据服务选择认证方式。只有在无法解析任何服务通道时，Redmi Buds 6 Play 才使用通道 6 回退。硬件兼容性仍取决于设备和固件。
 - **硬件依据：** Redmi Buds 6 Play 是项目的参考设备，已有电量/低延迟使用记录以及下方注明日期的 EQ/手势检查。这不代表所有型号都已验证；ANC/通透和原始认证仍需实机确认。
 
 名称、VID/PID、图片和能力数据来自[设备目录](../../assets/device_catalog.json)。识别到型号并不保证协议会话可用。控件按目录提供，操作能否完成还取决于连接和设备响应。固件和地区版本可能存在差异。
@@ -119,6 +119,8 @@ python3 -m venv .venv
 ```
 
 Linux 需要 BlueZ 的 `bluetoothctl` 进行发现，并需要 PyGObject（`gi`）搭配 AppIndicator3 或 GTK 提供托盘支持。X11 全屏检测还需要 `xprop`、`xwininfo` 和 `xrandr`。这些是系统依赖；`requirements.txt` 仅安装 Python 软件包。
+
+动态 RFCOMM 服务发现还需要 BlueZ 的 `sdptool`，部分发行版将其单独打包。
 
 ## 故障排查
 

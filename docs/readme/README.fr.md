@@ -37,7 +37,7 @@ Développé avec Python et Flet pour Windows et Linux.
 
 - **Commandes :** batterie, ANC/transparence, préréglages EQ, gestes tactiles pris en charge et faible latence. Les choix dépendent du modèle ; la batterie dépend des données transmises par l'appareil.
 - **Windows :** découverte dynamique du canal RFCOMM ; authentification par commandes sur MIUI SPP (FD2D), authentification brute sur XiaoAI/SPP standard.
-- **Linux :** découverte Bluetooth et solution existante sur le canal 6 pour Redmi Buds 6 Play. La découverte dynamique des services est actuellement propre à Windows ; la connexion générale à plusieurs modèles n'est pas encore implémentée sous Linux.
+- **Linux :** découverte dynamique du canal RFCOMM via les enregistrements SDP de BlueZ et l’UUID exact du service. L’authentification dépend du service. Seuls les Redmi Buds 6 Play conservent le canal 6 de secours si aucun canal de service n’est résolu. La compatibilité dépend du matériel et du firmware.
 - **Preuves matérielles :** Redmi Buds 6 Play est l'appareil de référence, avec utilisation documentée de la batterie/faible latence et vérifications EQ/gestes datées ci-dessous. Cela ne valide pas chaque modèle ; ANC/transparence et authentification brute restent à confirmer sur appareil réel.
 
 Noms, identifiants, images et capacités viennent du [catalogue](../../assets/device_catalog.json). Reconnaître un modèle ne garantit pas une session fonctionnelle. Les commandes dépendent du catalogue ; leur réussite dépend de la connexion et des réponses de l'appareil. Firmware et variantes régionales peuvent différer.
@@ -119,6 +119,8 @@ python3 -m venv .venv
 ```
 
 Linux nécessite `bluetoothctl` de BlueZ pour la détection, et PyGObject (`gi`) avec AppIndicator3 ou GTK pour la zone de notification. La détection X11 exige `xprop`, `xwininfo` et `xrandr`. Ces dépendances système ne sont pas installées par `requirements.txt`, qui contient uniquement les paquets Python.
+
+La découverte dynamique des services RFCOMM nécessite aussi `sdptool` de BlueZ, parfois fourni dans un paquet séparé.
 
 ## Dépannage
 

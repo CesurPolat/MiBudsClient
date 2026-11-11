@@ -1,6 +1,6 @@
 # RFCOMM service resolution
 
-Windows resolves the selected peer's exact service UUID with native Winsock SDP,
+Windows uses native Winsock SDP; Linux reads the selected peer's BlueZ SDP records with `sdptool`. Both resolve the exact service UUID,
 in the APK's order: MIUI (`0000fd2d-0000-1000-8000-00805f9b34fb`),
 XiaoAI (`00001101-0000-1000-8000-008584d01810`), then standard SPP
 (`00001101-0000-1000-8000-00805f9b34fb`). No channel scanning is performed.
@@ -26,9 +26,22 @@ If no service channel could be resolved, only the exact normalized name
 `service_uuid=None` and `resolution_source="profile_fallback"`. No service/auth
 identity is inferred from that channel. If a service was resolved but its
 connection failed, no speculative profile fallback is attempted. Linux keeps
-the existing socket transport and 6 Play fallback; live Linux SDP is not added.
+the existing socket transport and the same restricted 6 Play fallback.
 Callers providing only a MAC address must also supply the known device name to
 qualify for fallback; an unknown peer never inherits channel 6.
+
+Linux requires the BlueZ `sdptool` executable. Its `search` command does not
+accept arbitrary 128-bit UUID strings. Bluetooth-base UUIDs are queried directly
+with `search --bdaddr`, including services outside the public browse group.
+For vendor UUIDs the app uses `browse --xml` on only the selected peer. It always
+matches complete ServiceClassIDList/ServiceID UUIDs in the returned records.
+The RFCOMM channel must belong to that same record's ProtocolDescriptorList
+and be in 1–30. Standard short UUIDs are expanded with the Bluetooth base UUID;
+the XiaoAI vendor UUID is never reduced to standard SPP. Ambiguous channels or
+malformed records fail discovery. Each child process has a bounded timeout and
+is killed and reaped on cancellation. No RFCOMM channel scanning occurs.
+Successful Linux results record `resolution_source="linux_sdp"`; Windows keeps
+`"windows_sdp"`. Authentication selection depends on service UUID, not platform.
 
 ## Validation
 

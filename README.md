@@ -40,7 +40,7 @@ Built with Python and Flet for Windows and Linux.
 | Model recognition | Names, VID/PID identities, images and capability data come from the [device catalog](assets/device_catalog.json). Recognition alone does not guarantee a working protocol session. |
 | Implemented controls | Battery monitoring, ANC/transparency, EQ presets, supported touch gestures and low latency. Controls and choices depend on the model; battery readings depend on what the device reports. |
 | Windows connection | Discovers the RFCOMM channel from the device's Bluetooth service. Supports command authentication on MIUI SPP (FD2D) and raw authentication on XiaoAI/standard SPP. |
-| Linux connection | Bluetooth discovery and the existing Redmi Buds 6 Play channel-6 fallback are available. Dynamic RFCOMM service discovery is currently Windows-only; general multi-model connectivity is not yet implemented on Linux. |
+| Linux connection | BlueZ SDP records resolve RFCOMM channels by exact service UUID. Authentication follows the selected service, as on Windows. Redmi Buds 6 Play retains its channel-6 fallback only when no service channel is resolved. Hardware compatibility still depends on the device and firmware. |
 | Hardware evidence | Redmi Buds 6 Play is the project's hardware reference, with recorded battery/low-latency use and dated EQ/gesture checks below. This does not establish every feature on every model; ANC/transparency and raw authentication still need hardware confirmation. |
 
 Custom EQ is deferred and hidden, including the custom preset. Other catalog features do not become app controls automatically. Feature availability comes from the catalog; connection success and the device's replies determine whether an operation can complete. Firmware and regional variants can differ.
@@ -123,7 +123,7 @@ python3 -m venv .venv
 .venv/bin/python main.py
 ```
 
-On Linux, Bluetooth discovery requires BlueZ's `bluetoothctl`. Tray integration prefers PyGObject (`gi`) with GTK 3 and AppIndicator3 or AyatanaAppIndicator3, then falls back to GTK's legacy tray or Xorg when available. Desktop tray support is still required; Xorg has limited menu support. Missing tray dependencies do not prevent startup. Until the tray is ready, closing the window minimizes it with its taskbar entry retained; an unexpected tray shutdown restores the window. An explicit `PYSTRAY_BACKEND` setting is respected. Automatic fullscreen detection also needs `xprop`, `xwininfo`, and `xrandr` in an X11 session. These are system dependencies; `requirements.txt` installs the Python packages only.
+On Linux, Bluetooth discovery requires BlueZ's `bluetoothctl`; dynamic RFCOMM service discovery also requires `sdptool` (some distributions package it separately). Tray integration prefers PyGObject (`gi`) with GTK 3 and AppIndicator3 or AyatanaAppIndicator3, then falls back to GTK's legacy tray or Xorg when available. Desktop tray support is still required; Xorg has limited menu support. Missing tray dependencies do not prevent startup. Until the tray is ready, closing the window minimizes it with its taskbar entry retained; an unexpected tray shutdown restores the window. An explicit `PYSTRAY_BACKEND` setting is respected. Automatic fullscreen detection also needs `xprop`, `xwininfo`, and `xrandr` in an X11 session. These are system dependencies; `requirements.txt` installs the Python packages only.
 
 ## Troubleshooting
 

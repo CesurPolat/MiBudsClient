@@ -37,7 +37,7 @@ Mit Python und Flet für Windows und Linux entwickelt.
 
 - **Funktionen:** Akkuanzeige, ANC/Transparenz, EQ-Voreinstellungen, unterstützte Touch-Gesten und niedrige Latenz. Die verfügbaren Optionen hängen vom Modell ab; Akkudaten vom Gerät.
 - **Windows:** dynamische RFCOMM-Kanalsuche; Befehlsauthentifizierung über MIUI SPP (FD2D), rohe Authentifizierung über XiaoAI/Standard-SPP.
-- **Linux:** Bluetooth-Erkennung und der bestehende Kanal-6-Fallback für Redmi Buds 6 Play. Dynamische Dienstsuche ist derzeit Windows-exklusiv; eine allgemeine Verbindung für mehrere Modelle ist unter Linux noch nicht implementiert.
+- **Linux:** dynamische RFCOMM-Kanalsuche über BlueZ-SDP mit exakter Dienst-UUID. Die Authentifizierung richtet sich nach dem Dienst. Nur Redmi Buds 6 Play nutzt Kanal 6 als Fallback, wenn kein Dienstkanal aufgelöst wird. Die Hardwarekompatibilität hängt von Gerät und Firmware ab.
 - **Hardwarebelege:** Redmi Buds 6 Play ist das Referenzgerät mit dokumentierter Akku-/Latenznutzung und den unten datierten EQ-/Gestenprüfungen. ANC/Transparenz, rohe Authentifizierung und andere Modelle sind damit nicht auf Hardware bestätigt.
 
 Modellnamen, Identitäten, Bilder und Funktionsdaten stammen aus dem [Gerätekatalog](../../assets/device_catalog.json). Ein erkannter Name garantiert keine funktionierende Protokollverbindung. Implementierte Funktionen werden ohne Modellfreigabeliste angeboten; erfolgreiche Vorgänge erfordern eine Verbindung und passende Geräteantworten. Firmware und regionale Varianten können abweichen.
@@ -119,6 +119,8 @@ python3 -m venv .venv
 ```
 
 Linux benötigt BlueZs `bluetoothctl` zur Erkennung sowie PyGObject (`gi`) mit AppIndicator3 oder GTK für den Infobereich. Die X11-Vollbilderkennung benötigt `xprop`, `xwininfo` und `xrandr`. Diese Systemabhängigkeiten werden nicht durch `requirements.txt` installiert; die Datei enthält nur Python-Pakete.
+
+Die dynamische RFCOMM-Dienstsuche benötigt außerdem BlueZs `sdptool`, das manche Distributionen separat paketieren.
 
 ## Fehlerbehebung
 

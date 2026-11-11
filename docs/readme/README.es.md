@@ -37,7 +37,7 @@ Creado con Python y Flet para Windows y Linux.
 
 - **Controles:** batería, ANC/transparencia, perfiles EQ, gestos táctiles compatibles y baja latencia. Las opciones dependen del modelo y la batería de los datos que envíe el dispositivo.
 - **Windows:** descubrimiento dinámico del canal RFCOMM; autenticación por comandos en MIUI SPP (FD2D) y autenticación sin trama RCSP en XiaoAI/SPP estándar.
-- **Linux:** detección Bluetooth y conexión alternativa existente por el canal 6 para Redmi Buds 6 Play. El descubrimiento dinámico de servicios solo está implementado en Windows; Linux aún no tiene conectividad general para varios modelos.
+- **Linux:** descubrimiento dinámico del canal RFCOMM mediante SDP de BlueZ y la UUID exacta del servicio. La autenticación depende del servicio. Solo Redmi Buds 6 Play conserva el canal 6 como alternativa cuando no se resuelve ningún canal. La compatibilidad depende del dispositivo y firmware.
 - **Evidencia de hardware:** Redmi Buds 6 Play es el dispositivo de referencia, con uso registrado de batería/baja latencia y las comprobaciones EQ/gestos fechadas abajo. Esto no confirma todos los modelos; ANC/transparencia y autenticación sin trama RCSP aún necesitan pruebas reales.
 
 Los nombres, identificadores, imágenes y capacidades proceden del [catálogo](../../assets/device_catalog.json). Reconocer un modelo no garantiza una sesión de protocolo funcional. Los controles se ofrecen según el catálogo; completar una operación depende de la conexión y las respuestas del dispositivo. El firmware y las variantes regionales pueden diferir.
@@ -119,6 +119,8 @@ python3 -m venv .venv
 ```
 
 Linux requiere `bluetoothctl` de BlueZ para detectar dispositivos y PyGObject (`gi`) con AppIndicator3 o GTK para la bandeja. La detección X11 también necesita `xprop`, `xwininfo` y `xrandr`. Son dependencias del sistema; `requirements.txt` solo instala paquetes Python.
+
+El descubrimiento dinámico de servicios RFCOMM también requiere `sdptool` de BlueZ; algunas distribuciones lo empaquetan por separado.
 
 ## Solución de problemas
 

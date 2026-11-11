@@ -80,6 +80,9 @@ class BluetoothConnection:
             deadline = time.monotonic() + timeout
             last_error = None
             resolved = False
+            source = getattr(self._backend, "resolution_source", None)
+            # Older injected backends may not provide platform metadata.
+            source = source if isinstance(source, str) else "windows_sdp"
 
             def budget(limit):
                 if cancel.is_set():
@@ -136,7 +139,7 @@ class BluetoothConnection:
                     raise
                 except OSError as exc:
                     last_error = exc
-                    log.warning("RFCOMM stage=resolution uuid=%s source=windows_sdp error=%s", uuid, exc)
+                    log.warning("RFCOMM stage=resolution uuid=%s source=%s error=%s", uuid, source, exc)
                     continue
                 if channel is None:
                     log.info("RFCOMM stage=resolution uuid=%s channel=None", uuid)
@@ -145,12 +148,12 @@ class BluetoothConnection:
                     raise ValueError("Backend returned invalid RFCOMM channel")
                 resolved = True
                 try:
-                    result = open_channel(uuid, channel, "windows_sdp")
+                    result = open_channel(uuid, channel, source)
                 except ConnectionCancelled:
                     raise
                 except OSError as exc:
                     last_error = exc
-                    log.warning("RFCOMM stage=connection uuid=%s channel=%s source=windows_sdp error=%s", uuid, channel, exc)
+                    log.warning("RFCOMM stage=connection uuid=%s channel=%s source=%s error=%s", uuid, channel, source, exc)
                     continue
                 return self._activate_session(result, session_policy, cancel)
             # Only when SDP could not resolve any service. Never label this FD2D.

@@ -107,10 +107,6 @@ class ServiceConnectionTests(unittest.TestCase):
                 BluetoothConnection(backend).connect("AA:BB:CC:DD:EE:FF", timeout=1)
         backend.create_rfcomm_socket.assert_not_called()
 
-    def test_linux_keeps_6_play_profile_without_windows_process(self):
-        with patch("controllers.bluetooth.sdp.sys.platform", "linux"), patch("controllers.bluetooth.sdp.subprocess.Popen") as process:
-            self.assertIsNone(PlatformBackend().resolve_rfcomm_channel("AA:BB:CC:DD:EE:FF", SERVICE_UUIDS[0], 1, threading.Event()))
-            process.assert_not_called()
 
 
 class WindowsQueryLifecycleTests(unittest.TestCase):
