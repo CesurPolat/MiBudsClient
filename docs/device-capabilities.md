@@ -12,7 +12,7 @@ retains all function metadata, including functions without an implementation.
 
 `available` follows the selected model's `func_list` through `COMPONENT_REGISTRY`.
 There are no model-validation/backend allowlists or experimental activation flags.
-Implemented controls: EQ presets (2006/2016), touch gestures (4001/4002/4003/4006),
+Implemented controls: EQ presets (2006/2016), touch gestures (4001/4002/4003/4006/4011),
 manual low latency (3011), ANC (1002/1003/1006/1007), and transparency (1004/1005).
 Only that device's own profile/gesture/level options can be selected. A new model
 with these functions needs no source-code registration. Battery is basic telemetry
@@ -34,6 +34,11 @@ profiles and controller profile writes. The band editor defaults to hidden too.
 Existing custom-band codec support is retained for future work.
 Gesture choices come from `click_action`, restricted to actions represented by
 the current codec, including noise control when present in that model's list.
+`GESTURE_FUNCTION_TYPES` maps catalog function 4011 to config 0x0002's swipe
+type 0x05. It shares the existing per-earbud assignment, ACK and readback flow;
+4011 is never used as a Bluetooth configuration ID. The UI only shows swipe
+when both the model's catalog and the device's returned assignments include it.
+See [REDMI Buds 8 Pro](redmi-buds-8-pro.md) for catalog scope and protocol sources.
 
 ## Adding support
 

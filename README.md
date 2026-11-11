@@ -25,7 +25,7 @@ Built with Python and Flet for Windows and Linux.
 | Battery monitoring | Separate readings for both earbuds and the charging case, charging indicators, and manual refresh. |
 | Low latency | Switch Game Mode off, on, or automatically based on the active app. |
 | Sound profiles | Read and change the EQ presets offered by your earbuds. |
-| Touch controls | Read and edit left and right assignments for single tap, double tap, triple tap, and long press. |
+| Touch controls | Read and edit left and right assignments for single tap, double tap, triple tap, long press, and swipe. |
 | Desktop notifications | Connection, disconnection, and case-placement updates with battery information and a device image when available. |
 | System tray | Keep the app in the background, restore its window, or change low-latency mode from the tray. |
 | Everyday conveniences | Automatic connection attempts, run at startup, saved preferences, and a built-in update checker. |
@@ -83,6 +83,8 @@ Open **Settings → Equalizer** to read the current profile and select the prese
 Preset switching was verified on Redmi Buds 6 Play on **2026-10-27**; this is not hardware confirmation for other models. See [EQ technical notes](docs/equalizer.md) for earlier implementation and validation details.
 
 ### Touch gestures
+
+Swipe assignments are available on models whose catalog includes the slide gesture, including REDMI Buds 8 Pro. See the [Buds 8 Pro notes](docs/redmi-buds-8-pro.md) for source-version setup and hardware checks.
 
 Open **Settings → Gestures** to load assignments from the earbuds. Each supported gesture has separate left and right selectors, with choices taken from the exact model's catalog record. Changes are sent immediately and shown as saved only after the assignment is read back. Assignments live on the earbuds. ANC cycle editing is outside the current implementation.
 

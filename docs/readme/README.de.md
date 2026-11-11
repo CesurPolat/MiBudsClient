@@ -25,7 +25,7 @@ Mit Python und Flet für Windows und Linux entwickelt.
 | Akkuüberwachung | Separate Werte für beide Ohrhörer und das Ladecase, Ladeanzeigen und manuelle Aktualisierung. |
 | Niedrige Latenz | Spielmodus aus, ein oder automatisch anhand der aktiven Anwendung. |
 | Klangprofile | EQ-Voreinstellungen des Geräts lesen und ändern. |
-| Touch-Steuerung | Belegungen für einfaches, doppeltes, dreifaches Tippen und langes Drücken links und rechts bearbeiten. |
+| Touch-Steuerung | Belegungen für einfaches, doppeltes, dreifaches Tippen, langes Drücken und Wischen links und rechts bearbeiten. |
 | Benachrichtigungen | Verbindungs- und Ladecase-Meldungen mit Akkudaten und Gerätebild, sofern verfügbar. |
 | Infobereich | Im Hintergrund arbeiten, das Fenster öffnen und den Latenzmodus wechseln. |
 | Komfort | Automatische Verbindungsversuche, Autostart, gespeicherte Einstellungen und Updateprüfung. |

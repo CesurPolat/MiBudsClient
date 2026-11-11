@@ -61,6 +61,7 @@
   "gesture.double": "더블 탭",
   "gesture.triple": "세 번 탭",
   "gesture.long": "길게 누르기",
+  "gesture.swipe": "스와이프",
   "side.left": "왼쪽",
   "side.right": "오른쪽",
   "action.assistant": "보이스 어시스턴트",

@@ -8,6 +8,7 @@ import json
 import re
 from .device_catalog import get_device_models_by_name
 from .equalizer import PROFILE_KEYS
+from .gestures import GESTURE_FUNCTION_TYPES
 
 FUNCTIONS = {
     1006: "FUNC_ANC_NOISE_FOUR",
@@ -83,7 +84,7 @@ FUNCTIONS = {
 # Register implemented features, not model names. A new catalog model can use
 # these controls without requiring a source-code allowlist entry.
 COMPONENT_REGISTRY = {"eq": (2006, 2016),
-                      "gestures": (4006, 4001, 4002, 4003), "latency": (3011,),
+                      "gestures": tuple(GESTURE_FUNCTION_TYPES), "latency": (3011,),
                       "noise": (1002, 1003, 1004, 1005, 1006, 1007)}
 
 
@@ -144,7 +145,7 @@ def resolve_capabilities(device_name="", identity=None):
             catalog_effects = tuple(v for v in legacy if type(v) is int)
     profiles = tuple(dict.fromkeys(v for v in catalog_effects if v in PROFILE_KEYS and v != 10))
     gestures = {}
-    for fid, gesture in ((4006, 4), (4001, 1), (4002, 2), (4003, 3)):
+    for fid, gesture in GESTURE_FUNCTION_TYPES.items():
         actions = options.get(fid, {}).get("click_action")
         if isinstance(actions, list):
             allowed = tuple(dict.fromkeys(v for v in actions if type(v) is int and v in range(14)))

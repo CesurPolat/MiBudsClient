@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, field
 
-GESTURE_NAMES = {4: "Single tap", 1: "Double tap", 2: "Triple tap", 3: "Long press"}
+GESTURE_NAMES = {4: "Single tap", 1: "Double tap", 2: "Triple tap", 3: "Long press", 5: "Swipe"}
 ACTION_NAMES = {
     0: "Voice assistant", 1: "Play / pause", 2: "Previous track",
     3: "Next track", 4: "Volume up", 5: "Volume down",
@@ -10,8 +10,9 @@ ACTION_NAMES = {
     10: "Record", 11: "Volume control", 12: "Speech translation",
     13: "Track control",
 }
-# Only confirmed touch gesture function IDs. Do not infer press/swipe variants.
-_FUNCTION_TYPES = {4006: 4, 4001: 1, 4002: 2, 4003: 3}
+# Catalog function IDs mapped to config 0x0002 gesture types, not config IDs.
+# Swipe uses type 0x05; press/pinch variants need their own protocol evidence.
+GESTURE_FUNCTION_TYPES = {4006: 4, 4001: 1, 4002: 2, 4003: 3, 4011: 5}
 _MODEL = "redmi buds 6 play"
 
 
