@@ -6,9 +6,11 @@ import math
 import struct
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import wave
+from pathlib import Path
 from typing import Sequence
 
 try:
@@ -84,35 +86,39 @@ def play_tones(tones: Sequence[tuple[int, int]], *, delay: float = 0.0, daemon: 
                             return
 
         if sys.platform.startswith("linux"):
-            play_bin = shutil.which("play")
-            beep_bin = shutil.which("beep")
-
-            if play_bin:
-                for frequency, duration in tones:
-                    subprocess.run(
-                        [
-                            play_bin,
-                            "-nq",
-                            "synth",
-                            f"{duration / 1000:.3f}",
-                            "sine",
-                            str(frequency),
-                        ],
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                        check=False,
-                    )
-                return
-
-            if beep_bin:
-                for frequency, duration in tones:
-                    subprocess.run(
-                        [beep_bin, "-f", str(frequency), "-l", str(duration)],
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
-                        check=False,
-                    )
-                return
+            # Use the desktop audio output, including Bluetooth headphones.
+            # `beep` targets the PC speaker rather than the active audio sink.
+            with _playback_lock:
+                try:
+                    with tempfile.TemporaryDirectory(prefix="mibuds-audio-") as directory:
+                        melody = Path(directory) / "melody.wav"
+                        melody.write_bytes(_tone_wave(tones))
+                        timeout = max(3.0, sum(duration for _, duration in tones) / 1000 + 2.0)
+                        for name, options in (
+                            ("pw-play", []), ("paplay", []),
+                            ("aplay", ["-q"]), ("play", ["-q"]),
+                        ):
+                            player = shutil.which(name)
+                            if not player:
+                                continue
+                            try:
+                                result = subprocess.run(
+                                    [player, *options, str(melody)],
+                                    stdout=subprocess.DEVNULL,
+                                    stderr=subprocess.PIPE,
+                                    timeout=timeout,
+                                    check=False,
+                                )
+                            except (OSError, subprocess.SubprocessError) as error:
+                                print(f"Audio playback via {name} failed: {error}")
+                                continue
+                            if result.returncode == 0:
+                                return
+                            detail = result.stderr.decode(errors="replace").strip()[:300]
+                            print(f"Audio playback via {name} failed ({result.returncode}): {detail}")
+                except OSError as error:
+                    print(f"Audio playback unavailable: {error}")
+                print("Audio playback unavailable: no Linux player succeeded")
 
         # Last-resort fallback: terminal bell pattern.
         for _, duration in tones:
