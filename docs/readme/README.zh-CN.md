@@ -44,7 +44,7 @@
 
 自定义 EQ 推迟到后续版本，目前连同自定义预设一起隐藏。目录中的其他功能不会自动变成应用控件。
 
-Linux 的托盘和通知取决于桌面环境。自动全屏检测需要 X11，在 Wayland 中不可用。Linux 硬件和界面验证尚未完成。
+Wayland 自动全屏检测现通过可选的 MiBudsClient Shell 扩展支持 GNOME Shell 46，参见[设置说明](../wayland.md)。暂不支持其他 Wayland 桌面。
 
 本 README 描述当前源码，旧的发行包可能不包含这些更新。技术详情：[设备能力](../device-capabilities.md)、[命令认证](../command-auth.md)、[原始认证](../raw-auth.md)（英文）。
 
@@ -131,7 +131,7 @@ Linux 需要 BlueZ 的 `bluetoothctl` 进行发现，并需要 PyGObject（`gi`�
 | 无电量读数 | 连接后检查电量。缺失数据视为未知。 |
 | 手势或 EQ 失败 | 关闭并重新打开分区以读取设备状态。 |
 | 无自定义 EQ | 本版本已推迟并隐藏自定义 EQ；型号支持的预设仍可使用。 |
-| Linux 自动模式无效 | 检查 X11 会话和上述工具。Wayland 检测不可用。 |
+| Linux 自动模式无效  | Wayland 自动全屏检测现通过可选的 MiBudsClient Shell 扩展支持 GNOME Shell 46，参见[设置说明](../wayland.md)。暂不支持其他 Wayland 桌面。 |
 | Linux 通知点击无效 | 检查默认操作支持，或从托盘打开窗口。 |
 
 [反馈问题](https://github.com/CesurPolat/MiBudsClient/issues)时，请提供应用版本、系统和桌面会话、型号、复现步骤及错误详情。

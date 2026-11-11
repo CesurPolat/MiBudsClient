@@ -8,6 +8,7 @@ import subprocess
 import threading
 import time
 from typing import Callable, Optional
+from utils.wayland import detect_gnome_fullscreen
 
 
 class FullscreenGameMonitor:
@@ -48,9 +49,14 @@ class FullscreenGameMonitor:
         while self._running:
             raw_state, app_id = self._detect_fullscreen_state()
             if raw_state is None:
+                self._last_raw_state = None
+                self._stable_count = 0
                 if not self._unsupported_logged:
                     self._unsupported_logged = True
-                    self._log("Fullscreen detection unavailable on this desktop session.")
+                    if os.getenv("WAYLAND_DISPLAY") or os.getenv("XDG_SESSION_TYPE") == "wayland":
+                        self._log("Wayland fullscreen detection unavailable. On GNOME 46, install and enable the MiBudsClient Fullscreen Bridge; see docs/wayland.md.")
+                    else:
+                        self._log("Fullscreen detection unavailable on this desktop session.")
                 time.sleep(self._poll_interval)
                 continue
 
@@ -171,8 +177,10 @@ class FullscreenGameMonitor:
             return None, ""
 
     def _detect_linux_fullscreen(self) -> tuple[Optional[bool], str]:
-        # Wayland sessions commonly hide this info from xprop/xwininfo.
-        if os.getenv("WAYLAND_DISPLAY"):
+        if os.getenv("WAYLAND_DISPLAY") or os.getenv("XDG_SESSION_TYPE") == "wayland":
+            desktop = os.getenv("XDG_CURRENT_DESKTOP", "").casefold()
+            if "gnome" in desktop or "zorin" in desktop or "ubuntu" in desktop:
+                return detect_gnome_fullscreen()
             return None, ""
 
         try:

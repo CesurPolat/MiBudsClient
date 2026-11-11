@@ -44,7 +44,7 @@ Noms, identifiants, images et capacités viennent du [catalogue](../../assets/de
 
 L'EQ personnalisé est reporté et masqué, y compris son préréglage. Les autres fonctions du catalogue ne créent pas automatiquement des commandes.
 
-Sous Linux, zone de notification et notifications dépendent du bureau. La détection automatique du plein écran exige X11 et ne fonctionne pas sous Wayland. Les validations matérielles et de l'interface sous Linux restent à effectuer.
+Sous Wayland, la détection automatique du plein écran prend en charge GNOME Shell 46 avec l’extension MiBudsClient optionnelle ; voir la [configuration](../wayland.md). Les autres bureaux Wayland ne sont pas encore pris en charge.
 
 Ce README décrit les sources actuelles ; les anciens paquets peuvent ne pas inclure ces changements. Détails techniques : [capacités](../device-capabilities.md), [authentification par commandes](../command-auth.md), [authentification brute](../raw-auth.md) (en anglais).
 
@@ -131,7 +131,7 @@ La découverte dynamique des services RFCOMM nécessite aussi `sdptool` de BlueZ
 | Batterie indisponible | Lancez la vérification après connexion. Les données absentes sont considérées comme inconnues. |
 | Erreur de geste ou EQ | Fermez puis rouvrez la section pour relire les données. |
 | EQ personnalisé absent | Reporté et masqué dans cette version ; les préréglages pris en charge restent disponibles. |
-| Automatique inactif sous Linux | Vérifiez X11 et les outils indiqués. La détection Wayland est indisponible. |
+| Automatique inactif sous Linux  | Sous Wayland, la détection automatique du plein écran prend en charge GNOME Shell 46 avec l’extension MiBudsClient optionnelle ; voir la [configuration](../wayland.md). Les autres bureaux Wayland ne sont pas encore pris en charge. |
 | Clic sur une notification Linux sans effet | Vérifiez les actions par défaut du serveur ou ouvrez depuis la zone de notification. |
 
 Pour [signaler un problème](https://github.com/CesurPolat/MiBudsClient/issues), indiquez la version, le système et la session de bureau, le modèle, les étapes de reproduction et les détails d’erreur.

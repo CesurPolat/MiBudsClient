@@ -44,7 +44,7 @@ Modellnamen, Identitäten, Bilder und Funktionsdaten stammen aus dem [Gerätekat
 
 Benutzerdefinierter EQ ist auf eine spätere Version verschoben und einschließlich des eigenen Profils ausgeblendet. Weitere Katalogfunktionen erzeugen nicht automatisch Bedienelemente.
 
-Unter Linux hängen Infobereich und Meldungen vom Desktop ab. Automatische Vollbilderkennung benötigt X11 und ist unter Wayland nicht verfügbar. Hardware- und Oberflächenprüfungen unter Linux stehen noch aus.
+Unter Wayland wird die automatische Vollbilderkennung mit der optionalen GNOME-Shell-46-Erweiterung unterstützt; siehe [Einrichtung](../wayland.md). Andere Wayland-Desktops werden noch nicht unterstützt.
 
 Diese README beschreibt den aktuellen Quellcode; ältere Pakete können davon abweichen. Technische Hinweise: [Funktionen](../device-capabilities.md), [Befehlsauthentifizierung](../command-auth.md), [rohe Authentifizierung](../raw-auth.md) (Englisch).
 
@@ -131,7 +131,7 @@ Die dynamische RFCOMM-Dienstsuche benötigt außerdem BlueZs `sdptool`, das manc
 | Akkudaten fehlen | Nach dem Verbinden die Akkuprüfung verwenden. Fehlende Werte gelten als unbekannt. |
 | Gesten- oder EQ-Fehler | Den Abschnitt schließen und erneut öffnen, um Gerätedaten zu laden. |
 | Benutzerdefinierter EQ fehlt | In dieser Version verschoben und ausgeblendet; unterstützte Voreinstellungen bleiben verfügbar. |
-| Automatik unter Linux ohne Wirkung | X11-Sitzung und die genannten Werkzeuge prüfen. Wayland-Erkennung ist nicht verfügbar. |
+| Automatik unter Linux ohne Wirkung  | Unter Wayland wird die automatische Vollbilderkennung mit der optionalen GNOME-Shell-46-Erweiterung unterstützt; siehe [Einrichtung](../wayland.md). Andere Wayland-Desktops werden noch nicht unterstützt. |
 | Klick auf Linux-Meldung ohne Wirkung | Standardaktionen prüfen oder das Fenster über den Infobereich öffnen. |
 
 Gib bei einer [Fehlermeldung](https://github.com/CesurPolat/MiBudsClient/issues) App-Version, Betriebssystem und Desktopsitzung, Modell, Schritte zur Reproduktion und Fehlerdetails an.

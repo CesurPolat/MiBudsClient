@@ -45,7 +45,7 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 
 Custom EQ ileri bir sürüme bırakıldı; özel profil dahil gizlidir. Katalogdaki diğer özellikler kendiliğinden uygulama kontrolüne dönüşmez. Özelliklerin görünürlüğünü katalog, işlemin tamamlanmasını bağlantı ve cihaz yanıtları belirler. Firmware ve bölgesel sürümler farklı davranabilir.
 
-Linux'ta tepsi ve bildirim davranışı masaüstüne bağlıdır. Otomatik tam ekran algılama X11 araçlarını kullanır ve Wayland'de kullanılamaz. Linux donanım ve arayüz doğrulaması henüz tamamlanmadı.
+Wayland otomatik tam ekran algılama için GNOME Shell 46 desteği eklendi; [kurulumdaki](../wayland.md) MiBudsClient Shell eklentisini etkinleştirmek gerekir. Diğer Wayland masaüstleri henüz desteklenmiyor.
 
 Bu README güncel kaynak kodu anlatır; eski paketlenmiş sürümler bu değişiklikleri içermeyebilir. Teknik ayrıntılar: [cihaz yetenekleri](../device-capabilities.md), [komutlu doğrulama](../command-auth.md), [ham doğrulama](../raw-auth.md) (İngilizce).
 
@@ -132,7 +132,7 @@ Dinamik RFCOMM servis keşfi için BlueZ'nin `sdptool` aracı da gerekir; bazı 
 | Pil seviyesi yok | Bağlandıktan sonra pil kontrolünü kullan. Eksik veriler bilinmiyor sayılır. |
 | Jest veya EQ hatası | İlgili bölümü kapatıp açarak cihaz verisini yeniden oku. |
 | Özel EQ görünmüyor | Custom EQ bu sürümde ertelendi ve gizlendi. Modelin desteklediği ön ayarlar kullanılabilir. |
-| Linux otomatik modu çalışmıyor | X11 oturumunu ve yukarıdaki araçları kontrol et. Wayland algılama kullanılamaz. |
+| Linux otomatik modu çalışmıyor  | Wayland otomatik tam ekran algılama için GNOME Shell 46 desteği eklendi; [kurulumdaki](../wayland.md) MiBudsClient Shell eklentisini etkinleştirmek gerekir. Diğer Wayland masaüstleri henüz desteklenmiyor. |
 | Linux bildirimine tıklamak işe yaramıyor | Sunucunun varsayılan eylem desteğini kontrol et; pencereyi tepsiden aç. |
 
 [Sorun bildirirken](https://github.com/CesurPolat/MiBudsClient/issues) uygulama sürümünü, işletim sistemini ve masaüstü oturumunu, modeli, yeniden üretme adımlarını ve hata ayrıntılarını ekle.

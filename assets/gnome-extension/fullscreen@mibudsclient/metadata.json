@@ -1,0 +1,8 @@
+{
+    "uuid": "fullscreen@mibudsclient",
+    "name": "MiBudsClient Fullscreen Bridge",
+    "description": "Provides the focused application's identity and fullscreen state to MiBudsClient's automatic game mode.",
+    "shell-version": ["46"],
+    "version": 1,
+    "url": "https://github.com/CesurPolat/MiBudsClient"
+}
