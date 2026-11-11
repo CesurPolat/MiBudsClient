@@ -65,6 +65,7 @@ class TrayLoaderTests(unittest.TestCase):
 class TrayLifecycleTests(unittest.TestCase):
     def setUp(self):
         self.tray = SystemTray(Mock(), Mock())
+        self.tray._linux_notifications = Mock()
         self.api = fake_tray_api()
         self.notifications = Mock()
         self.tray._image_notifications = self.notifications

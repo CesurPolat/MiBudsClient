@@ -114,6 +114,8 @@ python -m venv .venv
 
 **Linux**
 
+Les notifications Linux utilisent un worker D-Bus Gio/GLib indépendant de l’icône de notification ; un serveur de notifications est requis. Si l’hôte de l’icône disparaît, la fenêtre est restaurée. Clics et images dépendent du serveur. [Intégration](../linux-desktop.md).
+
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt

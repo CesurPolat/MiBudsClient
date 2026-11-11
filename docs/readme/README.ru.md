@@ -114,6 +114,8 @@ python -m venv .venv
 
 **Linux**
 
+Уведомления Linux используют отдельный поток Gio/GLib D-Bus независимо от значка в трее; нужен сервер уведомлений. При исчезновении панели трея окно восстанавливается. Поддержка нажатий и изображений зависит от сервера. [Интеграция](../linux-desktop.md).
+
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt

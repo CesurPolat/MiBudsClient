@@ -114,6 +114,8 @@ python -m venv .venv
 
 **Linux**
 
+Las notificaciones Linux usan un trabajador D-Bus Gio/GLib independiente del icono de bandeja; requieren un servidor de notificaciones. Si desaparece el anfitrión de la bandeja, la ventana se restaura. Clics e imágenes dependen del servidor. [Integración](../linux-desktop.md).
+
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt

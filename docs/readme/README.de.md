@@ -114,6 +114,8 @@ python -m venv .venv
 
 **Linux**
 
+Linux-Benachrichtigungen verwenden einen eigenen Gio/GLib-D-Bus-Worker ohne Abhängigkeit vom Tray-Symbol; ein Benachrichtigungsserver ist erforderlich. Verschwindet der Tray-Host, wird das Fenster wiederhergestellt. Klicks und Bilder hängen vom Server ab. [Desktop-Integration](../linux-desktop.md).
+
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt

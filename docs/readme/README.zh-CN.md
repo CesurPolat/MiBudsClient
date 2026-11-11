@@ -114,6 +114,8 @@ python -m venv .venv
 
 **Linux**
 
+Linux 通知通过独立的 Gio/GLib D-Bus 工作线程发送，不依赖托盘图标，但需要通知服务器。托盘宿主消失时会恢复窗口。点击和图片支持取决于服务器。[桌面集成](../linux-desktop.md)。
+
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt

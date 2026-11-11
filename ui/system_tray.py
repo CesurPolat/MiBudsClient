@@ -2,8 +2,11 @@
 
 from typing import Callable, Optional
 import threading
+import sys
 from utils.i18n import t, render
 from utils.image_notifications import ImageNotifications
+from utils.linux_notifications import LinuxNotifications
+from utils.tray_host import TrayHostMonitor
 
 from utils.tray_backend import load_tray_module
 
@@ -36,6 +39,8 @@ class SystemTray:
         self._device = ("Redmi Buds 6 Play", "")
         self._device_lock = threading.Lock()
         self._image_notifications = ImageNotifications(on_activate=self.on_show)
+        self._linux_notifications = LinuxNotifications(on_activate=self.on_show) if sys.platform.startswith("linux") else None
+        self._host_monitor = None
 
     @property
     def available(self) -> bool:
@@ -95,7 +100,13 @@ class SystemTray:
                 else:
                     try:
                         icon.visible = True
-                        self._ready.set()
+                        if sys.platform.startswith("linux") and type(icon).__module__ in {
+                            "pystray._appindicator", "pystray._gtk", "pystray._xorg",
+                        }:
+                            self._host_monitor = TrayHostMonitor(icon, lambda state: self._host_state(icon, state))
+                            self._host_monitor.start()
+                        else:
+                            self._ready.set()
                     except Exception as error:
                         print(f"Tray icon unavailable: {error}")
                         self.on_show()
@@ -105,6 +116,8 @@ class SystemTray:
         except Exception as e:
             print(f"Tray error: {e}")
         finally:
+            if self._host_monitor:
+                self._host_monitor.stop()
             self._ready.clear()
             self.icon = None
             try:
@@ -115,6 +128,17 @@ class SystemTray:
                     self._image_notifications.close()
                 except Exception as error:
                     print(f"Tray notification cleanup failed: {error}")
+
+    def _host_state(self, icon, available):
+        if self._stopped.is_set() or self.icon is not icon:
+            return
+        was_ready = self._ready.is_set()
+        if available:
+            self._ready.set()
+        else:
+            self._ready.clear()
+            if was_ready:
+                self.on_show()
     
     def _get_mode(self) -> str:
         """Get current latency mode."""
@@ -152,8 +176,7 @@ class SystemTray:
     def notify(self, message: str, title: str = "Mi Buds Client", *, device: bool = False,
                silent: bool = True) -> None:
         """Show notifications silently by default, including text fallback."""
-        icon = self.icon
-        if not self.available or not icon:
+        if self._stopped.is_set():
             return
 
         image_path = ""
@@ -162,6 +185,13 @@ class SystemTray:
                 title, image_path = self._device
         # Capture the active language now, including asynchronous Linux delivery.
         text = render(message)
+        if self._linux_notifications is not None:
+            self._linux_notifications.notify(text, title, image_path, silent=silent,
+                                             action_label=str(t("tray.open")))
+            return
+        icon = self.icon
+        if not self.available or not icon:
+            return
 
         def plain():
             if silent:
@@ -191,6 +221,10 @@ class SystemTray:
         """Stop the native loop; run() releases notification resources."""
         self._stopped.set()
         self._ready.clear()
+        if self._host_monitor:
+            self._host_monitor.stop()
+        if self._linux_notifications is not None:
+            self._linux_notifications.close()
         icon = self.icon
         if icon:
             try:

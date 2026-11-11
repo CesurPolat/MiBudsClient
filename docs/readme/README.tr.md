@@ -115,6 +115,8 @@ python -m venv .venv
 
 **Linux**
 
+Linux’ta bildirimler, tray ikonundan bağımsız Gio/GLib D-Bus işçisiyle gönderilir; bir bildirim sunucusu gerekir. İkonu barındıran panel kaybolursa pencere geri gelir. Tıklama ve resim desteği sunucuya bağlıdır. [Masaüstü entegrasyonu](../linux-desktop.md).
+
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt

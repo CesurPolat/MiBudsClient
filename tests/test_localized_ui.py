@@ -161,6 +161,7 @@ class LocalizedUITests(unittest.TestCase):
         from tray_fakes import fake_tray_api
         api = fake_tray_api()
         tray = SystemTray(Mock(), Mock())
+        tray._linux_notifications = None
         def run(setup):
             setup(api.Icon.return_value)
             menu = api.Icon.call_args.args[3]

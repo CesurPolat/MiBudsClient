@@ -111,6 +111,7 @@ class ImageNotificationTests(unittest.TestCase):
 
     def test_tray_connection_uses_model_and_cached_picture_without_changing_icon(self):
         tray = SystemTray(Mock(), Mock())
+        tray._linux_notifications = None  # Exercise the retained native/legacy adapter here.
         tray.icon = Mock()
         tray._ready.set()
         tray._image_notifications = Mock()
@@ -128,6 +129,7 @@ class ImageNotificationTests(unittest.TestCase):
 
     def test_tray_falls_back_when_image_fails_or_is_absent(self):
         tray = SystemTray(Mock(), Mock())
+        tray._linux_notifications = None  # Exercise the retained native/legacy adapter here.
         tray.icon = Mock()
         tray._ready.set()
         tray._image_notifications = Mock()
@@ -144,6 +146,7 @@ class ImageNotificationTests(unittest.TestCase):
 
     def test_every_default_notification_and_image_fallback_stay_silent(self):
         tray = SystemTray(Mock(), Mock())
+        tray._linux_notifications = None  # Exercise the retained native/legacy adapter here.
         tray.icon = Mock()
         tray._ready.set()
         tray._image_notifications = Mock()
