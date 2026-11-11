@@ -83,14 +83,14 @@ class MonitorRoutingTests(unittest.TestCase):
             with self.subTest(desktop=desktop), patch.dict(os.environ, {
                 'XDG_CURRENT_DESKTOP': desktop, 'XDG_SESSION_TYPE': 'wayland',
                 'WAYLAND_DISPLAY': '',
-            }, clear=True), patch('utils.game_monitor.detect_gnome_fullscreen', return_value=(True, 'game')) as bridge, patch(
+            }, clear=True), patch('utils.game_monitor.detect_wayland_fullscreen', return_value=(True, 'game')) as bridge, patch(
                 'utils.game_monitor.subprocess.run', side_effect=AssertionError('Unexpected X11 query'),
             ):
                 self.assertEqual(self.monitor()._detect_linux_fullscreen(), (True, 'game'))
                 bridge.assert_called_once()
 
     def test_other_wayland_compositors_do_not_guess_from_xwayland(self):
-        with patch.dict(os.environ, {'WAYLAND_DISPLAY': 'wayland-0', 'XDG_CURRENT_DESKTOP': 'KDE'}, clear=True), patch(
+        with patch.dict(os.environ, {'WAYLAND_DISPLAY': 'wayland-0', 'XDG_CURRENT_DESKTOP': 'Weston'}, clear=True), patch(
             'utils.game_monitor.subprocess.run', side_effect=AssertionError('Unexpected X11 query'),
         ):
             self.assertEqual(self.monitor()._detect_linux_fullscreen(), (None, ''))
@@ -113,7 +113,7 @@ class MonitorRoutingTests(unittest.TestCase):
             if len(seen) == 4:
                 monitor._running = False
         monitor._running = True
-        with patch.object(monitor, '_detect_fullscreen_state', side_effect=detect), patch('utils.game_monitor.time.sleep', side_effect=sleep), patch('utils.game_monitor.ensure_gnome_bridge', return_value='ready'):
+        with patch.object(monitor, '_detect_fullscreen_state', side_effect=detect), patch('utils.game_monitor.time.sleep', side_effect=sleep), patch('utils.game_monitor.ensure_wayland_support', return_value='ready'):
             monitor._run_loop()
         self.assertEqual(seen, [0, 0, 0, 0])
         monitor._on_fullscreen_change.assert_called_once_with(True, 'game')

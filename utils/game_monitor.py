@@ -8,8 +8,8 @@ import subprocess
 import threading
 import time
 from typing import Callable, Optional
-from utils.wayland import detect_gnome_fullscreen
-from utils.wayland_setup import ensure_gnome_bridge
+from utils.wayland import detect_wayland_fullscreen
+from utils.wayland_setup import ensure_wayland_support
 from utils.i18n import message as m
 
 
@@ -49,7 +49,7 @@ class FullscreenGameMonitor:
 
     def _run_loop(self) -> None:
         # Setup runs on this existing worker, never on Flet's UI thread.
-        setup_state = ensure_gnome_bridge()
+        setup_state = ensure_wayland_support()
         if setup_state == "relogin":
             self._log(m("auto.wayland_relogin"))
         elif setup_state == "disabled":
@@ -187,10 +187,7 @@ class FullscreenGameMonitor:
 
     def _detect_linux_fullscreen(self) -> tuple[Optional[bool], str]:
         if os.getenv("WAYLAND_DISPLAY") or os.getenv("XDG_SESSION_TYPE") == "wayland":
-            desktop = os.getenv("XDG_CURRENT_DESKTOP", "").casefold()
-            if "gnome" in desktop or "zorin" in desktop or "ubuntu" in desktop:
-                return detect_gnome_fullscreen()
-            return None, ""
+            return detect_wayland_fullscreen()
 
         try:
             active = subprocess.run(

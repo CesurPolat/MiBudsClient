@@ -45,7 +45,7 @@ Built with Python and Flet for Windows and Linux.
 
 Custom EQ is deferred and hidden, including the custom preset. Other catalog features do not become app controls automatically. Feature availability comes from the catalog; connection success and the device's replies determine whether an operation can complete. Firmware and regional variants can differ.
 
-Linux tray and notification behavior depends on the desktop environment. Automatic fullscreen detection uses X11 tools or the automatically installed GNOME Shell 46 bridge on Wayland; see [Wayland setup](docs/wayland.md). Other Wayland desktops are not supported yet. Linux hardware and UI validation remains outstanding.
+Linux tray and notification behavior depends on the desktop environment. Automatic fullscreen detection uses X11 tools or the automatically installed GNOME Shell 46 bridge on Wayland; see [Wayland setup](docs/wayland.md). KDE Plasma 6 (`kdotool` with `kwinscript`), Sway (`swaymsg`) and Hyprland (`hyprctl`) also have compositor-specific detectors. These three backends still need live desktop validation. Linux hardware and UI validation remains outstanding.
 
 This README describes the current source; older packaged releases may not include these changes. See [device capabilities](docs/device-capabilities.md), [command authentication](docs/command-auth.md) and [raw authentication](docs/raw-auth.md) for technical details.
 
@@ -134,7 +134,7 @@ On Linux, Bluetooth discovery requires BlueZ's `bluetoothctl`; dynamic RFCOMM se
 | Battery reading is unavailable | Use **Check Battery** after connecting. Missing readings are treated as unknown. |
 | Gesture or EQ request fails | Close and reopen the relevant settings section to read the device state again. |
 | Custom EQ is missing | Custom EQ is deferred and hidden in this version. Model-supported presets remain available. |
-| Auto mode does not switch on Linux | Check that you are using X11 and the fullscreen-detection tools above are installed. On GNOME 46 Wayland, the [fullscreen bridge](docs/wayland.md) installs automatically; log out and back in if prompted. Other Wayland desktops are not supported yet. |
+| Auto mode does not switch on Linux | Check that you are using X11 and the fullscreen-detection tools above are installed. On GNOME 46 Wayland, the [fullscreen bridge](docs/wayland.md) installs automatically; log out and back in if prompted. KDE Plasma 6 (`kdotool` with `kwinscript`), Sway (`swaymsg`) and Hyprland (`hyprctl`) also have compositor-specific detectors. These three backends still need live desktop validation. |
 | Clicking a Linux notification does nothing | Check whether your desktop notification server supports default actions. Restore the window through the tray. |
 
 When [reporting an issue](https://github.com/CesurPolat/MiBudsClient/issues), include the app version, OS and desktop session, earbud model, steps to reproduce, and any error details shown by the app.

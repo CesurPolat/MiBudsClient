@@ -11,9 +11,24 @@ import sys
 import tempfile
 
 from .resource_manager import get_resource_path
-from .wayland import detect_gnome_fullscreen
+from .wayland import detect_gnome_fullscreen, compositor
 
 UUID = "fullscreen@mibudsclient"
+
+
+def ensure_wayland_support():
+    if (not sys.platform.startswith("linux") or not (
+            os.getenv("WAYLAND_DISPLAY") or os.getenv("XDG_SESSION_TYPE") == "wayland")):
+        return "not_needed"
+    backend = compositor()
+    if backend == "gnome":
+        return ensure_gnome_bridge()
+    tool = {"kde": "kdotool", "sway": "swaymsg", "hyprland": "hyprctl"}.get(backend)
+    if tool and shutil.which(tool):
+        return "ready"
+    if tool:
+        print(f"Wayland fullscreen detection on {backend} requires {tool} with a compatible query interface")
+    return "unavailable"
 
 
 def _run(command):

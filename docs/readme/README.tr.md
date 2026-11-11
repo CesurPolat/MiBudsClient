@@ -45,7 +45,7 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 
 Custom EQ ileri bir sürüme bırakıldı; özel profil dahil gizlidir. Katalogdaki diğer özellikler kendiliğinden uygulama kontrolüne dönüşmez. Özelliklerin görünürlüğünü katalog, işlemin tamamlanmasını bağlantı ve cihaz yanıtları belirler. Firmware ve bölgesel sürümler farklı davranabilir.
 
-GNOME Shell 46 Wayland oturumunda tam ekran desteği otomatik kurulur. İstenirse oturumdan çıkıp tekrar giriş yapın; terminal komutu gerekmez. X11 ek eklenti kullanmaz. Diğer Wayland masaüstleri henüz desteklenmiyor. [Ayrıntılar](../wayland.md).
+Otomatik oyun modu: GNOME 46 Wayland desteği otomatik kurulur; istenirse çıkış/giriş yapın. KDE Plasma 6 için `kwinscript` destekli `kdotool`, Sway için `swaymsg`, Hyprland için `hyprctl` gerekir. Bu üç yeni yol canlı masaüstünde henüz doğrulanmadı. X11 ek eklenti kullanmaz. [Ayrıntılar](../wayland.md).
 
 Bu README güncel kaynak kodu anlatır; eski paketlenmiş sürümler bu değişiklikleri içermeyebilir. Teknik ayrıntılar: [cihaz yetenekleri](../device-capabilities.md), [komutlu doğrulama](../command-auth.md), [ham doğrulama](../raw-auth.md) (İngilizce).
 
@@ -132,7 +132,7 @@ Dinamik RFCOMM servis keşfi için BlueZ'nin `sdptool` aracı da gerekir; bazı 
 | Pil seviyesi yok | Bağlandıktan sonra pil kontrolünü kullan. Eksik veriler bilinmiyor sayılır. |
 | Jest veya EQ hatası | İlgili bölümü kapatıp açarak cihaz verisini yeniden oku. |
 | Özel EQ görünmüyor | Custom EQ bu sürümde ertelendi ve gizlendi. Modelin desteklediği ön ayarlar kullanılabilir. |
-| Linux otomatik modu çalışmıyor | GNOME Shell 46 Wayland oturumunda tam ekran desteği otomatik kurulur. İstenirse oturumdan çıkıp tekrar giriş yapın; terminal komutu gerekmez. X11 ek eklenti kullanmaz. Diğer Wayland masaüstleri henüz desteklenmiyor. [Ayrıntılar](../wayland.md). |
+| Linux otomatik modu çalışmıyor | Otomatik oyun modu: GNOME 46 Wayland desteği otomatik kurulur; istenirse çıkış/giriş yapın. KDE Plasma 6 için `kwinscript` destekli `kdotool`, Sway için `swaymsg`, Hyprland için `hyprctl` gerekir. Bu üç yeni yol canlı masaüstünde henüz doğrulanmadı. X11 ek eklenti kullanmaz. [Ayrıntılar](../wayland.md). |
 | Linux bildirimine tıklamak işe yaramıyor | Sunucunun varsayılan eylem desteğini kontrol et; pencereyi tepsiden aç. |
 
 [Sorun bildirirken](https://github.com/CesurPolat/MiBudsClient/issues) uygulama sürümünü, işletim sistemini ve masaüstü oturumunu, modeli, yeniden üretme adımlarını ve hata ayrıntılarını ekle.

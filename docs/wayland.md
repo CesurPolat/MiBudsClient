@@ -1,8 +1,34 @@
 # Automatic game mode on Wayland
 
-The initial Wayland backend supports **GNOME Shell 46**, including Zorin OS 18
-and Ubuntu 24.04. Other Wayland desktops currently report detection unavailable;
-manual game mode still works. X11 and Windows retain their existing detectors.
+Wayland detection chooses the current compositor automatically:
+
+| Desktop | Interface and requirements |
+| --- | --- |
+| GNOME Shell 46, Zorin OS 18, Ubuntu 24.04 | Bundled Shell bridge, installed automatically |
+| KDE Plasma 6 | `kdotool` with the `kwinscript --file` command; bundled read-only KWin query |
+| Sway | `swaymsg -r -t get_tree` |
+| Hyprland | `hyprctl -j activewindow` |
+
+X11 and Windows retain their existing detectors. Other Wayland compositors and
+GNOME versions currently report detection unavailable; manual game mode remains
+available. These backends do not query XWayland as a substitute for native windows.
+
+Sway and Hyprland use tools normally supplied by their compositor packages and
+need no MiBudsClient extension. KDE needs a recent `kdotool` that supports custom
+scripts; versions without `kwinscript` are insufficient. MiBudsClient does not
+install OS packages or download executables. Install missing system tools using
+your distribution's package manager. The KDE query reads `workspace.activeWindow`
+and `fullScreen` without changing windows or installing a persistent KWin plugin.
+`kdotool` manages its temporary script lifecycle. Plasma 5 is not supported by
+this query.
+
+The focused window's compositor fullscreen state is used, so a maximized
+Hyprland window is not treated as fullscreen. Sway supports floating windows,
+XWayland WM_CLASS fallback and a focused child inside a fullscreen container.
+No focused window reports false; malformed data, missing tools and timeouts
+report unknown. The existing include/exclude and process-hold policies apply
+to every backend. Lock-screen/overview suppression is implemented by the GNOME
+bridge; equivalent behavior is not asserted for the other compositors.
 
 GNOME does not provide ordinary applications with unrestricted foreground-window
 access. MiBudsClient includes a small, optional Shell extension that exposes only
@@ -13,7 +39,7 @@ history. No Shell unsafe mode or `org.gnome.Shell.Eval` workaround is used.
 ## Automatic setup
 
 On application startup, the monitor's background worker detects the desktop
-session. X11 and Windows do not install a Shell extension. On GNOME Shell 46
+session. X11, Windows, KDE, Sway and Hyprland do not install a GNOME Shell extension. On GNOME Shell 46
 Wayland, MiBudsClient automatically copies its two bundled extension files from
 `assets/gnome-extension/fullscreen@mibudsclient` into the current user's extension
 directory, then enables the bridge. This also works from the PyInstaller bundle;
@@ -31,7 +57,7 @@ the desktop or close the user's applications.
 
 If the user subsequently disables the bridge, or disables extensions globally,
 automatic setup preserves that preference. Re-enable it in GNOME's Extensions app
-when desired. Unsupported GNOME versions, other Wayland compositors, missing
+when desired. Unsupported desktop versions/compositors, missing
 system tools and read-only user directories do not prevent application startup;
 manual game mode remains available. This setup does not install OS packages.
 
@@ -59,10 +85,12 @@ restart. To disable this integration:
 gnome-extensions disable fullscreen@mibudsclient
 ```
 
-Software tests use synthetic D-Bus responses and do not validate a live GNOME
-Shell session. GNOME versions other than 46 and other Wayland compositors have
-not been enabled by this implementation.
+Software tests use synthetic D-Bus and compositor JSON responses. The GNOME 46
+bridge has been exercised on the user’s Zorin session. KDE Plasma, Sway and
+Hyprland have not been verified in live desktop sessions.
 
 References: [GNOME extension lifecycle](https://gjs.guide/extensions/development/creating.html),
 [GJS D-Bus](https://gjs.guide/guides/gio/dbus.html),
 [Meta.Window API](https://gnome.pages.gitlab.gnome.org/mutter/meta/class.Window.html).
+
+Additional references: [kdotool](https://github.com/jinliu/kdotool), [KWin API](https://develop.kde.org/docs/plasma/kwin/api/), [Sway IPC](https://github.com/swaywm/sway/blob/master/sway/sway-ipc.7.scd), [Hyprland IPC](https://wiki.hypr.land/IPC/).

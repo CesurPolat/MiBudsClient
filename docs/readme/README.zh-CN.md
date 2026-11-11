@@ -44,7 +44,7 @@
 
 自定义 EQ 推迟到后续版本，目前连同自定义预设一起隐藏。目录中的其他功能不会自动变成应用控件。
 
-GNOME Shell 46 Wayland 的全屏检测会自动配置。如有提示，请注销后重新登录，无需终端命令。X11 不需要扩展。暂不支持其他 Wayland 桌面。[详情](../wayland.md)。
+自动游戏模式：GNOME 46 Wayland 会自动配置，如有提示请重新登录。KDE Plasma 6 需要支持 `kwinscript` 的 `kdotool`，Sway 需要 `swaymsg`，Hyprland 需要 `hyprctl`。这三个新后端尚未经过实际桌面会话验证。X11 不需要扩展。[详情](../wayland.md)。
 
 本 README 描述当前源码，旧的发行包可能不包含这些更新。技术详情：[设备能力](../device-capabilities.md)、[命令认证](../command-auth.md)、[原始认证](../raw-auth.md)（英文）。
 
@@ -131,7 +131,7 @@ Linux 需要 BlueZ 的 `bluetoothctl` 进行发现，并需要 PyGObject（`gi`�
 | 无电量读数 | 连接后检查电量。缺失数据视为未知。 |
 | 手势或 EQ 失败 | 关闭并重新打开分区以读取设备状态。 |
 | 无自定义 EQ | 本版本已推迟并隐藏自定义 EQ；型号支持的预设仍可使用。 |
-| Linux 自动模式无效 | GNOME Shell 46 Wayland 的全屏检测会自动配置。如有提示，请注销后重新登录，无需终端命令。X11 不需要扩展。暂不支持其他 Wayland 桌面。[详情](../wayland.md)。 |
+| Linux 自动模式无效 | 自动游戏模式：GNOME 46 Wayland 会自动配置，如有提示请重新登录。KDE Plasma 6 需要支持 `kwinscript` 的 `kdotool`，Sway 需要 `swaymsg`，Hyprland 需要 `hyprctl`。这三个新后端尚未经过实际桌面会话验证。X11 不需要扩展。[详情](../wayland.md)。 |
 | Linux 通知点击无效 | 检查默认操作支持，或从托盘打开窗口。 |
 
 [反馈问题](https://github.com/CesurPolat/MiBudsClient/issues)时，请提供应用版本、系统和桌面会话、型号、复现步骤及错误详情。
