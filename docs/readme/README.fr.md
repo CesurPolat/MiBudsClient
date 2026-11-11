@@ -167,10 +167,12 @@ flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBu
 **Linux**
 
 ```sh
-flet pack main.py --icon assets/icon.ico --add-data "assets:assets" --name "MiBudsClient" --hidden-import optparse
+python tools/build_linux.py
 ```
 
 Gardez les ressources d’interface dans `assets/` pour les inclure au paquet. Avant publication, vérifiez avec les écouteurs et lancez l’exécutable deux fois : la seconde instance doit activer la fenêtre existante et se fermer silencieusement.
+
+Avec `appimagetool` installé, lancez `bash tools/build_appimage.sh` pour créer un AppImage à partir de l’exécutable Linux. Consultez le [guide de création du paquet](../linux-desktop.md#appimage-packaging) pour préparer uniquement l’AppDir et connaître les chemins de sortie.
 
 ## Licence
 

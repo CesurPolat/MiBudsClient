@@ -168,10 +168,12 @@ flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBu
 **Linux**
 
 ```sh
-flet pack main.py --icon assets/icon.ico --add-data "assets:assets" --name "MiBudsClient" --hidden-import optparse
+python tools/build_linux.py
 ```
 
 Paketlenmeleri için arayüz kaynaklarını `assets/` altında tut. Dağıtımdan önce kulaklıkla doğrula; ikinci kez açıldığında mevcut pencerenin öne geldiğini ve ikinci örneğin sessizce kapandığını kontrol et.
+
+Linux çalıştırılabilir dosyasından AppImage üretmek için `appimagetool` kurulu olduğunda `bash tools/build_appimage.sh` çalıştır. Yalnız AppDir hazırlama seçeneği ve çıktı yolları için [paketleme rehberine](../linux-desktop.md#appimage-packaging) bak.
 
 ## Lisans
 

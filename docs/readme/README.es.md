@@ -167,10 +167,12 @@ flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBu
 **Linux**
 
 ```sh
-flet pack main.py --icon assets/icon.ico --add-data "assets:assets" --name "MiBudsClient" --hidden-import optparse
+python tools/build_linux.py
 ```
 
 Mantén los recursos de interfaz en `assets/` para incluirlos en el paquete. Antes de publicar, prueba con los auriculares y abre el ejecutable dos veces: la segunda instancia debe enfocar la ventana existente y cerrarse silenciosamente.
+
+Con `appimagetool` instalado, ejecuta `bash tools/build_appimage.sh` para crear un AppImage a partir del ejecutable Linux. Consulta la [guía de empaquetado](../linux-desktop.md#appimage-packaging) para preparar solo el AppDir y conocer las rutas de salida.
 
 ## Licencia
 

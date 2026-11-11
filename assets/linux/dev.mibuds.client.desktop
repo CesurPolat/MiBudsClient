@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=MiBudsClient
+Exec=mibudsclient
+Icon=dev.mibuds.client
+StartupWMClass=dev.mibuds.client
+Terminal=false
+Categories=Utility;

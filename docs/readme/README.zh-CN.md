@@ -167,10 +167,12 @@ flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBu
 **Linux**
 
 ```sh
-flet pack main.py --icon assets/icon.ico --add-data "assets:assets" --name "MiBudsClient" --hidden-import optparse
+python tools/build_linux.py
 ```
 
 界面资源必须放在 `assets/` 下才能打包。发布前用耳机验证可执行文件；再次启动应激活已有窗口，第二个实例应静默退出。
+
+安装 `appimagetool` 后，运行 `bash tools/build_appimage.sh` 将 Linux 可执行文件打包为 AppImage。仅准备 AppDir 的选项和输出路径见[打包指南](../linux-desktop.md#appimage-packaging)。
 
 ## 许可证
 

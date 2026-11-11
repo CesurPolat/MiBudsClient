@@ -183,8 +183,10 @@ flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBu
 **Linux**
 
 ```sh
-flet pack main.py --icon assets/icon.ico --add-data "assets:assets" --name "MiBudsClient" --hidden-import optparse
+python tools/build_linux.py
 ```
+
+To wrap the Linux executable in an AppImage, run `bash tools/build_appimage.sh` with `appimagetool` installed. See the [AppImage packaging instructions](docs/linux-desktop.md#appimage-packaging) for preparation-only mode and output paths.
 
 Keep all UI resources under `assets/` so they are included in the package. Before shipping, launch the executable, verify its behavior with the earbuds, then launch it a second time to check that it focuses the existing window and exits silently.
 

@@ -167,10 +167,12 @@ flet pack main.py --icon assets\icon.ico --add-data "assets:assets" --name "MiBu
 **Linux**
 
 ```sh
-flet pack main.py --icon assets/icon.ico --add-data "assets:assets" --name "MiBudsClient" --hidden-import optparse
+python tools/build_linux.py
 ```
 
 Храните ресурсы интерфейса в `assets/`, чтобы включить их в сборку. Перед выпуском проверьте файл с наушниками и запустите его дважды: второй экземпляр должен активировать существующее окно и завершиться без сообщений.
+
+При установленном `appimagetool` выполните `bash tools/build_appimage.sh`, чтобы создать AppImage из исполняемого файла Linux. Режим подготовки только AppDir и пути вывода описаны в [руководстве по упаковке](../linux-desktop.md#appimage-packaging).
 
 ## Лицензия
 

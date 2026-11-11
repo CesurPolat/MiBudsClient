@@ -12,6 +12,8 @@ build/
 .validation-pack/
 develop-eggs/
 dist/
+*.AppDir/
+*.AppImage
 downloads/
 eggs/
 .eggs/

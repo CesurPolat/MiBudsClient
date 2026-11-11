@@ -34,6 +34,7 @@ from utils.error_reports import ErrorReportManager, ReportQueue, guard_ui_callba
 from ui.components.error_report import ErrorReportDialog
 from ui.components.debug_console import DebugConsoleDialog
 from utils.app_shutdown import ApplicationShutdown
+from utils.linux_desktop import setup_linux_desktop
 
 application_shutdown = ApplicationShutdown()
 
@@ -311,6 +312,7 @@ if __name__ == "__main__":
     check_for_existing_instance()
     reserve_instance_port()
     try:
+        application_shutdown.register("Linux desktop identity", setup_linux_desktop())
         ft.app(target=main, assets_dir="assets")
     finally:
         try:
