@@ -25,6 +25,7 @@ class WindowManager:
         self._close_lock = threading.Lock()
         self._force_exit_armed = False
         self._on_shutdown = on_shutdown
+        self.tray_available = lambda: False
         self._fit_revision = 0
         self._content_measurement = None
         self._settings_open = False
@@ -284,6 +285,14 @@ class WindowManager:
     def apply_hide(self) -> None:
         """Apply hide state to window."""
         if self._session_closed or self._is_closing:
+            return
+        if not self.tray_available():
+            # Keep the taskbar entry as a way back when no tray is ready.
+            self.page.window.visible = True
+            self.page.window.skip_task_bar = False
+            self.page.window.minimized = True
+            self._apply_legacy_props(visible=True, minimized=True, skip_task_bar=False)
+            self.page.update()
             return
         self.page.window.minimized = False
         self.page.window.visible = False

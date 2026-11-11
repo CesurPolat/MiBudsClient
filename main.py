@@ -124,6 +124,7 @@ async def main(page: ft.Page):
         latency_available=lambda: controller_ref["instance"] is not None and controller_ref["instance"].capabilities.supports("latency"),
     )
     tray_ref["instance"] = tray
+    window_mgr.tray_available = lambda: tray.available
     application_shutdown.register("system tray", tray.stop)
 
     # ─────────────────────────────────────────────────────────────────────────

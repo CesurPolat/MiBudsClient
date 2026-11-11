@@ -5,12 +5,10 @@ import threading
 from utils.i18n import t, render
 from utils.image_notifications import ImageNotifications
 
-from utils.tray_backend import configure_tray_backend
+from utils.tray_backend import load_tray_module
 
 # pystray chooses its backend during import, so configure it first.
-configure_tray_backend()
-
-import pystray
+pystray = load_tray_module()
 
 from utils.resource_manager import load_pil_image
 from .constants import TRAY_ICON_PATH, TRAY_ICON_SIZE
@@ -34,13 +32,18 @@ class SystemTray:
         self.get_latency_mode = get_latency_mode
         self.icon = None
         self._stopped = threading.Event()
+        self._ready = threading.Event()
         self._device = ("Redmi Buds 6 Play", "")
         self._device_lock = threading.Lock()
         self._image_notifications = ImageNotifications(on_activate=self.on_show)
+
+    @property
+    def available(self) -> bool:
+        return self._ready.is_set() and not self._stopped.is_set()
     
     def run(self) -> None:
         """Start the system tray icon."""
-        if self._stopped.is_set():
+        if self._stopped.is_set() or pystray is None:
             return
         try:
             # Tray uses default icon.png
@@ -82,18 +85,36 @@ class SystemTray:
                 )
             
             self.icon = pystray.Icon("MiBudsClient", tray_image, "Mi Buds Client", menu)
-            self._image_notifications.bind(self.icon)
+            try:
+                self._image_notifications.bind(self.icon)
+            except Exception as error:
+                print(f"Tray notification integration unavailable: {error}")
             def setup(icon):
                 if self._stopped.is_set():
                     icon.stop()
                 else:
-                    icon.visible = True
+                    try:
+                        icon.visible = True
+                        self._ready.set()
+                    except Exception as error:
+                        print(f"Tray icon unavailable: {error}")
+                        self.on_show()
+                        icon.stop()
 
             self.icon.run(setup=setup)
         except Exception as e:
             print(f"Tray error: {e}")
         finally:
-            self._image_notifications.close()
+            self._ready.clear()
+            self.icon = None
+            try:
+                if not self._stopped.is_set():
+                    self.on_show()
+            finally:
+                try:
+                    self._image_notifications.close()
+                except Exception as error:
+                    print(f"Tray notification cleanup failed: {error}")
     
     def _get_mode(self) -> str:
         """Get current latency mode."""
@@ -111,8 +132,12 @@ class SystemTray:
 
     def refresh_menu(self) -> None:
         """Refresh tray menu to reflect updated checked states."""
-        if self.icon and getattr(pystray.Icon, "HAS_MENU", False):
-            self.icon.update_menu()
+        icon = self.icon
+        if self.available and icon and getattr(type(icon), "HAS_MENU", False):
+            try:
+                icon.update_menu()
+            except Exception as error:
+                print(f"Tray menu update unavailable: {error}")
 
     def set_device(self, name: str, image_path: str = "") -> None:
         """Share the screen's local device presentation with notifications.
@@ -127,7 +152,8 @@ class SystemTray:
     def notify(self, message: str, title: str = "Mi Buds Client", *, device: bool = False,
                silent: bool = True) -> None:
         """Show notifications silently by default, including text fallback."""
-        if not self.icon:
+        icon = self.icon
+        if not self.available or not icon:
             return
 
         image_path = ""
@@ -136,7 +162,6 @@ class SystemTray:
                 title, image_path = self._device
         # Capture the active language now, including asynchronous Linux delivery.
         text = render(message)
-        icon = self.icon
 
         def plain():
             if silent:
@@ -165,5 +190,10 @@ class SystemTray:
     def stop(self) -> None:
         """Stop the native loop; run() releases notification resources."""
         self._stopped.set()
-        if self.icon:
-            self.icon.stop()
+        self._ready.clear()
+        icon = self.icon
+        if icon:
+            try:
+                icon.stop()
+            except Exception as error:
+                print(f"Tray stop error: {error}")

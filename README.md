@@ -123,7 +123,7 @@ python3 -m venv .venv
 .venv/bin/python main.py
 ```
 
-On Linux, Bluetooth discovery requires BlueZ's `bluetoothctl`. Tray integration uses PyGObject (`gi`) with AppIndicator3 or GTK. Automatic fullscreen detection also needs `xprop`, `xwininfo`, and `xrandr` in an X11 session. These are system dependencies; `requirements.txt` installs the Python packages only.
+On Linux, Bluetooth discovery requires BlueZ's `bluetoothctl`. Tray integration prefers PyGObject (`gi`) with GTK 3 and AppIndicator3 or AyatanaAppIndicator3, then falls back to GTK's legacy tray or Xorg when available. Desktop tray support is still required; Xorg has limited menu support. Missing tray dependencies do not prevent startup. Until the tray is ready, closing the window minimizes it with its taskbar entry retained; an unexpected tray shutdown restores the window. An explicit `PYSTRAY_BACKEND` setting is respected. Automatic fullscreen detection also needs `xprop`, `xwininfo`, and `xrandr` in an X11 session. These are system dependencies; `requirements.txt` installs the Python packages only.
 
 ## Troubleshooting
 
