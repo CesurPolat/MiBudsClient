@@ -98,6 +98,7 @@ class BTController:
         self._battery_has_value = False
         self._last_received_at = time.monotonic()
         self._last_connection_event: Optional[str] = None
+        self._last_connection_failure = ""
         
         # Callbacks
         self._status_callback = status_callback
@@ -107,6 +108,10 @@ class BTController:
         self._connection_state_callback = connection_state_callback
 
     def _notify_connection_state(self, state: str, reason: str = "") -> None:
+        if state == "failed" and reason:
+            self._last_connection_failure = reason
+        elif state == "connected":
+            self._last_connection_failure = ""
         if self._connection_state_callback:
             self._connection_state_callback(state, reason)
     
@@ -585,7 +590,8 @@ class BTController:
                     attempts, reached_limit = self._record_reconnect_failure()
                     if reached_limit:
                         self._update_status(m("connection.retry_limit"), "red")
-                        self._notify_connection_state("failed", m("connection.retry_limit"))
+                        self._notify_connection_state(
+                            "failed", self._last_connection_failure or m("connection.retry_limit"))
                         self._notify_connection_event("reconnect_failed_limit")
                     else:
                         self._update_status(

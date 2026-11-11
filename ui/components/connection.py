@@ -1,18 +1,20 @@
 """Connection feedback styled to match the home control panel."""
 
-from utils.i18n import t, render
+from utils.i18n import Message, t, render
 
 import flet as ft
 from ..constants import HOME_CONTROLS_HEIGHT
 
 class ConnectionPanel(ft.Column):
     def __init__(self):
+        self._failure_reason = ""
         self.connection_label = ft.Text(t("connection.connecting"), size=18, color="white", weight="w500",
                                         text_align=ft.TextAlign.CENTER)
         self.connection_progress = ft.ProgressRing(width=28, height=28, stroke_width=3, color="white")
         self.connection_reason = ft.Text(
             size=12, color="white70", visible=False, selectable=True,
-            text_align=ft.TextAlign.CENTER,
+            text_align=ft.TextAlign.CENTER, max_lines=2,
+            overflow=ft.TextOverflow.ELLIPSIS,
         )
         self.retry_button = ft.TextButton(
             content=ft.Text(t("connection.retry")), icon=ft.Icons.REFRESH, visible=False,
@@ -44,6 +46,13 @@ class ConnectionPanel(ft.Column):
     def update_connection_state(self, state: str, reason: str = "") -> None:
         connecting = state in {"connecting", "retrying", "loading"}
         failed = state == "failed"
+        if failed and reason:
+            self._failure_reason = reason
+        elif state in {"connected", "loading"}:
+            self._failure_reason = ""
+        # Automatic retries must not replace the actionable failure with a
+        # countdown or briefly hide it while the next connection is attempted.
+        display_reason = self._failure_reason if state in {"connecting", "retrying"} and self._failure_reason else reason
         self.connection_label.value = {
             "connecting": t("connection.connecting"),
             "retrying": t("connection.connecting"),
@@ -54,9 +63,13 @@ class ConnectionPanel(ft.Column):
         self.connection_label.color = "white"
         self.connection_progress.visible = connecting
         self._progress_slot.visible = connecting
-        self.connection_reason.value = render(reason)
-        self.connection_reason.visible = bool(reason)
-        self._reason_slot.visible = bool(reason)
+        short_reason = display_reason
+        if isinstance(display_reason, Message) and display_reason.key == "connection.technical":
+            short_reason = display_reason.params.get("reason", display_reason)
+        self.connection_reason.value = render(short_reason)
+        self.connection_reason.tooltip = render(display_reason) if display_reason else None
+        self.connection_reason.visible = bool(display_reason)
+        self._reason_slot.visible = bool(display_reason)
         self.retry_button.visible = failed
         self._retry_slot.visible = failed
         self.retry_button.disabled = connecting
