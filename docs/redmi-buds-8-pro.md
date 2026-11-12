@@ -57,6 +57,32 @@ in the configured environment. No channel override or model opt-in is needed.
 The existing service-based authentication remains unchanged; authentication
 failures must not be bypassed with direct commands.
 
+## Windows discovery
+
+If Windows shows the earbuds connected but the app reports no connected catalog
+device, discovery has not reached RFCOMM or authentication yet. Windows now
+prefers the native Classic Bluetooth device list and its actual connected flag,
+then retains the older PowerShell/PnP query as a fallback. This avoids depending
+solely on CIM/PnP device properties and subprocess startup timing. Name matching
+still requires the exact catalog name; paired but disconnected devices are not
+selected. Linux discovery is unchanged.
+
+F12 logs identify the native or PnP selection, the names of connected Classic
+devices when none matches the catalog, and query failures instead of silently
+discarding them. If both paths fail, copy those messages with the OS/model
+details. Local sandbox restrictions can deny an inventory query; that alone
+does not establish whether the same query succeeds in the user's app session.
+LE-only connections are not established as RFCOMM-compatible by this lookup.
+
+The native path uses Python's standard ctypes library and the documented
+[BluetoothFindFirstDevice](https://learn.microsoft.com/en-us/windows/win32/api/bluetoothapis/nf-bluetoothapis-bluetoothfindfirstdevice),
+[search flags](https://learn.microsoft.com/en-us/windows/win32/api/bluetoothapis/ns-bluetoothapis-bluetooth_device_search_params)
+and [connected-state record](https://learn.microsoft.com/en-us/windows/win32/api/bluetoothapis/ns-bluetoothapis-bluetooth_device_info_struct).
+It disables active inquiry, enumerates all radios, formats the 48-bit address,
+and closes the enumeration handle. It does not pair devices or bypass session
+authentication. Owner confirmation of discovery and the control session remains
+outstanding.
+
 ## Manual hardware report
 
 Hardware checks remain for an owner to perform. Do not mark a model verified
