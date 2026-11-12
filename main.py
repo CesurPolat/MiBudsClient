@@ -313,7 +313,7 @@ if __name__ == "__main__":
     reserve_instance_port()
     try:
         application_shutdown.register("Linux desktop identity", setup_linux_desktop())
-        ft.app(target=main, assets_dir="assets")
+        ft.run(main, assets_dir="assets")
     finally:
         try:
             application_shutdown.stop()

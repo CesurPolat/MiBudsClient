@@ -1,3 +1,4 @@
-flet
+# The existing UI still uses helper aliases removed in Flet 0.85.
+flet[desktop]==0.84.0
 pystray
 Pillow

@@ -39,6 +39,15 @@ Xiaomi Earbuds app.
 
 ## Try the source version
 
+Install the pinned desktop dependency from `requirements.txt`: this source
+currently targets Flet 0.84.0. Flet 0.85 removed spacing/border helper aliases
+used by the UI, and 1.0 removed the deprecated `ft.app` entry point. Startup
+now uses `ft.run`; the version pin also preserves the remaining UI helpers.
+If an earlier installation selected Flet 1.x, update this branch and rerun
+`python -m pip install -r requirements.txt` using the virtual environment's
+Python before starting the app. This compatibility choice is based on source
+API inspection; a live app/hardware check remains outstanding.
+
 Follow the [source installation instructions](../README.md#run-from-source)
 using the branch containing this change. Close any previously installed EXE
 with the tray's **Quit** command first: single-instance protection would
