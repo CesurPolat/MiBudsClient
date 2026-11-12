@@ -13,7 +13,7 @@
 
 [**下载**](https://github.com/CesurPolat/MiBudsClient/releases) · [快速开始](#快速开始) · [从源码运行](#从源码运行) · [反馈问题](https://github.com/CesurPolat/MiBudsClient/issues)
 
-<img src="../MiBudsClientPreview.png" alt="MiBudsClient 桌面界面预览" width="720">
+<a href="https://github.com/CesurPolat/MiBudsClient/releases"><img src="../MiBudsClientPreview.png" alt="MiBudsClient 桌面界面预览" width="720"></a>
 
 </div>
 

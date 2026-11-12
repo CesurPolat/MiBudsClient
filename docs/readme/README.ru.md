@@ -13,7 +13,7 @@
 
 [**Скачать**](https://github.com/CesurPolat/MiBudsClient/releases) · [Начало работы](#начало-работы) · [Запуск из исходного кода](#запуск-из-исходного-кода) · [Сообщить о проблеме](https://github.com/CesurPolat/MiBudsClient/issues)
 
-<img src="../MiBudsClientPreview.png" alt="Предварительный просмотр интерфейса MiBudsClient" width="720">
+<a href="https://github.com/CesurPolat/MiBudsClient/releases"><img src="../MiBudsClientPreview.png" alt="Предварительный просмотр интерфейса MiBudsClient" width="720"></a>
 
 </div>
 

@@ -13,7 +13,7 @@ Développé avec Python et Flet pour Windows et Linux.
 
 [**Télécharger**](https://github.com/CesurPolat/MiBudsClient/releases) · [Premiers pas](#premiers-pas) · [Exécuter depuis les sources](#exécuter-depuis-les-sources) · [Signaler un problème](https://github.com/CesurPolat/MiBudsClient/issues)
 
-<img src="../MiBudsClientPreview.png" alt="Aperçu de l’interface MiBudsClient" width="720">
+<a href="https://github.com/CesurPolat/MiBudsClient/releases"><img src="../MiBudsClientPreview.png" alt="Aperçu de l’interface MiBudsClient" width="720"></a>
 
 </div>
 

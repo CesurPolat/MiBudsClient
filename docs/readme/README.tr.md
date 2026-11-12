@@ -13,7 +13,7 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 
 [**İndir**](https://github.com/CesurPolat/MiBudsClient/releases) · [Başlangıç](#başlangıç) · [Kaynak koddan çalıştırma](#kaynak-koddan-çalıştırma) · [Sorun bildir](https://github.com/CesurPolat/MiBudsClient/issues)
 
-<img src="../MiBudsClientPreview.png" alt="MiBudsClient arayüzü önizlemesi" width="720">
+<a href="https://github.com/CesurPolat/MiBudsClient/releases"><img src="../MiBudsClientPreview.png" alt="MiBudsClient arayüzü önizlemesi" width="720"></a>
 
 </div>
 
