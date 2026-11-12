@@ -8,7 +8,7 @@
 
 **在电脑上管理你的小米和 Redmi 耳机。**
 
-集中查看电量、切换低延迟、调整音效和触控操作。<br>
+查看电量，管理噪声控制、均衡器预设、触控手势和低延迟模式。<br>
 使用 Python 和 Flet 开发，适用于 Windows 和 Linux。
 
 [**下载**](https://github.com/CesurPolat/MiBudsClient/releases) · [快速开始](#快速开始) · [从源码运行](#从源码运行) · [反馈问题](https://github.com/CesurPolat/MiBudsClient/issues)

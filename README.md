@@ -8,7 +8,7 @@
 
 **Your Xiaomi and Redmi earbuds, on your desktop.**
 
-Battery levels, low latency, sound profiles, and touch controls in one place.<br>
+Monitor battery levels and manage noise control, EQ presets, touch gestures, and low-latency mode.<br>
 Built with Python and Flet for Windows and Linux.
 
 [**Download**](https://github.com/CesurPolat/MiBudsClient/releases) · [Getting started](#getting-started) · [Run from source](#run-from-source) · [Report an issue](https://github.com/CesurPolat/MiBudsClient/issues)

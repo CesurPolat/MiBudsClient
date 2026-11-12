@@ -8,7 +8,7 @@
 
 **Deine Xiaomi- und Redmi-Ohrhörer auf dem Desktop.**
 
-Akkustände, niedrige Latenz, Klangprofile und Touch-Steuerung an einem Ort.<br>
+Akkustände überwachen und Geräuschkontrolle, EQ-Voreinstellungen, Touch-Gesten und den Modus für niedrige Latenz verwalten.<br>
 Mit Python und Flet für Windows und Linux entwickelt.
 
 [**Download**](https://github.com/CesurPolat/MiBudsClient/releases) · [Erste Schritte](#erste-schritte) · [Aus dem Quellcode starten](#aus-dem-quellcode-starten) · [Problem melden](https://github.com/CesurPolat/MiBudsClient/issues)

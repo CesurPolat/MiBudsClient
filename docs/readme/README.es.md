@@ -8,7 +8,7 @@
 
 **Tus auriculares Xiaomi y Redmi, en el escritorio.**
 
-Batería, baja latencia, perfiles de sonido y controles táctiles en un solo lugar.<br>
+Consulta los niveles de batería y gestiona el control de ruido, los ajustes predefinidos del ecualizador, los gestos táctiles y el modo de baja latencia.<br>
 Creado con Python y Flet para Windows y Linux.
 
 [**Descargar**](https://github.com/CesurPolat/MiBudsClient/releases) · [Primeros pasos](#primeros-pasos) · [Ejecutar desde el código fuente](#ejecutar-desde-el-código-fuente) · [Informar de un problema](https://github.com/CesurPolat/MiBudsClient/issues)

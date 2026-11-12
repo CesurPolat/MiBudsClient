@@ -8,7 +8,7 @@
 
 **Xiaomi ve Redmi kulaklıkların masaüstünde.**
 
-Pil seviyeleri, düşük gecikme, ses profilleri ve dokunmatik kontroller bir arada.<br>
+Pil seviyelerini takip et; gürültü kontrolünü, EQ ön ayarlarını, dokunmatik hareketleri ve düşük gecikme modunu yönet.<br>
 Windows ve Linux için Python ve Flet ile geliştirildi.
 
 [**İndir**](https://github.com/CesurPolat/MiBudsClient/releases) · [Başlangıç](#başlangıç) · [Kaynak koddan çalıştırma](#kaynak-koddan-çalıştırma) · [Sorun bildir](https://github.com/CesurPolat/MiBudsClient/issues)

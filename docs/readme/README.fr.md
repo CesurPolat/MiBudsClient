@@ -8,7 +8,7 @@
 
 **Vos écouteurs Xiaomi et Redmi, sur votre ordinateur.**
 
-Batterie, faible latence, profils sonores et commandes tactiles au même endroit.<br>
+Suivez les niveaux de batterie et gérez le contrôle du bruit, les préréglages de l’égaliseur, les gestes tactiles et le mode faible latence.<br>
 Développé avec Python et Flet pour Windows et Linux.
 
 [**Télécharger**](https://github.com/CesurPolat/MiBudsClient/releases) · [Premiers pas](#premiers-pas) · [Exécuter depuis les sources](#exécuter-depuis-les-sources) · [Signaler un problème](https://github.com/CesurPolat/MiBudsClient/issues)
