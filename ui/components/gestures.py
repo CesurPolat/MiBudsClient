@@ -8,7 +8,7 @@ from ..constants import (
     COLOR_HOME_SELECTED, COLOR_HOME_SELECTED_BORDER,
 )
 
-GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long")}
+GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long"), 5: t("gesture.swipe")}
 ACTION_NAMES = dict(enumerate(t("action." + key) for key in (
     "assistant", "play", "previous", "next", "volume_up", "volume_down",
     "noise", "game", "none", "photo", "record", "volume", "translation", "track",

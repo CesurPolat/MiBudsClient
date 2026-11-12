@@ -25,7 +25,7 @@ Creado con Python y Flet para Windows y Linux.
 | Batería | Niveles separados de ambos auriculares y del estuche, indicadores de carga y actualización manual. |
 | Baja latencia | Desactivar, activar o cambiar automáticamente el modo de juego según la aplicación activa. |
 | Perfiles de sonido | Leer y cambiar los ajustes de EQ que ofrece el dispositivo. |
-| Controles táctiles | Editar las asignaciones izquierda y derecha para uno, dos o tres toques y pulsación prolongada. |
+| Controles táctiles | Editar las asignaciones izquierda y derecha para uno, dos o tres toques, pulsación prolongada y deslizamiento. |
 | Notificaciones | Conexión, desconexión y cambios en el estuche con batería e imagen cuando estén disponibles. |
 | Bandeja del sistema | Funcionar en segundo plano, restaurar la ventana y cambiar el modo de latencia. |
 | Comodidad | Conexión automática, inicio con el sistema, preferencias guardadas y comprobación de actualizaciones. |

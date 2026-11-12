@@ -23,6 +23,8 @@ class BluetoothDevice:
 # Discovery Script
 # ─────────────────────────────────────────────────────────────────────────────
 POWERSHELL_DISCOVERY_SCRIPT = r"""
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$ErrorActionPreference = 'Stop'
 $bt = Get-PnpDevice -Class Bluetooth | Where-Object { $_.Status -eq 'OK' }
 $results = foreach ($d in $bt) {
     $isConn = (Get-PnpDeviceProperty -InstanceId $d.InstanceId -KeyName 'DEVPKEY_Device_IsConnected' -ErrorAction SilentlyContinue).Data
@@ -67,14 +69,43 @@ class BluetoothDiscovery:
         
         try:
             if sys.platform == "win32":
-                output = cls._run_discovery_script_win()
-                return cls._parse_output_win(output)
+                return cls._get_connected_device_windows()
             elif sys.platform == "linux":
                 return cls._get_connected_device_linux()
-        except Exception:
+        except Exception as exc:
+            print(f"[Bluetooth] Device discovery failed: {type(exc).__name__}: {exc}")
             return None
         return None
     
+    @classmethod
+    def _get_connected_device_windows(cls) -> Optional[BluetoothDevice]:
+        """Prefer native connection state; retain the older PnP fallback."""
+        try:
+            from .windows_discovery import get_connected_devices
+            devices = get_connected_devices()
+            for name, address in devices:
+                if address and cls._is_supported_device(name):
+                    print(f"[Bluetooth] Windows native discovery selected {name!r}")
+                    return BluetoothDevice(name=name, address=address)
+            names = ", ".join(repr(name) for name, _ in devices)
+            print(f"[Bluetooth] Windows native discovery: {len(devices)} connected "
+                  f"Classic device(s), no catalog match" + (f": {names}" if names else ""))
+        except OSError as exc:
+            print(f"[Bluetooth] Windows native discovery failed: {exc}")
+
+        # Preserve the existing Windows route for drivers that do not expose
+        # their connected peer through BluetoothFindFirstDevice.
+        try:
+            device = cls._parse_output_win(cls._run_discovery_script_win())
+        except (OSError, subprocess.SubprocessError, ValueError) as exc:
+            detail = getattr(exc, "stderr", None)
+            detail = detail.strip() if detail else str(exc)
+            print(f"[Bluetooth] Windows PnP discovery failed: {type(exc).__name__}: {detail}")
+            return None
+        if device is not None:
+            print(f"[Bluetooth] Windows PnP discovery selected {device.name!r}")
+        return device
+
     @staticmethod
     def _run_discovery_script_win() -> str:
         """Execute PowerShell discovery script."""
@@ -87,6 +118,7 @@ class BluetoothDiscovery:
             encoding="utf-8",
             errors="ignore",
             timeout=5,
+            stderr=subprocess.PIPE,
             creationflags=creation_flags
         ).strip()
     

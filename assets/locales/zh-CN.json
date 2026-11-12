@@ -61,6 +61,7 @@
   "gesture.double": "双击",
   "gesture.triple": "三击",
   "gesture.long": "长按",
+  "gesture.swipe": "滑动",
   "side.left": "左",
   "side.right": "右",
   "action.assistant": "唤醒语音助手",

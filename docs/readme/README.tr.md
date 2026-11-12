@@ -25,7 +25,7 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 | Pil takibi | Sol ve sağ kulaklık ile kutu için ayrı seviyeler, şarj göstergeleri ve elle yenileme. |
 | Düşük gecikme | Oyun modunu kapatma, açma veya etkin uygulamaya göre otomatik değiştirme. |
 | Ses profilleri | Kulaklıkların sunduğu EQ ön ayarlarını okuma ve değiştirme. |
-| Dokunmatik kontroller | Tek, çift, üçlü dokunma ve uzun basma için sol ve sağ atamalarını düzenleme. |
+| Dokunmatik kontroller | Tek, çift, üçlü dokunma, uzun basma ve kaydırma için sol ve sağ atamalarını düzenleme. |
 | Bildirimler | Bağlantı, bağlantı kesilmesi ve kutu değişiklikleri; mevcutsa pil bilgisi ve cihaz görseli. |
 | Sistem tepsisi | Arka planda çalışma, pencereyi açma ve düşük gecikmeyi tepsiden değiştirme. |
 | Günlük kullanım | Otomatik bağlantı denemeleri, başlangıçta çalıştırma, kaydedilen tercihler ve güncelleme denetimi. |

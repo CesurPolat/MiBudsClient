@@ -61,6 +61,7 @@
   "gesture.double": "2回タップ",
   "gesture.triple": "トリプルタップ",
   "gesture.long": "長押し",
+  "gesture.swipe": "スワイプ",
   "side.left": "左",
   "side.right": "右",
   "action.assistant": "音声アシスタント",

@@ -25,7 +25,7 @@ Développé avec Python et Flet pour Windows et Linux.
 | Batterie | Niveaux séparés des deux écouteurs et du boîtier, indicateurs de charge et actualisation manuelle. |
 | Faible latence | Mode jeu désactivé, activé ou automatique selon l’application active. |
 | Profils sonores | Lecture et modification des préréglages EQ proposés par les écouteurs. |
-| Commandes tactiles | Actions gauche et droite : appui simple, double, triple ou prolongé. |
+| Commandes tactiles | Actions gauche et droite : appui simple, double, triple, prolongé ou balayage. |
 | Notifications | Connexion, déconnexion et changements dans le boîtier, avec batterie et image si disponibles. |
 | Zone de notification | Fonctionnement en arrière-plan, restauration de la fenêtre et changement du mode de latence. |
 | Au quotidien | Connexion automatique, lancement au démarrage, préférences enregistrées et vérification des mises à jour. |

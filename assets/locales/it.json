@@ -61,6 +61,7 @@
   "gesture.double": "Doppio tocco",
   "gesture.triple": "Triplo tocco",
   "gesture.long": "Pressione prolungata del tasto",
+  "gesture.swipe": "Scorrimento",
   "side.left": "Sinistro",
   "side.right": "Destro",
   "action.assistant": "Assistente vocale",
