@@ -38,7 +38,7 @@ class GestureProtocolTests(unittest.TestCase):
                          "fedcbac4f200074205000204ff08ef")
 
     def test_invalid_command_arguments(self):
-        for args in ((256, 1, "left", 1), (1, 5, "left", 1),
+        for args in ((256, 1, "left", 1), (1, 6, "left", 1),
                      (1, 1, "both", 1), (1, 1, "left", 255)):
             with self.subTest(args=args), self.assertRaises(ValueError):
                 build_gesture_assignment(*args)
