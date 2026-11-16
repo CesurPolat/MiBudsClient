@@ -26,6 +26,7 @@ class WindowManager:
         self._force_exit_armed = False
         self._on_shutdown = on_shutdown
         self.tray_available = lambda: False
+        self.on_activity_change = lambda active: None
         self._fit_revision = 0
         self._content_measurement = None
         self._settings_open = False
@@ -71,6 +72,10 @@ class WindowManager:
     def _on_window_event_handler(self, e) -> None:
         """Handle window events."""
         event_type = getattr(e, "type", None)
+        if event_type == ft.WindowEventType.FOCUS:
+            self.on_activity_change(bool(self.page.window.visible and not self.page.window.minimized))
+        elif event_type in (ft.WindowEventType.BLUR, ft.WindowEventType.MINIMIZE):
+            self.on_activity_change(False)
         if event_type == ft.WindowEventType.CLOSE:
             if self.page.window.prevent_close:
                 self.hide()
@@ -278,6 +283,7 @@ class WindowManager:
         self.page.window.visible = True
         self.page.window.minimized = False
         self.page.window.skip_task_bar = False
+        self.on_activity_change(True)
         self._apply_legacy_props(visible=True, minimized=False, skip_task_bar=False)
         self.page.update()
         self._run_window_async(self.page.window.to_front, timeout_sec=0.5)
@@ -286,6 +292,7 @@ class WindowManager:
         """Apply hide state to window."""
         if self._session_closed or self._is_closing:
             return
+        self.on_activity_change(False)
         if not self.tray_available():
             # Keep the taskbar entry as a way back when no tray is ready.
             self.page.window.visible = True

@@ -53,7 +53,7 @@ class BTController:
     """High-level controller for Mi Buds communication."""
 
     _STALE_CONNECTION_TIMEOUT = 12
-    _BATTERY_REFRESH_INTERVAL = 60
+    _BATTERY_REFRESH_INTERVAL = 60 * 5
     _BATTERY_RESPONSE_TIMEOUT = 10
     _BATTERY_MAX_ATTEMPTS = 3
     _RECONNECT_COOLDOWN = 120
@@ -102,6 +102,8 @@ class BTController:
         self._battery_attempts = 0
         self._battery_next_check_at = 0.0
         self._battery_has_value = False
+        self._battery_polling_enabled = False
+        self._battery_last_request_at = 0.0
         self._last_received_at = time.monotonic()
         self._last_connection_event: Optional[str] = None
         self._last_connection_failure = ""
@@ -319,11 +321,28 @@ class BTController:
             raise ConnectionError(m("latency.disconnected"))
         return self._latency.read(timeout, session)
     
+    def set_battery_polling_active(self, active: bool) -> None:
+        """Poll only while the app is in use; refresh when it returns to foreground."""
+        with self._state_lock:
+            active = bool(active)
+            if active == self._battery_polling_enabled:
+                return
+            self._battery_polling_enabled = active
+            if active:
+                # Coalesce quick focus/show events without flooding the device.
+                self._battery_next_check_at = max(time.monotonic(), self._battery_last_request_at + 5)
+            else:
+                self._battery_requested_at = None
+                self._battery_probe_started_at = None
+                self._battery_attempts = 0
+
     def request_battery(self, user_initiated: bool = True) -> tuple[bool, str]:
         """Request battery status from device."""
         # User-invoked battery refresh should reopen reconnect attempts.
         if user_initiated:
             self.resume_reconnect_attempts()
+        elif not self._battery_polling_enabled:
+            return False, m("connection.waiting")
 
         if not self._ensure_connected():
             return False, m("connection.device_failed")
@@ -334,12 +353,15 @@ class BTController:
             payload = self._protocol.build_battery_request()
             # Record before sending so a fast response cannot race this state.
             with self._state_lock:
+                if not user_initiated and not self._battery_polling_enabled:
+                    return False, m("connection.waiting")
                 now = time.monotonic()
                 if self._battery_requested_at is None:
                     self._battery_requested_at = now
                     self._battery_probe_started_at = now
                     self._battery_attempts = 1
                 self._connection.send(payload)
+                self._battery_last_request_at = now
             return True, m("battery.sent")
         except Exception as e:
             self._connection.connected = False
@@ -353,6 +375,8 @@ class BTController:
         unresponsive = False
         exhausted = False
         with self._state_lock:
+            if not self._battery_polling_enabled:
+                return
             now = time.monotonic()
             requested_at = self._battery_requested_at
             if requested_at is None:
@@ -380,7 +404,7 @@ class BTController:
         if exhausted:
             return
         success, reason = self.request_battery(user_initiated=False)
-        if not success:
+        if not success and self._battery_polling_enabled:
             raise ConnectionError(reason)
     
     def request_device_identity(self, timeout: float = 5.0, *, reconnect: bool = True) -> tuple[bool, str]:
@@ -696,6 +720,14 @@ class BTController:
                 self._battery_has_value = True
                 self._battery_next_check_at = time.monotonic() + self._BATTERY_REFRESH_INTERVAL
             for status in statuses:
+                values = []
+                for label, raw in (("left", status.left), ("right", status.right), ("case", status.case)):
+                    percent = raw - 128 if raw >= 128 else raw
+                    value = "unknown" if raw == 255 or not 0 <= percent <= 100 else f"{percent}%"
+                    if value != "unknown" and raw >= 128:
+                        value += " (charging)"
+                    values.append(f"{label}={value} [raw={raw}]")
+                print("[Bluetooth] Battery received: " + "; ".join(values))
                 self._notify_battery(status.left, status.right, status.case)
         
         # Check for mode acknowledgment

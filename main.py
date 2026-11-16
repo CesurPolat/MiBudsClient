@@ -191,6 +191,10 @@ async def main(page: ft.Page):
     
     # Set controller reference for tray callbacks
     controller_ref["instance"] = controller
+    window_mgr.on_activity_change = controller.set_battery_polling_active
+    controller.set_battery_polling_active(bool(
+        page.window.visible and not page.window.minimized and getattr(page.window, "focused", False)
+    ))
     application_shutdown.register("Bluetooth", controller.stop)
 
     # ─────────────────────────────────────────────────────────────────────────
