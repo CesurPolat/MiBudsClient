@@ -263,5 +263,7 @@
   "debug.title": "Console de depuração",
   "debug.clear": "Limpar",
   "debug.close": "Fechar",
-  "debug.empty": "Ainda não há registros."
+  "debug.empty": "Ainda não há registros.",
+  "connection.auth_failed": "Falha na autenticação. Reconecte os fones nas configurações Bluetooth do sistema. Se persistir, envie um relatório de erro.",
+  "connection.service_failed": "Nenhum serviço de controle utilizável encontrado. Reconecte os fones nas configurações Bluetooth do sistema. Se persistir, envie um relatório de erro."
 }

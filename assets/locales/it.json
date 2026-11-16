@@ -263,5 +263,7 @@
   "debug.title": "Console di debug",
   "debug.clear": "Cancella",
   "debug.close": "Chiudi",
-  "debug.empty": "Nessun log disponibile."
+  "debug.empty": "Nessun log disponibile.",
+  "connection.auth_failed": "Autenticazione non riuscita. Ricollega gli auricolari nelle impostazioni Bluetooth del sistema. Se persiste, invia una segnalazione di errore.",
+  "connection.service_failed": "Nessun servizio di controllo utilizzabile trovato. Ricollega gli auricolari nelle impostazioni Bluetooth del sistema. Se persiste, invia una segnalazione di errore."
 }

@@ -141,6 +141,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -377,6 +379,8 @@
     "en": {
       "imported": {},
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.assistant",
         "action.game",
@@ -784,6 +788,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -1157,6 +1163,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -1530,6 +1538,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -1775,6 +1785,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.assistant",
         "action.game",
@@ -2052,6 +2064,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.assistant",
         "action.game",
@@ -2457,6 +2471,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -2702,6 +2718,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.assistant",
         "action.game",
@@ -2979,6 +2997,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.assistant",
         "action.game",
@@ -3384,6 +3404,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -3757,6 +3779,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -4130,6 +4154,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -4503,6 +4529,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -4876,6 +4904,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -5249,6 +5279,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -5622,6 +5654,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -5991,6 +6025,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -6361,6 +6397,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -6735,6 +6773,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -6980,6 +7020,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.assistant",
         "action.game",
@@ -7385,6 +7427,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -7758,6 +7802,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -8131,6 +8177,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -8500,6 +8548,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -8870,6 +8920,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",
@@ -9240,6 +9292,8 @@
         }
       },
       "authored": [
+        "connection.auth_failed",
+        "connection.service_failed",
         "latency.auto_activated",
         "action.game",
         "action.noise",

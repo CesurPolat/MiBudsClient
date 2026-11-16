@@ -263,5 +263,7 @@
   "debug.title": "Debug Konsolu",
   "debug.clear": "Temizle",
   "debug.close": "Kapat",
-  "debug.empty": "Henüz kayıt yok."
+  "debug.empty": "Henüz kayıt yok.",
+  "connection.auth_failed": "Kulaklık kimlik doğrulaması başarısız. Sistem Bluetooth ayarlarından yeniden bağlanıp deneyin; devam ederse hata raporu gönderin.",
+  "connection.service_failed": "Kullanılabilir kontrol servisi bulunamadı. Sistem Bluetooth ayarlarından yeniden bağlanıp deneyin; devam ederse hata raporu gönderin."
 }

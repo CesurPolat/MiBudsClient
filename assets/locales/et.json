@@ -263,5 +263,7 @@
   "debug.title": "Silumiskonsool",
   "debug.clear": "Tühjenda",
   "debug.close": "Sulge",
-  "debug.empty": "Logisid veel pole."
+  "debug.empty": "Logisid veel pole.",
+  "connection.auth_failed": "Autentimine ebaõnnestus. Ühenda kõrvaklapid süsteemi Bluetoothi seadetes uuesti. Probleemi püsimisel saada veaaruanne.",
+  "connection.service_failed": "Kasutatavat juhtteenust ei leitud. Ühenda kõrvaklapid süsteemi Bluetoothi seadetes uuesti. Probleemi püsimisel saada veaaruanne."
 }

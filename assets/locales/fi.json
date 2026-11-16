@@ -263,5 +263,7 @@
   "debug.title": "Vianmäärityskonsoli",
   "debug.clear": "Tyhjennä",
   "debug.close": "Sulje",
-  "debug.empty": "Ei vielä lokitietoja."
+  "debug.empty": "Ei vielä lokitietoja.",
+  "connection.auth_failed": "Todennus epäonnistui. Yhdistä kuulokkeet uudelleen järjestelmän Bluetooth-asetuksissa. Jos ongelma jatkuu, lähetä virheraportti.",
+  "connection.service_failed": "Käytettävää ohjauspalvelua ei löytynyt. Yhdistä kuulokkeet uudelleen järjestelmän Bluetooth-asetuksissa. Jos ongelma jatkuu, lähetä virheraportti."
 }

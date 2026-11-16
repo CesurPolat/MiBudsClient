@@ -263,5 +263,7 @@
   "debug.title": "Konsol Debug",
   "debug.clear": "Bersihkan",
   "debug.close": "Tutup",
-  "debug.empty": "Belum ada log."
+  "debug.empty": "Belum ada log.",
+  "connection.auth_failed": "Autentikasi gagal. Hubungkan ulang earbud melalui pengaturan Bluetooth sistem. Jika berlanjut, kirim laporan kesalahan.",
+  "connection.service_failed": "Layanan kontrol yang dapat digunakan tidak ditemukan. Hubungkan ulang earbud melalui pengaturan Bluetooth sistem. Jika berlanjut, kirim laporan kesalahan."
 }

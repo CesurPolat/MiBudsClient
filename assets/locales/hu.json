@@ -263,5 +263,7 @@
   "debug.title": "Hibakeresési konzol",
   "debug.clear": "Törlés",
   "debug.close": "Bezárás",
-  "debug.empty": "Még nincsenek naplóbejegyzések."
+  "debug.empty": "Még nincsenek naplóbejegyzések.",
+  "connection.auth_failed": "A hitelesítés sikertelen. Csatlakoztasd újra a fülhallgatót a rendszer Bluetooth-beállításaiban. Ha a hiba fennáll, küldj hibajelentést.",
+  "connection.service_failed": "Nem található használható vezérlési szolgáltatás. Csatlakoztasd újra a fülhallgatót a rendszer Bluetooth-beállításaiban. Ha a hiba fennáll, küldj hibajelentést."
 }

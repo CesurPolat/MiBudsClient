@@ -263,5 +263,7 @@
   "debug.title": "Console de débogage",
   "debug.clear": "Effacer",
   "debug.close": "Fermer",
-  "debug.empty": "Aucun journal pour le moment."
+  "debug.empty": "Aucun journal pour le moment.",
+  "connection.auth_failed": "Échec de l’authentification. Reconnectez les écouteurs dans les paramètres Bluetooth du système. Si le problème persiste, envoyez un rapport d’erreur.",
+  "connection.service_failed": "Aucun service de contrôle utilisable trouvé. Reconnectez les écouteurs dans les paramètres Bluetooth du système. Si le problème persiste, envoyez un rapport d’erreur."
 }

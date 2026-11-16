@@ -13,8 +13,7 @@ class ConnectionPanel(ft.Column):
         self.connection_progress = ft.ProgressRing(width=28, height=28, stroke_width=3, color="white")
         self.connection_reason = ft.Text(
             size=12, color="white70", visible=False, selectable=True,
-            text_align=ft.TextAlign.CENTER, max_lines=2,
-            overflow=ft.TextOverflow.ELLIPSIS,
+            text_align=ft.TextAlign.CENTER,
         )
         self.retry_button = ft.TextButton(
             content=ft.Text(t("connection.retry")), icon=ft.Icons.REFRESH, visible=False,

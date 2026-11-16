@@ -3,6 +3,7 @@
 import subprocess
 import json
 import sys
+import os
 from dataclasses import dataclass
 from typing import Optional
 
@@ -47,6 +48,28 @@ if ($results) { $results | ConvertTo-Json -Compress }
 # ─────────────────────────────────────────────────────────────────────────────
 class BluetoothDiscovery:
     """Handles Bluetooth device discovery."""
+
+    @classmethod
+    def connection_state(cls, address):
+        """Check this exact peer; an unavailable OS query is not a disconnect."""
+        try:
+            if sys.platform == "win32":
+                from .windows_discovery import get_connected_devices
+                connected = any(cls._format_mac(peer) == cls._format_mac(address)
+                                for _, peer in get_connected_devices())
+                return {"state": "connected" if connected else "disconnected", "source": "windows_native"}
+            if sys.platform == "linux":
+                output = subprocess.check_output(
+                    ["bluetoothctl", "info", address], text=True, timeout=5,
+                    stderr=subprocess.PIPE, env={**os.environ, "LC_ALL": "C"})
+                for line in output.splitlines():
+                    if line.strip() in ("Connected: yes", "Connected: no"):
+                        return {"state": "connected" if line.strip().endswith("yes") else "disconnected",
+                                "source": "bluetoothctl"}
+            return {"state": "unknown", "source": sys.platform}
+        except (OSError, subprocess.SubprocessError) as exc:
+            return {"state": "unknown", "source": sys.platform,
+                    "error": f"{type(exc).__name__}: {exc}"}
 
     @staticmethod
     def _is_supported_device(name: str) -> bool:
@@ -144,7 +167,7 @@ class BluetoothDiscovery:
         """Get connected Bluetooth device using bluetoothctl on Linux."""
         try:
             # Get list of devices
-            devices_output = subprocess.check_output(["bluetoothctl", "devices"], text=True)
+            devices_output = subprocess.check_output(["bluetoothctl", "devices"], text=True, timeout=5)
             for line in devices_output.splitlines():
                 # Format: Device XX:XX:XX:XX:XX:XX Name
                 parts = line.split(" ", 2)
@@ -158,8 +181,8 @@ class BluetoothDiscovery:
                     info_output = subprocess.check_output(["bluetoothctl", "info", mac], text=True, timeout=5)
                     if "Connected: yes" in info_output:
                         return BluetoothDevice(name=name, address=cls._format_mac(mac))
-        except (subprocess.SubprocessError, FileNotFoundError):
-            pass
+        except (subprocess.SubprocessError, OSError) as exc:
+            print(f"[Bluetooth] Linux discovery failed: {type(exc).__name__}: {exc}")
         return None
     
     @staticmethod

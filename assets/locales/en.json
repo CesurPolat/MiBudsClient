@@ -263,5 +263,7 @@
   "debug.title": "Debug Console",
   "debug.clear": "Clear",
   "debug.close": "Close",
-  "debug.empty": "No logs yet."
+  "debug.empty": "No logs yet.",
+  "connection.auth_failed": "Earbud authentication failed. Reconnect in system Bluetooth settings and retry; send an error report if it persists.",
+  "connection.service_failed": "No usable control service found. Reconnect in system Bluetooth settings and retry; send an error report if it persists."
 }

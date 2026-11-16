@@ -263,5 +263,7 @@
   "debug.title": "Consola de depuração",
   "debug.clear": "Limpar",
   "debug.close": "Fechar",
-  "debug.empty": "Ainda não há registos."
+  "debug.empty": "Ainda não há registos.",
+  "connection.auth_failed": "Falha na autenticação. Volte a ligar os auriculares nas definições Bluetooth do sistema. Se persistir, envie um relatório de erro.",
+  "connection.service_failed": "Não foi encontrado um serviço de controlo utilizável. Volte a ligar os auriculares nas definições Bluetooth do sistema. Se persistir, envie um relatório de erro."
 }

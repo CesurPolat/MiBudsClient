@@ -263,5 +263,7 @@
   "debug.title": "调试控制台",
   "debug.clear": "清空",
   "debug.close": "关闭",
-  "debug.empty": "暂无日志。"
+  "debug.empty": "暂无日志。",
+  "connection.auth_failed": "耳机身份验证失败。请在系统蓝牙设置中重新连接。如果问题仍然存在，请发送错误报告。",
+  "connection.service_failed": "未找到可用的耳机控制服务。请在系统蓝牙设置中重新连接。如果问题仍然存在，请发送错误报告。"
 }

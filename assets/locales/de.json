@@ -263,5 +263,7 @@
   "debug.title": "Debug-Konsole",
   "debug.clear": "Leeren",
   "debug.close": "Schließen",
-  "debug.empty": "Noch keine Protokolle."
+  "debug.empty": "Noch keine Protokolle.",
+  "connection.auth_failed": "Authentifizierung fehlgeschlagen. Verbinde die Ohrhörer in den Bluetooth-Systemeinstellungen erneut. Sende bei weiteren Problemen einen Fehlerbericht.",
+  "connection.service_failed": "Kein nutzbarer Steuerungsdienst gefunden. Verbinde die Ohrhörer in den Bluetooth-Systemeinstellungen erneut. Sende bei weiteren Problemen einen Fehlerbericht."
 }

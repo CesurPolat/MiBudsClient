@@ -95,7 +95,9 @@ class ErrorReportDialog:
         dialog = ft.AlertDialog(
             modal=True, title=ft.Text(t('report.title')),
             content=ft.Container(width=420, content=ft.Column([
-                ft.Text(t('report.consent')), description, ft.Text(t('report.privacy'), size=12),
+                ft.Text(t('report.consent')),
+                ft.Text(report['message'], selectable=True, size=12),
+                description, ft.Text(t('report.privacy'), size=12),
                 ft.ExpansionTile(title=ft.Text(t('report.preview')), controls=[preview]),
                 feedback,
             ], tight=True, scroll=ft.ScrollMode.AUTO)),

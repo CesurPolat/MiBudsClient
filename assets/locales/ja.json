@@ -263,5 +263,7 @@
   "debug.title": "デバッグコンソール",
   "debug.clear": "クリア",
   "debug.close": "閉じる",
-  "debug.empty": "ログはまだありません。"
+  "debug.empty": "ログはまだありません。",
+  "connection.auth_failed": "イヤホンの認証に失敗しました。システムのBluetooth設定で再接続してください。解決しない場合はエラーレポートを送信してください。",
+  "connection.service_failed": "利用可能なイヤホン制御サービスが見つかりません。システムのBluetooth設定で再接続してください。解決しない場合はエラーレポートを送信してください。"
 }

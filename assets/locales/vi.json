@@ -263,5 +263,7 @@
   "debug.title": "Bảng điều khiển gỡ lỗi",
   "debug.clear": "Xóa",
   "debug.close": "Đóng",
-  "debug.empty": "Chưa có nhật ký."
+  "debug.empty": "Chưa có nhật ký.",
+  "connection.auth_failed": "Xác thực tai nghe thất bại. Kết nối lại trong cài đặt Bluetooth của hệ thống. Nếu vẫn lỗi, hãy gửi báo cáo lỗi.",
+  "connection.service_failed": "Không tìm thấy dịch vụ điều khiển khả dụng. Kết nối lại tai nghe trong cài đặt Bluetooth của hệ thống. Nếu vẫn lỗi, hãy gửi báo cáo lỗi."
 }

@@ -5,12 +5,15 @@ from utils.i18n import message as m, error_message
 import socket
 import threading
 import time
+import traceback
+from utils.error_reports import redact
 from dataclasses import dataclass
 from typing import Callable, Optional
 
 from .capabilities import resolve_capabilities, DeviceCapabilities
 from .connection import BluetoothConnection
-from .auth_session import AuthPolicy
+from .auth_session import AuthPolicy, AuthError
+from .sdp import ConnectionCancelled
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
@@ -65,6 +68,7 @@ class BTController:
         identity_callback: Optional[Callable[[DeviceIdentity], None]] = None,
         connection_state_callback: Optional[Callable[[str, str], None]] = None,
         auth_policy: AuthPolicy | str | None = None,
+        error_callback: Optional[Callable] = None,
     ):
         self._connection = BluetoothConnection()
         self._auth_policy = AuthPolicy(auth_policy) if auth_policy is not None else None
@@ -78,6 +82,8 @@ class BTController:
         self.noise_callback = None
         self._bd_addr = bd_addr
         self._device_name = ""
+        self._error_callback = error_callback
+        self._device_check = {"state": "unknown"}
         self._running = True
         self._connect_lock = threading.RLock()
         self._state_lock = threading.Lock()
@@ -206,6 +212,9 @@ class BTController:
                 return True
 
             self._notify_connection_state("connecting")
+            self._connection.diagnostics = []
+            self._connection.stage = "discovery"
+            self._device_check = {"state": "unknown"}
             try:
                 if not self._bd_addr:
                     device = BluetoothDiscovery.get_connected_device()
@@ -213,9 +222,12 @@ class BTController:
                         reason = m("connection.no_catalog")
                         self._notify_connection_state("failed", reason)
                         self._update_status(m("connection.no_device"), "red")
+                        self._report_connection_error(ConnectionError(str(reason)), "bluetooth_discovery")
                         return False
                     self._bd_addr = device.address
                     self._device_name = device.name
+                self._device_check = BluetoothDiscovery.connection_state(self._bd_addr)
+                print(f"[Bluetooth] Device check: {redact(self._device_check)}")
                 self._reset_identity_state(m("identity.connection_changed"))
                 policy = self._auth_policy or AuthPolicy.AUTO
                 connected_caps = resolve_capabilities(self._device_name)
@@ -239,18 +251,38 @@ class BTController:
                 self.on_connect_setup()
                 return True
             except Exception as e:
-                if not self._running:
+                if not self._running or isinstance(e, ConnectionCancelled):
                     return False
                 self._connection.connected = False
                 self._update_status(m("connection.failure_details", details=str(e)), "red")
-                if isinstance(e, (TimeoutError, socket.timeout)):
+                if isinstance(e, AuthError):
+                    reason = m("connection.auth_failed")
+                elif self._device_check.get("state") == "disconnected":
+                    reason = m("connection.disconnected_reason")
+                elif isinstance(e, (TimeoutError, socket.timeout)):
                     reason = m("connection.timeout")
                 elif isinstance(e, PermissionError):
                     reason = m("connection.permission")
                 else:
-                    reason = m("connection.establish_failed")
+                    reason = m("connection.service_failed") if self._connection.stage == "resolution" else m("connection.establish_failed")
                 self._notify_connection_state("failed", m("connection.technical", reason=reason, details=str(e) or type(e).__name__))
+                self._report_connection_error(e, "bluetooth_connect")
                 return False
+
+    def _report_connection_error(self, error, action):
+        """Forward handled transport failures to the existing consent dialog."""
+        error.bluetooth_diagnostics = {
+            "device": self._device_name,
+            "device_check": self._device_check,
+            "stage": "receive" if action == "bluetooth_receive" else self._connection.stage,
+            "transport": list(self._connection.diagnostics),
+        }
+        print(redact("".join(traceback.format_exception(type(error), error, error.__traceback__))))
+        if self._error_callback:
+            try:
+                self._error_callback(error, action)
+            except Exception as exc:
+                print(f"[Bluetooth] Could not prepare error report: {redact(exc)}")
     
     # ─────────────────────────────────────────────────────────────────────────
     # Commands
@@ -618,7 +650,9 @@ class BTController:
             except socket.timeout:
                 # The next loop checks the health deadline even on idle sockets.
                 continue
-            except Exception:
+            except Exception as exc:
+                if self._running and self._connection.connected:
+                    self._report_connection_error(exc, "bluetooth_receive")
                 self._handle_disconnect()
     
     def _process_data(self, last_packet_size: int) -> int:

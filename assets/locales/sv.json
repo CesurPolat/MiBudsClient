@@ -263,5 +263,7 @@
   "debug.title": "Felsökningskonsol",
   "debug.clear": "Rensa",
   "debug.close": "Stäng",
-  "debug.empty": "Inga loggar ännu."
+  "debug.empty": "Inga loggar ännu.",
+  "connection.auth_failed": "Autentiseringen misslyckades. Anslut hörlurarna igen i systemets Bluetooth-inställningar. Skicka en felrapport om problemet kvarstår.",
+  "connection.service_failed": "Ingen användbar styrtjänst hittades. Anslut hörlurarna igen i systemets Bluetooth-inställningar. Skicka en felrapport om problemet kvarstår."
 }

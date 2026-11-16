@@ -90,12 +90,13 @@ async def main(page: ft.Page):
         "instance": None,
         "game_monitor": None,
     }
+    report_queue = ReportQueue(notify=lambda state: publish(
+        {'type': 'error_report_status', 'state': state}))
     reports = ErrorReportManager(
         publish=publish, app_version=APP_VERSION,
         get_device=lambda: getattr(getattr(controller_ref['instance'], 'capabilities', None), 'name', ''),
+        auto_submit=report_queue.enqueue,
     )
-    report_queue = ReportQueue(notify=lambda state: publish(
-        {'type': 'error_report_status', 'state': state}))
     application_shutdown.register("F12 listener", debug_console.stop_f12_hotkey_listener)
     application_shutdown.register("error reports", report_queue.stop)
     report_dialog = ErrorReportDialog(page, report_queue, ui_lock=ui_lock)
@@ -177,6 +178,7 @@ async def main(page: ft.Page):
         publish({"type": "firmware_info", "identity": identity})
 
     controller = BTController(
+        error_callback=reports.capture,
         identity_callback=on_identity,
         connection_state_callback=lambda state, reason: publish(
             {"type": "connection_state", "state": state, "reason": reason}

@@ -1,4 +1,4 @@
-"""Consent-only error reports and a bounded, durable delivery queue."""
+"""Error reports with consent dialogs, automatic Bluetooth reports and durable delivery."""
 import hashlib
 import json
 import math
@@ -48,6 +48,18 @@ def encode_report(report):
 def make_report(error, *, app_version='', device='', action='', tb=None):
     frames = traceback.extract_tb(tb if tb is not None else error.__traceback__)
     stack = '\n'.join(f'{Path(frame.filename).name}:{frame.lineno} in {frame.name}' for frame in frames)
+    # Preserve handled transport causes and safe metadata within the existing
+    # API schema. Never collect socket data, auth challenges, or frame locals.
+    causes, current, visited = [], error, set()
+    while current is not None and id(current) not in visited and len(causes) < 8:
+        visited.add(id(current))
+        causes.append(f'{type(current).__name__}: {str(current)[:256]} '
+                      f'(errno={getattr(current, "errno", None)}, winerror={getattr(current, "winerror", None)})')
+        current = current.__cause__ or (None if current.__suppress_context__ else current.__context__)
+    diagnostics = getattr(error, 'bluetooth_diagnostics', None)
+    if diagnostics is not None:
+        stack += '\n\nBluetooth diagnostics:\n' + json.dumps(diagnostics, ensure_ascii=False, default=str)
+        stack += '\nCauses:\n' + '\n'.join(causes)
     report = {
         'message': redact(str(error) or type(error).__name__)[:4096],
         'name': type(error).__name__[:128], 'stack': redact(stack)[-16000:],
@@ -194,7 +206,7 @@ class ReportQueue:
         temporary.replace(path)
 
     def enqueue(self, report):
-        """Call only after explicit consent. Persist before attempting HTTP."""
+        """Persist authorized manual or automatic reports before attempting HTTP."""
         encode_report(report)
         with self.lock:
             if len(self._records()) >= 20:
@@ -256,12 +268,16 @@ class ReportQueue:
 
 
 class ErrorReportManager:
-    def __init__(self, *, publish, app_version, get_device):
+    AUTOMATIC_ACTIONS = frozenset({'bluetooth_connect', 'bluetooth_discovery', 'bluetooth_receive'})
+
+    def __init__(self, *, publish, app_version, get_device, auto_submit=None):
         self.publish, self.app_version, self.get_device = publish, app_version, get_device
+        self.auto_submit = auto_submit
         self.seen = set()
         self.lock = threading.Lock()
 
     def capture(self, error, action='', tb=None):
+        signature = None
         try:
             report = make_report(error, app_version=self.app_version,
                                  device=self.get_device(), action=action, tb=tb)
@@ -270,6 +286,15 @@ class ErrorReportManager:
                 if signature in self.seen:
                     return
                 self.seen.add(signature)
+            if action in self.AUTOMATIC_ACTIONS and self.auto_submit is not None:
+                if not self.auto_submit(report):
+                    with self.lock:
+                        self.seen.discard(signature)
+                    print('[Error reports] Could not queue automatic Bluetooth report.')
+                    self.publish({'type': 'error_report_status', 'state': 'failed'})
+                return
             self.publish({'type': 'error_report', 'report': report})
         except Exception:
-            pass
+            if signature is not None:
+                with self.lock:
+                    self.seen.discard(signature)

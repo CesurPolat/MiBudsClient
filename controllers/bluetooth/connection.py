@@ -7,6 +7,7 @@ import logging
 import time
 from dataclasses import dataclass
 from typing import Optional
+from utils.error_reports import redact
 
 from .sdp import PlatformBackend, SERVICE_UUIDS, ConnectionCancelled
 from .auth_session import AuthPolicy, AuthError, CommandAuthSession
@@ -43,6 +44,16 @@ class BluetoothConnection:
         self.session_authenticated = False
         self.auth_session = None
         self._prefetched = b""
+        self.diagnostics = []
+        self.stage = "idle"
+
+    def trace(self, stage, **details):
+        """Keep bounded transport metadata, never authentication payloads."""
+        self.stage = stage
+        entry = redact(f"stage={stage} " + " ".join(f"{key}={value}" for key, value in details.items()))[:512]
+        self.diagnostics.append(entry)
+        del self.diagnostics[:-20]
+        print(f"[Bluetooth] {entry}")
     
     @property
     def connected(self) -> bool:
@@ -71,6 +82,8 @@ class BluetoothConnection:
         if session_policy is not None:
             session_policy = AuthPolicy(session_policy)
         with self._connect_lock:
+            self.diagnostics = []
+            self.trace("resolution", device=device_name)
             self.disconnect()
             cancel = threading.Event()
             with self._state_lock:
@@ -93,6 +106,7 @@ class BluetoothConnection:
                 return min(limit, remaining)
 
             def open_channel(uuid, channel, source):
+                self.trace("connection", service_uuid=uuid, channel=channel, source=source)
                 connect_timeout = budget(SOCKET_TIMEOUT)
                 log.info("RFCOMM stage=connection uuid=%s channel=%s source=%s", uuid, channel, source)
                 sock = self._backend.create_rfcomm_socket()
@@ -132,6 +146,7 @@ class BluetoothConnection:
                     raise
 
             for uuid in SERVICE_UUIDS:
+                self.trace("resolution", service_uuid=uuid, source=source)
                 lookup_timeout = budget(4)
                 try:
                     channel = self._backend.resolve_rfcomm_channel(address, uuid, lookup_timeout, cancel)
@@ -139,9 +154,11 @@ class BluetoothConnection:
                     raise
                 except OSError as exc:
                     last_error = exc
+                    self.trace("resolution", error=f"{type(exc).__name__}: {exc}")
                     log.warning("RFCOMM stage=resolution uuid=%s source=%s error=%s", uuid, source, exc)
                     continue
                 if channel is None:
+                    self.trace("resolution", service_uuid=uuid, channel=None)
                     log.info("RFCOMM stage=resolution uuid=%s channel=None", uuid)
                     continue
                 if type(channel) is not int or not 1 <= channel <= 30:
@@ -153,6 +170,7 @@ class BluetoothConnection:
                     raise
                 except OSError as exc:
                     last_error = exc
+                    self.trace("connection", error=f"{type(exc).__name__}: {exc}")
                     log.warning("RFCOMM stage=connection uuid=%s channel=%s source=%s error=%s", uuid, channel, source, exc)
                     continue
                 return self._activate_session(result, session_policy, cancel)
@@ -180,6 +198,8 @@ class BluetoothConnection:
             if policy == AuthPolicy.UNKNOWN:
                 raise AuthError(f"Unsupported authentication method for selected service: {policy.value}")
             if policy in (AuthPolicy.COMMAND, AuthPolicy.RAW):
+                self.trace("authentication", policy=policy.value, service_uuid=result.service_uuid,
+                           channel=result.channel, source=result.resolution_source)
                 if policy == AuthPolicy.COMMAND and result.service_uuid != SERVICE_UUIDS[0]:
                     raise AuthError("command_auth requires a resolved MIUI SPP service")
                 if policy == AuthPolicy.RAW and result.service_uuid not in SERVICE_UUIDS[1:]:
@@ -217,6 +237,7 @@ class BluetoothConnection:
                 self._connected = True
             if policy is not None:
                 print(f"[Bluetooth] Session policy={policy.value} ready={self.session_ready} authenticated={self.session_authenticated}")
+            self.trace("ready", authenticated=self.session_authenticated)
             return result
         except BaseException:
             print("[Bluetooth] Session failed; closing transport (no auth fallback)")

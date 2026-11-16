@@ -263,5 +263,7 @@
   "debug.title": "Debugconsole",
   "debug.clear": "Wissen",
   "debug.close": "Sluiten",
-  "debug.empty": "Nog geen logboekgegevens."
+  "debug.empty": "Nog geen logboekgegevens.",
+  "connection.auth_failed": "Authenticatie mislukt. Verbind de oordopjes opnieuw via de Bluetooth-instellingen van het systeem. Stuur een foutrapport als het probleem aanhoudt.",
+  "connection.service_failed": "Geen bruikbare besturingsservice gevonden. Verbind de oordopjes opnieuw via de Bluetooth-instellingen van het systeem. Stuur een foutrapport als het probleem aanhoudt."
 }

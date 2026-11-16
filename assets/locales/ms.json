@@ -263,5 +263,7 @@
   "debug.title": "Konsol Nyahpepijat",
   "debug.clear": "Kosongkan",
   "debug.close": "Tutup",
-  "debug.empty": "Belum ada log."
+  "debug.empty": "Belum ada log.",
+  "connection.auth_failed": "Pengesahan gagal. Sambungkan semula fon telinga dalam tetapan Bluetooth sistem. Jika berterusan, hantar laporan ralat.",
+  "connection.service_failed": "Tiada perkhidmatan kawalan yang boleh digunakan ditemui. Sambungkan semula fon telinga dalam tetapan Bluetooth sistem. Jika berterusan, hantar laporan ralat."
 }

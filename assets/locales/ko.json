@@ -263,5 +263,7 @@
   "debug.title": "디버그 콘솔",
   "debug.clear": "지우기",
   "debug.close": "닫기",
-  "debug.empty": "아직 로그가 없습니다."
+  "debug.empty": "아직 로그가 없습니다.",
+  "connection.auth_failed": "이어버드 인증에 실패했습니다. 시스템 Bluetooth 설정에서 다시 연결하세요. 문제가 지속되면 오류 보고서를 보내 주세요.",
+  "connection.service_failed": "사용 가능한 이어버드 제어 서비스를 찾지 못했습니다. 시스템 Bluetooth 설정에서 다시 연결하세요. 문제가 지속되면 오류 보고서를 보내 주세요."
 }

@@ -263,5 +263,7 @@
   "debug.title": "Consola de depuración",
   "debug.clear": "Limpiar",
   "debug.close": "Cerrar",
-  "debug.empty": "Aún no hay registros."
+  "debug.empty": "Aún no hay registros.",
+  "connection.auth_failed": "Falló la autenticación. Reconecta los auriculares desde los ajustes Bluetooth del sistema. Si persiste, envía un informe de error.",
+  "connection.service_failed": "No se encontró un servicio de control utilizable. Reconecta los auriculares desde los ajustes Bluetooth del sistema. Si persiste, envía un informe de error."
 }

@@ -263,5 +263,7 @@
   "debug.title": "Konsola debugowania",
   "debug.clear": "Wyczyść",
   "debug.close": "Zamknij",
-  "debug.empty": "Brak wpisów w dzienniku."
+  "debug.empty": "Brak wpisów w dzienniku.",
+  "connection.auth_failed": "Uwierzytelnianie nie powiodło się. Połącz słuchawki ponownie w systemowych ustawieniach Bluetooth. Jeśli problem się powtarza, wyślij raport błędu.",
+  "connection.service_failed": "Nie znaleziono dostępnej usługi sterowania. Połącz słuchawki ponownie w systemowych ustawieniach Bluetooth. Jeśli problem się powtarza, wyślij raport błędu."
 }
