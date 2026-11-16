@@ -129,13 +129,13 @@ class BluetoothConnection:
                     log.info("RFCOMM connected uuid=%s channel=%s source=%s", uuid, channel, source)
                     # The F12 debug console captures stdout; INFO logging may be disabled.
                     method = (
-                        "eski yontem (6 Play kanal 6 yedegi)"
+                        "legacy method (6 Play channel 6 fallback)"
                         if source == "profile_fallback"
-                        else "yeni yontem (SDP servis kesfi)"
+                        else "SDP service discovery"
                     )
                     print(
-                        f"[Bluetooth] Baglanti basarili: {method}; "
-                        f"kanal={channel}; service_uuid={uuid}; resolution_source={source}"
+                        f"[Bluetooth] RFCOMM transport connected: {method}; "
+                        f"channel={channel}; service_uuid={uuid}; resolution_source={source}"
                     )
                     return result
                 except BaseException:
