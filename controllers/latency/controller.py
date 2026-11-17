@@ -409,17 +409,14 @@ class LatencyController:
 
     @_serialized
     def toggle_latency_from_tray(self, session) -> None:
-        """Invert the actual device mode, overriding auto until selected again."""
+        """Cycle the selected policy through On, Off, and Auto."""
         controller = self._get_controller()
         if (controller is None or not controller.connected or controller.eq_session != session
                 or not controller.capabilities.supports("latency")):
             return
-        self._sync_device_state()
-        enabled = self.state["effective_low_latency"]
-        # Unknown telemetry is not an off state; use the explicit preference then.
-        if enabled is None:
-            enabled = self.state["selected_mode"] == "on"
-        self.set_selected_latency_mode("off" if enabled else "on", source="tray")
+        next_mode = {"on": "off", "off": "auto", "auto": "on"}
+        self.set_selected_latency_mode(
+            next_mode.get(self.state["selected_mode"], "on"), source="tray")
 
     def on_latency_mode_change(self, e):
         selected = str(getattr(e.control, "value", "off"))
