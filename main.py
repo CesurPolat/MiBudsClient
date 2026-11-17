@@ -93,8 +93,10 @@ async def main(page: ft.Page):
         "instance": None,
         "game_monitor": None,
     }
-    report_queue = ReportQueue(notify=lambda state: publish(
-        {'type': 'error_report_status', 'state': state}))
+    report_queue = ReportQueue(
+        notify=lambda state: publish({'type': 'error_report_status', 'state': state}),
+        on_report_status=lambda status: publish({'type': 'connection_report_status', **status}),
+    )
     reports = ErrorReportManager(
         publish=publish, app_version=APP_VERSION,
         get_device=lambda: (getattr(controller_ref['instance'], 'diagnostic_identity', None) or {}).get('device_name', ''),

@@ -4,6 +4,7 @@ from utils.i18n import t
 
 import time
 import threading
+from datetime import datetime
 from typing import Callable
 
 from .constants import BATTERY_UNKNOWN
@@ -50,6 +51,8 @@ class AppMessageHandler:
         self._connection_notification_token = 0
         self._connection_notification_pending = False
         self._last_debug_toggle_at = 0.0
+        self._latest_connection_report = float("-inf")
+        self._connection_report_state = None
         self._routes = {
             "capabilities_changed": self._handle_capabilities_changed,
             "language": self._handle_language,
@@ -73,7 +76,27 @@ class AppMessageHandler:
             "connection_notification_timeout": self._handle_connection_notification_timeout,
             "fullscreen_state": self._handle_fullscreen_state,
             "tray_device_action": self._handle_tray_device_action,
+            "connection_report_status": self._handle_connection_report_status,
         }
+
+    def _handle_connection_report_status(self, message):
+        if message.get("action") not in {"bluetooth_connect", "bluetooth_discovery", "bluetooth_receive"}:
+            return
+        state = message.get("state")
+        if state not in {"queued", "sent", "failed"}:
+            return
+        try:
+            occurred_at = datetime.fromisoformat(message.get("occurred_at", "").replace("Z", "+00:00")).timestamp()
+        except (ValueError, TypeError, AttributeError):
+            return
+        if (occurred_at < self._latest_connection_report
+                or (occurred_at == self._latest_connection_report and state == "queued"
+                    and self._connection_report_state in {"sent", "failed"})):
+            return
+        self._latest_connection_report = occurred_at
+        self._connection_report_state = state
+        self._settings_card.connection_panel.update_report_status(state)
+        self._update_page()
 
     def sync_tray(self):
         """Publish value-only snapshots from the serialized Flet update path."""

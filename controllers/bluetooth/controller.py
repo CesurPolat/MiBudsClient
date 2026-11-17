@@ -3,6 +3,7 @@
 from utils.i18n import message as m, error_message
 
 import socket
+import errno
 import threading
 import time
 import traceback
@@ -118,6 +119,8 @@ class BTController:
         self._connection_state_callback = connection_state_callback
 
     def _notify_connection_state(self, state: str, reason: str = "") -> None:
+        if state != "retrying":  # Do not repeat the countdown every second.
+            print(redact(f"[Bluetooth] state={state} reason={reason}"))
         if state == "failed" and reason:
             self._last_connection_failure = reason
         elif state == "connected":
@@ -281,19 +284,32 @@ class BTController:
                     return False
                 self._connection.connected = False
                 self._update_status(m("connection.failure_details", details=str(e)), "red")
-                if isinstance(e, AuthError):
-                    reason = m("connection.auth_failed")
-                elif self._device_check.get("state") == "disconnected":
-                    reason = m("connection.disconnected_reason")
-                elif isinstance(e, (TimeoutError, socket.timeout)):
-                    reason = m("connection.timeout")
-                elif isinstance(e, PermissionError):
-                    reason = m("connection.permission")
-                else:
-                    reason = m("connection.service_failed") if self._connection.stage == "resolution" else m("connection.establish_failed")
+                reason = self._connection_failure_reason(e)
                 self._notify_connection_state("failed", m("connection.technical", reason=reason, details=str(e) or type(e).__name__))
                 self._report_connection_error(e, "bluetooth_connect")
                 return False
+
+    def _connection_failure_reason(self, error):
+        """Classify wrapped SDP/socket errors using their original causes."""
+        causes, visited = [], set()
+        while error is not None and id(error) not in visited and len(causes) < 8:
+            visited.add(id(error))
+            causes.append(error)
+            error = error.__cause__ or (None if error.__suppress_context__ else error.__context__)
+        if any(isinstance(cause, AuthError) for cause in causes):
+            return m("connection.auth_failed")
+        if self._device_check.get("state") == "disconnected":
+            return m("connection.disconnected_reason")
+        if any(isinstance(cause, PermissionError)
+               or getattr(cause, "errno", None) in (errno.EACCES, errno.EPERM, 10013)
+               or getattr(cause, "winerror", None) in (5, 10013) for cause in causes):
+            return m("connection.permission")
+        if any(isinstance(cause, (TimeoutError, socket.timeout))
+               or getattr(cause, "errno", None) in (errno.ETIMEDOUT, 10060)
+               or getattr(cause, "winerror", None) == 10060 for cause in causes):
+            return m("connection.timeout")
+        return m("connection.service_failed" if self._connection.stage == "resolution"
+                 else "connection.establish_failed")
 
     def _report_connection_error(self, error, action):
         """Forward handled transport failures to automatic reporting."""

@@ -15,6 +15,8 @@ class ConnectionPanel(ft.Column):
             size=12, color="white70", visible=False, selectable=True,
             text_align=ft.TextAlign.CENTER,
         )
+        self.report_status = ft.Text(size=11, color="white70", visible=False, selectable=True,
+                                     text_align=ft.TextAlign.CENTER)
         self.retry_button = ft.TextButton(
             content=ft.Text(t("connection.retry")), icon=ft.Icons.REFRESH, visible=False,
             style=ft.ButtonStyle(color="white"),
@@ -22,7 +24,7 @@ class ConnectionPanel(ft.Column):
         self._progress_slot = ft.Container(
             content=self.connection_progress, height=28, alignment=ft.Alignment.CENTER)
         self._reason_slot = ft.Container(
-            content=ft.Column([self.connection_reason], scroll=ft.ScrollMode.AUTO,
+            content=ft.Column([self.connection_reason, self.report_status], scroll=ft.ScrollMode.AUTO,
                               alignment=ft.MainAxisAlignment.CENTER,
                               horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
             height=64, alignment=ft.Alignment.CENTER,
@@ -68,7 +70,14 @@ class ConnectionPanel(ft.Column):
         self.connection_reason.value = render(short_reason)
         self.connection_reason.tooltip = render(display_reason) if display_reason else None
         self.connection_reason.visible = bool(display_reason)
-        self._reason_slot.visible = bool(display_reason)
+        self._reason_slot.visible = bool(display_reason) or self.report_status.visible
         self.retry_button.visible = failed
         self._retry_slot.visible = failed
         self.retry_button.disabled = connecting
+
+    def update_report_status(self, state):
+        if state not in {"queued", "sent", "failed"}:
+            return
+        self.report_status.value = t("report." + state)
+        self.report_status.visible = True
+        self._reason_slot.visible = True

@@ -308,8 +308,7 @@ class BluetoothConnection:
             data, self._prefetched = self._prefetched, b""
             return data
         if self._sock:
-            data = self._sock.recv(RECV_BUFFER_SIZE)
-            if not data:
-                self.disconnect()
-            return data
+            # The controller reports EOF with the live session diagnostics before
+            # its disconnect handler closes the transport and clears metadata.
+            return self._sock.recv(RECV_BUFFER_SIZE)
         return b""

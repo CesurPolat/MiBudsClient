@@ -179,12 +179,27 @@ class ErrorReportClient:
 class ReportQueue:
     delays = (60, 300, 1800, 7200)
 
-    def __init__(self, *, directory=None, client=None, clock=time.time, notify=lambda *args: None):
+    def __init__(self, *, directory=None, client=None, clock=time.time, notify=lambda *args: None,
+                 on_report_status=None):
         self.directory = Path(directory) if directory is not None else queue_directory()
         self.client, self.clock, self.notify = client or ErrorReportClient(), clock, notify
         self.lock = threading.RLock()
         self.wake, self.stopped = threading.Event(), threading.Event()
         self.worker = None
+        self.on_report_status = on_report_status
+
+    def _report_status(self, report, state):
+        print(redact(f"[Error reports] state={state} "
+                     f"action={report.get('details', {}).get('action', '')} "
+                     f"occurred_at={report.get('occurred_at', '')}"))
+        if self.on_report_status is not None:
+            try:
+                self.on_report_status({
+                    'state': state, 'action': report.get('details', {}).get('action', ''),
+                    'occurred_at': report.get('occurred_at', ''),
+                })
+            except Exception:
+                pass  # UI feedback must not interrupt durable report delivery.
 
     def _records(self):
         records = []
@@ -194,6 +209,7 @@ class ReportQueue:
                 if (self.clock() - record['created'] >= 7 * 86400
                         or (record['attempts'] >= 5 and record['next'] <= self.clock())):
                     path.unlink()
+                    self._report_status(record['report'], 'failed')
                 else:
                     encode_report(record['report'])
                     records.append((path, record))
@@ -212,13 +228,16 @@ class ReportQueue:
         encode_report(report)
         with self.lock:
             if len(self._records()) >= 20:
+                self._report_status(report, 'failed')
                 return False
             try:
                 self._save(self.directory / f'{uuid4()}.json', {
                     'created': self.clock(), 'attempts': 0, 'next': self.clock(), 'report': report,
                 })
             except OSError:
+                self._report_status(report, 'failed')
                 return False
+            self._report_status(report, 'queued')
         self.wake.set()
         return True
 
@@ -237,13 +256,16 @@ class ReportQueue:
             except DeliveryError as exc:
                 if not exc.retryable or record['attempts'] >= 5:
                     path.unlink()
+                    self._report_status(record['report'], 'failed')
                     self.notify('failed')
                 else:
                     record['next'] = max(record['next'], self.clock() + exc.delay)
                     self._save(path, record)
+                    self._report_status(record['report'], 'queued')
                     self.notify('queued')
             else:
                 path.unlink()
+                self._report_status(record['report'], 'sent')
                 self.notify('sent')
 
     def start(self):
@@ -288,6 +310,7 @@ class ErrorReportManager:
             signature = hashlib.sha256(encode_report({key: report[key] for key in ('name', 'message', 'stack')})).hexdigest()
             with self.lock:
                 if signature in self.seen:
+                    print(redact(f'[Error reports] Duplicate report skipped: action={action}'))
                     return
                 self.seen.add(signature)
             if action in self.AUTOMATIC_ACTIONS and self.auto_submit is not None:
@@ -298,7 +321,8 @@ class ErrorReportManager:
                     self.publish({'type': 'error_report_status', 'state': 'failed'})
                 return
             self.publish({'type': 'error_report', 'report': report})
-        except Exception:
+        except Exception as exc:
+            print(f'[Error reports] Could not prepare report: {redact(exc)}')
             if signature is not None:
                 with self.lock:
                     self.seen.discard(signature)
