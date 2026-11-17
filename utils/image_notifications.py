@@ -126,7 +126,9 @@ class ImageNotifications:
                 return text.replace("\0", "").encode("utf-16-le")[:units * 2].decode("utf-16-le", errors="ignore")
 
             icon._message(
-                win32.NIM_MODIFY, win32.NIF_INFO,
+                # NIF_REALTIME: discard notifications that cannot be shown now,
+                # rather than queueing old connection/case events until wake.
+                win32.NIM_MODIFY, win32.NIF_INFO | 0x40,
                 szInfo=limit(message, 255), szInfoTitle=limit(title, 63),
                 dwInfoFlags=(0x24 if handle else 0) | (0x10 if silent else 0),
                 # NIIF_USER | NIIF_LARGE_ICON, optionally NIIF_NOSOUND.
