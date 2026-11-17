@@ -198,9 +198,9 @@ class SystemTray:
                 children.append(item(str(t(key)), None, enabled=False))
             elif data.get("error"):
                 children.append(item(data["error"], None, enabled=False))
-            key = "eq.refresh" if feature == "eq" else "noise.refresh"
-            children.append(item(str(t(key)), action(feature, "read"),
-                                 enabled=connected and data.get("can_read", False)))
+            if feature != "eq":
+                children.append(item(str(t("noise.refresh")), action(feature, "read"),
+                                     enabled=connected and data.get("can_read", False)))
 
         eq = state.get("eq", {})
         if eq.get("visible"):
