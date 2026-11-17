@@ -1,0 +1,71 @@
+name: General issue
+description: Ask a question or share an issue that does not fit the dedicated templates.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing issues before opening a new one. You can write in your preferred language.
+        For a reproducible problem, choose Bug report; for a proposed improvement, choose Feature request.
+        You can also use this general form if you are unsure. Fill in only the details relevant to your issue.
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue type
+      options:
+        - Bug report
+        - Feature request
+        - Setup or usage question
+        - Device compatibility question
+        - Documentation or translation feedback
+        - Other / Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What are you trying to do, and where do you need help? Include the affected screen, control, documentation page, or language. For a feature request, explain the need.
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: MiBudsClient version
+      description: Include the release version, or the commit if running from source. Mention whether you use a downloaded release or run from source.
+      placeholder: e.g. v1.2.3 or a commit hash
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      description: Include your Windows version or Linux distribution and version. On Linux, include the desktop environment and X11/Wayland if relevant.
+      placeholder: e.g. Windows 11 24H2 or Ubuntu 24.04, GNOME, Wayland
+  - type: input
+    id: earbuds
+    attributes:
+      label: Earbuds model and firmware
+      description: Include the exact model and firmware version, if known.
+      placeholder: e.g. Redmi Buds 6 Play, firmware version unknown
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: If applicable, explain the actions leading to the issue, how often it happens, and anything you have already tried.
+      placeholder: |
+        1. Connect the earbuds in the operating system's Bluetooth settings.
+        2. Open MiBudsClient.
+        3. ...
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected and actual behavior
+      description: For bugs, explain what you expected and what happened instead. For feature requests, describe the desired behavior.
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Logs, screenshots, and additional context
+      description: |
+        Attach screenshots or paste relevant logs here. Press F12 in MiBudsClient to open the runtime logs.
+        Remove personal information, Bluetooth addresses, and other sensitive details before posting.
+        For connection questions, say whether the OS shows the earbuds as connected, whether audio works, and what status MiBudsClient displays.
+        For missing controls, name the exact mode, preset, or gesture and include an official-app screenshot if available. Custom EQ is currently hidden by design.
+        If relevant, include your Bluetooth adapter, any workaround, or the last app version that worked. No logs or hardware tests are required to ask a question.
