@@ -6,7 +6,7 @@ labels: ''
 assignees: ''
 ---
 
-<!-- Search existing issues first. You can write in your preferred language. -->
+<!-- Search existing issues first. Please write your issue in English. -->
 
 ### What would you like to improve?
 

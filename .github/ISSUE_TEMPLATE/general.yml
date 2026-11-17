@@ -4,7 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Search existing issues first. You can write in your preferred language.
+        Search existing issues first. Please write your issue in English.
         For bugs or feature requests, you can use the dedicated templates.
   - type: textarea
     id: description

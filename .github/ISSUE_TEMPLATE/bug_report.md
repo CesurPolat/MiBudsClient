@@ -6,21 +6,27 @@ labels: ''
 assignees: ''
 ---
 
-<!-- Search existing issues first. You can write in your preferred language. -->
+<!-- Search existing issues first. Please write your issue in English. -->
 
 ### What went wrong?
 
-<!-- Describe the problem and any error message. -->
+Describe the problem and any error message.
+
+Example: The earbuds are connected and playing audio, but MiBudsClient does not show their battery levels.
 
 ### Steps to reproduce
 
-1.
-2.
-3.
+Replace this example with the steps that trigger your issue:
+
+1. Connect the earbuds in the operating system's Bluetooth settings.
+2. Open MiBudsClient and wait for it to connect.
+3. Click **Check Battery**; the battery levels remain unavailable.
 
 ### Expected behavior
 
-<!-- What should have happened instead? -->
+Describe what should have happened instead.
+
+Example: Clicking **Check Battery** should display the battery levels reported by the earbuds.
 
 ### App and device
 
@@ -34,6 +40,8 @@ in the OS, and what connection status MiBudsClient shows. -->
 
 ### Additional context (optional)
 
-<!-- Add screenshots, how often it happens, or any workaround.
-For logs, press F12 (focus the app first on Linux).
-Remove personal information and Bluetooth addresses before posting. -->
+Add screenshots, how often the issue happens, or any workaround.
+
+Press **F12** in MiBudsClient to open runtime logs (on Linux, focus the app first). Paste relevant log lines here or attach a text file.
+
+Remove personal information and Bluetooth addresses before posting.
