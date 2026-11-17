@@ -84,6 +84,7 @@ class BTController:
         self._device_name = ""
         self._error_callback = error_callback
         self._device_check = {"state": "unknown"}
+        self._discovery_devices = []
         self._running = True
         self._connect_lock = threading.RLock()
         self._state_lock = threading.Lock()
@@ -238,9 +239,11 @@ class BTController:
             self._connection.diagnostics = []
             self._connection.stage = "discovery"
             self._device_check = {"state": "unknown"}
+            self._discovery_devices = []
             try:
                 if not self._bd_addr:
                     device = BluetoothDiscovery.get_connected_device()
+                    self._discovery_devices = BluetoothDiscovery.discovery_diagnostics()
                     if not device or not device.address:
                         reason = m("connection.no_catalog")
                         self._notify_connection_state("failed", reason)
@@ -297,6 +300,7 @@ class BTController:
         error.bluetooth_diagnostics = {
             "device": self._device_name,
             "device_check": self._device_check,
+            "discovered_devices": self._discovery_devices,
             "stage": "receive" if action == "bluetooth_receive" else self._connection.stage,
             "transport": list(self._connection.diagnostics),
             "identity": self.diagnostic_identity,

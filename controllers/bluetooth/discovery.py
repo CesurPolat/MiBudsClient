@@ -4,6 +4,8 @@ import subprocess
 import json
 import sys
 import os
+import threading
+from utils.error_reports import redact
 from dataclasses import dataclass
 from typing import Optional
 
@@ -49,6 +51,23 @@ if ($results) { $results | ConvertTo-Json -Compress }
 class BluetoothDiscovery:
     """Handles Bluetooth device discovery."""
 
+    _diagnostics = threading.local()
+
+    @classmethod
+    def discovery_diagnostics(cls):
+        return list(getattr(cls._diagnostics, "devices", []))
+
+    @classmethod
+    def _record_device(cls, name, source, state):
+        entry = {"name": redact(name)[:256], "source": source, "state": state,
+                 "catalog_match": cls._is_supported_device(name)}
+        devices = getattr(cls._diagnostics, "devices", None)
+        if devices is None:
+            devices = cls._diagnostics.devices = []
+        if len(devices) < 20:
+            devices.append(entry)
+        print(f"[Bluetooth] Discovery device: {entry}")
+
     @classmethod
     def connection_state(cls, address):
         """Check this exact peer; an unavailable OS query is not a disconnect."""
@@ -87,6 +106,7 @@ class BluetoothDiscovery:
         Returns:
             BluetoothDevice if found, None otherwise
         """
+        cls._diagnostics.devices = []
         if not cls.is_supported():
             return None
         
@@ -106,6 +126,8 @@ class BluetoothDiscovery:
         try:
             from .windows_discovery import get_connected_devices
             devices = get_connected_devices()
+            for name, _ in devices:
+                cls._record_device(name, "windows_native", "connected")
             for name, address in devices:
                 if address and cls._is_supported_device(name):
                     print(f"[Bluetooth] Windows native discovery selected {name!r}")
@@ -158,6 +180,7 @@ class BluetoothDiscovery:
                 continue
             address = item.get("Address")
             name = item.get("Name", "")
+            cls._record_device(name, "windows_pnp", "connected")
             if address and cls._is_supported_device(name):
                 return BluetoothDevice(name=name, address=cls._format_mac(address))
         return None
@@ -175,10 +198,13 @@ class BluetoothDiscovery:
                     mac = parts[1]
                     name = parts[2]
                     if not cls._is_supported_device(name):
+                        cls._record_device(name, "bluetoothctl", "unknown")
                         continue
                     
                     # Verify if connected
                     info_output = subprocess.check_output(["bluetoothctl", "info", mac], text=True, timeout=5)
+                    cls._record_device(name, "bluetoothctl",
+                                       "connected" if "Connected: yes" in info_output else "disconnected")
                     if "Connected: yes" in info_output:
                         return BluetoothDevice(name=name, address=cls._format_mac(mac))
         except (subprocess.SubprocessError, OSError) as exc:
