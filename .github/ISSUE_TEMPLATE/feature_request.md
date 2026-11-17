@@ -1,4 +1,4 @@
-﻿---
+---
 name: Feature request
 about: Suggest an improvement for MiBudsClient.
 title: ''

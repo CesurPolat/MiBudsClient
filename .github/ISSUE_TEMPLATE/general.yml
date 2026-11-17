@@ -1,4 +1,4 @@
-﻿name: General issue
+name: General issue
 description: Ask a question or share anything that does not fit the other templates.
 body:
   - type: markdown
