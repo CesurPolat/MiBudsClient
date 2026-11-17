@@ -37,7 +37,8 @@ class LinuxDesktopTests(unittest.TestCase):
         self.assertIn('NoDisplay=true', content)
         self.assertIn('StartupWMClass=flet', content)
         icon = self.root / 'data/MiBudsClient/icon.png'
-        self.assertIn(f'Icon={icon}', content)
+        encoded_icon = str(icon).replace('\\', '\\\\')
+        self.assertIn(f'Icon={encoded_icon}', content)
         self.assertEqual(icon.read_bytes(), b'fixture icon')
         self.assertEqual(os.environ['FLET_APP_ID'], desktop.APP_ID)
         cleanup()
@@ -50,7 +51,8 @@ class LinuxDesktopTests(unittest.TestCase):
         appimage.write_bytes(b'fixture')
         with patch.dict(os.environ, {'APPIMAGE': str(appimage)}):
             cleanup = desktop.setup_linux_desktop()
-        self.assertIn(f'Exec="{appimage}"', (self.entries / (desktop.APP_ID + '.desktop')).read_text())
+        encoded_appimage = str(appimage).replace('\\', '\\\\\\\\')
+        self.assertIn(f'Exec="{encoded_appimage}"', (self.entries / (desktop.APP_ID + '.desktop')).read_text())
         cleanup()
 
     def test_user_entry_is_never_overwritten_and_cleanup_respects_edits(self):
@@ -64,6 +66,7 @@ class LinuxDesktopTests(unittest.TestCase):
         self.assertIn('Another application', legacy.read_text())
         self.assertIn('User edited', own.read_text())
 
+    @unittest.skipIf(os.name == 'nt', 'XDG colon-separated directories require Linux paths')
     def test_system_entry_is_never_shadowed(self):
         system = self.root / 'system/applications' / (desktop.LEGACY_ID + '.desktop')
         system.parent.mkdir(parents=True)

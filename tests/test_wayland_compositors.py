@@ -123,7 +123,7 @@ class CompositorRoutingTests(unittest.TestCase):
     def test_new_backends_need_tools_but_do_not_install_gnome_extensions(self):
         for desktop, tool in (('KDE', 'kdotool'), ('sway', 'swaymsg'), ('Hyprland', 'hyprctl')):
             for present in (False, True):
-                with self.subTest(desktop=desktop, present=present), patch.dict(os.environ, {
+                with self.subTest(desktop=desktop, present=present), patch('utils.wayland_setup.sys.platform', 'linux'), patch.dict(os.environ, {
                     'XDG_CURRENT_DESKTOP': desktop, 'XDG_SESSION_TYPE': 'wayland',
                 }, clear=True), patch('utils.wayland_setup.shutil.which', return_value='/bin/' + tool if present else None) as which, patch(
                     'utils.wayland_setup.ensure_gnome_bridge', side_effect=AssertionError('Unexpected GNOME setup'),

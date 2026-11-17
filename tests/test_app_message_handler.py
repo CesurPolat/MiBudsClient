@@ -195,7 +195,7 @@ class AppMessageHandlerTests(unittest.TestCase):
             suppress.assert_called_once_with("v1.2.3")
         with patch("ui.components.update_notification.webbrowser.open") as open_url:
             download.on_click(None)
-            open_url.assert_called_once_with(GITHUB_URL + "/releases")
+            open_url.assert_called_once_with(GITHUB_URL + "/releases/latest")
         self.assertFalse(snack.open)
 
     def test_startup_mounts_home_controls_before_subscribing(self):

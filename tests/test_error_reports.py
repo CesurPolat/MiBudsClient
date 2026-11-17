@@ -101,10 +101,12 @@ class ErrorReportTests(unittest.TestCase):
         page.window.visible = True
         dialog.show_pending()
         control = dialog.active
-        field = control.content.content.controls[1]
+        field = next(child for child in control.content.content.controls
+                     if hasattr(child, 'on_change'))
         field.value = 'I clicked connect'
         field.on_change(None)
-        preview = control.content.content.controls[3].controls[0]
+        preview = next(child for child in control.content.content.controls
+                       if hasattr(child, 'controls')).controls[0]
         self.assertEqual(json.loads(preview.value)['details']['description'], field.value)
         button = control.actions[1]
         button.on_click(None)

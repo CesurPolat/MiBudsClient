@@ -147,7 +147,9 @@ class ConnectionFeedbackTests(unittest.TestCase):
         controller, feedback = self.make_controller()
         controller._bd_addr = "AA:BB:CC:DD:EE:FF"
         controller._connection.connect.side_effect = TimeoutError("timed out")
-        self.assertFalse(controller.connect())
+        with patch("controllers.bluetooth.controller.BluetoothDiscovery.connection_state",
+                   return_value={"state": "unknown"}):
+            self.assertFalse(controller.connect())
         self.assertEqual(feedback.call_args.args[0], "failed")
         self.assertIn("connection timed out", feedback.call_args.args[1])
         self.assertIn("timed out", feedback.call_args.args[1])

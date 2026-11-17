@@ -95,7 +95,7 @@ class LinuxStartupTests(unittest.TestCase):
         with patch.dict(os.environ, {'XDG_CONFIG_HOME': 'relative'}), patch.object(
             startup.os.path, 'expanduser', return_value='/home/example/.config',
         ):
-            self.assertEqual(startup._get_linux_autostart_path(), '/home/example/.config/autostart/mibudsclient.desktop')
+            self.assertEqual(startup._get_linux_autostart_path(), os.path.join('/home/example/.config', 'autostart', 'mibudsclient.desktop'))
 
     def test_exec_escapes_percent_and_reserved_characters_without_a_shell(self):
         # Expected on-disk escaping includes desktop-string and Exec layers.
@@ -162,4 +162,4 @@ class ResourcePathTests(unittest.TestCase):
 
     def test_packaged_assets_use_bundle_directory(self):
         with patch('utils.resource_manager.sys._MEIPASS', '/tmp/example-bundle', create=True):
-            self.assertEqual(get_resource_path('assets/icon.png'), '/tmp/example-bundle/assets/icon.png')
+            self.assertEqual(get_resource_path('assets/icon.png'), os.path.join('/tmp/example-bundle', 'assets/icon.png'))

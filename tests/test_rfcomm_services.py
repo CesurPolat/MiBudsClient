@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from controllers.bluetooth.connection import BluetoothConnection
+from controllers.bluetooth.controller import BTController
 from controllers.bluetooth.sdp import ConnectionCancelled, PlatformBackend, SERVICE_UUIDS
 
 
@@ -38,14 +39,40 @@ class ServiceConnectionTests(unittest.TestCase):
         self.assertEqual(result.service_uuid, SERVICE_UUIDS[2])
         self.assertEqual(result.channel, 7)
 
-    def test_eof_closes_transport_and_clears_session_metadata(self):
+    def test_eof_preserves_metadata_until_controller_disconnect(self):
         connection = BluetoothConnection(self.backend([24]))
         result = connection.connect("AA:BB:CC:DD:EE:FF")
         result.socket.recv.return_value = b""
         self.assertEqual(connection.receive(), b"")
+        result.socket.close.assert_not_called()
+        self.assertTrue(connection.connected)
+        self.assertIs(connection.result, result)
+        connection.disconnect()
         result.socket.close.assert_called_once()
         self.assertFalse(connection.connected)
         self.assertIsNone(connection.result)
+
+    def test_listener_reports_eof_before_closing_transport(self):
+        connection = BluetoothConnection(self.backend([24]))
+        result = connection.connect("AA:BB:CC:DD:EE:FF")
+        result.socket.recv.return_value = b""
+
+        def capture(error, action):
+            self.assertIsInstance(error, ConnectionError)
+            self.assertEqual(action, "bluetooth_receive")
+            self.assertIs(connection.result, result)
+            result.socket.close.assert_not_called()
+            self.assertTrue(error.bluetooth_diagnostics["transport"])
+
+        report = Mock(side_effect=capture)
+        controller = BTController(error_callback=report)
+        controller._connection = connection
+        with patch("controllers.bluetooth.controller.time.sleep",
+                   side_effect=lambda _: setattr(controller, "_running", False)):
+            controller.listen()
+        report.assert_called_once()
+        result.socket.close.assert_called_once()
+        self.assertFalse(connection.connected)
 
     def test_profile_fallback_is_explicit_and_only_for_6_play(self):
         backend = self.backend([None] * 3)
