@@ -198,7 +198,7 @@
   "report.preview": "技術的な詳細",
   "report.send": "送信",
   "report.cancel": "キャンセル",
-  "report.sent": "送信済み",
+  "report.sent": "エラーレポートを送信しました",
   "report.queued": "後で送信するために保存しました",
   "report.failed": "レポートを保存または送信できませんでした",
   "noise.title": "ノイズコントロール",

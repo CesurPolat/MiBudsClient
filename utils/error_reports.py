@@ -45,7 +45,7 @@ def encode_report(report):
     return body
 
 
-def make_report(error, *, app_version='', device='', action='', tb=None):
+def make_report(error, *, app_version='', device='', action='', tb=None, identity=None):
     frames = traceback.extract_tb(tb if tb is not None else error.__traceback__)
     stack = '\n'.join(f'{Path(frame.filename).name}:{frame.lineno} in {frame.name}' for frame in frames)
     # Preserve handled transport causes and safe metadata within the existing
@@ -60,6 +60,8 @@ def make_report(error, *, app_version='', device='', action='', tb=None):
     if diagnostics is not None:
         stack += '\n\nBluetooth diagnostics:\n' + json.dumps(diagnostics, ensure_ascii=False, default=str)
         stack += '\nCauses:\n' + '\n'.join(causes)
+    if identity is not None and diagnostics is None:
+        stack += '\n\nDevice identity:\n' + json.dumps(identity, ensure_ascii=False, default=str)
     report = {
         'message': redact(str(error) or type(error).__name__)[:4096],
         'name': type(error).__name__[:128], 'stack': redact(stack)[-16000:],
@@ -270,9 +272,10 @@ class ReportQueue:
 class ErrorReportManager:
     AUTOMATIC_ACTIONS = frozenset({'bluetooth_connect', 'bluetooth_discovery', 'bluetooth_receive'})
 
-    def __init__(self, *, publish, app_version, get_device, auto_submit=None):
+    def __init__(self, *, publish, app_version, get_device, auto_submit=None, get_identity=None):
         self.publish, self.app_version, self.get_device = publish, app_version, get_device
         self.auto_submit = auto_submit
+        self.get_identity = get_identity
         self.seen = set()
         self.lock = threading.Lock()
 
@@ -280,7 +283,8 @@ class ErrorReportManager:
         signature = None
         try:
             report = make_report(error, app_version=self.app_version,
-                                 device=self.get_device(), action=action, tb=tb)
+                                 device=self.get_device(), action=action, tb=tb,
+                                 identity=self.get_identity() if self.get_identity is not None else None)
             signature = hashlib.sha256(encode_report({key: report[key] for key in ('name', 'message', 'stack')})).hexdigest()
             with self.lock:
                 if signature in self.seen:

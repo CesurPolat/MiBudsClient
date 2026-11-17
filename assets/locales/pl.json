@@ -198,7 +198,7 @@
   "report.preview": "Szczegóły techniczne",
   "report.send": "Wyślij",
   "report.cancel": "Anuluj",
-  "report.sent": "Wysłano",
+  "report.sent": "Raport błędu wysłany",
   "report.queued": "Zapisano do późniejszego wysłania",
   "report.failed": "Nie udało się zapisać ani wysłać raportu",
   "noise.title": "Kontrola hałasu",

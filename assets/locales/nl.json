@@ -198,7 +198,7 @@
   "report.preview": "Technische details",
   "report.send": "Verzenden",
   "report.cancel": "Annuleren",
-  "report.sent": "Verzonden",
+  "report.sent": "Foutrapport verzonden",
   "report.queued": "Opgeslagen om later te verzenden",
   "report.failed": "Het rapport kon niet worden opgeslagen of verzonden",
   "noise.title": "Ruisregeling",

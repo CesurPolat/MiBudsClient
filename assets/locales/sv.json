@@ -198,7 +198,7 @@
   "report.preview": "Tekniska detaljer",
   "report.send": "Skicka",
   "report.cancel": "Avbryt",
-  "report.sent": "Skickat",
+  "report.sent": "Felrapport skickad",
   "report.queued": "Sparat för senare leverans",
   "report.failed": "Rapporten kunde inte sparas eller skickas",
   "noise.title": "Bullerkontroll",

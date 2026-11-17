@@ -198,7 +198,7 @@
   "report.preview": "Műszaki részletek",
   "report.send": "Küldés",
   "report.cancel": "Mégse",
-  "report.sent": "Elküldve",
+  "report.sent": "Hibajelentés elküldve",
   "report.queued": "Mentve későbbi küldéshez",
   "report.failed": "Nem sikerült menteni vagy elküldeni a jelentést",
   "noise.title": "Zajvezérlés",

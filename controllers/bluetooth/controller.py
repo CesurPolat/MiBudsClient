@@ -92,6 +92,7 @@ class BTController:
         self._identity_pending: Optional[_IdentityRequest] = None
         self._identity_counter = 0x90
         self._identity: Optional[DeviceIdentity] = None
+        self._last_identity = None
         self._identity_callback = identity_callback
         self._max_reconnect_attempts = 5
         self._reconnect_attempts = 0
@@ -156,6 +157,26 @@ class BTController:
     def device_identity(self) -> Optional[DeviceIdentity]:
         with self._identity_condition:
             return self._identity
+
+    @property
+    def diagnostic_identity(self) -> dict:
+        """Use only identity read from this peer, including its last session."""
+        with self._identity_condition:
+            identity = self._identity
+            source = "current_session"
+            if identity is None and self._last_identity is not None:
+                address, previous = self._last_identity
+                if BluetoothDiscovery._format_mac(address) == BluetoothDiscovery._format_mac(self._bd_addr):
+                    identity, source = previous, "previous_session"
+            if identity is None:
+                return {"status": "unavailable", "device_name": self._device_name}
+            return {
+                "status": "available", "source": source,
+                "device_name": self._device_name,
+                "vid": f"0x{identity.vid:04X}", "pid": f"0x{identity.pid:04X}",
+                "firmware_version": identity.firmware_version,
+                "model_name": identity.model_name, "model_codes": list(identity.model_codes),
+            }
     
     # ─────────────────────────────────────────────────────────────────────────
     # Status Updates
@@ -272,13 +293,15 @@ class BTController:
                 return False
 
     def _report_connection_error(self, error, action):
-        """Forward handled transport failures to the existing consent dialog."""
+        """Forward handled transport failures to automatic reporting."""
         error.bluetooth_diagnostics = {
             "device": self._device_name,
             "device_check": self._device_check,
             "stage": "receive" if action == "bluetooth_receive" else self._connection.stage,
             "transport": list(self._connection.diagnostics),
+            "identity": self.diagnostic_identity,
         }
+        print(f"[Bluetooth] Error report device identity: {redact(error.bluetooth_diagnostics['identity'])}")
         print(redact("".join(traceback.format_exception(type(error), error, error.__traceback__))))
         if self._error_callback:
             try:
@@ -527,10 +550,13 @@ class BTController:
                     else:
                         identity = request.identity
                         self._identity = identity
+                        self._last_identity = (self._bd_addr, identity)
                 request.completed = True
                 self._identity_condition.notify_all()
-        if identity is not None and self._identity_callback:
-            self._identity_callback(identity)
+        if identity is not None:
+            print(f"[Bluetooth] Device identity received: {redact(self.diagnostic_identity)}")
+            if self._identity_callback:
+                self._identity_callback(identity)
 
     def _reset_identity_state(self, reason: str) -> None:
         with self._state_lock:

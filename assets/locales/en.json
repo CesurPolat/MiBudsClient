@@ -198,7 +198,7 @@
   "report.preview": "Technical details",
   "report.send": "Send",
   "report.cancel": "Cancel",
-  "report.sent": "Sent",
+  "report.sent": "Error report sent",
   "report.queued": "Saved for later delivery",
   "report.failed": "Could not save or deliver the report",
   "noise.title": "Noise control",

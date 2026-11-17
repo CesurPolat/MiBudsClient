@@ -198,7 +198,7 @@
   "report.preview": "Tekniset tiedot",
   "report.send": "Lähetä",
   "report.cancel": "Peruuta",
-  "report.sent": "Lähetetty",
+  "report.sent": "Virheraportti lähetetty",
   "report.queued": "Tallennettu myöhempää lähetystä varten",
   "report.failed": "Raporttia ei voitu tallentaa tai lähettää",
   "noise.title": "Melunhallinta",

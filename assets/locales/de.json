@@ -198,7 +198,7 @@
   "report.preview": "Technische Details",
   "report.send": "Senden",
   "report.cancel": "Abbrechen",
-  "report.sent": "Gesendet",
+  "report.sent": "Fehlerbericht gesendet",
   "report.queued": "Zum späteren Senden gespeichert",
   "report.failed": "Der Bericht konnte nicht gespeichert oder gesendet werden",
   "noise.title": "Geräuschsteuerung",

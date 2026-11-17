@@ -198,7 +198,7 @@
   "report.preview": "기술 세부 정보",
   "report.send": "보내기",
   "report.cancel": "취소",
-  "report.sent": "전송됨",
+  "report.sent": "오류 보고서를 보냈습니다",
   "report.queued": "나중에 보내도록 저장됨",
   "report.failed": "보고서를 저장하거나 전송할 수 없습니다",
   "noise.title": "소음 제어",

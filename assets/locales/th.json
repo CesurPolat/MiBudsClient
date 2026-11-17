@@ -198,7 +198,7 @@
   "report.preview": "รายละเอียดทางเทคนิค",
   "report.send": "ส่ง",
   "report.cancel": "ยกเลิก",
-  "report.sent": "ส่งแล้ว",
+  "report.sent": "ส่งรายงานข้อผิดพลาดแล้ว",
   "report.queued": "บันทึกไว้เพื่อส่งภายหลัง",
   "report.failed": "ไม่สามารถบันทึกหรือส่งรายงานได้",
   "noise.title": "การควบคุมเสียงรบกวน",

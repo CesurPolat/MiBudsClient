@@ -198,7 +198,7 @@
   "report.preview": "التفاصيل التقنية",
   "report.send": "إرسال",
   "report.cancel": "إلغاء",
-  "report.sent": "تم الإرسال",
+  "report.sent": "تم إرسال تقرير الخطأ",
   "report.queued": "تم الحفظ للإرسال لاحقًا",
   "report.failed": "تعذر حفظ التقرير أو إرساله",
   "noise.title": "التحكم في الضوضاء",

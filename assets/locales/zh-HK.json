@@ -198,7 +198,7 @@
   "report.preview": "技術詳情",
   "report.send": "傳送",
   "report.cancel": "取消",
-  "report.sent": "已傳送",
+  "report.sent": "錯誤報告已傳送",
   "report.queued": "已儲存，稍後傳送",
   "report.failed": "無法儲存或傳送報告",
   "noise.title": "噪音控制",

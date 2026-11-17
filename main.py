@@ -94,8 +94,9 @@ async def main(page: ft.Page):
         {'type': 'error_report_status', 'state': state}))
     reports = ErrorReportManager(
         publish=publish, app_version=APP_VERSION,
-        get_device=lambda: getattr(getattr(controller_ref['instance'], 'capabilities', None), 'name', ''),
+        get_device=lambda: (getattr(controller_ref['instance'], 'diagnostic_identity', None) or {}).get('device_name', ''),
         auto_submit=report_queue.enqueue,
+        get_identity=lambda: getattr(controller_ref['instance'], 'diagnostic_identity', None),
     )
     application_shutdown.register("F12 listener", debug_console.stop_f12_hotkey_listener)
     application_shutdown.register("error reports", report_queue.stop)

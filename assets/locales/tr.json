@@ -198,7 +198,7 @@
   "report.preview": "Teknik bilgiler",
   "report.send": "Gönder",
   "report.cancel": "Vazgeç",
-  "report.sent": "Gönderildi",
+  "report.sent": "Hata raporu gönderildi",
   "report.queued": "Daha sonra gönderilmek üzere kaydedildi",
   "report.failed": "Rapor kaydedilemedi veya gönderilemedi",
   "noise.title": "Gürültü kontrolü",

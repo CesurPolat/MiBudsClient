@@ -198,7 +198,7 @@
   "report.preview": "Detail teknis",
   "report.send": "Kirim",
   "report.cancel": "Batal",
-  "report.sent": "Terkirim",
+  "report.sent": "Laporan kesalahan terkirim",
   "report.queued": "Disimpan untuk dikirim nanti",
   "report.failed": "Tidak dapat menyimpan atau mengirim laporan",
   "noise.title": "Kontrol kebisingan",
