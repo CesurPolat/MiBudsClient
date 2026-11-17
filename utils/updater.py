@@ -76,9 +76,9 @@ def check_for_updates() -> Tuple[bool, Optional[str]]:
         owner = parts[-2]
         repo = parts[-1]
         
-        # We check both 'latest' (stable) and the general releases list
-        # to ensure we can detect updates even if we are on a pre-release.
-        api_url = f"https://api.github.com/repos/{owner}/{repo}/releases"
+        # GitHub's latest endpoint excludes pre-releases and drafts, including
+        # when many test builds have been published since the stable release.
+        api_url = f"https://api.github.com/repos/{owner}/{repo}/releases/latest"
         
         req = urllib.request.Request(
             api_url, 
@@ -87,12 +87,11 @@ def check_for_updates() -> Tuple[bool, Optional[str]]:
         
         with urllib.request.urlopen(req, timeout=5) as response:
             if response.getcode() == 200:
-                releases = json.loads(response.read().decode())
-                if not releases:
+                latest_release = json.loads(response.read().decode())
+                if (not isinstance(latest_release, dict) or not latest_release
+                        or latest_release.get("prerelease") or latest_release.get("draft")):
                     return False, None
                 
-                # Get the most recent release (GitHub API returns them sorted by date)
-                latest_release = releases[0]
                 latest_tag = latest_release.get("tag_name")
                 
                 if latest_tag:

@@ -19,7 +19,7 @@ def show_update_notification(page: ft.Page, latest_ver: str) -> None:
             suppress_update_notification(latest_ver)
 
     def on_update_click(e):
-        webbrowser.open(f"{GITHUB_URL.rstrip('/')}/releases")
+        webbrowser.open(f"{GITHUB_URL.rstrip('/')}/releases/latest")
         snack_bar.open = False
         page.update()
 
