@@ -118,6 +118,35 @@ class NoiseSettings:
             if operation == "read" or self._state is not None:
                 self._on_action(operation, **kwargs)
 
+    def tray_state(self):
+        """Copy confirmed state; pending writes never become checked values."""
+        mode = self._state.mode if self._state else None
+        return {
+            "modes": self.capabilities.modes,
+            "mode": mode,
+            "level": self._state.level if self._state else None,
+            "levels": tuple((level, render(self._level_text(mode, level)))
+                            for level in self.capabilities.levels(mode)),
+            "enabled": bool(self._connected and self._backend_enabled and not self._busy
+                            and self._state is not None and not self._error),
+            "busy": self._busy,
+            "error": render(self._error) if self._error else "",
+            "can_read": self._connected and self._backend_enabled and not self._busy,
+        }
+
+    def select_from_tray(self, operation, mode=None, level=None):
+        if operation == "read":
+            self._act("read")
+            return
+        if (operation != "write" or self._error or not self._state
+                or type(mode) is not int or mode not in self.capabilities.modes):
+            return
+        if level is None:
+            self._choose_mode(mode)
+        elif (mode == self._state.mode and type(level) is int
+              and level in self.capabilities.levels(mode) and level != self._state.level):
+            self._act("write", mode=mode, level=level)
+
     def _choose_mode(self, mode):
         if mode in self.capabilities.modes and self._state and mode != self._state.mode:
             self._act("write", mode=mode)

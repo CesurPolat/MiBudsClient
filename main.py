@@ -48,6 +48,7 @@ async def main(page: ft.Page):
 
     ui_lock = threading.RLock()
     window_mgr = None
+    message_handler = None
 
     def publish(message):
         if not application_shutdown.started.is_set():
@@ -57,6 +58,8 @@ async def main(page: ft.Page):
         if application_shutdown.started.is_set():
             return
         with ui_lock:
+            if message_handler is not None:
+                message_handler.sync_tray()
             refresh_translations(page.controls)
             refresh_translations(page.overlay)
             page.update()
@@ -126,6 +129,7 @@ async def main(page: ft.Page):
         on_latency_mode_select=latency.select_latency_mode_from_tray,
         get_latency_mode=lambda: latency.state["selected_mode"],
         latency_available=lambda: controller_ref["instance"] is not None and controller_ref["instance"].capabilities.supports("latency"),
+        on_device_action=publish,
     )
     tray_ref["instance"] = tray
     window_mgr.tray_available = lambda: tray.available
@@ -247,7 +251,10 @@ async def main(page: ft.Page):
         on_catalog_stop=catalog_sync.stop,
         get_capabilities=lambda: controller.capabilities,
         get_identity=lambda: controller.device_identity if controller.connected else None,
+        get_device_session=lambda: controller.eq_session,
+        is_connected=lambda: controller.connected,
     )
+    message_handler.sync_tray()
     application_shutdown.register("UI notifications", message_handler.begin_shutdown)
     def handle_message(message):
         try:

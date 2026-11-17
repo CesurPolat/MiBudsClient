@@ -7,6 +7,8 @@ from utils.i18n import t, render
 from utils.image_notifications import ImageNotifications
 from utils.linux_notifications import LinuxNotifications
 from utils.tray_host import TrayHostMonitor
+from utils.battery import battery_state
+from controllers.bluetooth.equalizer import PROFILE_KEYS
 
 from utils.tray_backend import load_tray_module
 
@@ -27,7 +29,11 @@ class SystemTray:
         on_latency_mode_select: Optional[Callable[[str], None]] = None,
         get_latency_mode: Optional[Callable[[], str]] = None,
         latency_available: Callable[[], bool] = lambda: False,
+        on_device_action: Optional[Callable[[dict], None]] = None,
     ):
+        self.on_device_action = on_device_action
+        self._state_lock = threading.Lock()
+        self._state = {}
         self.latency_available = latency_available
         self.on_show = on_show
         self.on_exit = on_exit
@@ -56,30 +62,7 @@ class SystemTray:
 
             has_menu = bool(getattr(pystray.Icon, "HAS_MENU", False))
             if has_menu:
-                menu = pystray.Menu(
-                    pystray.MenuItem(lambda item: t("tray.open"), lambda icon, item: self.on_show(), default=True),
-                    pystray.Menu.SEPARATOR,
-                    pystray.MenuItem(
-                        lambda item: t("tray.off"),
-                        lambda icon, item: self._on_mode_select("off"),
-                        visible=lambda item: self.latency_available(),
-                        checked=lambda item: self._is_mode("off"),
-                    ),
-                    pystray.MenuItem(
-                        lambda item: t("tray.auto"),
-                        lambda icon, item: self._on_mode_select("auto"),
-                        visible=lambda item: self.latency_available(),
-                        checked=lambda item: self._is_mode("auto"),
-                    ),
-                    pystray.MenuItem(
-                        lambda item: t("tray.on"),
-                        lambda icon, item: self._on_mode_select("on"),
-                        visible=lambda item: self.latency_available(),
-                        checked=lambda item: self._is_mode("on"),
-                    ),
-                    pystray.Menu.SEPARATOR,
-                    pystray.MenuItem(lambda item: t("tray.quit"), lambda icon, item: self._exit())
-                )
+                menu = self._build_menu()
             else:
                 print(
                     f"Tray backend has no menu support: {pystray.Icon.__module__}. "
@@ -107,6 +90,7 @@ class SystemTray:
                             self._host_monitor.start()
                         else:
                             self._ready.set()
+                            self.refresh_menu()
                     except Exception as error:
                         print(f"Tray icon unavailable: {error}")
                         self.on_show()
@@ -135,6 +119,8 @@ class SystemTray:
         was_ready = self._ready.is_set()
         if available:
             self._ready.set()
+            if not was_ready:
+                self.refresh_menu()
         else:
             self._ready.clear()
             if was_ready:
@@ -154,11 +140,115 @@ class SystemTray:
         if self.latency_available() and self.on_latency_mode_select:
             self.on_latency_mode_select(mode)
 
+    def set_state(self, state: dict) -> None:
+        """Accept an owned snapshot, never live Flet controls or controller data."""
+        with self._state_lock:
+            if self._state == state:
+                return
+            self._state = state
+        self.refresh_menu()
+
+    def _build_menu(self):
+        with self._state_lock:
+            state = self._state
+        item = pystray.MenuItem
+        separator = pystray.Menu.SEPARATOR
+        connected = state.get("connected", False)
+        entries = [item(str(t("tray.open")), lambda icon, entry: self.on_show(), default=True)]
+        if not connected:
+            entries.append(item(str(t("eq.disconnected")), None, enabled=False))
+        else:
+            batteries = {}
+            for side, raw in zip(("left", "right", "case"), state.get("battery", (255, 255, 255))):
+                value = battery_state(raw)
+                label = str(t("notification.battery_percent", percent=value[0])) if value else "\u2014"
+                if value and value[1]:
+                    label = str(t("notification.battery_charging", level=label))
+                batteries[side] = label
+            entries.append(item(str(t(
+                "notification.battery_summary", **batteries,
+                left_label=t("battery.left"), right_label=t("battery.right"),
+                case_label=t("battery.case"))), None, enabled=False))
+        entries.append(separator)
+
+        def action(feature, operation, **values):
+            # Bind the snapshot's session, so an old open menu cannot affect a new device.
+            request = {"type": "tray_device_action", "session": state.get("session"),
+                       "feature": feature, "operation": operation, **values}
+            def invoke(icon, entry):
+                if self.on_device_action and not self._stopped.is_set():
+                    self.on_device_action(dict(request))
+            return invoke
+
+        def choice(label, callback, selected, enabled):
+            return item(str(label), callback, checked=lambda entry: selected,
+                        radio=True, enabled=enabled)
+
+        def group(title, children):
+            if not children:
+                return
+            if getattr(pystray.Icon, "HAS_SUBMENU", True):
+                entries.append(item(str(title), pystray.Menu(*children)))
+            else:
+                entries.extend([item(str(title), None, enabled=False), *children, separator])
+
+        def feedback(feature, data, children):
+            if data.get("busy"):
+                key = "eq.working" if feature == "eq" else "noise.working"
+                children.append(item(str(t(key)), None, enabled=False))
+            elif data.get("error"):
+                children.append(item(data["error"], None, enabled=False))
+            key = "eq.refresh" if feature == "eq" else "noise.refresh"
+            children.append(item(str(t(key)), action(feature, "read"),
+                                 enabled=connected and data.get("can_read", False)))
+
+        eq = state.get("eq", {})
+        if eq.get("visible"):
+            children = [choice(t("eq." + PROFILE_KEYS[p]), action("eq", "profile", profile=p),
+                               eq.get("current") == p, connected and eq.get("enabled", False))
+                        for p in eq.get("profiles", ())]
+            current = eq.get("current")
+            if current is not None and current != 10 and current not in eq.get("profiles", ()):
+                children.append(item(str(t("eq.current", code=f"{current:02X}")), None, enabled=False))
+            feedback("eq", eq, children)
+            group(t("eq.title"), children)
+
+        noise = state.get("noise", {})
+        if noise.get("modes"):
+            enabled = connected and noise.get("enabled", False)
+            children = [choice(t("noise.mode_" + str(mode)), action("noise", "write", mode=mode),
+                               noise.get("mode") == mode, enabled) for mode in noise["modes"]]
+            mode, level = noise.get("mode"), noise.get("level")
+            unknown = (mode if mode is not None and mode not in noise["modes"] else
+                       level if mode in (1, 2) and level is not None
+                       and level not in tuple(value for value, _ in noise.get("levels", ())) else None)
+            if unknown is not None:
+                children.append(item(str(t("noise.unknown", code=unknown)), None, enabled=False))
+            feedback("noise", noise, children)
+            group(t("noise.title"), children)
+            group(t("noise.level"), [
+                choice(label, action("noise", "write", mode=noise.get("mode"), level=level),
+                       noise.get("level") == level, enabled)
+                for level, label in noise.get("levels", ())])
+
+        if state.get("latency_available"):
+            latency = state.get("latency", {})
+            mode = latency.get("mode", "off")
+            label = (t("tray.auto") if mode == "auto" else
+                     t("latency.unknown") if latency.get("enabled") is None else
+                     t("tray.on" if latency["enabled"] else "tray.off"))
+            entries.append(item(str(label), action("latency", "toggle"),
+                                checked=lambda entry: latency.get("enabled") is True,
+                                enabled=connected))
+        entries.extend([separator, item(str(t("tray.quit")), lambda icon, entry: self._exit())])
+        return pystray.Menu(*entries)
+
     def refresh_menu(self) -> None:
         """Refresh tray menu to reflect updated checked states."""
         icon = self.icon
         if self.available and icon and getattr(type(icon), "HAS_MENU", False):
             try:
+                icon.menu = self._build_menu()
                 icon.update_menu()
             except Exception as error:
                 print(f"Tray menu update unavailable: {error}")

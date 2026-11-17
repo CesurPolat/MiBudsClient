@@ -79,6 +79,25 @@ class EqualizerSettings(ft.Column):
     def ready(self):
         return self._connected and self._state is not None and bool(self._profiles)
 
+    def tray_state(self, capabilities):
+        """Copy display state on the Flet loop for the native tray thread."""
+        return {
+            "visible": capabilities.supports("eq"),
+            "profiles": tuple(p for p in capabilities.profiles if p in PROFILE_KEYS and p != 10),
+            "current": self._state.profile if self._state else None,
+            "enabled": bool(self.ready and self._state.profile is not None
+                            and not self._busy and not self._needs_refresh),
+            "busy": self._busy,
+            "error": render(self.status.value) if self.status.color == "red" else "",
+            "can_read": self._connected and not self._busy,
+        }
+
+    def select_from_tray(self, operation, profile=None):
+        if operation == "read":
+            self._act("read")
+        elif operation == "profile" and type(profile) is int:
+            self._select_profile(profile)
+
     @property
     def initial_read_failed(self):
         return self._connected and not self.ready and not self._busy and self.status.color == "red"

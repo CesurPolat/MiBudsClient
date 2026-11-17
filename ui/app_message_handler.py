@@ -21,11 +21,16 @@ class AppMessageHandler:
     def __init__(self, *, page, device_status_card, settings_card, window_manager,
                  latency, tray, debug_console, on_window_show: Callable,
                  get_game_monitor: Callable, on_catalog_stop: Callable | None = None, get_capabilities: Callable | None = None,
-                 ui_lock=None, get_identity: Callable | None = None):
+                 ui_lock=None, get_identity: Callable | None = None,
+                 get_device_session: Callable | None = None, is_connected: Callable | None = None):
         self._dispatch_lock = ui_lock if ui_lock is not None else threading.RLock()
         self._closing = False
         self._get_capabilities = get_capabilities
         self._get_identity = get_identity
+        self._get_device_session = get_device_session
+        self._is_connected = is_connected
+        self._tray_session = None
+        self._tray_battery = (BATTERY_UNKNOWN,) * 3
         self._page = page
         self._device_status_card = device_status_card
         self._settings_card = settings_card
@@ -67,7 +72,48 @@ class AppMessageHandler:
             "connection_event": self._handle_connection_event,
             "connection_notification_timeout": self._handle_connection_notification_timeout,
             "fullscreen_state": self._handle_fullscreen_state,
+            "tray_device_action": self._handle_tray_device_action,
         }
+
+    def sync_tray(self):
+        """Publish value-only snapshots from the serialized Flet update path."""
+        if (self._closing or self._get_capabilities is None
+                or self._get_device_session is None or self._is_connected is None):
+            return
+        session = self._get_device_session()
+        connected = self._is_connected()
+        if session != self._tray_session or not connected:
+            self._tray_battery = (BATTERY_UNKNOWN,) * 3
+        self._tray_session = session
+        capabilities = self._get_capabilities()
+        self._tray.set_state({
+            "session": session, "connected": connected, "name": capabilities.name,
+            "battery": self._tray_battery,
+            "eq": self._settings_card.equalizer.tray_state(capabilities),
+            "noise": self._settings_card.noise.tray_state(),
+            "latency": self._latency.get_display_state(),
+            "latency_available": capabilities.supports("latency"),
+        })
+
+    def _handle_tray_device_action(self, message):
+        if (self._get_capabilities is None or self._get_device_session is None or self._is_connected is None
+                or not self._is_connected()
+                or message.get("session") != self._get_device_session()):
+            return
+        capabilities = self._get_capabilities()
+        operation = message.get("operation")
+        if message.get("feature") == "eq" and capabilities.supports("eq"):
+            profile = message.get("profile")
+            if operation == "read" or (type(profile) is int and profile in capabilities.profiles and profile != 10):
+                self._settings_card.equalizer.select_from_tray(operation, profile)
+        elif message.get("feature") == "noise" and capabilities.supports("noise"):
+            self._settings_card.noise.select_from_tray(
+                operation, message.get("mode"), message.get("level"))
+        elif (message.get("feature") == "latency" and operation == "toggle"
+              and capabilities.supports("latency")):
+            threading.Thread(target=self._latency.toggle_latency_from_tray,
+                             args=(message["session"],), daemon=True).start()
+        self.sync_tray()
 
     def _handle_capabilities_changed(self, message):
         if self._get_capabilities is not None:
@@ -90,6 +136,7 @@ class AppMessageHandler:
         self._update_page()
 
     def _update_page(self) -> None:
+        self.sync_tray()
         refresh_translations(self._page.controls)
         refresh_translations(self._page.overlay)
         self._page.update()
@@ -169,6 +216,11 @@ class AppMessageHandler:
         right = message.get("right", BATTERY_UNKNOWN)
         case = message.get("case", BATTERY_UNKNOWN)
         transient = message.get("transient", False)
+
+        # A transient UI refresh must not overwrite the last real device sample.
+        self.sync_tray()
+        if not transient and self._is_connected is not None and self._is_connected():
+            self._tray_battery = (left, right, case)
 
         if not transient:
             with self._notification_lock:
