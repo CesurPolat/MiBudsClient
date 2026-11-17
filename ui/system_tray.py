@@ -72,7 +72,7 @@ class SystemTray:
                     pystray.MenuItem(lambda item: t("tray.open"), lambda icon, item: self.on_show(), default=True)
                 )
             
-            self.icon = pystray.Icon("MiBudsClient", tray_image, "Mi Buds Client", menu)
+            self.icon = pystray.Icon("MiBudsClient", tray_image, self._tooltip(), menu)
             try:
                 self._image_notifications.bind(self.icon)
             except Exception as error:
@@ -148,6 +148,28 @@ class SystemTray:
             self._state = state
         self.refresh_menu()
 
+    @staticmethod
+    def _battery_values(state):
+        values = {}
+        for side, raw in zip(("left", "right", "case"), state.get("battery", (255, 255, 255))):
+            value = battery_state(raw)
+            if side == "case" and value is None:
+                continue
+            label = str(t("notification.battery_percent", percent=value[0])) if value else "\u2014"
+            if value and value[1]:
+                label = str(t("notification.battery_charging", level=label))
+            values[side] = label
+        return values
+
+    def _tooltip(self):
+        with self._state_lock:
+            state = self._state
+        if not state.get("connected"):
+            return f'Mi Buds Client\n{t("eq.disconnected")}'
+        lines = [f'{t("battery." + side)}: {value}'
+                 for side, value in self._battery_values(state).items()]
+        return "Mi Buds Client\n" + "\n".join(lines)
+
     def _build_menu(self):
         with self._state_lock:
             state = self._state
@@ -158,17 +180,10 @@ class SystemTray:
         if not connected:
             entries.append(item(str(t("eq.disconnected")), None, enabled=False))
         else:
-            batteries = {}
-            for side, raw in zip(("left", "right", "case"), state.get("battery", (255, 255, 255))):
-                value = battery_state(raw)
-                label = str(t("notification.battery_percent", percent=value[0])) if value else "\u2014"
-                if value and value[1]:
-                    label = str(t("notification.battery_charging", level=label))
-                batteries[side] = label
-            entries.append(item(str(t(
-                "notification.battery_summary", **batteries,
-                left_label=t("battery.left"), right_label=t("battery.right"),
-                case_label=t("battery.case"))), None, enabled=False))
+            batteries = self._battery_values(state)
+            summary = " · ".join(f'{t("battery." + side)}: {value}'
+                                 for side, value in batteries.items())
+            entries.append(item(summary, None, enabled=False))
         entries.append(separator)
 
         def action(feature, operation, **values):
@@ -246,6 +261,11 @@ class SystemTray:
     def refresh_menu(self) -> None:
         """Refresh tray menu to reflect updated checked states."""
         icon = self.icon
+        if self.available and icon:
+            try:
+                icon.title = self._tooltip()
+            except Exception as error:
+                print(f"Tray tooltip update unavailable: {error}")
         if self.available and icon and getattr(type(icon), "HAS_MENU", False):
             try:
                 icon.menu = self._build_menu()
