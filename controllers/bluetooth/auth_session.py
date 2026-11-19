@@ -42,10 +42,11 @@ def _serialized(method):
 
 class CommandAuthSession:
     def __init__(self, send, *, clock=time.monotonic, random_bytes=None,
-                 next_sequence=None, timeout=25.0):
+                 next_sequence=None, timeout=25.0, trace=None):
         if timeout <= 0:
             raise ValueError("Auth timeout must be positive")
         self._send = send
+        self._trace_callback = trace
         self._lock = threading.RLock()
         self._clock = clock
         self._random = random_bytes if random_bytes is not None else secrets.token_bytes
@@ -58,6 +59,11 @@ class CommandAuthSession:
         self._expected = None
         self._deadline = None
         self.error = ""
+
+    def _trace(self, event, **details):
+        """Only framing metadata; never challenges or cipher answers."""
+        if self._trace_callback is not None:
+            self._trace_callback("authentication", event=event, state=self.state, **details)
 
     @property
     def authenticated(self):
@@ -86,6 +92,7 @@ class CommandAuthSession:
         self.error = reason
 
     def _fail(self, reason):
+        self._trace("failure", reason=reason)
         self.abort(reason)
         raise AuthError(reason)
 
@@ -93,6 +100,8 @@ class CommandAuthSession:
         sequence = self._sequence()
         frame = encode_auth(opcode, sequence, payload)
         self._pending[(opcode, sequence)] = [frame, timeout, self._clock() + timeout, 0]
+        self._trace("tx_request", opcode=f"0x{opcode:02X}", sequence=sequence,
+                    length=1 + len(payload))
         self._send(frame)
 
     @_serialized
@@ -118,6 +127,8 @@ class CommandAuthSession:
                     self._fail("Auth response timed out")
                 pending[3] += 1
                 pending[2] = now + pending[1]
+                self._trace("retry", opcode=f"0x{pending[0][4]:02X}",
+                            sequence=pending[0][7], attempt=pending[3])
                 self._send(pending[0])
 
     @_serialized
@@ -127,6 +138,13 @@ class CommandAuthSession:
         normal = []
         try:
             for packet in self._parser.feed(data):
+                if packet.opcode in (0x50, 0x51) and not self.authenticated:
+                    sequence_index = 0 if packet.flags & 0x80 else 1
+                    self._trace("rx", flags=f"0x{packet.flags:02X}",
+                                opcode=f"0x{packet.opcode:02X}",
+                                sequence=(packet.payload[sequence_index]
+                                          if len(packet.payload) > sequence_index else None),
+                                length=len(packet.payload))
                 frame = decode_auth(packet)
                 if self.authenticated:
                     if packet.opcode not in (0x50, 0x51):
@@ -135,10 +153,14 @@ class CommandAuthSession:
                 if self.state in ("idle", "failed"):
                     raise AuthError("Auth session is not active")
                 if frame is None:
+                    if packet.opcode in (0x50, 0x51):
+                        self._trace("ignored_flags", flags=f"0x{packet.flags:02X}")
                     continue  # Normal commands are not replayed from before READY.
                 if not frame.request:
                     key = (frame.opcode, frame.sequence)
                     if key not in self._pending:
+                        self._trace("ignored_response", opcode=f"0x{frame.opcode:02X}",
+                                    sequence=frame.sequence)
                         continue
                     if frame.status:
                         self._fail("Auth response returned nonzero status")
@@ -164,6 +186,8 @@ class CommandAuthSession:
                         self._fail("Invalid peer challenge length/version")
                     answer = challenge_response(frame.data[1:])
                     self.state = "waiting_result"
+                    self._trace("tx_response", opcode="0x50", sequence=frame.sequence,
+                                length=19)
                     self._send(encode_auth(0x50, frame.sequence, bytes.fromhex("01") + answer, request=False))
                 else:
                     if self.state != "waiting_result" or len(frame.data) != 2 or frame.data[0] != 1:
@@ -172,6 +196,7 @@ class CommandAuthSession:
                     if frame.data[1]:
                         self._fail("Peer rejected authentication")
                     self.state = "authenticated"
+                    self._trace("complete")
                     self._pending.clear()
                     self._expected = None
         except ValueError as exc:

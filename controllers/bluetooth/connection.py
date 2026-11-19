@@ -206,7 +206,8 @@ class BluetoothConnection:
                     raise AuthError("raw_auth requires a resolved XiaoAI or standard SPP service")
                 sock = result.socket
                 session_type = CommandAuthSession if policy == AuthPolicy.COMMAND else RawAuthSession
-                session = session_type(sock.sendall)
+                session = (session_type(sock.sendall, trace=self.trace)
+                           if policy == AuthPolicy.COMMAND else session_type(sock.sendall))
                 with self._state_lock:
                     if cancel.is_set():
                         raise ConnectionCancelled("Auth cancelled")

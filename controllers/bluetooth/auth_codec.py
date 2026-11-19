@@ -14,7 +14,11 @@ class AuthFrame:
 
 
 def decode_auth(packet: RcspPacket) -> AuthFrame | None:
-    if packet.opcode not in (0x50, 0x51) or packet.flags & 7 not in (4, 7):
+    # Peer requests use C0 on some devices; keep existing app roles and
+    # accept that explicit request type without admitting role-0 responses.
+    if packet.opcode not in (0x50, 0x51) or (
+        packet.flags & 7 not in (4, 7) and packet.flags != 0xC0
+    ):
         return None
     request = bool(packet.flags & 0x80)
     minimum = 1 if request else 2
