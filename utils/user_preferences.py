@@ -11,6 +11,17 @@ DEFAULT_LOW_LATENCY_MODE = "off"
 DEFAULT_LOW_LATENCY_HOLD_UNTIL_APP_CLOSE = True
 
 
+def get_selected_bluetooth_address():
+    value = _load_settings().get("bluetooth_address")
+    return value if isinstance(value, str) else None
+
+
+def set_selected_bluetooth_address(address):
+    settings = _load_settings()
+    settings["bluetooth_address"] = address
+    _save_settings(settings)
+
+
 def get_language_preference() -> str:
     """Old installations follow the system until a language is selected."""
     from .i18n import LANGUAGE_CHOICES

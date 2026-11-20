@@ -38,7 +38,8 @@ class CapabilityTests(unittest.TestCase):
         # Independent contract: adding a metadata-only function must not grant
         # controls simply because it was added to the production registry.
         implemented = {
-            "eq": {2006, 2016}, "gestures": {4006, 4001, 4002, 4003},
+            "eq": {2006, 2016},
+            "gestures": {4006, 4001, 4002, 4003, 4004, 4005, 4011, 4012, 4013, 4014, 4018},
             "latency": {3011}, "noise": {1002, 1003, 1004, 1005, 1006, 1007},
         }
         from controllers.bluetooth.device_catalog import _APP_CATALOG

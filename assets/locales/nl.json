@@ -265,5 +265,16 @@
   "debug.close": "Sluiten",
   "debug.empty": "Nog geen logboekgegevens.",
   "connection.auth_failed": "Authenticatie mislukt. Verbind de oordopjes opnieuw via de Bluetooth-instellingen van het systeem. Stuur een foutrapport als het probleem aanhoudt.",
-  "connection.service_failed": "Geen bruikbare besturingsservice gevonden. Verbind de oordopjes opnieuw via de Bluetooth-instellingen van het systeem. Stuur een foutrapport als het probleem aanhoudt."
+  "connection.service_failed": "Geen bruikbare besturingsservice gevonden. Verbind de oordopjes opnieuw via de Bluetooth-instellingen van het systeem. Stuur een foutrapport als het probleem aanhoudt.",
+  "gesture.squeeze_double": "Knijpen ×2",
+  "gesture.squeeze_triple": "Knijpen ×3",
+  "gesture.press_single": "Knop ×1",
+  "gesture.press_double": "Knop ×2",
+  "gesture.press_triple": "Knop ×3",
+  "side.common": "Knop",
+  "connection.choose_device": "Kies een Bluetooth-apparaat",
+  "noise.wear_one": "Draag minstens één oordopje om de ruisregeling te wijzigen.",
+  "noise.wear_both": "Draag beide oordopjes om de ruisregeling te wijzigen.",
+  "battery.device": "Hoofdtelefoon",
+  "noise.unconfirmed": "Het apparaat heeft de gevraagde -instellingen niet bevestigd."
 }

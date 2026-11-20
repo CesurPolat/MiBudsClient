@@ -4,13 +4,17 @@ import unittest
 from unittest.mock import Mock
 
 from controllers.bluetooth.battery_stream import BatteryStreamParser
-from controllers.bluetooth.constants import BATTERY_PATTERN
+def battery_frame(values):
+    # A target-info response: STATUS/SEQ followed by length/type attributes.
+    payload = bytes.fromhex("00 0b 02 06 02") + bytes((len(values) + 1, 7)) + bytes(values)
+    return bytes.fromhex("fe dc ba 04 02") + len(payload).to_bytes(2, "big") + payload + bytes.fromhex("ef")
+
 from controllers.bluetooth.controller import BTController
 
 
 class BatteryStreamTests(unittest.TestCase):
     def test_every_split_position_and_bytewise_delivery(self):
-        record = BATTERY_PATTERN + bytes([188, 70, 255])
+        record = battery_frame([188, 70, 255])
         for split in range(len(record) + 1):
             parser = BatteryStreamParser()
             records = parser.feed(record[:split]) + parser.feed(record[split:])
@@ -22,15 +26,15 @@ class BatteryStreamTests(unittest.TestCase):
 
     def test_multiple_records_and_noise_are_consumed_exactly_once(self):
         parser = BatteryStreamParser()
-        records = parser.feed(b"noise" + BATTERY_PATTERN + bytes([60, 70, 80]) + b"noise" + BATTERY_PATTERN + bytes([61, 71, 81]))
+        records = parser.feed(b"noise" + battery_frame([60, 70, 80]) + b"noise" + battery_frame([61, 71, 81]))
         self.assertEqual([item.left for item in records], [60, 61])
         self.assertEqual(parser.feed(b""), [])
         parser.feed(b"x" * 100000)
-        self.assertLessEqual(len(parser._buffer), len(BATTERY_PATTERN) - 1)
+        self.assertLessEqual(parser._parser.buffered_bytes, 2)
 
     def test_disconnect_reset_prevents_cross_connection_records(self):
         parser = BatteryStreamParser()
-        record = BATTERY_PATTERN + bytes([60, 70, 80])
+        record = battery_frame([60, 70, 80])
         parser.feed(record[:5])
         parser.reset()
         self.assertEqual(parser.feed(record[5:]), [])
@@ -39,7 +43,8 @@ class BatteryStreamTests(unittest.TestCase):
     def test_controller_delivers_fragmented_battery_once(self):
         callback = Mock()
         controller = BTController(battery_callback=callback)
-        record = BATTERY_PATTERN + bytes([60, 70, 80])
+        record = battery_frame([60, 70, 80])
+        controller._connection.connected = True
         controller._connection.receive = Mock(side_effect=[record[:2], record[2:5], record[5:]])
         size = 0
         for _ in range(3):
@@ -48,6 +53,6 @@ class BatteryStreamTests(unittest.TestCase):
 
     def test_controller_resets_partial_battery_on_disconnect(self):
         controller = BTController()
-        controller._battery_parser.feed(BATTERY_PATTERN + bytes([60]))
+        controller._battery_parser.feed(battery_frame([60, 70, 80])[:10])
         controller._reset_identity_state("Disconnected")
         self.assertEqual(controller._battery_parser.feed(bytes([70, 80])), [])

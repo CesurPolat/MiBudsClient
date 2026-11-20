@@ -8,23 +8,25 @@ import threading
 import time
 import traceback
 from utils.error_reports import redact
+from utils.user_preferences import get_selected_bluetooth_address, set_selected_bluetooth_address
 from dataclasses import dataclass
 from typing import Callable, Optional
 
 from .capabilities import resolve_capabilities, DeviceCapabilities
 from .connection import BluetoothConnection
-from .auth_session import AuthPolicy, AuthError
+from .auth_session import AuthPolicy, AuthError, CommandAuthSession
 from .sdp import ConnectionCancelled
 from .discovery import BluetoothDiscovery
 from .protocol import BudsProtocol
 from .battery_stream import BatteryStreamParser
+from .config_transport import parse_config_records
 from .gesture_transport import GestureTransport
 from .eq_transport import EqTransport
 from .latency_transport import LatencyTransport
 from .noise import noise_capabilities, noise_backend_enabled, parse_noise_notification
 from .noise_transport import NoiseTransport
 from .equalizer import EqResult, eq_profiles
-from .gestures import GestureResult, gesture_capabilities
+from .gestures import GestureResult, gesture_capabilities, gesture_config
 from .constants import RECONNECT_DELAY
 from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, parse_identity_fields
 
@@ -80,6 +82,10 @@ class BTController:
         self._latency = LatencyTransport(self._gestures)
         self._noise = NoiseTransport(self._gestures)
         self._noise_parser = RcspStreamParser()
+        self._rx_lock = threading.RLock()
+        self.config_callback = None
+        self.device_candidates_callback = None
+        self._device_candidates = ()
         self.noise_callback = None
         self._bd_addr = bd_addr
         self._device_name = ""
@@ -245,16 +251,25 @@ class BTController:
             self._discovery_devices = []
             try:
                 if not self._bd_addr:
-                    device = BluetoothDiscovery.get_connected_device()
+                    preferred = get_selected_bluetooth_address()
+                    devices = BluetoothDiscovery.get_connected_devices(preferred)
+                    self._device_candidates = devices
+                    if self.device_candidates_callback:
+                        self.device_candidates_callback(devices)
+                    device = next((item for item in devices if item.address == preferred), None)
+                    if device is None and len(devices) == 1:
+                        device = devices[0]
                     self._discovery_devices = BluetoothDiscovery.discovery_diagnostics()
                     if not device or not device.address:
-                        reason = m("connection.no_catalog")
+                        reason = m("connection.choose_device" if devices else "connection.no_catalog")
                         self._notify_connection_state("failed", reason)
-                        self._update_status(m("connection.no_device"), "red")
-                        self._report_connection_error(ConnectionError(str(reason)), "bluetooth_discovery")
+                        self._update_status(reason if devices else m("connection.no_device"), "red")
+                        if not devices:
+                            self._report_connection_error(ConnectionError(str(reason)), "bluetooth_discovery")
                         return False
                     self._bd_addr = device.address
                     self._device_name = device.name
+                    set_selected_bluetooth_address(device.address)
                 self._device_check = BluetoothDiscovery.connection_state(self._bd_addr)
                 print(f"[Bluetooth] Device check: {redact(self._device_check)}")
                 self._reset_identity_state(m("identity.connection_changed"))
@@ -313,13 +328,20 @@ class BTController:
 
     def _report_connection_error(self, error, action):
         """Forward handled transport failures to automatic reporting."""
+        from .device_catalog import catalog_diagnostics
+        from .diagnostics import implementation_diagnostics
         error.bluetooth_diagnostics = {
             "device": self._device_name,
             "device_check": self._device_check,
             "discovered_devices": self._discovery_devices,
             "stage": "receive" if action == "bluetooth_receive" else self._connection.stage,
             "transport": list(self._connection.diagnostics),
+            "authentication": self._connection.auth_diagnostics,
             "identity": self.diagnostic_identity,
+            "catalog": catalog_diagnostics(),
+            "implementation": implementation_diagnostics(),
+            "catalog_match": {"model": resolve_capabilities(self._device_name).model,
+                              "source": "bluetooth_name", "device_identity_verified": False},
         }
         print(f"[Bluetooth] Error report device identity: {redact(error.bluetooth_diagnostics['identity'])}")
         print(redact("".join(traceback.format_exception(type(error), error, error.__traceback__))))
@@ -393,7 +415,10 @@ class BTController:
         try:
             if not self.capabilities.supports("battery"):
                 return False, m("connection.device_failed")
-            payload = self._protocol.build_battery_request()
+            with self._identity_condition:
+                counter = self._identity_counter
+                self._identity_counter = (counter + 1) & 255
+            payload = self._protocol.build_battery_request(counter)
             # Record before sending so a fast response cannot race this state.
             with self._state_lock:
                 if not user_initiated and not self._battery_polling_enabled:
@@ -465,8 +490,6 @@ class BTController:
             request = _IdentityRequest(self._identity_counter)
             self._identity_counter = (self._identity_counter + 1) & 0xFF
             self._identity_pending = request
-            # Do not reuse an incomplete frame from an earlier, timed-out query.
-            self._identity_parser.reset()
 
         try:
             self._connection.send(build_identity_request(request.counter))
@@ -511,7 +534,12 @@ class BTController:
 
     def request_noise_settings(self, *, session, timeout=2.0):
         self._require_noise_backend()
+        self._noise.read_aux(self.noise_capabilities, session)
         return self._noise.read(session, timeout)
+
+    def set_adaptive_noise(self, enabled, *, session, timeout=2.0):
+        self._require_noise_backend()
+        return self._noise.set_adaptive(self.noise_capabilities, session, enabled, timeout)
 
     def set_noise_settings(self, mode, level=None, *, session, timeout=2.0):
         self._require_noise_backend()
@@ -539,23 +567,28 @@ class BTController:
             return GestureResult(False, message=m("gesture.connect"))
         if not self.gesture_capabilities:
             return GestureResult(False, message=m("gesture.no_capabilities"))
-        return self._gestures.read(timeout, session)
+        configs = tuple(dict.fromkeys(gesture_config(g) for g in self.gesture_capabilities))
+        return self._gestures.read(timeout, session, configs)
 
     def set_gesture_assignment(self, gesture_type, side, action, timeout=5.0, *, session=None):
         """Write one side, then verify by reading the device's settings back."""
         allowed = self.gesture_capabilities.get(gesture_type, ())
-        if side not in ("left", "right") or type(action) is not int or action not in allowed:
+        if side not in ("left", "right", "common") or type(action) is not int or action not in allowed:
             return GestureResult(False, message=m("gesture.unsupported"))
         return self._gestures.write(gesture_type, side, action, timeout, session)
 
     def _process_identity_data(self, data: bytes) -> None:
+        self._process_identity_packets(self._identity_parser.feed(data))
+
+    def _process_identity_packets(self, packets) -> None:
         identity = None
         with self._identity_condition:
-            for packet in self._identity_parser.feed(data):
+            for packet in packets:
                 request = self._identity_pending
                 if request is None or request.completed:
                     continue
-                if packet.flags & 0x80 or packet.opcode != 0x02 or len(packet.payload) < 2:
+                if (packet.flags & 0x80 or packet.flags & 7 not in (0, 4, 7)
+                        or packet.opcode != 0x02 or len(packet.payload) < 2):
                     continue
                 status, counter = packet.payload[:2]
                 if counter != request.counter:
@@ -579,6 +612,10 @@ class BTController:
                 self._identity_callback(identity)
 
     def _reset_identity_state(self, reason: str) -> None:
+        with self._rx_lock:
+            self._reset_session_state(reason)
+
+    def _reset_session_state(self, reason: str) -> None:
         with self._state_lock:
             invalidate = self._battery_has_value
             self._battery_has_value = False
@@ -639,6 +676,19 @@ class BTController:
                 self._bd_addr = None
                 self._device_name = ""
             self._notify_connection_event("reconnecting")
+            return self.connect()
+
+    def select_device(self, address):
+        """Only accept an address offered by the latest eligible discovery."""
+        with self._connect_lock:
+            device = next((item for item in self._device_candidates if item.address == address), None)
+            if device is None:
+                return False
+            self._connection.disconnect()
+            self._reset_identity_state(m("identity.connection_changed"))
+            self._bd_addr, self._device_name = device.address, device.name
+            set_selected_bluetooth_address(device.address)
+            self.resume_reconnect_attempts()
             return self.connect()
     
     def on_connect_setup(self):
@@ -727,7 +777,16 @@ class BTController:
     
     def _process_data(self, last_packet_size: int) -> int:
         """Process incoming data packet."""
-        data = self._connection.receive()
+        session = self.eq_session
+        transport = self._connection.result
+        try:
+            data = self._connection.receive()
+        except OSError:
+            if session != self.eq_session or transport is not self._connection.result:
+                return last_packet_size
+            raise
+        if session != self.eq_session or transport is not self._connection.result:
+            return last_packet_size
         if not data:
             raise ConnectionError("Received zero bytes from RFCOMM socket")
         with self._state_lock:
@@ -735,52 +794,97 @@ class BTController:
 
         packet_size = len(data)
         print(f"Received data size: {packet_size}")
-        self._process_identity_data(data)
-        config_response = self._gestures.feed(data)
-        if noise_backend_enabled(self.capabilities):
-            from .noise_capture import record
-            record("RX", data)
-            for packet in self._noise_parser.feed(data):
-                if packet.flags & 7 not in (4, 7):
+        with self._rx_lock:
+            if session != self.eq_session or not self.connected:
+                return packet_size
+            packets = self._noise_parser.feed(data)
+            self._process_identity_packets(packets)
+            config_response = self._gestures.feed_packets(packets)
+            statuses = self._battery_parser.feed_packets(packets)
+            capture_noise = noise_backend_enabled(self.capabilities)
+            if capture_noise:
+                from .noise_capture import record
+            for packet in packets:
+                if packet.opcode in (0x50, 0x51):
+                    auth = self._connection.auth_session
+                    if isinstance(auth, CommandAuthSession) and auth.authenticated:
+                        auth.feed(bytes.fromhex(packet.raw_hex))
                     continue
-                try:
-                    state = parse_noise_notification(packet)
-                except ValueError:
+                if capture_noise:
+                    record("RX", bytes.fromhex(packet.raw_hex))
+                if packet.flags & 7 not in (4, 7) and packet.flags != 0xC0:
                     continue
-                if state is not None:
-                    self._noise.notify(self.eq_session, state)
-                    # Respond only if the peer explicitly requests an ACK.
-                    if packet.flags & 0x80 and packet.flags & 0x40:
-                        self._connection.send(bytes.fromhex("fe dc ba 04 f4 00 02") +
-                                              bytes((0, packet.payload[0], 0xEF)))
-                    if self.noise_callback:
-                        self.noise_callback(self.eq_session, state)
+                if packet.opcode == 0xF4:
+                    offset = 1 if packet.flags & 0x80 else 2
+                    if len(packet.payload) < offset or (offset == 2 and packet.payload[0]):
+                        continue
+                    try:
+                        records = parse_config_records(packet.payload[offset:])
+                    except ValueError:
+                        continue
+                    self._gestures.notify(session, records)
+                    self._latency.notify(session, records)
+                    eq = self._equalizer.notify(session, records)
+                    if 2 in records or 80 in records:
+                        from .gestures import parse_gesture_records
+                        try:
+                            self._gestures._last_read = parse_gesture_records(packet.payload[offset:], physical=True)
+                        except ValueError:
+                            pass
+                    self._noise.notify_aux(session, records)
+                    try:
+                        state = parse_noise_notification(packet)
+                    except ValueError:
+                        state = None
+                    if state is not None:
+                        state = self._noise.enrich(session, state)
+                        self._noise.notify(session, state)
+                        if self.noise_callback:
+                            self.noise_callback(session, state)
+                    elif 12 in records or 37 in records:
+                        state = self._noise.current_state(session)
+                        if state is not None and self.noise_callback:
+                            self.noise_callback(session, state)
+                    if self.config_callback:
+                        self.config_callback(session, records, eq)
+                elif packet.opcode == 0x0E:
+                    from .rcsp import parse_info_fields
+                    try:
+                        if not packet.flags & 0x80 or not packet.payload:
+                            continue
+                        parse_info_fields(packet.payload[1:])
+                    except ValueError:
+                        continue
+                else:
+                    continue
+                # A single router owns notification ACKs. Bit 6 requests one.
+                if packet.flags & 0x80 and packet.flags & 0x40:
+                    self._connection.send(bytes.fromhex("fe dc ba 04") +
+                                          bytes((packet.opcode, 0, 2, 0, packet.payload[0], 0xEF)))
 
-        # Check for battery data
-        statuses = self._battery_parser.feed(data)
-        if statuses:
-            with self._state_lock:
-                self._battery_requested_at = None
-                self._battery_probe_started_at = None
-                self._battery_attempts = 0
-                self._battery_has_value = True
-                self._battery_next_check_at = time.monotonic() + self._BATTERY_REFRESH_INTERVAL
-            for status in statuses:
-                values = []
-                for label, raw in (("left", status.left), ("right", status.right), ("case", status.case)):
-                    percent = raw - 128 if raw >= 128 else raw
-                    value = "unknown" if raw == 255 or not 0 <= percent <= 100 else f"{percent}%"
-                    if value != "unknown" and raw >= 128:
-                        value += " (charging)"
-                    values.append(f"{label}={value} [raw={raw}]")
-                print("[Bluetooth] Battery received: " + "; ".join(values))
-                self._notify_battery(status.left, status.right, status.case)
-        
-        # Check for mode acknowledgment
-        elif not config_response and self._protocol.is_mode_ack_packet(packet_size):
-            if last_packet_size != packet_size:
-                self._trigger_battery_check()
-        
+            if statuses:
+                with self._state_lock:
+                    self._battery_requested_at = None
+                    self._battery_probe_started_at = None
+                    self._battery_attempts = 0
+                    self._battery_has_value = True
+                    self._battery_next_check_at = time.monotonic() + self._BATTERY_REFRESH_INTERVAL
+                for status in statuses:
+                    values = []
+                    for label, raw in (("left", status.left), ("right", status.right), ("case", status.case)):
+                        percent = raw - 128 if raw >= 128 else raw
+                        value = "unknown" if raw == 255 or not 0 <= percent <= 100 else f"{percent}%"
+                        if value != "unknown" and raw >= 128:
+                            value += " (charging)"
+                        values.append(f"{label}={value} [raw={raw}]")
+                    print("[Bluetooth] Battery received: " + "; ".join(values))
+                    self._notify_battery(status.left, status.right, status.case)
+            
+            # Check for mode acknowledgment
+            elif not config_response and self._protocol.is_mode_ack_packet(packet_size):
+                if last_packet_size != packet_size:
+                    self._trigger_battery_check()
+            
         return packet_size
     
     def _handle_disconnect(self) -> None:

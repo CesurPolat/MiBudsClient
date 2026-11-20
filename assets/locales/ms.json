@@ -265,5 +265,16 @@
   "debug.close": "Tutup",
   "debug.empty": "Belum ada log.",
   "connection.auth_failed": "Pengesahan gagal. Sambungkan semula fon telinga dalam tetapan Bluetooth sistem. Jika berterusan, hantar laporan ralat.",
-  "connection.service_failed": "Tiada perkhidmatan kawalan yang boleh digunakan ditemui. Sambungkan semula fon telinga dalam tetapan Bluetooth sistem. Jika berterusan, hantar laporan ralat."
+  "connection.service_failed": "Tiada perkhidmatan kawalan yang boleh digunakan ditemui. Sambungkan semula fon telinga dalam tetapan Bluetooth sistem. Jika berterusan, hantar laporan ralat.",
+  "gesture.squeeze_double": "Picit ×2",
+  "gesture.squeeze_triple": "Picit ×3",
+  "gesture.press_single": "Butang ×1",
+  "gesture.press_double": "Butang ×2",
+  "gesture.press_triple": "Butang ×3",
+  "side.common": "Butang",
+  "connection.choose_device": "Pilih peranti Bluetooth",
+  "noise.wear_one": "Pakai sekurang-kurangnya satu fon telinga untuk menukar kawalan hingar.",
+  "noise.wear_both": "Pakai kedua-dua fon telinga untuk menukar kawalan hingar.",
+  "battery.device": "Fon kepala",
+  "noise.unconfirmed": "Peranti tidak mengesahkan tetapan yang diminta."
 }

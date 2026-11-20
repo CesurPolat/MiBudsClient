@@ -265,5 +265,16 @@
   "debug.close": "ปิด",
   "debug.empty": "ยังไม่มีบันทึก",
   "connection.auth_failed": "ยืนยันตัวตนหูฟังไม่สำเร็จ โปรดเชื่อมต่อใหม่ในการตั้งค่า Bluetooth ของระบบ หากยังมีปัญหา ให้ส่งรายงานข้อผิดพลาด",
-  "connection.service_failed": "ไม่พบบริการควบคุมหูฟังที่ใช้งานได้ โปรดเชื่อมต่อใหม่ในการตั้งค่า Bluetooth ของระบบ หากยังมีปัญหา ให้ส่งรายงานข้อผิดพลาด"
+  "connection.service_failed": "ไม่พบบริการควบคุมหูฟังที่ใช้งานได้ โปรดเชื่อมต่อใหม่ในการตั้งค่า Bluetooth ของระบบ หากยังมีปัญหา ให้ส่งรายงานข้อผิดพลาด",
+  "gesture.squeeze_double": "บีบ ×2",
+  "gesture.squeeze_triple": "บีบ ×3",
+  "gesture.press_single": "ปุ่ม ×1",
+  "gesture.press_double": "ปุ่ม ×2",
+  "gesture.press_triple": "ปุ่ม ×3",
+  "side.common": "ปุ่ม",
+  "connection.choose_device": "เลือกอุปกรณ์ Bluetooth",
+  "noise.wear_one": "สวมเอียร์บัดอย่างน้อยหนึ่งข้างเพื่อเปลี่ยนการควบคุมเสียงรบกวน",
+  "noise.wear_both": "สวมเอียร์บัดทั้งสองข้างเพื่อเปลี่ยนการควบคุมเสียงรบกวน",
+  "battery.device": "หูฟัง",
+  "noise.unconfirmed": "อุปกรณ์ไม่ได้ยืนยันการตั้งค่า ที่ร้องขอ"
 }

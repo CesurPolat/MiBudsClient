@@ -265,5 +265,16 @@
   "debug.close": "Fechar",
   "debug.empty": "Ainda não há registros.",
   "connection.auth_failed": "Falha na autenticação. Reconecte os fones nas configurações Bluetooth do sistema. Se persistir, envie um relatório de erro.",
-  "connection.service_failed": "Nenhum serviço de controle utilizável encontrado. Reconecte os fones nas configurações Bluetooth do sistema. Se persistir, envie um relatório de erro."
+  "connection.service_failed": "Nenhum serviço de controle utilizável encontrado. Reconecte os fones nas configurações Bluetooth do sistema. Se persistir, envie um relatório de erro.",
+  "gesture.squeeze_double": "Apertar ×2",
+  "gesture.squeeze_triple": "Apertar ×3",
+  "gesture.press_single": "Botão ×1",
+  "gesture.press_double": "Botão ×2",
+  "gesture.press_triple": "Botão ×3",
+  "side.common": "Botão",
+  "connection.choose_device": "Escolha um dispositivo Bluetooth",
+  "noise.wear_one": "Coloque pelo menos um auricular para alterar o controlo de ruído.",
+  "noise.wear_both": "Coloque ambos os auriculares para alterar o controlo de ruído.",
+  "battery.device": "Auscultadores",
+  "noise.unconfirmed": "O dispositivo não confirmou os ajustes do equalizador solicitados."
 }

@@ -265,5 +265,16 @@
   "debug.close": "Fermer",
   "debug.empty": "Aucun journal pour le moment.",
   "connection.auth_failed": "Échec de l’authentification. Reconnectez les écouteurs dans les paramètres Bluetooth du système. Si le problème persiste, envoyez un rapport d’erreur.",
-  "connection.service_failed": "Aucun service de contrôle utilisable trouvé. Reconnectez les écouteurs dans les paramètres Bluetooth du système. Si le problème persiste, envoyez un rapport d’erreur."
+  "connection.service_failed": "Aucun service de contrôle utilisable trouvé. Reconnectez les écouteurs dans les paramètres Bluetooth du système. Si le problème persiste, envoyez un rapport d’erreur.",
+  "gesture.squeeze_double": "Pincement ×2",
+  "gesture.squeeze_triple": "Pincement ×3",
+  "gesture.press_single": "Bouton ×1",
+  "gesture.press_double": "Bouton ×2",
+  "gesture.press_triple": "Bouton ×3",
+  "side.common": "Bouton",
+  "connection.choose_device": "Choisir un appareil Bluetooth",
+  "noise.wear_one": "Portez au moins un écouteur pour modifier le contrôle du bruit.",
+  "noise.wear_both": "Portez les deux écouteurs pour modifier le contrôle du bruit.",
+  "battery.device": "Casque",
+  "noise.unconfirmed": "L’appareil n’a pas confirmé les réglages d’égaliseur demandés."
 }

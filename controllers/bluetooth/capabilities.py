@@ -8,7 +8,8 @@ import json
 import re
 from .device_catalog import get_device_models_by_name
 from .equalizer import PROFILE_KEYS
-from .gestures import GESTURE_FUNCTION_TYPES
+from .gestures import GESTURE_FUNCTION_TYPES, actions_for_gesture
+from .catalog_options import resolve_options
 
 FUNCTIONS = {
     1006: "FUNC_ANC_NOISE_FOUR",
@@ -103,6 +104,9 @@ class DeviceCapabilities:
     profiles: tuple = ()
     gestures: dict = field(default_factory=dict)
     catalog_effects: tuple = ()
+    firmware_version: str | None = None
+    unresolved_options: tuple = ()
+    single_body: bool = False
 
     def supports(self, feature):
         return feature in self.available
@@ -134,6 +138,8 @@ def resolve_capabilities(device_name="", identity=None):
                     continue
             if isinstance(data, dict):
                 options[fid] = data
+    firmware = getattr(identity, "firmware_version", None)
+    options, unresolved = resolve_options(options, firmware)
     functions = frozenset(function_ids)
     effects = options.get(2016, {}).get("sound_effect", {})
     effects = effects.get("effects", []) if isinstance(effects, dict) else effects
@@ -148,7 +154,7 @@ def resolve_capabilities(device_name="", identity=None):
     for fid, gesture in GESTURE_FUNCTION_TYPES.items():
         actions = options.get(fid, {}).get("click_action")
         if isinstance(actions, list):
-            allowed = tuple(dict.fromkeys(v for v in actions if type(v) is int and v in range(14)))
+            allowed = tuple(dict.fromkeys(v for v in actions if type(v) is int and v in actions_for_gesture(gesture)))
             if allowed:
                 gestures[gesture] = allowed
     available = {feature for feature, ids in COMPONENT_REGISTRY.items()
@@ -159,4 +165,5 @@ def resolve_capabilities(device_name="", identity=None):
     return DeviceCapabilities(model["model"], model["name"],
                               (model.get("vid"), model.get("pid")), functions,
                               options, frozenset(available), profiles, gestures,
-                              tuple(dict.fromkeys(catalog_effects)))
+                              tuple(dict.fromkeys(catalog_effects)), firmware, unresolved,
+                              model.get("extra_info", {}).get("headphone_type") == 2)

@@ -265,5 +265,16 @@
   "debug.close": "Stäng",
   "debug.empty": "Inga loggar ännu.",
   "connection.auth_failed": "Autentiseringen misslyckades. Anslut hörlurarna igen i systemets Bluetooth-inställningar. Skicka en felrapport om problemet kvarstår.",
-  "connection.service_failed": "Ingen användbar styrtjänst hittades. Anslut hörlurarna igen i systemets Bluetooth-inställningar. Skicka en felrapport om problemet kvarstår."
+  "connection.service_failed": "Ingen användbar styrtjänst hittades. Anslut hörlurarna igen i systemets Bluetooth-inställningar. Skicka en felrapport om problemet kvarstår.",
+  "gesture.squeeze_double": "Kläm ×2",
+  "gesture.squeeze_triple": "Kläm ×3",
+  "gesture.press_single": "Knapp ×1",
+  "gesture.press_double": "Knapp ×2",
+  "gesture.press_triple": "Knapp ×3",
+  "side.common": "Knapp",
+  "connection.choose_device": "Välj en Bluetooth-enhet",
+  "noise.wear_one": "Bär minst en öronsnäcka för att ändra bruskontrollen.",
+  "noise.wear_both": "Bär båda öronsnäckorna för att ändra bruskontrollen.",
+  "battery.device": "Hörlurar",
+  "noise.unconfirmed": "Enheten bekräftade inte de begärda -inställningarna."
 }

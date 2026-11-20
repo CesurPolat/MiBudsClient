@@ -127,3 +127,11 @@ class BatteryPanel(ft.Container):
         self._left.update_value(left)
         self._right.update_value(right)
         self._case.update_value(case)
+
+    def set_single_body(self, single):
+        if getattr(self, "_single_body", None) == single:
+            return
+        self._single_body = single
+        self._left._label_text.value = t("battery.device" if single else "battery.left")
+        for control in self.content.controls[1:]:
+            control.visible = not single

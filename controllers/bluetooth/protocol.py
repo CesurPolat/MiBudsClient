@@ -45,9 +45,10 @@ class BudsProtocol:
         return bytes.fromhex(payload)
     
     @staticmethod
-    def build_battery_request() -> bytes:
+    def build_battery_request(counter=0x0B) -> bytes:
         """Build battery status request payload."""
-        return bytes.fromhex(BATTERY_REQUEST_PAYLOAD)
+        from .rcsp import build_identity_request
+        return build_identity_request(counter)
     
     @staticmethod
     def parse_battery(data: bytes) -> Optional[BatteryStatus]:
@@ -59,23 +60,14 @@ class BudsProtocol:
         Returns:
             BatteryStatus if found, None otherwise
         """
-        try:
-            idx = data.find(BATTERY_PATTERN)
-            if idx == -1 or len(data) < idx + 7:
-                return None
-            
-            return BatteryStatus(
-                left=data[idx + 4],
-                right=data[idx + 5],
-                case=data[idx + 6]
-            )
-        except Exception:
-            return None
+        from .battery_stream import BatteryStreamParser
+        statuses = BatteryStreamParser().feed(data)
+        return statuses[-1] if statuses else None
     
     @staticmethod
     def is_battery_packet(data: bytes) -> bool:
         """Check if packet contains battery status pattern."""
-        return BATTERY_PATTERN in data
+        return BudsProtocol.parse_battery(data) is not None
     
     @staticmethod
     def is_mode_ack_packet(packet_size: int) -> bool:

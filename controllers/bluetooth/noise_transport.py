@@ -2,9 +2,13 @@
 import math
 import threading
 import time
+from dataclasses import replace
 
 from utils.i18n import message as m
 from .noise import build_noise_mode, build_noise_level, build_noise_read, parse_noise_state
+from .noise import wear_requirement
+from .config_transport import parse_config_records
+from .equalizer import _frame
 
 
 class NoiseTransport:
@@ -13,11 +17,17 @@ class NoiseTransport:
         self._updates = threading.Condition()
         self._revision = 0
         self._notification = None
+        self._aux_session = None
+        self._wear = self._adaptive = None
+        self._last_state = None
 
     def reset(self):
         """Called after the shared channel generation changes on disconnect."""
         with self._updates:
             self._notification = None
+            self._aux_session = None
+            self._wear = self._adaptive = None
+            self._last_state = None
             self._revision += 1
             self._updates.notify_all()
 
@@ -26,9 +36,64 @@ class NoiseTransport:
         with self._updates:
             if session != self.channel.generation:
                 return
-            self._notification = (session, state)
+            self._notification = (session, self.enrich(session, state))
+            self._last_state = self._notification[1]
             self._revision += 1
             self._updates.notify_all()
+
+    def enrich(self, session, state):
+        return replace(state, wear=self._wear, adaptive=self._adaptive) if self._aux_session == session else state
+
+    def current_state(self, session):
+        if self._last_state is not None and self._aux_session == session:
+            return self.enrich(session, self._last_state)
+        return None
+
+    def notify_aux(self, session, records):
+        with self._updates:
+            if session != self.channel.generation:
+                return
+            self._aux_session = session
+            if 12 in records and len(records[12]) == 1:
+                self._wear = records[12][0]
+            if records.get(37) in (b"\x00", b"\x01"):
+                self._adaptive = records[37] == b"\x01"
+            if self._notification is not None and self._notification[0] == session:
+                self._notification = (session, self.enrich(session, self._notification[1]))
+            self._revision += 1
+            self._updates.notify_all()
+
+    def read_aux(self, capabilities, session, timeout=0.4):
+        for config in (12, 37) if capabilities.adaptive == "switch" else (12,):
+            try:
+                data = self.channel.exchange(0xF3, lambda ss: _frame(0xF3, ss, config.to_bytes(2, "big")),
+                                             timeout, session, config, namespace="noise")
+                self.notify_aux(session, parse_config_records(data))
+            except (OSError, ValueError):
+                self._check_session(session)
+
+    def set_adaptive(self, capabilities, session, enabled, timeout=2.0):
+        if capabilities.adaptive != "switch" or type(enabled) is not bool:
+            raise ValueError("Separate adaptive noise control is unavailable")
+        with self.channel.transaction():
+            revision = self.channel.revision
+            deadline = time.monotonic() + timeout
+            self.channel.exchange(0xF2, lambda ss: _frame(0xF2, ss, bytes((3, 0, 37, int(enabled)))),
+                                  timeout, session, 37, namespace="noise")
+            def parse(data):
+                value = parse_config_records(data).get(37)
+                if value not in (b"\x00", b"\x01"):
+                    raise ValueError("Invalid adaptive noise state")
+                return value == b"\x01"
+            confirmed, actual = self.channel.confirm(
+                37, parse,
+                lambda remaining: parse(self.channel.exchange(0xF3, lambda ss: _frame(0xF3, ss, b"\x00\x25"),
+                                       remaining, session, 37, namespace="noise")),
+                lambda value: value == enabled, max(0, deadline - time.monotonic()), session, revision, namespace="noise")
+            self._aux_session, self._adaptive = session, actual
+            if not confirmed:
+                raise TimeoutError(m("noise.unconfirmed"))
+            return self.read(session, max(0.1, deadline - time.monotonic()))
 
     def _check_session(self, session):
         if session != self.channel.generation:
@@ -77,14 +142,20 @@ class NoiseTransport:
                 return actual
 
     def read(self, session, timeout=2.0):
-        return parse_noise_state(self.channel.exchange(
-            0xF3, build_noise_read, timeout, session, 11, namespace="noise"))
+        state = self.enrich(session, parse_noise_state(self.channel.exchange(
+            0xF3, build_noise_read, timeout, session, 11, namespace="noise")))
+        self._check_session(session)
+        self._last_state = state
+        return state
 
     def apply(self, capabilities, session, mode, level=None, timeout=2.0):
         if not math.isfinite(timeout) or timeout <= 0:
             raise ValueError("Noise timeout must be finite and positive")
         if type(mode) is not int or mode not in capabilities.modes:
             raise ValueError("Unsupported noise mode")
+        reason = wear_requirement(capabilities, self._wear if self._aux_session == session else None, mode)
+        if reason:
+            raise ValueError(m(reason))
         builder = lambda ss: build_noise_mode(ss, mode)
         opcode = 0x08
         if level is not None:

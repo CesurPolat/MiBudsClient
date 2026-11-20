@@ -373,7 +373,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "en": {
@@ -645,7 +656,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "ar": {
@@ -1020,7 +1042,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "de": {
@@ -1395,7 +1428,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "es": {
@@ -1770,7 +1814,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "et": {
@@ -2049,7 +2104,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "fi": {
@@ -2328,7 +2394,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "fr": {
@@ -2703,7 +2780,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "hi": {
@@ -2982,7 +3070,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "hu": {
@@ -3261,7 +3360,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "id": {
@@ -3636,7 +3746,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "it": {
@@ -4011,7 +4132,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "ja": {
@@ -4386,7 +4518,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "ko": {
@@ -4761,7 +4904,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "ms": {
@@ -5136,7 +5290,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "nl": {
@@ -5511,7 +5676,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "pl": {
@@ -5886,7 +6062,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "pt-BR": {
@@ -6258,7 +6445,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "pt-PT": {
@@ -6630,7 +6828,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "ru": {
@@ -7005,7 +7214,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "sv": {
@@ -7284,7 +7504,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "th": {
@@ -7659,7 +7890,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "uk": {
@@ -8034,7 +8276,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "vi": {
@@ -8409,7 +8662,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "zh-CN": {
@@ -8781,7 +9045,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "zh-TW": {
@@ -9153,7 +9428,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     },
     "zh-HK": {
@@ -9525,7 +9811,18 @@
         "debug.clear",
         "debug.close",
         "debug.empty",
-        "gesture.swipe"
+        "gesture.swipe",
+        "gesture.squeeze_double",
+        "gesture.squeeze_triple",
+        "gesture.press_single",
+        "gesture.press_double",
+        "gesture.press_triple",
+        "side.common",
+        "connection.choose_device",
+        "noise.wear_one",
+        "noise.wear_both",
+        "battery.device",
+        "noise.unconfirmed"
       ]
     }
   },

@@ -3,6 +3,7 @@
 from utils.i18n import message as m
 
 import threading
+import time
 from dataclasses import dataclass
 
 from .rcsp import RcspStreamParser
@@ -29,6 +30,8 @@ class RcspConfigTransport:
         self._generation = 0
         self._pending = None
         self._last_read = None
+        self._values = {}
+        self._revision = 0
 
     @property
     def generation(self):
@@ -39,6 +42,8 @@ class RcspConfigTransport:
         with self._condition:
             self._generation += 1
             self._last_read = None
+            self._values.clear()
+            self._revision += 1
             self._parser.reset()
             if self._pending is not None:
                 self._pending.error = reason
@@ -46,18 +51,22 @@ class RcspConfigTransport:
             self._condition.notify_all()
 
     def feed(self, data):
+        return self.feed_packets(self._parser.feed(data))
+
+    def feed_packets(self, packets):
         matched = False
         with self._condition:
-            for packet in self._parser.feed(data):
+            for packet in packets:
                 request = self._pending
                 # Bit 7 indicates a command; only consume responses.
                 if (request is None or request.completed or packet.flags & 0x80
+                        or packet.flags & 7 not in (4, 7)
                         or packet.opcode != request.opcode or len(packet.payload) < 2):
                     continue
                 status, counter = packet.payload[:2]
                 if counter != request.counter:
                     continue
-                if not status and request.config_id is not None and packet.payload[2:]:
+                if not status and request.opcode == 0xF3 and request.config_id is not None and packet.payload[2:]:
                     try:
                         records = parse_config_records(packet.payload[2:])
                     except ValueError as exc:
@@ -78,6 +87,55 @@ class RcspConfigTransport:
                 self._condition.notify_all()
         return matched
 
+    def notify(self, generation, records):
+        with self._condition:
+            if generation != self._generation:
+                return
+            self._revision += 1
+            for config, value in records.items():
+                self._values[config] = (self._revision, value)
+            self._condition.notify_all()
+
+    @property
+    def revision(self):
+        with self._condition:
+            return self._revision
+
+    def confirm(self, config, parser, read, matches, timeout, generation, revision, namespace="eq"):
+        """Read/await fresh notifications after one write, within a fixed budget.
+
+        Return the last actual value as well as confirmation; an ACK is never
+        substituted for device state. Reset wakes waits and cancels old sessions.
+        """
+        deadline = time.monotonic() + timeout
+        actual = None
+        while True:
+            with self._condition:
+                if generation != self._generation or not self._connection.connected:
+                    raise ConnectionError(m(namespace + ".connection_changed"))
+                cached = self._values.get(config)
+                if cached is not None and cached[0] > revision:
+                    actual = parser(bytes([len(cached[1]) + 2]) + config.to_bytes(2, "big") + cached[1])
+                    if matches(actual):
+                        return True, actual
+                revision = self._revision
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    return False, actual
+            try:
+                actual = read(min(0.4, remaining))
+            except TimeoutError:
+                pass
+            else:
+                if generation != self.generation:
+                    raise ConnectionError(m(namespace + ".connection_changed"))
+                if time.monotonic() <= deadline and matches(actual):
+                    return True, actual
+            with self._condition:
+                self._condition.wait_for(
+                    lambda: generation != self._generation or self._revision != revision,
+                    min(0.2, max(0, deadline - time.monotonic())))
+
     def _exchange(self, opcode, builder, timeout, generation, config_id=None, namespace="gesture"):
         with self._condition:
             if generation != self._generation or not self._connection.connected:
@@ -88,7 +146,6 @@ class RcspConfigTransport:
             if self._counter == 0x90:
                 self._counter = 0x91
             request = _Request(opcode, counter, config_id=config_id, namespace=namespace)
-            self._parser.reset()
             self._pending = request
             try:
                 self._connection.send(builder(counter))
@@ -118,10 +175,19 @@ def parse_config_records(data):
     pos = 0
     while pos < len(data):
         length = data[pos]
-        end = pos + 1 + length
-        if length < 2 or end > len(data):
+        if pos + 3 > len(data):
             raise ValueError(m("eq.invalid"))
         config = int.from_bytes(data[pos + 1:pos + 3], "big")
+        if length == 255:
+            # APK CommonConfig: FF/0034 carries a big-endian value length.
+            # Unknown extended types have no safe boundary; never byte-scan.
+            if config != 0x0034 or pos + 5 > len(data):
+                raise ValueError(m("eq.invalid"))
+            end = pos + 5 + int.from_bytes(data[pos + 3:pos + 5], "big")
+        else:
+            end = pos + 1 + length
+        if length < 2 or end > len(data):
+            raise ValueError(m("eq.invalid"))
         if config in records:
             raise ValueError(m("eq.invalid"))
         records[config] = data[pos + 3:end]

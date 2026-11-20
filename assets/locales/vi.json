@@ -265,5 +265,16 @@
   "debug.close": "Đóng",
   "debug.empty": "Chưa có nhật ký.",
   "connection.auth_failed": "Xác thực tai nghe thất bại. Kết nối lại trong cài đặt Bluetooth của hệ thống. Nếu vẫn lỗi, hãy gửi báo cáo lỗi.",
-  "connection.service_failed": "Không tìm thấy dịch vụ điều khiển khả dụng. Kết nối lại tai nghe trong cài đặt Bluetooth của hệ thống. Nếu vẫn lỗi, hãy gửi báo cáo lỗi."
+  "connection.service_failed": "Không tìm thấy dịch vụ điều khiển khả dụng. Kết nối lại tai nghe trong cài đặt Bluetooth của hệ thống. Nếu vẫn lỗi, hãy gửi báo cáo lỗi.",
+  "gesture.squeeze_double": "Bóp ×2",
+  "gesture.squeeze_triple": "Bóp ×3",
+  "gesture.press_single": "Nút ×1",
+  "gesture.press_double": "Nút ×2",
+  "gesture.press_triple": "Nút ×3",
+  "side.common": "Nút",
+  "connection.choose_device": "Chọn thiết bị Bluetooth",
+  "noise.wear_one": "Đeo ít nhất một tai nghe để thay đổi kiểm soát tiếng ồn.",
+  "noise.wear_both": "Đeo cả hai tai nghe để thay đổi kiểm soát tiếng ồn.",
+  "battery.device": "Tai nghe",
+  "noise.unconfirmed": "Thiết bị không xác nhận cài đặt được yêu cầu."
 }

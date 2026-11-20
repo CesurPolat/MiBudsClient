@@ -265,5 +265,16 @@
   "debug.close": "बंद करें",
   "debug.empty": "अभी कोई लॉग नहीं है।",
   "connection.auth_failed": "प्रमाणीकरण विफल हुआ। सिस्टम की Bluetooth सेटिंग में ईयरबड्स को फिर से कनेक्ट करें। समस्या बनी रहे तो त्रुटि रिपोर्ट भेजें।",
-  "connection.service_failed": "उपयोग योग्य नियंत्रण सेवा नहीं मिली। सिस्टम की Bluetooth सेटिंग में ईयरबड्स को फिर से कनेक्ट करें। समस्या बनी रहे तो त्रुटि रिपोर्ट भेजें।"
+  "connection.service_failed": "उपयोग योग्य नियंत्रण सेवा नहीं मिली। सिस्टम की Bluetooth सेटिंग में ईयरबड्स को फिर से कनेक्ट करें। समस्या बनी रहे तो त्रुटि रिपोर्ट भेजें।",
+  "gesture.squeeze_double": "दबाना ×2",
+  "gesture.squeeze_triple": "दबाना ×3",
+  "gesture.press_single": "बटन ×1",
+  "gesture.press_double": "बटन ×2",
+  "gesture.press_triple": "बटन ×3",
+  "side.common": "बटन",
+  "connection.choose_device": "Bluetooth डिवाइस चुनें",
+  "noise.wear_one": "शोर नियंत्रण बदलने के लिए कम से कम एक ईयरबड पहनें।",
+  "noise.wear_both": "शोर नियंत्रण बदलने के लिए दोनों ईयरबड पहनें।",
+  "battery.device": "हेडफ़ोन",
+  "noise.unconfirmed": "डिवाइस ने अनुरोधित सेटिंग्स की पुष्टि नहीं की।"
 }

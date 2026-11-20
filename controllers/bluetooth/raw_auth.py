@@ -55,6 +55,18 @@ class RawAuthSession:
         self._deadline = None
         self._next_send = None
         self._attempts = 0
+        self.failure_diagnostics = None
+        self._peer_challenge = self._peer_answer = self._own_answer = None
+        self._replays = 0
+        self._last_rx = None
+
+    @_serialized
+    def diagnostics(self):
+        now = self._clock()
+        return {"state_before_failure": self.state,
+                "elapsed": None if self._deadline is None else round(now - self._deadline + self._timeout, 3),
+                "remaining": None if self._deadline is None else round(max(0, self._deadline - now), 3),
+                "retry": self._attempts, "buffered_bytes": len(self._buffer), "last_rx": self._last_rx}
 
     @_serialized
     def abort(self, reason="Auth cancelled"):
@@ -63,7 +75,9 @@ class RawAuthSession:
         self.error = reason
 
     def _fail(self, reason):
+        snapshot = self.diagnostics()
         self.abort(reason)
+        self.failure_diagnostics = snapshot
         raise AuthError(reason)
 
     def _write(self, message):
@@ -109,6 +123,22 @@ class RawAuthSession:
             raise AuthError("Raw auth session is not active")
         self._buffer.extend(data)
         while self._buffer:
+            kind = self._buffer[0]
+            self._last_rx = {"type": kind, "buffered_bytes": len(self._buffer)}
+            # Only exact repeats of an already verified message are idempotent.
+            # Different data and new out-of-order requests still fail below.
+            cached = ((self._own_answer, AUTH_PASS) if kind == 1 else
+                      (self._peer_challenge, self._peer_answer) if kind == 0 else (None, None))
+            if cached[0] is not None:
+                if len(self._buffer) < 17:
+                    break
+                if bytes(self._buffer[:17]) != cached[0]:
+                    self._fail("Raw auth retry data mismatch")
+                del self._buffer[:17]
+                if self._replays < 3:
+                    self._replays += 1
+                    self._write(cached[1])
+                continue
             expected_type = {"waiting_answer": 1, "waiting_challenge": 0,
                              "waiting_result": 2}[self.state]
             if self._buffer[0] != expected_type:
@@ -123,12 +153,14 @@ class RawAuthSession:
             if self.state == "waiting_answer":
                 if not hmac.compare_digest(message, self._expected):
                     self._fail("Raw auth challenge answer mismatch")
+                self._own_answer = message
                 self._challenge = self._expected = None
                 self._next_send = None
                 self.state = "waiting_challenge"
                 self._write(AUTH_PASS)
             elif self.state == "waiting_challenge":
                 answer = raw_auth_response(message)
+                self._peer_challenge, self._peer_answer = message, answer
                 self.state = "waiting_result"
                 self._write(answer)
             else:

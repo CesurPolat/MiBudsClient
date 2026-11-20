@@ -265,5 +265,16 @@
   "debug.close": "Tutup",
   "debug.empty": "Belum ada log.",
   "connection.auth_failed": "Autentikasi gagal. Hubungkan ulang earbud melalui pengaturan Bluetooth sistem. Jika berlanjut, kirim laporan kesalahan.",
-  "connection.service_failed": "Layanan kontrol yang dapat digunakan tidak ditemukan. Hubungkan ulang earbud melalui pengaturan Bluetooth sistem. Jika berlanjut, kirim laporan kesalahan."
+  "connection.service_failed": "Layanan kontrol yang dapat digunakan tidak ditemukan. Hubungkan ulang earbud melalui pengaturan Bluetooth sistem. Jika berlanjut, kirim laporan kesalahan.",
+  "gesture.squeeze_double": "Jepit ×2",
+  "gesture.squeeze_triple": "Jepit ×3",
+  "gesture.press_single": "Tombol ×1",
+  "gesture.press_double": "Tombol ×2",
+  "gesture.press_triple": "Tombol ×3",
+  "side.common": "Tombol",
+  "connection.choose_device": "Pilih perangkat Bluetooth",
+  "noise.wear_one": "Kenakan setidaknya satu earbud untuk mengubah kontrol kebisingan.",
+  "noise.wear_both": "Kenakan kedua earbud untuk mengubah kontrol kebisingan.",
+  "battery.device": "Headphone",
+  "noise.unconfirmed": "Perangkat tidak mengonfirmasi pengaturan yang diminta."
 }

@@ -1,39 +1,50 @@
-"""Reassemble the existing battery records across RFCOMM receives."""
-
+﻿"""Battery telemetry from complete target-info and status RCSP frames."""
 import threading
 
-from .constants import BATTERY_PATTERN
-from .protocol import BudsProtocol
+from .rcsp import RcspStreamParser, parse_info_fields
+from .protocol import BatteryStatus
 
 
 class BatteryStreamParser:
-    """Keep partial records and consume every complete record exactly once."""
-
     def __init__(self):
-        self._buffer = bytearray()
+        self._parser = RcspStreamParser()
         self._lock = threading.Lock()
+        self._values = [255, 255, 255]
 
-    def reset(self) -> None:
+    def reset(self):
         with self._lock:
-            self._buffer.clear()
+            self._parser.reset()
+            self._values = [255, 255, 255]
 
-    def feed(self, data: bytes):
+    def feed(self, data):
+        return self.feed_packets(self._parser.feed(data))
+
+    def feed_packets(self, packets):
+        statuses = []
         with self._lock:
-            self._buffer.extend(data)
-            records = []
-            record_size = len(BATTERY_PATTERN) + 3
-            while self._buffer:
-                start = self._buffer.find(BATTERY_PATTERN)
-                if start < 0:
-                    # Preserve only a possible split pattern, bounding stream noise.
-                    self._buffer[:] = self._buffer[-(len(BATTERY_PATTERN) - 1):]
-                    break
-                if start:
-                    del self._buffer[:start]
-                if len(self._buffer) < record_size:
-                    break
-                status = BudsProtocol.parse_battery(bytes(self._buffer[:record_size]))
-                if status is not None:
-                    records.append(status)
-                del self._buffer[:record_size]
-            return records
+            for packet in packets:
+                if packet.flags & 7 not in (0, 4, 7):
+                    continue
+                if packet.opcode == 0x02 and not packet.flags & 0x80:
+                    if len(packet.payload) < 2 or packet.payload[0]:
+                        continue
+                    data, kind = packet.payload[2:], 7
+                elif packet.opcode == 0x0E and packet.flags & 0x80:
+                    if not packet.payload:
+                        continue
+                    data, kind = packet.payload[1:], 0
+                else:
+                    continue
+                try:
+                    values = parse_info_fields(data).get(kind)
+                except ValueError:
+                    continue
+                if values is None or not 1 <= len(values) <= 3:
+                    continue
+                if any(value != 255 and (value & 127) > 100 for value in values):
+                    continue
+                # Omitted components retain their last value; FF explicitly
+                # means unknown, and zero is a valid empty battery.
+                self._values[:len(values)] = values
+                statuses.append(BatteryStatus(*self._values))
+        return statuses

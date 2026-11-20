@@ -8,6 +8,8 @@ from ..constants import HOME_CONTROLS_HEIGHT
 class ConnectionPanel(ft.Column):
     def __init__(self):
         self._failure_reason = ""
+        self.device_selector = ft.Dropdown(label=t("connection.choose_device"), visible=False,
+                                            text_size=12, dense=True)
         self.connection_label = ft.Text(t("connection.connecting"), size=18, color="white", weight="w500",
                                         text_align=ft.TextAlign.CENTER)
         self.connection_progress = ft.ProgressRing(width=28, height=28, stroke_width=3, color="white")
@@ -32,6 +34,7 @@ class ConnectionPanel(ft.Column):
         self._retry_slot = ft.Container(
             content=self.retry_button, height=36, alignment=ft.Alignment.CENTER, visible=False)
         super().__init__(controls=[
+            self.device_selector,
             ft.Container(content=ft.Container(content=ft.Icon(ft.Icons.BLUETOOTH, size=28, color="white"),
                          width=52, height=52, border_radius=16, bgcolor="#23364C",
                          alignment=ft.Alignment.CENTER), height=52, alignment=ft.Alignment.CENTER),

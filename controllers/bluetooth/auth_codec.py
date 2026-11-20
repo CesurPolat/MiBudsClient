@@ -14,13 +14,13 @@ class AuthFrame:
 
 
 def decode_auth(packet: RcspPacket) -> AuthFrame | None:
-    # Peer requests use C0 on some devices; keep existing app roles and
-    # accept that explicit request type without admitting role-0 responses.
+    # Peer requests include role 0 (C0); replies remain app roles 4/7.
+    request = bool(packet.flags & 0x80)
+    role = packet.flags & 7
     if packet.opcode not in (0x50, 0x51) or (
-        packet.flags & 7 not in (4, 7) and packet.flags != 0xC0
+        role not in ((0, 4, 7) if request else (4, 7))
     ):
         return None
-    request = bool(packet.flags & 0x80)
     minimum = 1 if request else 2
     if len(packet.payload) < minimum:
         raise ValueError("Truncated auth frame")

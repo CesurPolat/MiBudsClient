@@ -9,6 +9,7 @@ class BatteryNotificationState:
         self.active = False
         self._sample = {"left": None, "right": None, "case": None}
         self.inserted = ()
+        self.single_body = False
 
     def reset(self, *, active=False):
         self.active = active
@@ -45,6 +46,8 @@ class BatteryNotificationState:
             else:
                 level = t("notification.battery_percent", percent=state[0])
                 values[name] = t("notification.battery_charging", level=level) if state[1] else level
+        if self.single_body:
+            return f'{t("battery.device")}: {values["left"]}'
         return t("notification.battery_summary", **values,
                  left_label=t("battery.left"), right_label=t("battery.right"), case_label=t("battery.case"))
 

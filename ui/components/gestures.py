@@ -3,12 +3,16 @@
 from utils.i18n import t, render
 
 import flet as ft
+from controllers.bluetooth.gestures import MFB_OPERATIONS, MFB_ACTION_KEYS
 from ..constants import (
     COLOR_HOME_CONTROL, COLOR_HOME_SURFACE, COLOR_HOME_BORDER,
     COLOR_HOME_SELECTED, COLOR_HOME_SELECTED_BORDER,
 )
 
 GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long"), 5: t("gesture.swipe")}
+GESTURE_NAMES.update({4004: t("gesture.squeeze_double"), 4005: t("gesture.squeeze_triple"),
+                      4012: t("gesture.press_double"), 4013: t("gesture.press_triple"),
+                      4014: t("gesture.long"), 4018: t("gesture.press_single")})
 ACTION_NAMES = dict(enumerate(t("action." + key) for key in (
     "assistant", "play", "previous", "next", "volume_up", "volume_down",
     "noise", "game", "none", "photo", "record", "volume", "translation", "track",
@@ -89,7 +93,7 @@ class GestureSettings(ft.Column):
             return
         self._busy = False
         self._needs_refresh = not result.success
-        if result.success:
+        if result.success or result.assignments:
             self._assignments = dict(result.assignments)
             self._capabilities = dict(capabilities)
         self.status.value = render(result.message)
@@ -116,6 +120,11 @@ class GestureSettings(ft.Column):
         if action != current and self._on_assignment:
             self._on_assignment(gesture, side, action)
 
+    def notification(self, assignments):
+        if self._connected and not self._busy:
+            self._assignments.update(assignments)
+            self._render()
+
     def _render(self):
         self.refresh_button.disabled = not self._connected or self._busy
         self.selectors = {}
@@ -124,12 +133,14 @@ class GestureSettings(ft.Column):
             if gesture not in self._assignments or gesture not in self._capabilities:
                 continue
             fields = []
-            for index, side in enumerate(("left", "right")):
+            mfb = gesture in MFB_OPERATIONS
+            names = {key: t("action." + name) for key, name in MFB_ACTION_KEYS.items()} if mfb else ACTION_NAMES
+            for index, side in enumerate(("common",) if mfb else ("left", "right")):
                 current = self._assignments[gesture][index]
                 allowed = self._capabilities[gesture]
-                options = [ft.dropdown.Option(str(action), render(ACTION_NAMES[action])) for action in allowed]
+                options = [ft.dropdown.Option(str(action), render(names[action])) for action in allowed]
                 if current not in allowed:
-                    label = ACTION_NAMES.get(current, t("gesture.unknown", code=f"{current:02X}"))
+                    label = names.get(current, t("gesture.unknown", code=f"{current:02X}"))
                     options.append(ft.dropdown.Option(str(current), t("gesture.current", label=label), disabled=True))
                 selector = ft.Dropdown(
                     label=t("side." + side), value=str(current), options=options,

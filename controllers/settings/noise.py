@@ -22,6 +22,8 @@ class NoiseSettingsController:
                     state = self.controller.request_noise_settings(session=session)
                 elif operation == "write":
                     state = self.controller.set_noise_settings(session=session, **kwargs)
+                elif operation == "adaptive":
+                    state = self.controller.set_adaptive_noise(session=session, **kwargs)
                 else:
                     raise ValueError("Unknown noise operation")
             except (OSError, ValueError) as exc:

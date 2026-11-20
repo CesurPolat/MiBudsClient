@@ -265,5 +265,16 @@
   "debug.close": "닫기",
   "debug.empty": "아직 로그가 없습니다.",
   "connection.auth_failed": "이어버드 인증에 실패했습니다. 시스템 Bluetooth 설정에서 다시 연결하세요. 문제가 지속되면 오류 보고서를 보내 주세요.",
-  "connection.service_failed": "사용 가능한 이어버드 제어 서비스를 찾지 못했습니다. 시스템 Bluetooth 설정에서 다시 연결하세요. 문제가 지속되면 오류 보고서를 보내 주세요."
+  "connection.service_failed": "사용 가능한 이어버드 제어 서비스를 찾지 못했습니다. 시스템 Bluetooth 설정에서 다시 연결하세요. 문제가 지속되면 오류 보고서를 보내 주세요.",
+  "gesture.squeeze_double": "꼬집기 ×2",
+  "gesture.squeeze_triple": "꼬집기 ×3",
+  "gesture.press_single": "버튼 ×1",
+  "gesture.press_double": "버튼 ×2",
+  "gesture.press_triple": "버튼 ×3",
+  "side.common": "버튼",
+  "connection.choose_device": "Bluetooth 기기 선택",
+  "noise.wear_one": "소음 제어를 변경하려면 이어버드를 하나 이상 착용하세요.",
+  "noise.wear_both": "소음 제어를 변경하려면 양쪽 이어버드를 착용하세요.",
+  "battery.device": "헤드폰",
+  "noise.unconfirmed": "기기가 요청한 설정을 확인하지 않았습니다."
 }

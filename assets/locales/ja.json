@@ -265,5 +265,16 @@
   "debug.close": "閉じる",
   "debug.empty": "ログはまだありません。",
   "connection.auth_failed": "イヤホンの認証に失敗しました。システムのBluetooth設定で再接続してください。解決しない場合はエラーレポートを送信してください。",
-  "connection.service_failed": "利用可能なイヤホン制御サービスが見つかりません。システムのBluetooth設定で再接続してください。解決しない場合はエラーレポートを送信してください。"
+  "connection.service_failed": "利用可能なイヤホン制御サービスが見つかりません。システムのBluetooth設定で再接続してください。解決しない場合はエラーレポートを送信してください。",
+  "gesture.squeeze_double": "つまむ ×2",
+  "gesture.squeeze_triple": "つまむ ×3",
+  "gesture.press_single": "ボタン ×1",
+  "gesture.press_double": "ボタン ×2",
+  "gesture.press_triple": "ボタン ×3",
+  "side.common": "ボタン",
+  "connection.choose_device": "Bluetoothデバイスを選択",
+  "noise.wear_one": "ノイズ制御を変更するには、少なくとも片方のイヤホンを装着してください。",
+  "noise.wear_both": "ノイズ制御を変更するには、両方のイヤホンを装着してください。",
+  "battery.device": "ヘッドホン",
+  "noise.unconfirmed": "デバイスが要求された設定を確認しませんでした。"
 }

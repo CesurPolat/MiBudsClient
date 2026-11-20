@@ -265,5 +265,16 @@
   "debug.close": "Schließen",
   "debug.empty": "Noch keine Protokolle.",
   "connection.auth_failed": "Authentifizierung fehlgeschlagen. Verbinde die Ohrhörer in den Bluetooth-Systemeinstellungen erneut. Sende bei weiteren Problemen einen Fehlerbericht.",
-  "connection.service_failed": "Kein nutzbarer Steuerungsdienst gefunden. Verbinde die Ohrhörer in den Bluetooth-Systemeinstellungen erneut. Sende bei weiteren Problemen einen Fehlerbericht."
+  "connection.service_failed": "Kein nutzbarer Steuerungsdienst gefunden. Verbinde die Ohrhörer in den Bluetooth-Systemeinstellungen erneut. Sende bei weiteren Problemen einen Fehlerbericht.",
+  "gesture.squeeze_double": "Drücken ×2",
+  "gesture.squeeze_triple": "Drücken ×3",
+  "gesture.press_single": "Taste ×1",
+  "gesture.press_double": "Taste ×2",
+  "gesture.press_triple": "Taste ×3",
+  "side.common": "Taste",
+  "connection.choose_device": "Bluetooth-Gerät auswählen",
+  "noise.wear_one": "Zum Ändern der Geräuschsteuerung mindestens einen Ohrhörer tragen.",
+  "noise.wear_both": "Zum Ändern der Geräuschsteuerung beide Ohrhörer tragen.",
+  "battery.device": "Kopfhörer",
+  "noise.unconfirmed": "Das Gerät hat die angeforderten -Einstellungen nicht bestätigt."
 }

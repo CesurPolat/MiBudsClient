@@ -177,7 +177,7 @@ async def main(page: ft.Page):
         publish({"type": "connection_event", "event": event})
         catalog_sync.identity_changed(None)
         current = controller_ref["instance"]
-        if event == "connected" and current is not None and current.capabilities.model == "miwear.headphone.n79bg":
+        if event == "connected" and current is not None:
             threading.Thread(target=current.request_device_identity, kwargs={"reconnect": False}, daemon=True).start()
 
     def on_identity(identity):
@@ -198,6 +198,10 @@ async def main(page: ft.Page):
     
     # Set controller reference for tray callbacks
     controller_ref["instance"] = controller
+    controller.config_callback = lambda session, records, eq: publish(
+        {"type": "config_notification", "session": session, "records": records, "eq": eq})
+    controller.device_candidates_callback = lambda devices: publish(
+        {"type": "device_candidates", "devices": [(item.name, item.address) for item in devices]})
     window_mgr.on_activity_change = controller.set_battery_polling_active
     controller.set_battery_polling_active(bool(
         page.window.visible and not page.window.minimized and getattr(page.window, "focused", False)
@@ -218,6 +222,8 @@ async def main(page: ft.Page):
         ),
     )
     settings_card = settings_controller.card
+    settings_card.connection_panel.device_selector.on_select = lambda event: threading.Thread(
+        target=controller.select_device, args=(event.control.value,), daemon=True).start()
     settings_card.set_catalog_device(cached_name, cached_image)
     settings_card.connection_panel.retry_button.on_click = lambda e: settings_card.retry_connection(
         device_connection.reconnect_on_show)

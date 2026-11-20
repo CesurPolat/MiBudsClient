@@ -1,5 +1,6 @@
 """EQ transactions share the gesture channel's lock, counter and stream parser."""
 from utils.i18n import message as m, error_message
+import time
 from .equalizer import (
     EqResult, EqState, build_eq_request, build_profile, build_custom_eq,
     build_eq_reset, parse_profile, parse_custom_eq,
@@ -11,6 +12,7 @@ class EqTransport:
         self.channel = channel
         self._state = None
         self._session = None
+        self._writable = False
 
     def _exchange(self, opcode, builder, config, timeout, session):
         return self.channel.exchange(opcode, builder, timeout, session, config)
@@ -36,6 +38,7 @@ class EqTransport:
             state = EqState(profile, custom)
             self._state = state if profile is not None or custom is not None else None
             self._session = session
+            self._writable = self._state is not None
             if self._state is None:
                 return EqResult(False, message=m("eq.failed", details="; ".join(errors)))
             return EqResult(True, state, m("eq.loaded") if custom or not include_custom else m("eq.presets_only"))
@@ -44,7 +47,7 @@ class EqTransport:
         session = self.channel.generation if session is None else session
         with self.channel.transaction():
             try:
-                if self._state is None or self._session != session or session != self.channel.generation:
+                if not self._writable or self._state is None or self._session != session or session != self.channel.generation:
                     raise ValueError(m("eq.refresh_first"))
                 state, custom = self._state, self._state.custom
                 if operation == "profile":
@@ -63,21 +66,28 @@ class EqTransport:
                         builder = build_eq_reset
                     else:
                         raise ValueError(m("eq.invalid"))
+                deadline = time.monotonic() + timeout
+                revision = self.channel.revision
                 self._exchange(0xF2, builder, config, timeout, session)
                 if operation == "preview":
                     return EqResult(True, state, m("eq.previewed"))
                 parser = parse_profile if config == 7 else parse_custom_eq
-                actual = parser(self._exchange(0xF3, lambda ss: build_eq_request(ss, config), config, timeout, session))
+                expected = tuple(bands) if operation == "save" else tuple(
+                    type(b)(b.frequency, 0) for b in custom.bands) if custom else ()
+                confirmed, actual = self.channel.confirm(
+                    config, parser,
+                    lambda remaining: parser(self._exchange(0xF3, lambda ss: build_eq_request(ss, config), config, remaining, session)),
+                    (lambda value: value == profile) if operation == "profile" else
+                    (lambda value: value.bands == expected and (operation != "save" or value.mode == 10)),
+                    max(0, deadline - time.monotonic()), session, revision)
                 if operation == "profile":
-                    confirmed = actual == profile
                     state = EqState(actual, custom)
                 else:
-                    expected = tuple(bands) if operation == "save" else tuple(
-                        type(b)(b.frequency, 0) for b in custom.bands)
-                    confirmed = (actual.bands == expected and (operation != "save" or actual.mode == 10))
                     state = EqState(state.profile, actual)
                 if not confirmed:
-                    raise ValueError(m("eq.unconfirmed"))
+                    self._state = state
+                    self._writable = False
+                    return EqResult(False, state, m("eq.unconfirmed"))
                 # Keep 0007 independently authoritative after 0037 changes.
                 if config == 55:
                     try:
@@ -91,4 +101,16 @@ class EqTransport:
                 return EqResult(True, state, m("eq.saved" if operation != "reset" else "eq.reset_done"))
             except (OSError, ValueError) as exc:
                 self._state = None
+                self._writable = False
                 return EqResult(False, message=m("eq.failed", details=error_message(exc)))
+
+    def notify(self, session, records):
+        if session != self.channel.generation or 7 not in records:
+            return None
+        value = records[7]
+        if len(value) != 1:
+            return None
+        self._state = EqState(value[0], self._state.custom if self._state and self._session == session else None)
+        self._session = session
+        self._writable = True
+        return EqResult(True, self._state, m("eq.loaded"))

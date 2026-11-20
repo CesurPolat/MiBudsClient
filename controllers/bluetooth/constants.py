@@ -17,6 +17,7 @@ PACKET_SIZE_MODE_ACK = 14
 # Protocol Patterns
 # ─────────────────────────────────────────────────────────────────────────────
 BATTERY_PATTERN = bytes.fromhex("02020407")
-BATTERY_REQUEST_PAYLOAD = "fedcbac40200050bffffffffef4f"
+# Live queries allocate a sequence through the target-info frame builder.
+BATTERY_REQUEST_PAYLOAD = "fedcbac40200050bffffffffef"
 MODE_COMMAND_TEMPLATE = "fedcbac4f20005{counter}03002f{param}ef"
 COUNTER_VALUE = 0x90

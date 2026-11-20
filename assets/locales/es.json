@@ -265,5 +265,16 @@
   "debug.close": "Cerrar",
   "debug.empty": "Aún no hay registros.",
   "connection.auth_failed": "Falló la autenticación. Reconecta los auriculares desde los ajustes Bluetooth del sistema. Si persiste, envía un informe de error.",
-  "connection.service_failed": "No se encontró un servicio de control utilizable. Reconecta los auriculares desde los ajustes Bluetooth del sistema. Si persiste, envía un informe de error."
+  "connection.service_failed": "No se encontró un servicio de control utilizable. Reconecta los auriculares desde los ajustes Bluetooth del sistema. Si persiste, envía un informe de error.",
+  "gesture.squeeze_double": "Apretar ×2",
+  "gesture.squeeze_triple": "Apretar ×3",
+  "gesture.press_single": "Botón ×1",
+  "gesture.press_double": "Botón ×2",
+  "gesture.press_triple": "Botón ×3",
+  "side.common": "Botón",
+  "connection.choose_device": "Elige un dispositivo Bluetooth",
+  "noise.wear_one": "Ponte al menos un auricular para cambiar el control de ruido.",
+  "noise.wear_both": "Ponte ambos auriculares para cambiar el control de ruido.",
+  "battery.device": "Auriculares",
+  "noise.unconfirmed": "El dispositivo no confirmó los ajustes del ecualizador solicitados."
 }

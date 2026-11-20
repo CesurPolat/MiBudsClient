@@ -265,5 +265,16 @@
   "debug.close": "Bezárás",
   "debug.empty": "Még nincsenek naplóbejegyzések.",
   "connection.auth_failed": "A hitelesítés sikertelen. Csatlakoztasd újra a fülhallgatót a rendszer Bluetooth-beállításaiban. Ha a hiba fennáll, küldj hibajelentést.",
-  "connection.service_failed": "Nem található használható vezérlési szolgáltatás. Csatlakoztasd újra a fülhallgatót a rendszer Bluetooth-beállításaiban. Ha a hiba fennáll, küldj hibajelentést."
+  "connection.service_failed": "Nem található használható vezérlési szolgáltatás. Csatlakoztasd újra a fülhallgatót a rendszer Bluetooth-beállításaiban. Ha a hiba fennáll, küldj hibajelentést.",
+  "gesture.squeeze_double": "Összenyomás ×2",
+  "gesture.squeeze_triple": "Összenyomás ×3",
+  "gesture.press_single": "Gomb ×1",
+  "gesture.press_double": "Gomb ×2",
+  "gesture.press_triple": "Gomb ×3",
+  "side.common": "Gomb",
+  "connection.choose_device": "Válassz Bluetooth-eszközt",
+  "noise.wear_one": "A zajszabályozás módosításához viselj legalább egy fülhallgatót.",
+  "noise.wear_both": "A zajszabályozás módosításához viseld mindkét fülhallgatót.",
+  "battery.device": "Fejhallgató",
+  "noise.unconfirmed": "Az eszköz nem erősítette meg a kért hangszínszabályzó-beállításokat."
 }

@@ -265,5 +265,16 @@
   "debug.close": "Sulge",
   "debug.empty": "Logisid veel pole.",
   "connection.auth_failed": "Autentimine ebaõnnestus. Ühenda kõrvaklapid süsteemi Bluetoothi seadetes uuesti. Probleemi püsimisel saada veaaruanne.",
-  "connection.service_failed": "Kasutatavat juhtteenust ei leitud. Ühenda kõrvaklapid süsteemi Bluetoothi seadetes uuesti. Probleemi püsimisel saada veaaruanne."
+  "connection.service_failed": "Kasutatavat juhtteenust ei leitud. Ühenda kõrvaklapid süsteemi Bluetoothi seadetes uuesti. Probleemi püsimisel saada veaaruanne.",
+  "gesture.squeeze_double": "Pigistus ×2",
+  "gesture.squeeze_triple": "Pigistus ×3",
+  "gesture.press_single": "Nupp ×1",
+  "gesture.press_double": "Nupp ×2",
+  "gesture.press_triple": "Nupp ×3",
+  "side.common": "Nupp",
+  "connection.choose_device": "Vali Bluetooth-seade",
+  "noise.wear_one": "Mürakontrolli muutmiseks kanna vähemalt üht kõrvaklappi.",
+  "noise.wear_both": "Mürakontrolli muutmiseks kanna mõlemat kõrvaklappi.",
+  "battery.device": "Kõrvaklapid",
+  "noise.unconfirmed": "Seade ei kinnitanud soovitud seadeid."
 }

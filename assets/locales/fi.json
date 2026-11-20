@@ -265,5 +265,16 @@
   "debug.close": "Sulje",
   "debug.empty": "Ei vielä lokitietoja.",
   "connection.auth_failed": "Todennus epäonnistui. Yhdistä kuulokkeet uudelleen järjestelmän Bluetooth-asetuksissa. Jos ongelma jatkuu, lähetä virheraportti.",
-  "connection.service_failed": "Käytettävää ohjauspalvelua ei löytynyt. Yhdistä kuulokkeet uudelleen järjestelmän Bluetooth-asetuksissa. Jos ongelma jatkuu, lähetä virheraportti."
+  "connection.service_failed": "Käytettävää ohjauspalvelua ei löytynyt. Yhdistä kuulokkeet uudelleen järjestelmän Bluetooth-asetuksissa. Jos ongelma jatkuu, lähetä virheraportti.",
+  "gesture.squeeze_double": "Puristus ×2",
+  "gesture.squeeze_triple": "Puristus ×3",
+  "gesture.press_single": "Painike ×1",
+  "gesture.press_double": "Painike ×2",
+  "gesture.press_triple": "Painike ×3",
+  "side.common": "Painike",
+  "connection.choose_device": "Valitse Bluetooth-laite",
+  "noise.wear_one": "Käytä vähintään yhtä nappikuuloketta muuttaaksesi melunhallintaa.",
+  "noise.wear_both": "Käytä molempia nappikuulokkeita muuttaaksesi melunhallintaa.",
+  "battery.device": "Kuulokkeet",
+  "noise.unconfirmed": "Laite ei vahvistanut pyydettyjä taajuuskorjaimen asetuksia."
 }

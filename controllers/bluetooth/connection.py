@@ -46,6 +46,7 @@ class BluetoothConnection:
         self._prefetched = b""
         self.diagnostics = []
         self.stage = "idle"
+        self.auth_diagnostics = None
 
     def trace(self, stage, **details):
         """Keep bounded transport metadata, never authentication payloads."""
@@ -83,6 +84,7 @@ class BluetoothConnection:
             session_policy = AuthPolicy(session_policy)
         with self._connect_lock:
             self.diagnostics = []
+            self.auth_diagnostics = None
             self.trace("resolution", device=device_name)
             self.disconnect()
             cancel = threading.Event()
@@ -241,6 +243,13 @@ class BluetoothConnection:
             self.trace("ready", authenticated=self.session_authenticated)
             return result
         except BaseException:
+            session = self.auth_session
+            if session is not None:
+                self.auth_diagnostics = (getattr(session, "failure_diagnostics", None)
+                                         or session.diagnostics())
+                self.auth_diagnostics.update(service_uuid=result.service_uuid, channel=result.channel,
+                                             resolution_source=result.resolution_source,
+                                             auth_policy=policy.value)
             print("[Bluetooth] Session failed; closing transport (no auth fallback)")
             self.disconnect()
             raise

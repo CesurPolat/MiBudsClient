@@ -191,12 +191,18 @@ class EqualizerSettings(ft.Column):
         self._on_update()
         return self._token
 
+    def notification(self, result):
+        if self._connected and not self._busy and result.state is not None:
+            self._state = result.state
+            self._needs_refresh = False
+            self._render()
+
     def complete(self, token, result, profiles, operation):
         if token != self._token or not self._connected or not self._busy:
             return
         self._busy = False
         self._needs_refresh = not result.success
-        if result.success:
+        if result.state is not None:
             self._state = result.state
             self._profiles = tuple(p for p in profiles if p in PROFILE_KEYS and p != 10)
             if operation != "preview":

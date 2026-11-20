@@ -135,7 +135,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
 
     def test_missing_device_reports_actionable_failure_after_connecting(self):
         controller, feedback = self.make_controller()
-        with patch("controllers.bluetooth.controller.BluetoothDiscovery.get_connected_device", return_value=None):
+        with patch("controllers.bluetooth.controller.BluetoothDiscovery.get_connected_devices", return_value=()):
             self.assertFalse(controller.connect())
         self.assertEqual(feedback.call_args_list[0].args, ("connecting", ""))
         state, reason = feedback.call_args.args
@@ -159,7 +159,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
 
     def test_discovery_exception_reports_failure(self):
         controller, feedback = self.make_controller()
-        with patch("controllers.bluetooth.controller.BluetoothDiscovery.get_connected_device", side_effect=PermissionError("denied")):
+        with patch("controllers.bluetooth.controller.BluetoothDiscovery.get_connected_devices", side_effect=PermissionError("denied")):
             self.assertFalse(controller.connect())
         self.assertIn("access was denied", feedback.call_args.args[1])
 

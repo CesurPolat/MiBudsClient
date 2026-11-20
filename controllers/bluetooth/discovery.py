@@ -100,6 +100,51 @@ class BluetoothDiscovery:
         return sys.platform in ["win32", "linux"]
     
     @classmethod
+    def get_connected_devices(cls, preferred_address=None):
+        """Enumerate eligible peers; selection belongs to the user/controller."""
+        cls._diagnostics.devices = []
+        peers = []
+        source = sys.platform
+        try:
+            if sys.platform == "win32":
+                source = "windows_native"
+                try:
+                    from .windows_discovery import get_connected_devices
+                    peers = list(get_connected_devices())
+                except OSError:
+                    pass
+                if not peers or not any(cls._is_supported_device(name) for name, _ in peers):
+                    source = "windows_pnp"
+                    output = cls._run_discovery_script_win()
+                    items = json.loads(output) if output else []
+                    peers += [(item.get("Name", ""), item.get("Address", ""))
+                              for item in (items if isinstance(items, list) else [items])
+                              if isinstance(item, dict)]
+            elif sys.platform == "linux":
+                env = {**os.environ, "LC_ALL": "C"}
+                output = subprocess.check_output(["bluetoothctl", "devices"], text=True, timeout=5, env=env)
+                source = "bluetoothctl"
+                for line in output.splitlines():
+                    parts = line.split(" ", 2)
+                    if len(parts) != 3 or parts[0] != "Device":
+                        continue
+                    _, address, name = parts
+                    if not (cls._is_supported_device(name) or cls._format_mac(address) == preferred_address):
+                        continue
+                    info = subprocess.check_output(["bluetoothctl", "info", address], text=True, timeout=5, env=env)
+                    if "Connected: yes" in info:
+                        peers.append((name, address))
+        except (OSError, subprocess.SubprocessError, ValueError) as exc:
+            print(f"[Bluetooth] Discovery: {type(exc).__name__}: {exc}")
+        result = {}
+        for name, address in peers:
+            address = cls._format_mac(address)
+            cls._record_device(name, source, "connected")
+            if address and (cls._is_supported_device(name) or address == preferred_address):
+                result[address] = BluetoothDevice(name, address)
+        return tuple(result.values())
+
+    @classmethod
     def get_connected_device(cls) -> Optional[BluetoothDevice]:
         """Get the first connected device whose name is in the active catalog.
         

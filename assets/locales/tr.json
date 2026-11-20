@@ -265,5 +265,16 @@
   "debug.close": "Kapat",
   "debug.empty": "Henüz kayıt yok.",
   "connection.auth_failed": "Kulaklık kimlik doğrulaması başarısız. Sistem Bluetooth ayarlarından yeniden bağlanıp deneyin; devam ederse hata raporu gönderin.",
-  "connection.service_failed": "Kullanılabilir kontrol servisi bulunamadı. Sistem Bluetooth ayarlarından yeniden bağlanıp deneyin; devam ederse hata raporu gönderin."
+  "connection.service_failed": "Kullanılabilir kontrol servisi bulunamadı. Sistem Bluetooth ayarlarından yeniden bağlanıp deneyin; devam ederse hata raporu gönderin.",
+  "gesture.squeeze_double": "Sıkma ×2",
+  "gesture.squeeze_triple": "Sıkma ×3",
+  "gesture.press_single": "Düğme ×1",
+  "gesture.press_double": "Düğme ×2",
+  "gesture.press_triple": "Düğme ×3",
+  "side.common": "Düğme",
+  "connection.choose_device": "Bluetooth cihazı seç",
+  "noise.wear_one": "Gürültü kontrolünü değiştirmek için en az bir kulaklığı tak.",
+  "noise.wear_both": "Gürültü kontrolünü değiştirmek için iki kulaklığı da tak.",
+  "battery.device": "Kulaklık",
+  "noise.unconfirmed": "Cihaz istenen ayarlarını doğrulamadı."
 }

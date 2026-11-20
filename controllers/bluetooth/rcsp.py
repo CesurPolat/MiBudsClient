@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Optional
+import time
 
 from .device_catalog import get_device_codes, get_device_name, get_device_models
 
@@ -62,6 +63,23 @@ def decode_version(data: bytes) -> str:
     return ".".join(str(nibble) for byte in data for nibble in (byte >> 4, byte & 15))
 
 
+def parse_info_fields(data):
+    """One-byte length/type attributes; validate all boundaries first."""
+    fields = {}
+    pos = 0
+    while pos < len(data):
+        length = data[pos]
+        end = pos + 1 + length
+        if length < 1 or end > len(data):
+            raise ValueError("Invalid device attribute length")
+        kind = data[pos + 1]
+        if kind in fields:
+            raise ValueError("Duplicate device attribute")
+        fields[kind] = data[pos + 2:end]
+        pos = end
+    return fields
+
+
 def parse_identity_fields(fields: bytes) -> Optional[DeviceIdentity]:
     """Decode type 03 only after validating the entire TLV field list."""
     pos = 0
@@ -97,14 +115,21 @@ class RcspStreamParser:
 
     def __init__(self):
         self._buffer = bytearray()
+        self._incomplete_since = None
+
+    @property
+    def buffered_bytes(self):
+        return len(self._buffer)
 
     def reset(self) -> None:
         self._buffer.clear()
+        self._incomplete_since = None
 
     def take_buffer(self) -> bytes:
         """Hand off an incomplete frame when switching from auth to normal IO."""
         data = bytes(self._buffer)
         self._buffer.clear()
+        self._incomplete_since = None
         return data
 
     def feed(self, data: bytes) -> list[RcspPacket]:
@@ -123,7 +148,26 @@ class RcspStreamParser:
             payload_length = int.from_bytes(self._buffer[5:7], "big")
             frame_length = 8 + payload_length
             if len(self._buffer) < frame_length:
+                # Length is a uint16: memory is bounded to one maximum frame.
+                # Only abandon an incomplete candidate after a five-second
+                # stall and when a complete later frame validates its trailer.
+                now = time.monotonic()
+                if self._incomplete_since is None:
+                    self._incomplete_since = now
+                if now - self._incomplete_since >= 5:
+                    candidate = self._buffer.find(self._HEADER, 3)
+                    while candidate >= 0 and candidate + 7 <= len(self._buffer):
+                        end = candidate + 8 + int.from_bytes(self._buffer[candidate + 5:candidate + 7], "big")
+                        if end <= len(self._buffer) and self._buffer[end - 1] == 0xEF:
+                            del self._buffer[:candidate]
+                            self._incomplete_since = None
+                            break
+                        candidate = self._buffer.find(self._HEADER, candidate + 3)
+                    else:
+                        break
+                    continue
                 break
+            self._incomplete_since = None
             if self._buffer[frame_length - 1] != 0xEF:
                 del self._buffer[0]
                 continue

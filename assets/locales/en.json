@@ -265,5 +265,16 @@
   "debug.close": "Close",
   "debug.empty": "No logs yet.",
   "connection.auth_failed": "Earbud authentication failed. Reconnect in system Bluetooth settings and retry; send an error report if it persists.",
-  "connection.service_failed": "No usable control service found. Reconnect in system Bluetooth settings and retry; send an error report if it persists."
+  "connection.service_failed": "No usable control service found. Reconnect in system Bluetooth settings and retry; send an error report if it persists.",
+  "gesture.squeeze_double": "Squeeze ×2",
+  "gesture.squeeze_triple": "Squeeze ×3",
+  "gesture.press_single": "Button ×1",
+  "gesture.press_double": "Button ×2",
+  "gesture.press_triple": "Button ×3",
+  "side.common": "Button",
+  "connection.choose_device": "Choose a Bluetooth device",
+  "noise.wear_one": "Wear at least one earbud to change noise control.",
+  "noise.wear_both": "Wear both earbuds to change noise control.",
+  "battery.device": "Headphones",
+  "noise.unconfirmed": "The device did not confirm the requested settings."
 }

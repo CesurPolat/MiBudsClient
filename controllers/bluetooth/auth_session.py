@@ -59,11 +59,27 @@ class CommandAuthSession:
         self._expected = None
         self._deadline = None
         self.error = ""
+        self._last_rx = None
+        self._replies = {}
+        self.failure_diagnostics = None
+        self._last_decision = None
 
     def _trace(self, event, **details):
         """Only framing metadata; never challenges or cipher answers."""
+        self._last_decision = {"event": event, "state": self.state, **details}
         if self._trace_callback is not None:
             self._trace_callback("authentication", event=event, state=self.state, **details)
+
+    @_serialized
+    def diagnostics(self):
+        now = self._clock()
+        return {"state_before_failure": self.state,
+                "elapsed": None if self._deadline is None else round(now - self._deadline + self._timeout, 3),
+                "remaining": None if self._deadline is None else round(max(0, self._deadline - now), 3),
+                "pending": [{"opcode": f"0x{op:02X}", "sequence": seq, "retry": value[3]}
+                            for (op, seq), value in self._pending.items()],
+                "last_rx": self._last_rx, "last_decision": self._last_decision,
+                "buffered_bytes": self._parser.buffered_bytes}
 
     @property
     def authenticated(self):
@@ -84,6 +100,10 @@ class CommandAuthSession:
         self._expected = None
         self._deadline = None
         self._parser.reset()
+        self._last_rx = None
+        self._replies.clear()
+        self.failure_diagnostics = None
+        self._last_decision = None
 
     @_serialized
     def abort(self, reason="Auth cancelled"):
@@ -92,8 +112,10 @@ class CommandAuthSession:
         self.error = reason
 
     def _fail(self, reason):
+        snapshot = self.diagnostics()
         self._trace("failure", reason=reason)
         self.abort(reason)
+        self.failure_diagnostics = snapshot
         raise AuthError(reason)
 
     def _request(self, opcode, payload, timeout):
@@ -140,12 +162,28 @@ class CommandAuthSession:
             for packet in self._parser.feed(data):
                 if packet.opcode in (0x50, 0x51) and not self.authenticated:
                     sequence_index = 0 if packet.flags & 0x80 else 1
+                    self._last_rx = {"flags": f"0x{packet.flags:02X}", "opcode": f"0x{packet.opcode:02X}",
+                                     "length": len(packet.payload),
+                                     "sequence": packet.payload[sequence_index] if len(packet.payload) > sequence_index else None,
+                                     "status": packet.payload[0] if sequence_index == 1 and packet.payload else None}
                     self._trace("rx", flags=f"0x{packet.flags:02X}",
                                 opcode=f"0x{packet.opcode:02X}",
                                 sequence=(packet.payload[sequence_index]
                                           if len(packet.payload) > sequence_index else None),
                                 length=len(packet.payload))
                 frame = decode_auth(packet)
+                if packet.opcode in (0x50, 0x51) and self._last_rx is not None:
+                    self._last_rx["decision"] = "accepted_role" if frame is not None else "ignored_role"
+                if frame is not None and frame.request:
+                    cached = self._replies.get((frame.opcode, frame.sequence))
+                    if cached is not None:
+                        if frame.data != cached[0]:
+                            self._fail("Auth request reused sequence with different data")
+                        if cached[2] < 3:
+                            cached[2] += 1
+                            self._send(cached[1])
+                            self._trace("replayed_response", opcode=f"0x{frame.opcode:02X}", sequence=frame.sequence)
+                        continue
                 if self.authenticated:
                     if packet.opcode not in (0x50, 0x51):
                         normal.append(bytes.fromhex(packet.raw_hex))
@@ -188,11 +226,15 @@ class CommandAuthSession:
                     self.state = "waiting_result"
                     self._trace("tx_response", opcode="0x50", sequence=frame.sequence,
                                 length=19)
-                    self._send(encode_auth(0x50, frame.sequence, bytes.fromhex("01") + answer, request=False))
+                    reply = encode_auth(0x50, frame.sequence, bytes.fromhex("01") + answer, request=False)
+                    self._replies[(0x50, frame.sequence)] = [frame.data, reply, 0]
+                    self._send(reply)
                 else:
                     if self.state != "waiting_result" or len(frame.data) != 2 or frame.data[0] != 1:
                         self._fail("Invalid peer auth result/stage")
-                    self._send(encode_auth(0x51, frame.sequence, bytes.fromhex("01"), request=False))
+                    reply = encode_auth(0x51, frame.sequence, bytes.fromhex("01"), request=False)
+                    self._replies[(0x51, frame.sequence)] = [frame.data, reply, 0]
+                    self._send(reply)
                     if frame.data[1]:
                         self._fail("Peer rejected authentication")
                     self.state = "authenticated"

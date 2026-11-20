@@ -3,7 +3,7 @@ import math
 
 import flet as ft
 
-from controllers.bluetooth.noise import NoiseCapabilities
+from controllers.bluetooth.noise import NoiseCapabilities, wear_requirement
 from utils.i18n import t, render
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
 from ..constants import HOME_CONTROL_HEADER_HEIGHT
@@ -25,6 +25,9 @@ class NoiseSettings:
         self._preview = None
         self._last_anc_manual = None
         self.quick_status = ft.Text(size=12, color=COLOR_DISABLED, visible=False)
+        self.adaptive_switch = ft.Switch(label=t("noise.anc_adaptive"), value=False,
+                                         visible=False, disabled=True,
+                                         on_change=lambda event: self._act("adaptive", enabled=bool(event.control.value)))
         self.retry_button = ft.TextButton(t("connection.retry"), visible=False,
                                          on_click=lambda _: self._act("read"))
         self.quick_mode_buttons = {}
@@ -126,7 +129,8 @@ class NoiseSettings:
             "mode": mode,
             "level": self._state.level if self._state else None,
             "levels": tuple((level, render(self._level_text(mode, level)))
-                            for level in self.capabilities.levels(mode)),
+                            for level in self.capabilities.levels(mode))
+                      if not self._state or self._state.adaptive is not True else (),
             "enabled": bool(self._connected and self._backend_enabled and not self._busy
                             and self._state is not None and not self._error),
             "busy": self._busy,
@@ -243,6 +247,13 @@ class NoiseSettings:
         mode = self._state.mode if self._state else None
         level = self._state.level if self._state else None
         self.quick_mode.disabled = not enabled
+        adaptive = self._state.adaptive if self._state else None
+        self.adaptive_switch.visible = self.capabilities.adaptive == "switch"
+        self.adaptive_switch.label = t("noise.anc_adaptive") + (" —" if adaptive is None else "")
+        self.adaptive_switch.value = bool(adaptive)
+        self.adaptive_switch.disabled = not enabled or adaptive is None
+        # With the separate automatic controller on, manual gears are not
+        # authoritative. Its switch remains available to return to manual mode.
         for value, button in self.quick_mode_buttons.items():
             selected = mode == value
             pending = self._busy and self._operation == "write" and "level" not in self._pending and self._pending.get("mode") == value
@@ -269,8 +280,8 @@ class NoiseSettings:
             display_level = preview[2]
         self.quick_level.value = (preview[1] if preview else levels.index(display_level)
                                  if display_level in levels else 0)
-        self.quick_level.disabled = not enabled or mode not in self.capabilities.modes or level not in levels or len(levels) < 2
-        self.quick_level.visible = self.quick_level_controls.visible = True
+        self.quick_level.disabled = not enabled or adaptive is True or mode not in self.capabilities.modes or level not in levels or len(levels) < 2
+        self.quick_level.visible = self.quick_level_controls.visible = len(levels) > 1
         self.quick_level_controls.opacity = 1 if mode in (1, 2) and level in levels else .35
         text = (t("noise.mode_0") if mode == 0 else self._level_text(mode, display_level)
                 if display_level is not None else t("noise.level"))
@@ -298,9 +309,13 @@ class NoiseSettings:
         elif self._state and (mode not in self.capabilities.modes or (mode in (1, 2) and level not in all_levels)):
             self.quick_status.value = t("noise.unknown", code=mode if mode not in self.capabilities.modes else level)
         self.quick_status.visible = bool(self.quick_status.value)
+        wear_reason = wear_requirement(self.capabilities, self._state.wear if self._state else None, mode)
+        if not self.quick_status.value and wear_reason:
+            self.quick_status.value = t(wear_reason)
+            self.quick_status.visible = True
         self.retry_button.visible = bool(self._error) and self._connected and self._backend_enabled
         self.retry_button.disabled = self._busy
         self._quick_body.controls = [self.quick_mode] + [
-            control for control in (self.quick_level_controls, self.special_level_controls, self.quick_status, self.retry_button)
+            control for control in (self.quick_level_controls, self.special_level_controls, self.adaptive_switch, self.quick_status, self.retry_button)
             if control.visible
         ]

@@ -152,6 +152,10 @@ class SystemTray:
     def _battery_values(state):
         values = {}
         for side, raw in zip(("left", "right", "case"), state.get("battery", (255, 255, 255))):
+            if state.get("single_body"):
+                if side != "left":
+                    continue
+                side = "device"
             value = battery_state(raw)
             if side == "case" and value is None:
                 continue

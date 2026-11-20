@@ -265,5 +265,16 @@
   "debug.close": "Zamknij",
   "debug.empty": "Brak wpisów w dzienniku.",
   "connection.auth_failed": "Uwierzytelnianie nie powiodło się. Połącz słuchawki ponownie w systemowych ustawieniach Bluetooth. Jeśli problem się powtarza, wyślij raport błędu.",
-  "connection.service_failed": "Nie znaleziono dostępnej usługi sterowania. Połącz słuchawki ponownie w systemowych ustawieniach Bluetooth. Jeśli problem się powtarza, wyślij raport błędu."
+  "connection.service_failed": "Nie znaleziono dostępnej usługi sterowania. Połącz słuchawki ponownie w systemowych ustawieniach Bluetooth. Jeśli problem się powtarza, wyślij raport błędu.",
+  "gesture.squeeze_double": "Ściśnięcie ×2",
+  "gesture.squeeze_triple": "Ściśnięcie ×3",
+  "gesture.press_single": "Przycisk ×1",
+  "gesture.press_double": "Przycisk ×2",
+  "gesture.press_triple": "Przycisk ×3",
+  "side.common": "Przycisk",
+  "connection.choose_device": "Wybierz urządzenie Bluetooth",
+  "noise.wear_one": "Załóż co najmniej jedną słuchawkę, aby zmienić kontrolę hałasu.",
+  "noise.wear_both": "Załóż obie słuchawki, aby zmienić kontrolę hałasu.",
+  "battery.device": "Słuchawki",
+  "noise.unconfirmed": "Urządzenie nie potwierdziło żądanych ustawień korektora."
 }

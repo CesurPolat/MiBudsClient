@@ -265,5 +265,16 @@
   "debug.close": "關閉",
   "debug.empty": "暫無日誌。",
   "connection.auth_failed": "耳機驗證失敗。請在系統藍牙設定中重新連接。如果問題持續，請傳送錯誤報告。",
-  "connection.service_failed": "找不到可用的耳機控制服務。請在系統藍牙設定中重新連接。如果問題持續，請傳送錯誤報告。"
+  "connection.service_failed": "找不到可用的耳機控制服務。請在系統藍牙設定中重新連接。如果問題持續，請傳送錯誤報告。",
+  "gesture.squeeze_double": "捏按 ×2",
+  "gesture.squeeze_triple": "捏按 ×3",
+  "gesture.press_single": "按鈕 ×1",
+  "gesture.press_double": "按鈕 ×2",
+  "gesture.press_triple": "按鈕 ×3",
+  "side.common": "按鈕",
+  "connection.choose_device": "選擇藍牙裝置",
+  "noise.wear_one": "請至少佩戴一隻耳機後再調整噪音控制。",
+  "noise.wear_both": "請佩戴雙耳後再調整噪音控制。",
+  "battery.device": "耳機",
+  "noise.unconfirmed": "裝置未確認要求的均衡器設定。"
 }

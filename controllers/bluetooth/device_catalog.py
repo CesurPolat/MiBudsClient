@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 import sys
 import threading
+import hashlib
 
 from utils.mibuds_api import validate_catalog
 
@@ -41,6 +42,13 @@ def get_device_models(vid: int, pid: int) -> tuple[dict, ...]:
         return tuple(deepcopy(_APP_MODELS.get((vid, pid), ())))
 
 
+def catalog_diagnostics():
+    with _CATALOG_LOCK:
+        products = [item for models in _APP_MODELS.values() for item in models]
+        digest = hashlib.sha256(json.dumps(products, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+        return {"last_modify_time": CATALOG_LAST_MODIFY_TIME, "content_sha256": digest}
+
+
 def get_device_models_by_name(name: str) -> tuple[dict, ...]:
     """Match full Bluetooth names against the active API/cache/bundled catalog."""
     if not isinstance(name, str) or not name.strip():
@@ -48,7 +56,9 @@ def get_device_models_by_name(name: str) -> tuple[dict, ...]:
     normalized = " ".join(name.split()).casefold()
     with _CATALOG_LOCK:
         return tuple(deepcopy(model) for models in _APP_MODELS.values() for model in models
-                     if " ".join(model["name"].split()).casefold() == normalized)
+                     if any(" ".join(alias.split()).casefold() == normalized
+                            for alias in (model["name"], *model.get("aliases", []))
+                            if isinstance(alias, str)))
 
 
 # Original Chinese labels keyed by internal code, retained for future zh locales.

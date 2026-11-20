@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from .config_transport import parse_config_records
 from .equalizer import _frame
+from .catalog_options import firmware_at_least
 
 
 ANC_FUNCTIONS = (1002, 1003, 1006, 1007)
@@ -59,7 +60,7 @@ class NoiseCapabilities:
 
 
 def noise_capabilities(caps):
-    """Base catalog gears only; unknown firmware cannot enable OTA gears."""
+    """Use the centrally resolved catalog options, preserving gear order."""
     anc = next((fid for fid in ANC_FUNCTIONS if fid in caps.functions), None)
     trans = next((fid for fid in TRANSPARENCY_FUNCTIONS if fid in caps.functions), None)
 
@@ -71,9 +72,16 @@ def noise_capabilities(caps):
 
     options = caps.options.get(anc, {})
     code = caps.model.rsplit(".", 1)[-1].casefold()
-    adaptive = "level" if anc and any(code == old or code == old + "g" for old in OLD_ADAPTIVE_MODELS) else (
+    adaptive = "level" if anc and 3 in gears(anc) and any(code == old or code == old + "g" for old in OLD_ADAPTIVE_MODELS) else (
         "switch" if anc and options.get("auto_fit") == 1 else None)
     wear = options.get("anc_wear_type")
+    # APK NoiseReductionVM exceptions are interpretation rules, not gates.
+    if code in ("n76", "n76g", "k73", "k73g", "k73a", "k73ag", "k75", "k75g"):
+        wear = 1
+    elif code in ("n77", "n77g", "m75a", "m75ag") or (
+        caps.model == SPECIAL_ANC_MODEL and firmware_at_least(caps.firmware_version, "2.5.6.4")
+    ):
+        wear = 2
     anc_levels, trans_levels = gears(anc), gears(trans)
     anc_schema = "unknown"
     if caps.model == SPECIAL_ANC_MODEL:
@@ -95,6 +103,19 @@ class NoiseState:
     mode: int
     level: int | None = None
     extra: bytes = b""
+    adaptive: bool | None = None
+    wear: int | None = None
+
+
+def wear_requirement(capabilities, wear, mode):
+    if mode == 0 or wear is None or capabilities.wear_type in (None, 1):
+        return None
+    left, right = bool(wear & 8), bool(wear & 4)
+    if not (left or right):
+        return "noise.wear_one"
+    if mode == 1 and capabilities.wear_type == 3 and not (left and right):
+        return "noise.wear_both"
+    return None
 
 
 def build_noise_mode(counter, mode):
@@ -122,13 +143,6 @@ def parse_noise_state(data):
 
 
 def _records(data):
-    # The shared parser has no FF/0034 extended-length support yet. Fail closed
-    # instead of interpreting its marker as a normal 255-byte record.
-    pos = 0
-    while pos < len(data):
-        if data[pos] == 255:
-            raise ValueError("Extended CommonConfig records are not supported")
-        pos += 1 + data[pos]
     return parse_config_records(data)
 
 

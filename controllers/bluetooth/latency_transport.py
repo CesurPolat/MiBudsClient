@@ -1,5 +1,6 @@
 """Game mode config 002F; the shared listener owns all socket reads."""
 from utils.i18n import message as m
+import time
 
 from .config_transport import parse_config_records
 
@@ -36,12 +37,27 @@ class LatencyTransport:
     def write(self, enabled, timeout=5.0):
         session = self.channel.generation
         with self.channel.transaction():
+            deadline = time.monotonic() + timeout
+            revision = self.channel.revision
             self._confirmed = (session, None)
             self._exchange(0xF2, lambda counter: bytes.fromhex(
                 f"fe dc ba c4 f2 00 05 {counter:02x} 03 00 2f {int(enabled):02x} ef"),
                 timeout, session)
             # An ACK confirms the write request, never the resulting mode.
-            actual = self.read(timeout, session)
-            if actual != enabled:
+            def parse(data):
+                value = parse_config_records(data).get(0x002F)
+                if value not in (b"\x00", b"\x01"):
+                    raise ValueError(m("latency.unknown"))
+                return value == b"\x01"
+            confirmed, actual = self.channel.confirm(
+                0x002F, parse, lambda remaining: self.read(remaining, session),
+                lambda value: value == enabled, max(0, deadline - time.monotonic()), session, revision, namespace="latency")
+            self._confirmed = (session, actual)
+            if not confirmed:
                 raise ValueError(m("latency.unconfirmed"))
             return actual
+
+    def notify(self, session, records):
+        value = records.get(0x002F)
+        if session == self.channel.generation and value in (b"\x00", b"\x01"):
+            self._confirmed = (session, value == b"\x01")

@@ -60,6 +60,8 @@ class AppMessageHandler:
             "eq_settings": self._handle_eq_settings,
             "noise_settings": self._handle_noise_settings,
             "noise_notification": self._handle_noise_notification,
+            "config_notification": self._handle_config_notification,
+            "device_candidates": self._handle_device_candidates,
             "catalog_device": self._handle_catalog_device,
             "connection_state": self._handle_connection_state,
             "status": self._handle_status,
@@ -109,9 +111,12 @@ class AppMessageHandler:
             self._tray_battery = (BATTERY_UNKNOWN,) * 3
         self._tray_session = session
         capabilities = self._get_capabilities()
+        self._device_status_card.battery_panel.set_single_body(capabilities.single_body)
+        self._battery_notifications.single_body = capabilities.single_body
         self._tray.set_state({
             "session": session, "connected": connected, "name": capabilities.name,
             "battery": self._tray_battery,
+            "single_body": capabilities.single_body,
             "eq": self._settings_card.equalizer.tray_state(capabilities),
             "noise": self._settings_card.noise.tray_state(),
             "latency": self._latency.get_display_state(),
@@ -273,7 +278,7 @@ class AppMessageHandler:
         identity = message.get("identity")
         if identity is not None and self._get_identity is not None and self._get_identity() is identity:
             self._settings_card.set_firmware_version(identity.firmware_version)
-            self._update_page()
+            self._handle_capabilities_changed({})
 
     def _handle_device_identity(self, message: dict) -> None:
         self._settings_card.set_device_identity_result(message["text"])
@@ -297,7 +302,38 @@ class AppMessageHandler:
         self._update_page()
 
     def _handle_noise_notification(self, message):
+        if self._get_device_session and message["session"] != self._get_device_session():
+            return
         self._settings_card.noise.notification(message["session"], message["state"])
+        self._update_page()
+
+    def _handle_config_notification(self, message):
+        if (self._get_device_session is None or message["session"] != self._get_device_session()
+                or (self._is_connected and not self._is_connected())):
+            return
+        records = message["records"]
+        if message.get("eq") is not None:
+            self._settings_card.equalizer.notification(message["eq"])
+        if 2 in records or 80 in records:
+            from controllers.bluetooth.gestures import parse_gesture_records
+            config = 80 if 80 in records else 2
+            value = records[config]
+            try:
+                assignments = parse_gesture_records(bytes((len(value) + 2,)) + config.to_bytes(2, "big") + value, physical=True)
+            except ValueError:
+                pass
+            else:
+                self._settings_card.gestures.notification(assignments)
+        if 47 in records:
+            self._handle_latency({})
+        self._update_page()
+
+    def _handle_device_candidates(self, message):
+        import flet as ft
+        devices = message["devices"]
+        selector = self._settings_card.connection_panel.device_selector
+        selector.options = [ft.dropdown.Option(address, name) for name, address in devices]
+        selector.visible = len(devices) > 1
         self._update_page()
 
     def _handle_window(self, message: dict) -> None:
