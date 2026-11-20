@@ -7,6 +7,14 @@ import time
 from .device_catalog import get_device_codes, get_device_name, get_device_models
 
 
+SUPPORTED_TARGET_ROLES = frozenset((0, 4, 7))
+
+
+def is_supported_target(flags: int) -> bool:
+    """Check the application target only; request/response bits are separate."""
+    return (flags & 0x07) in SUPPORTED_TARGET_ROLES
+
+
 
 @dataclass(frozen=True)
 class DeviceIdentity:

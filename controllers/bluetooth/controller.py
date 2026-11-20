@@ -28,7 +28,7 @@ from .noise_transport import NoiseTransport
 from .equalizer import EqResult, eq_profiles
 from .gestures import GestureResult, gesture_capabilities, gesture_config
 from .constants import RECONNECT_DELAY
-from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, parse_identity_fields
+from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, is_supported_target, parse_identity_fields
 
 
 @dataclass
@@ -587,7 +587,7 @@ class BTController:
                 request = self._identity_pending
                 if request is None or request.completed:
                     continue
-                if (packet.flags & 0x80 or packet.flags & 7 not in (0, 4, 7)
+                if (packet.flags & 0x80 or not is_supported_target(packet.flags)
                         or packet.opcode != 0x02 or len(packet.payload) < 2):
                     continue
                 status, counter = packet.payload[:2]
@@ -812,7 +812,7 @@ class BTController:
                     continue
                 if capture_noise:
                     record("RX", bytes.fromhex(packet.raw_hex))
-                if packet.flags & 7 not in (4, 7) and packet.flags != 0xC0:
+                if not is_supported_target(packet.flags):
                     continue
                 if packet.opcode == 0xF4:
                     offset = 1 if packet.flags & 0x80 else 2

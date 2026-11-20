@@ -1,7 +1,7 @@
 ﻿"""Battery telemetry from complete target-info and status RCSP frames."""
 import threading
 
-from .rcsp import RcspStreamParser, parse_info_fields
+from .rcsp import RcspStreamParser, is_supported_target, parse_info_fields
 from .protocol import BatteryStatus
 
 
@@ -23,7 +23,7 @@ class BatteryStreamParser:
         statuses = []
         with self._lock:
             for packet in packets:
-                if packet.flags & 7 not in (0, 4, 7):
+                if not is_supported_target(packet.flags):
                     continue
                 if packet.opcode == 0x02 and not packet.flags & 0x80:
                     if len(packet.payload) < 2 or packet.payload[0]:

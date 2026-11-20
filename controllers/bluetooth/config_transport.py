@@ -6,7 +6,7 @@ import threading
 import time
 from dataclasses import dataclass
 
-from .rcsp import RcspStreamParser
+from .rcsp import RcspStreamParser, is_supported_target
 
 
 @dataclass
@@ -60,7 +60,7 @@ class RcspConfigTransport:
                 request = self._pending
                 # Bit 7 indicates a command; only consume responses.
                 if (request is None or request.completed or packet.flags & 0x80
-                        or packet.flags & 7 not in (4, 7)
+                        or not is_supported_target(packet.flags)
                         or packet.opcode != request.opcode or len(packet.payload) < 2):
                     continue
                 status, counter = packet.payload[:2]

@@ -1,7 +1,7 @@
 """RCSP command-auth framing, separate from the cipher and session policy."""
 from dataclasses import dataclass
 
-from .rcsp import RcspPacket
+from .rcsp import RcspPacket, is_supported_target
 
 
 @dataclass(frozen=True)
@@ -14,12 +14,8 @@ class AuthFrame:
 
 
 def decode_auth(packet: RcspPacket) -> AuthFrame | None:
-    # Peer requests include role 0 (C0); replies remain app roles 4/7.
     request = bool(packet.flags & 0x80)
-    role = packet.flags & 7
-    if packet.opcode not in (0x50, 0x51) or (
-        role not in ((0, 4, 7) if request else (4, 7))
-    ):
+    if packet.opcode not in (0x50, 0x51) or not is_supported_target(packet.flags):
         return None
     minimum = 1 if request else 2
     if len(packet.payload) < minimum:
