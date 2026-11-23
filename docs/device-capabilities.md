@@ -14,7 +14,7 @@ retains all function metadata, including functions without an implementation.
 There are no model-validation/backend allowlists or experimental activation flags.
 Implemented controls: EQ presets (2006/2016), touch gestures (4001/4002/4003/4006/4011),
 manual low latency (3011), ANC (1002/1003/1006/1007), and transparency (1004/1005).
-Only that device's own profile/gesture/level options can be selected. A new model
+Profile, gesture, and level choices are derived from that device's catalog options. A new model
 with these functions needs no source-code registration. Battery is basic telemetry
 for recognized catalog devices, since it has no separate function ID.
 Catalog access is not a claim that every device was hardware-tested; protocol
@@ -34,6 +34,9 @@ profiles and controller profile writes. The band editor defaults to hidden too.
 Existing custom-band codec support is retained for future work.
 Gesture choices come from `click_action`, restricted to actions represented by
 the current codec, including noise control when present in that model's list.
+Catalog-listed taps, squeezes, and long presses also offer actions listed for
+the same model's other gestures that use the same codec. Multifunction-button
+presses share their own action list. Swipe keeps its catalog-listed options.
 `GESTURE_FUNCTION_TYPES` maps catalog function 4011 to config 0x0002's swipe
 type 0x05. It shares the existing per-earbud assignment, ACK and readback flow;
 4011 is never used as a Bluetooth configuration ID. The UI only shows swipe

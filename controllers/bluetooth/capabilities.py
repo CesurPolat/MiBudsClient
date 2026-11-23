@@ -8,7 +8,7 @@ import json
 import re
 from .device_catalog import get_device_models_by_name
 from .equalizer import PROFILE_KEYS
-from .gestures import GESTURE_FUNCTION_TYPES, actions_for_gesture
+from .gestures import GESTURE_FUNCTION_TYPES, actions_for_gesture, gesture_config
 from .catalog_options import resolve_options
 
 FUNCTIONS = {
@@ -157,6 +157,18 @@ def resolve_capabilities(device_name="", identity=None):
             allowed = tuple(dict.fromkeys(v for v in actions if type(v) is int and v in actions_for_gesture(gesture)))
             if allowed:
                 gestures[gesture] = allowed
+    # Swipe uses directional action pairs. Clicks and MFB presses use
+    # individual actions, with different action IDs in each config.
+    swipe = GESTURE_FUNCTION_TYPES[4011]
+    actions_by_config = {}
+    for gesture, actions in gestures.items():
+        if gesture != swipe:
+            actions_by_config.setdefault(gesture_config(gesture), []).extend(actions)
+    for fid, gesture in GESTURE_FUNCTION_TYPES.items():
+        if fid in functions and gesture != swipe:
+            shared_actions = actions_by_config.get(gesture_config(gesture), ())
+            if shared_actions:
+                gestures[gesture] = tuple(dict.fromkeys((*gestures.get(gesture, ()), *shared_actions)))
     available = {feature for feature, ids in COMPONENT_REGISTRY.items()
                  if any(fid in functions for fid in ids)}
     # Battery is basic device telemetry and has no func_list feature ID.
