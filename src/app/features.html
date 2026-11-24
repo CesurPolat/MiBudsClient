@@ -1,8 +1,25 @@
-<section class="features wrap" id="ozellikler" aria-labelledby="features-title">
-  <div class="section-head"><div><p class="kicker"><span></span> ÖZELLİKLER</p><h2 id="features-title">Masaüstünden yönet.</h2></div><p class="side-note">Kontroller, kulaklık modeline göre değişir.</p></div>
+<section class="features wrap" id="features" aria-labelledby="features-title">
+  <p class="kicker"><span></span> LISTENING CONTROLS</p>
+  <h2 id="features-title">Find your listening mode.</h2>
+  <div class="showcase">
+    <div class="acoustic" [class.ambient]="mode() === 1">
+      <div class="rings" aria-hidden="true"></div>
+      <img ngSrc="media/kulaklik.webp" fill alt="Detail of a Redmi earbud and its silicone tip">
+    </div>
+    <div class="sound-copy">
+      <p class="kicker">NOISE CONTROL</p>
+      <h3>{{ mode() === 0 ? 'Quiet the room.' : 'Let the room in.' }}</h3>
+      <p>{{ mode() === 0 ? 'Select active noise cancellation (ANC) and choose the levels your earbuds offer.' : 'Switch to transparency mode to hear your surroundings while keeping your earbuds in.' }}</p>
+      <div class="choices" role="group" aria-label="Explore noise control modes">
+        <button [attr.aria-pressed]="mode()===0" (click)="mode.set(0)">ANC</button>
+        <button [attr.aria-pressed]="mode()===1" (click)="mode.set(1)">Transparency</button>
+      </div>
+      <small>Available on supported models. Hardware compatibility varies.</small>
+    </div>
+  </div>
   <div class="cards">
-    <article class="feature"><div class="mini batteries" aria-hidden="true"><div><i style="--level:84%"></i><b>SOL</b></div><div><i style="--level:68%"></i><b>SAĞ</b></div><div><i style="--level:94%"></i><b>KUTU</b></div></div><h3>Pil takibi</h3><p>İki kulaklığın ve şarj kutusunun bildirdiği seviyeleri ayrı ayrı gör.</p></article>
-    <article class="feature"><div class="mini equalizer" aria-hidden="true">@for (height of levels; track $index) {<i [style.height.px]="height"></i>}</div><h3>Ses profilleri</h3><p>Kulaklığının sunduğu ekolayzır ön ayarları arasında geçiş yap.</p></article>
-    <article class="feature"><div class="mini game" aria-hidden="true"><svg viewBox="0 0 230 58"><path class="ghostline" d="M0 45h45l18-29 19 32 22-36 20 33h31l14-22 16 22h45"/><path class="signal" d="M0 38h46l9-6 10 6h20l11-24 12 27 9-10 10 7h103"/></svg></div><h3>Oyun modu</h3><p>Düşük gecikmeyi elle aç veya seçtiğin uygulamayla otomatik başlat.</p></article>
+    <article class="feature battery"><div class="batteries" aria-hidden="true"><i>L</i><i>R</i><i>Case</i></div><h3>Battery at a glance</h3><p>See separate charge readings for the left bud, right bud and case when your device reports them.</p></article>
+    <article class="feature profiles"><div class="equalizer" aria-hidden="true">@for (height of levels; track $index) {<i [style.height.px]="height"></i>}</div><h3>EQ presets</h3><p>Pick a sound profile from your earbuds’ built-in presets and switch it from your desktop.</p></article>
+    <article class="feature gaming"><div class="latency" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><h3>Game mode</h3><p>Enable low latency for a session or set it to switch on automatically with a chosen app.</p></article>
   </div>
 </section>

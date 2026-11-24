@@ -66,48 +66,94 @@ nav a:hover,.guide:hover,.foot a:hover {
   transform: none;
 }
 
+.download {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(32px,5.2vw,80px);
+  border-radius: 22px;
+  color: #071523;
+  background: linear-gradient(109deg,#ddf7f7 0%,#bde1fa 40%,#8caef1 67%,#687bdb);
+}
+
+.grooves {
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+  top: -50%;
+  bottom: -60%;
+  left: 38%;
+  width: 85%;
+  transform: rotate(-28deg) skew(-8deg);
+  background: repeating-radial-gradient(ellipse at 55% 50%,transparent 0 6px,#f0feff8c 7px,#3c6eaf47 8px,transparent 10px);
+  mask-image: linear-gradient(90deg,transparent,#000 40%);
+}
+
+.app-icon {
+  position: absolute;
+  right: 14%;
+  top: 50%;
+  width: clamp(85px,11vw,156px);
+  height: auto;
+  border-radius: 22%;
+  transform: translateY(-50%) rotate(-14deg);
+  box-shadow: 2px 4px 0 #5e7895,6px 12px 0 -2px #465d7b,15px 27px 22px #1637606b;
+}
+
+.download-copy {
+  position: relative;
+  max-width: 60%;
+}
+
+.download h2 {
+  font-size: clamp(2.4rem,4.6vw,5rem);
+  margin: 12px 0;
+}
+
 .download p:not(.kicker) {
-  font-size: 1.06rem;
-  line-height: 1.63;
-  color: #b7c4d8;
-  max-width: 46ch;
+  max-width: 44ch;
+  color: #173553;
+  font-size: 1.03rem;
+}
+
+.download .kicker {
+  color: #213957;
+}
+
+.download .kicker span {
+  background: #284878;
+}
+
+.download-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.install {
+  color: white;
+  background: #0c1a2e;
+  box-shadow: 0 5px 15px #24446b40;
+}
+
+.install:hover {
+  background: #213854;
+}
+
+.guide {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.download .guide:hover {
+  color: #243e6a;
 }
 
 .faq details p,.foot p {
   color: var(--muted);
-}
-
-.download {
-  border: 1px solid #334a71;
-  border-radius: 15px;
-  background: radial-gradient(ellipse at top right,#274c8566,transparent 64%),#101a2b;
-  padding: clamp(26px,4vw,52px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-}
-
-.download h2 {
-  margin-bottom: 13px;
-}
-
-.download p:not(.kicker) {
-  max-width: 60ch;
-}
-
-.download-actions {
-  display: grid;
-  gap: 13px;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.guide {
-  color: #b7c9ed;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  font-size: .9rem;
 }
 
 .faq {
@@ -243,5 +289,32 @@ footer {
 
   .bar nav {
     gap: 12px;
+  }
+}
+
+@media(max-width:700px) {
+
+  .download-copy {
+    max-width: 100%;
+  }
+
+  .app-icon {
+    right: 8%;
+    top: 26px;
+    transform: rotate(-14deg);
+    width: 46px;
+  }
+
+  .download {
+    padding: 35px 23px;
+  }
+
+  .download .kicker {
+    padding-right: 48px;
+  }
+
+  .grooves {
+    opacity: .48;
+    left: 48%;
   }
 }

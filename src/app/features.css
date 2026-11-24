@@ -1,84 +1,158 @@
+:host {
+  display: block;
+  background: linear-gradient(#080e1c,#080c14 75%);
+}
+
 .features {
-  padding-block: 55px 54px;
+  padding-block: clamp(50px,6vw,94px);
 }
 
-.section-head {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 25px;
+h2 {
+  margin: 12px 0 30px;
 }
 
-.side-note {
-  color: #a0aec4;
-  font-size: .9rem;
+.showcase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid #33435c;
+  border-radius: 20px;
+  background: linear-gradient(110deg,#0c2032,#142139 68%,#10192d);
+}
+
+.acoustic {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center,#2c6079,transparent 68%);
+}
+
+.rings {
+  position: absolute;
+  inset: -45% -8%;
+  transform: rotate(-19deg) scaleY(.84);
+  border-radius: 50%;
+  background: repeating-radial-gradient(ellipse at center,transparent 0 8%,#66cafe69 8.3%,transparent 8.9%);
+  mask-image: radial-gradient(ellipse,#000 43%,transparent 71%);
+  transition: transform .7s,filter .7s;
+}
+
+.ambient .rings {
+  transform: rotate(12deg) scale(1.45,.78);
+  filter: hue-rotate(58deg);
+}
+
+.acoustic img {
+  object-fit: contain;
+  transform: scale(.83) rotate(-14deg);
+  filter: drop-shadow(0 20px 15px #010913a1);
+  transition: transform .65s;
+}
+
+.ambient img {
+  transform: scale(.79) rotate(5deg);
+}
+
+.sound-copy {
+  position: relative;
+  align-self: center;
+  padding: 36px clamp(22px,4vw,62px) 36px 16px;
+}
+
+.sound-copy h3 {
+  font-size: clamp(2.2rem,3.7vw,3.8rem);
+  margin: 9px 0 12px;
+}
+
+.sound-copy p:not(.kicker),.feature p {
+  color: #bdcbe0;
+  max-width: 46ch;
+}
+
+.choices {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #506783;
+  border-radius: 24px;
+  background: #091526;
+  margin: 18px 0 12px;
+}
+
+button {
+  color: #c4d4e8;
+  background: none;
+  border: 0;
+  border-radius: 18px;
+  padding: 7px 17px;
+  cursor: pointer;
+  font: 550 .88rem var(--sans);
+}
+
+button[aria-pressed=true] {
+  background: #abdef4;
+  color: #0d2330;
+}
+
+small {
+  display: block;
+  color: #a5b6ce;
+  font-size: .8rem;
 }
 
 .cards {
   display: grid;
   grid-template-columns: repeat(3,1fr);
-  gap: 16px;
+  gap: 14px;
+  margin-top: 14px;
 }
 
 .feature {
-  padding: 25px 26px 28px;
-  border: 1px solid #2a3547;
-  border-radius: 13px;
-  background: linear-gradient(130deg,#151e2e,#0d131f 85%);
+  border: 1px solid #2a3951;
+  border-radius: 16px;
+  padding: 25px;
   overflow: hidden;
+  background: radial-gradient(ellipse at top right,#193537 0,transparent 62%),#0d1623;
 }
 
-.feature p {
-  color: var(--muted);
+.profiles {
+  background: radial-gradient(ellipse at top right,#302a4d,transparent 60%),#121724;
 }
 
-.feature p {
-  max-width: 33ch;
+.gaming {
+  background: radial-gradient(ellipse at top right,#19325a,transparent 62%),#0e1725;
 }
 
-.mini {
-  height: 64px;
+.feature h3 {
+  font-size: 1.4rem;
+  margin: 19px 0 8px;
+}
+
+.batteries,.equalizer,.latency {
   display: flex;
   align-items: center;
-  margin-bottom: 19px;
-}
-
-.batteries {
-  align-items: flex-start;
-  gap: 13px;
-  padding-top: 13px;
-}
-
-.batteries div {
-  width: 49px;
-  text-align: center;
+  height: 54px;
+  gap: 6px;
 }
 
 .batteries i {
-  display: block;
-  background: linear-gradient(to right,#8fafff var(--level),#283957 var(--level));
-  height: 17px;
-  border: 3px solid #1a2538;
-  outline: 1px solid #6b82a6;
-  border-radius: 3px;
-  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,#10262f 58%,transparent 61%),conic-gradient(#83e2d1 0 76%,#2a474e 76%);
+  font: .73rem var(--mono);
+  color: #c5f2e8;
 }
 
-.batteries i:after {
-  content: "";
-  position: absolute;
-  width: 2px;
-  height: 5px;
-  right: -6px;
-  top: 3px;
-  background: #708bb7;
+.batteries i:nth-child(2) {
+  transform: rotate(-8deg);
 }
 
-.batteries b {
-  color: #9eadc5;
-  font: .65rem var(--mono);
-  letter-spacing: .12em;
+.batteries i:last-child {
+  background: radial-gradient(circle,#10262f 58%,transparent 61%),conic-gradient(#83e2d1 0 54%,#2a474e 54%);
 }
 
 .equalizer {
@@ -87,101 +161,69 @@
 
 .equalizer i {
   width: 4px;
-  border-radius: 3px;
-  background: linear-gradient(#a0bcff,#507cdd);
+  border-radius: 4px;
+  background: linear-gradient(#dcc5ff,#8b80e7);
 }
 
-.game svg {
-  width: min(100%,210px);
-  height: 58px;
-  fill: none;
-  stroke-width: 2;
+.latency {
+  gap: 0;
+  transform: skewX(-26deg);
+  padding-left: 9px;
 }
 
-.ghostline {
-  stroke: #34425a;
-  stroke-dasharray: 3 3;
+.latency i {
+  height: 27px;
+  width: 24px;
+  background: #8ab9ff;
+  margin-right: 4px;
 }
 
-.signal {
-  stroke: #8aafff;
+.latency i:nth-child(2) {
+  opacity: .8;
 }
 
-@media(max-width:870px) {
+.latency i:nth-child(3) {
+  opacity: .6;
+}
+
+.latency i:nth-child(4) {
+  opacity: .4;
+}
+
+.latency i:nth-child(5) {
+  opacity: .2;
+}
+
+@media(max-width:720px) {
+
+  .showcase,.cards {
+    grid-template-columns: 1fr;
+  }
+
+  .acoustic {
+    min-height: 190px;
+  }
+
+  .sound-copy {
+    padding: 8px 23px 25px;
+  }
 
   .feature {
     padding: 20px;
   }
 
-  .section-head {
-    align-items: start;
-    flex-direction: column;
+  .cards {
     gap: 10px;
   }
-}
 
-@media(max-width:700px) {
-
-  .features {
-    padding-block: 36px;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
-  }
-
-  .feature {
-    display: grid;
-    grid-template-columns: 1fr 110px;
-    align-items: center;
-    gap: 3px 12px;
-  }
-
-  .mini {
-    grid-column: 2;
-    grid-row: 1/3;
-    margin: 0;
-    justify-content: center;
-  }
-
-  .feature p {
-    font-size: .95rem;
-  }
-
-  .equalizer {
-    gap: 2px;
-  }
-
-  .equalizer i {
-    width: 2px;
-  }
-
-  .batteries {
-    gap: 7px;
-    align-items: center;
-    padding: 0;
-  }
-
-  .batteries div {
-    width: 28px;
+  .feature h3 {
+    margin-top: 11px;
   }
 }
 
-@media(max-width:430px) {
+@media(prefers-reduced-motion:reduce) {
 
-  .feature {
-    grid-template-columns: 1fr 85px;
-  }
-
-  .batteries div {
-    width: 22px;
-  }
-
-  .equalizer {
-    gap: 1px;
-  }
-
-  .side-note {
-    font-size: .85rem;
+  .rings,.acoustic img {
+    transition: none;
   }
 }

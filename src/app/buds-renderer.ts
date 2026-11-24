@@ -10,23 +10,26 @@ interface Model {
   accessors: { bufferView: number; componentType: number; count: number }[];
   materials: { pbrMetallicRoughness: Material }[];
 }
-export interface Pose { yaw: number; pitch: number; open: number; lift: number; zoom: number; centerY: number; centerX: number; caseDrop: number }
+export interface Pose {
+  yaw: number; pitch: number; open: number; lift: number;
+  zoom: number; centerY: number; centerX: number;
+}
 export const presets: Pose[] = [
-  { yaw: -.55, pitch: .39, open: 103, lift: .97, zoom: 49, centerY: 36, centerX: -1, caseDrop: 0 },
-  { yaw: -.46, pitch: .51, open: 0, lift: 0, zoom: 35, centerY: 13, centerX: 0, caseDrop: 0 },
-  { yaw: .49, pitch: .39, open: 103, lift: 1, zoom: 15.5, centerY: 40, centerX: 26, caseDrop: 130 }
+  { yaw: -.53, pitch: .43, open: 0, lift: 0, zoom: 39, centerY: 25, centerX: 0 },
+  { yaw: -.38, pitch: .35, open: 103, lift: 0, zoom: 52, centerY: 34, centerX: 0 },
+  { yaw: -.20, pitch: .33, open: 108, lift: 1, zoom: 54, centerY: 36, centerX: 0 }
 ];
 const vertex = `#version 300 es
 layout(location=0) in vec3 vertex;
 layout(location=1) in vec3 normal;
-uniform vec3 position,axis,target,right,up,eye;
+uniform vec3 pivot,position,axis,target,right,up,eye;
 uniform float angle,aspect,zoom;
 out vec3 N;
 void main() {
   float c=cos(angle),s=sin(angle);
   mat3 r=c*mat3(1.)+(1.-c)*outerProduct(axis,axis)+s*mat3(0.,axis.z,-axis.y,-axis.z,0.,axis.x,axis.y,-axis.x,0.);
   N=r*normal;
-  vec3 p=r*(vertex*1000.)+position-target;
+  vec3 p=r*(vertex*1000.-pivot)+pivot+position-target;
   gl_Position=vec4(dot(p,right)/zoom/aspect,dot(p,up)/zoom,-dot(p,eye)/180.,1.);
 }`;
 const fragment = `#version 300 es
@@ -49,10 +52,10 @@ void main() {
   float rim=panel(ray,vec3(.7,.6,-.42),vec3(0,1,0),vec2(.95,.25));
   float top=panel(ray,vec3(.35,1.,.45),vec3(1,0,0),vec2(.95,.15));
   float fres=.046+.48*pow(1.-max(dot(n,eye),0.),3.);
-  vec3 lights=key*vec3(2.8,3.15,3.7)+rim*vec3(.37,.94,3.6)+top*vec3(1.5,1.7,2.2);
+  vec3 lights=key*vec3(3.1,4.2,5.2)+rim*vec3(.46,1.6,4.4)+top*vec3(1.5,1.7,2.2);
   vec3 diffuse=albedo*(.24+.65*max(dot(n,normalize(vec3(-.7,1,.65))),0.));
   vec3 linear=diffuse+mix(vec3(fres),albedo,metal)*(lights+vec3(.045,.075,.14));
-  linear+=vec3(.05,.095,.19)*pow(1.-max(dot(n,eye),0.),3.);
+  linear+=vec3(.08,.17,.33)*pow(1.-max(dot(n,eye),0.),3.);
   color=vec4(pow(linear,vec3(1./2.2)),1.);
 }`;
 export async function createRenderer(canvas: HTMLCanvasElement, signal: AbortSignal) {
@@ -76,7 +79,7 @@ export async function createRenderer(canvas: HTMLCanvasElement, signal: AbortSig
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error('Shader linking failed');
   gl.useProgram(program);
-  const uniform = Object.fromEntries('position axis target right up eye angle aspect zoom albedo rough metal'.split(' ').map(key => [key, gl.getUniformLocation(program,key)]));
+  const uniform = Object.fromEntries('pivot position axis target right up eye angle aspect zoom albedo rough metal'.split(' ').map(key => [key, gl.getUniformLocation(program,key)]));
   const buffers = doc.bufferViews.map(view => {
     const buffer = gl.createBuffer();
     gl.bindBuffer(view.target,buffer);
@@ -121,12 +124,17 @@ export async function createRenderer(canvas: HTMLCanvasElement, signal: AbortSig
       gl.uniform1f(uniform['zoom'],p.zoom*Math.max(1,height/width));
       for (const part of parts) {
         let position: Vec3 = [0,0,0], angle = 0;
-        const lifted = part.group === 'right';
+        const rightBud = part.group === 'right';
         if (part.group === 'lid') { position = [0,18.2,-25.4]; angle = -p.open*Math.PI/180; }
-        if (lifted) { position = [10+16*p.lift,15+25*p.lift,8.7+.8*p.lift]; angle = 2*halfAngle*p.lift; }
-        if (!lifted) position[1] -= p.caseDrop;
+        if (rightBud) { position = [10+23*p.lift,15+47*p.lift,8.7+3*p.lift]; angle = 2*halfAngle*p.lift; }
+        const leftBud = part.group === 'left';
+        if (leftBud) {
+          position = [-21*p.lift,40*p.lift,7*p.lift];
+          angle = -1.18*p.lift;
+        }
+        gl.uniform3fv(uniform['pivot'],leftBud ? [-10,15,8.7] : [0,0,0]);
         gl.uniform3fv(uniform['position'],position);
-        gl.uniform3fv(uniform['axis'],lifted ? liftAxis : [1,0,0]);
+        gl.uniform3fv(uniform['axis'],rightBud ? liftAxis : leftBud ? [0,.8,.6] : [1,0,0]);
         gl.uniform1f(uniform['angle'],angle);
         gl.uniform3fv(uniform['albedo'],part.material.baseColorFactor.slice(0,3));
         gl.uniform1f(uniform['rough'],part.material.roughnessFactor);

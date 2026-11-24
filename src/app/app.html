@@ -1,23 +1,33 @@
-<a class="skip" href="#icerik">İçeriğe geç</a>
-<header id="ust"><div class="wrap bar">
-  <a class="brand" href="#ust" aria-label="MiBudsClient ana sayfa"><img ngSrc="media/mibuds.png" width="32" height="32" alt="" priority>MiBuds<span>Client</span></a>
-  <nav aria-label="Ana menü"><a href="#ozellikler">Özellikler</a><a href="#indir">İndirme</a><a href="#sss">SSS</a></nav>
+<a class="skip" href="#main">Skip to content</a>
+<header id="top"><div class="wrap bar">
+  <a class="brand" href="#top" aria-label="MiBudsClient home"><img ngSrc="media/mibuds.png" width="32" height="32" alt="" priority>MiBuds<span>Client</span></a>
+  <nav aria-label="Main navigation"><a href="#features">Features</a><a href="#download">Download</a><a href="#faq">FAQ</a></nav>
   <a class="github" [href]="repo"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .8a11.2 11.2 0 0 0-3.54 21.82c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.68.08-.68 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.62 1.22 3.26.93.1-.73.39-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.55 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.43.11-2.97 0 0 .95-.3 3.08 1.15a10.7 10.7 0 0 1 5.6 0c2.14-1.45 3.08-1.15 3.08-1.15.61 1.54.23 2.69.11 2.97.73.79 1.16 1.79 1.16 3.02 0 4.31-2.63 5.26-5.13 5.54.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"/></svg> GitHub</a>
 </div></header>
-
-<main id="icerik">
-<app-hero/>
-
-<app-features/>
-
-<section id="indir" class="download wrap" aria-labelledby="download-title">
-  <div><p class="kicker"><span></span> WINDOWS &amp; LINUX</p><h2 id="download-title">MiBudsClient’ı indir.</h2><p>GitHub sürümlerinden sistemine uygun paketi seç. İlk bağlantı için kulaklığını bilgisayarının Bluetooth ayarlarından eşleştir.</p></div>
-  <div class="download-actions"><a class="button primary" [href]="repo+'/releases'"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>Sürümleri görüntüle</a><a class="guide" [href]="repo+'/blob/main/docs/readme/README.tr.md'">Türkçe kullanım kılavuzu</a></div>
-</section>
-
-<section class="faq wrap" id="sss" aria-labelledby="faq-title"><div><p class="kicker"><span></span> SSS</p><h2 id="faq-title">Sık sorulan <br>sorular.</h2></div>
-  <div>@for (item of questions; track item.q) {<details><summary>{{item.q}}<span aria-hidden="true"></span></summary><p>{{item.a}}</p></details>}</div>
-</section>
+<main id="main">
+  <app-hero/>
+  <app-features/>
+  <section id="download" class="download wrap" aria-labelledby="download-title">
+    <div class="grooves" aria-hidden="true"></div>
+    <img class="app-icon" ngSrc="media/mibuds.png" width="146" height="146" alt="">
+    <div class="download-copy">
+      <p class="kicker"><span></span> WINDOWS &amp; LINUX</p>
+      <h2 id="download-title">Get MiBudsClient.</h2>
+      <p>Choose your desktop build from GitHub Releases, pair your earbuds over Bluetooth and open the app.</p>
+      <div class="download-actions">
+        <a class="button install" [href]="repo+'/releases'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>Download for desktop</a>
+        <a class="guide" [href]="repo+'#getting-started'">Setup guide</a>
+      </div>
+    </div>
+  </section>
+  <section class="faq wrap" id="faq" aria-labelledby="faq-title">
+    <div><p class="kicker"><span></span> SUPPORT</p><h2 id="faq-title">Common questions.</h2></div>
+    <div>@for (item of questions; track item.q) {
+      <details><summary>{{item.q}}<span aria-hidden="true"></span></summary><p>{{item.a}}</p></details>
+    }</div>
+  </section>
 </main>
-<footer><div class="wrap foot"><a class="brand" href="#ust"><img ngSrc="media/mibuds.png" width="27" height="27" alt="">MiBuds<span>Client</span></a><p>Bağımsız bir topluluk projesi.</p><a [href]="repo+'/blob/main/LICENSE'">GPL-3.0 lisansı</a></div></footer>
-
+<footer><div class="wrap foot">
+  <a class="brand" href="#top"><img ngSrc="media/mibuds.png" width="27" height="27" alt="">MiBuds<span>Client</span></a>
+  <p>An independent community project.</p><a [href]="repo+'/blob/main/LICENSE'">GPL-3.0 license</a>
+</div></footer>

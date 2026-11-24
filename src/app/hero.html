@@ -1,13 +1,22 @@
-<section class="hero" aria-labelledby="hero-title">
-  <div class="waves" aria-hidden="true"></div>
+<section #stage class="hero" aria-labelledby="hero-title">
+  <app-sound-waves [paused]="paused()"/>
   <div class="wrap hero-inner">
     <div class="intro">
-      <p class="kicker"><span></span> AÇIK KAYNAKLI MASAÜSTÜ İSTEMCİSİ</p>
-      <h1 id="hero-title">Kulaklığın.<br><em>Senin ayarın.</em></h1>
-      <p class="lede">MiBudsClient ile Xiaomi ve Redmi kulaklıklarının pilini gör, ses profilini seç ve oyun modunu masaüstünden yönet.</p>
-      <div class="actions"><a href="#indir" class="button primary"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>Ücretsiz indir</a><a class="button subtle" href="#ozellikler">Özellikleri keşfet</a></div>
-      <div class="platforms"><span class="win" aria-hidden="true"></span>Windows<span class="divider"></span><span class="terminal" aria-hidden="true">›_</span>Linux</div>
+      <p class="kicker"><span></span> OPEN-SOURCE EARBUD CONTROL</p>
+      <h1 id="hero-title">Your sound.<br><em>Your desktop.</em></h1>
+      <p class="lede">Meet MiBudsClient. Check your Xiaomi or Redmi earbuds’ battery, tune your sound and switch listening modes on Windows and Linux.</p>
+      <div class="actions">
+        <a class="button primary" href="#download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>Get MiBudsClient</a>
+        <a class="text-link" href="#features">Explore features</a>
+      </div>
     </div>
-    <app-buds-viewer/>
+    <app-buds-viewer (viewRequested)="choose($event)"/>
+  </div>
+  <div class="wrap stage-foot">
+    <span class="hardware">REDMI BUDS 6 PLAY</span>
+    @if (motionEnabled()) {
+      <span class="cue"><i></i> Scroll to unbox</span>
+      <button type="button" (click)="paused.set(!paused())" [attr.aria-pressed]="paused()">{{ paused() ? 'Resume waves' : 'Pause waves' }}</button>
+    }
   </div>
 </section>
