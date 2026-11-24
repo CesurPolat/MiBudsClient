@@ -1,0 +1,126 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  background: radial-gradient(ellipse at 74% 33%,#142c574f,transparent 51%),linear-gradient(120deg,#090e17,#0b1527 73%,#0b1425);
+  border-bottom: 1px solid var(--line);
+}
+
+.hero:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: linear-gradient(#6783b115 1px,transparent 1px),linear-gradient(90deg,#6783b115 1px,transparent 1px);
+  background-size: 50px 50px;
+  mask-image: linear-gradient(100deg,transparent 28%,#0009 80%);
+}
+
+.waves {
+  position: absolute;
+  z-index: -1;
+  inset: 12% 0 0;
+  background: url('../../public/media/waves.svg') center bottom/100% 72% no-repeat;
+  pointer-events: none;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1%;
+  align-items: center;
+  padding-block: 42px 40px;
+  min-height: 560px;
+}
+
+.intro {
+  position: relative;
+  z-index: 1;
+}
+
+h1 em {
+  font-style: normal;
+  color: #8ab0ff;
+  background: linear-gradient(110deg,#accbff,#7099ff 95%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lede {
+  font-size: 1.06rem;
+  line-height: 1.63;
+  color: #b7c4d8;
+  max-width: 46ch;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin: 26px 0 18px;
+  flex-wrap: wrap;
+}
+
+.platforms {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #aebad0;
+  font-size: .81rem;
+}
+
+.divider {
+  background: #3d495c;
+  width: 1px;
+  height: 12px;
+  margin: 0 6px;
+}
+
+.win {
+  width: 13px;
+  height: 12px;
+  background: conic-gradient(#acbcd5 0 25%,transparent 0) 0 0/7px 7px;
+  background: linear-gradient(to right,transparent 45%,#111725 45% 55%,transparent 55%),linear-gradient(to bottom,#aebbd0 45%,transparent 45% 55%,#aebbd0 55%);
+}
+
+.terminal {
+  font: 700 .75rem var(--mono);
+  border: 1px solid #a5b6d1;
+  border-radius: 2px;
+  padding: 0 2px;
+  line-height: 11px;
+}
+
+@media(max-width:870px) {
+
+  .hero-inner {
+    min-height: 500px;
+  }
+}
+
+@media(max-width:700px) {
+
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding-block: 37px 24px;
+  }
+
+  .lede {
+    font-size: 1rem;
+  }
+
+  .actions {
+    margin: 18px 0 13px;
+  }
+
+  .waves {
+    inset: 36% 0 0;
+    background-size: auto 85%;
+  }
+}
+
+@media(max-width:430px) {
+
+  .actions {
+    gap: 8px;
+  }
+}

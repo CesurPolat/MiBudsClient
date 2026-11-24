@@ -1,0 +1,187 @@
+.features {
+  padding-block: 55px 54px;
+}
+
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.side-note {
+  color: #a0aec4;
+  font-size: .9rem;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 16px;
+}
+
+.feature {
+  padding: 25px 26px 28px;
+  border: 1px solid #2a3547;
+  border-radius: 13px;
+  background: linear-gradient(130deg,#151e2e,#0d131f 85%);
+  overflow: hidden;
+}
+
+.feature p {
+  color: var(--muted);
+}
+
+.feature p {
+  max-width: 33ch;
+}
+
+.mini {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 19px;
+}
+
+.batteries {
+  align-items: flex-start;
+  gap: 13px;
+  padding-top: 13px;
+}
+
+.batteries div {
+  width: 49px;
+  text-align: center;
+}
+
+.batteries i {
+  display: block;
+  background: linear-gradient(to right,#8fafff var(--level),#283957 var(--level));
+  height: 17px;
+  border: 3px solid #1a2538;
+  outline: 1px solid #6b82a6;
+  border-radius: 3px;
+  position: relative;
+}
+
+.batteries i:after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 5px;
+  right: -6px;
+  top: 3px;
+  background: #708bb7;
+}
+
+.batteries b {
+  color: #9eadc5;
+  font: .65rem var(--mono);
+  letter-spacing: .12em;
+}
+
+.equalizer {
+  gap: 4px;
+}
+
+.equalizer i {
+  width: 4px;
+  border-radius: 3px;
+  background: linear-gradient(#a0bcff,#507cdd);
+}
+
+.game svg {
+  width: min(100%,210px);
+  height: 58px;
+  fill: none;
+  stroke-width: 2;
+}
+
+.ghostline {
+  stroke: #34425a;
+  stroke-dasharray: 3 3;
+}
+
+.signal {
+  stroke: #8aafff;
+}
+
+@media(max-width:870px) {
+
+  .feature {
+    padding: 20px;
+  }
+
+  .section-head {
+    align-items: start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media(max-width:700px) {
+
+  .features {
+    padding-block: 36px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .feature {
+    display: grid;
+    grid-template-columns: 1fr 110px;
+    align-items: center;
+    gap: 3px 12px;
+  }
+
+  .mini {
+    grid-column: 2;
+    grid-row: 1/3;
+    margin: 0;
+    justify-content: center;
+  }
+
+  .feature p {
+    font-size: .95rem;
+  }
+
+  .equalizer {
+    gap: 2px;
+  }
+
+  .equalizer i {
+    width: 2px;
+  }
+
+  .batteries {
+    gap: 7px;
+    align-items: center;
+    padding: 0;
+  }
+
+  .batteries div {
+    width: 28px;
+  }
+}
+
+@media(max-width:430px) {
+
+  .feature {
+    grid-template-columns: 1fr 85px;
+  }
+
+  .batteries div {
+    width: 22px;
+  }
+
+  .equalizer {
+    gap: 1px;
+  }
+
+  .side-note {
+    font-size: .85rem;
+  }
+}

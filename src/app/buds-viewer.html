@@ -1,0 +1,16 @@
+<div class="viewer">
+  <div class="scene">
+    <div class="orbit" aria-hidden="true"></div>
+    <div class="floor" aria-hidden="true"></div>
+    <img class="poster" [class.hidden]="ready()" [ngSrc]="posters[active()]" fill priority alt="Redmi Buds 6 Play modelinin seçili görünümü">
+    <canvas #surface [class.visible]="ready()" [attr.tabindex]="ready() ? 0 : null" [attr.aria-hidden]="ready() ? null : true" role="img" aria-label="Redmi Buds 6 Play üç boyutlu modeli. Döndürmek için sürükleyin veya sağ ve sol ok tuşlarını kullanın." (pointerdown)="start($event)" (pointermove)="move($event)" (pointerup)="end()" (pointercancel)="end()" (lostpointercapture)="end()" (keydown)="turn($event)"></canvas>
+    <span class="annotation" aria-hidden="true">{{ captions[active()] }}</span>
+  </div>
+  <div class="model-info"><span class="indicator"></span> REDMI BUDS 6 PLAY <span class="sep">/</span> {{ ready() ? 'Sürükleyerek döndür' : 'Model görünümü' }}</div>
+  <div class="switches" role="group" aria-label="Model görünümü">
+    @for (label of labels; track label; let i = $index) {
+      <button type="button" [attr.aria-pressed]="active() === i" (click)="select(i)">{{ label }}</button>
+    }
+  </div>
+</div>
+
