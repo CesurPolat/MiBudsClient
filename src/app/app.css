@@ -318,3 +318,9 @@ footer {
     left: 48%;
   }
 }
+
+@media (max-width:600px) {
+  .bar { height: auto; flex-wrap: wrap; padding-block: 12px 9px; gap: 11px; }
+  .bar nav { order: 3; width: 100%; margin: 0; justify-content: space-between; }
+  .bar .github { margin-left: auto; display: flex; }
+}

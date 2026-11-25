@@ -11,9 +11,18 @@
   min-height: clamp(620px,91svh,1000px);
   overflow: hidden;
   background: radial-gradient(ellipse at 75% 46%,#173f78 0,#0c2147 19%,#060f23 43%,#050912 75%);
-  border-bottom: 1px solid #213653;
+  border-bottom: 1px solid #101826;
 }
 
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 0;
+  height: clamp(66px, 10vh, 108px);
+  background: linear-gradient(transparent, #080c14 98%);
+  pointer-events: none;
+}
 .hero-inner {
   display: grid;
   grid-template-columns: .9fr 1.1fr;
@@ -69,6 +78,7 @@ h1 em {
 }
 
 .stage-foot {
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -111,16 +121,6 @@ h1 em {
   background: #bddeff;
 }
 
-.stage-foot button {
-  font: inherit;
-  color: #d9e7ff;
-  background: #0c1931;
-  border: 1px solid #405476;
-  padding: 4px 9px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
 @media(max-width:760px) {
 
   .hero {
@@ -129,7 +129,7 @@ h1 em {
 
   .hero-inner {
     grid-template-columns: 1fr;
-    padding: 34px 0 7px;
+    padding: 34px 0 clamp(32px, 10vw, 58px);
     gap: 3px;
   }
 

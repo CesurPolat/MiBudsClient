@@ -1,10 +1,11 @@
 import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Features } from './features';
+import { DeviceGallery } from './device-gallery';
 import { Hero } from './hero';
 
 @Component({
-  selector: 'app-root', imports: [Hero, Features, NgOptimizedImage],
+  selector: 'app-root', imports: [Hero, Features, DeviceGallery, NgOptimizedImage],
   templateUrl: './app.html', styleUrl: './app.css', changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {

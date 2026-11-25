@@ -1,0 +1,27 @@
+<section #gallery id="devices" class="catalog wrap" aria-labelledby="devices-title" (focusin)="stopAutoplay()">
+  <div class="heading">
+    <div>
+      <p class="kicker"><span></span> DEVICE CATALOG</p>
+      <h2 id="devices-title">Supported devices.</h2>
+      <p class="scope">Explore the {{ devices.length }} models MiBudsClient recognizes. Redmi Buds 6 Play is the hardware reference. Connection and controls vary by model and firmware.</p>
+    </div>
+    <div class="arrows" role="group" aria-label="Browse device gallery">
+      <button type="button" aria-label="Previous models" aria-controls="device-rail" (click)="move(-1)">‹</button>
+      <button type="button" aria-label="Next models" aria-controls="device-rail" (click)="move(1)">›</button>
+    </div>
+  </div>
+  <ul #rail id="device-rail" class="rail" aria-label="Recognized Xiaomi and Redmi models" tabindex="0"
+      (pointerdown)="stopAutoplay()" (wheel)="stopAutoplay()">
+    @for (device of devices; track device.id) {
+      <li class="device">
+        <div class="visual">
+          <img [ngSrc]="'media/devices/' + device.id + '.webp'" width="480" height="360" alt="">
+        </div>
+        <div class="caption">
+          <span class="maker">{{device.brand}}</span>
+          <h3>{{device.name}}</h3>
+        </div>
+      </li>
+    }
+  </ul>
+</section>

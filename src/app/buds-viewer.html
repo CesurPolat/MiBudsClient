@@ -1,18 +1,8 @@
-<div class="viewer">
-  <div class="scene">
-    <div class="halo" aria-hidden="true"></div>
-    <img class="plinth" ngSrc="media/basalt.webp" width="1200" height="396" priority alt="">
-    <div class="contact" aria-hidden="true"></div>
-    <img class="poster" [class.hidden]="ready()" [ngSrc]="views[active()].poster" fill priority [alt]="views[active()].alt">
-    <canvas #surface [class.visible]="ready()" [attr.tabindex]="ready() ? 0 : null"
-      [attr.aria-hidden]="ready() ? null : true" role="img"
-      aria-label="Interactive Redmi Buds 6 Play model. Drag horizontally or use the left and right arrow keys to rotate."
-      (pointerdown)="start($event)" (pointermove)="move($event)" (pointerup)="end()"
-      (pointercancel)="end()" (lostpointercapture)="end()" (keydown)="turn($event)"></canvas>
-  </div>
-  <div class="switches" role="group" aria-label="Product view">
-    @for (view of views; track view.label; let i = $index) {
-      <button type="button" [attr.aria-pressed]="active() === i" (click)="viewRequested.emit(view.at)">{{ view.label }}</button>
-    }
-  </div>
+<div class="scene">
+  <div class="halo" aria-hidden="true"></div>
+  <img class="plinth" ngSrc="media/basalt.webp" width="1200" height="396" priority alt="">
+  <div class="contact" aria-hidden="true"></div>
+  <img class="poster" [class.hidden]="ready()" [ngSrc]="views[active()].poster" fill priority [alt]="views[active()].alt">
+  <canvas #surface [class.visible]="ready()" [attr.aria-hidden]="ready() ? null : true"
+          role="img" [attr.aria-label]="views[active()].alt"></canvas>
 </div>

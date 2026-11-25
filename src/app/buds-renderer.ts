@@ -11,13 +11,12 @@ interface Model {
   materials: { pbrMetallicRoughness: Material }[];
 }
 export interface Pose {
-  yaw: number; pitch: number; open: number; lift: number;
-  zoom: number; centerY: number; centerX: number;
+  open: number; lift: number;
 }
 export const presets: Pose[] = [
-  { yaw: -.53, pitch: .43, open: 0, lift: 0, zoom: 39, centerY: 25, centerX: 0 },
-  { yaw: -.38, pitch: .35, open: 103, lift: 0, zoom: 52, centerY: 34, centerX: 0 },
-  { yaw: -.20, pitch: .33, open: 108, lift: 1, zoom: 54, centerY: 36, centerX: 0 }
+  { open: 0, lift: 0 },
+  { open: 103, lift: 0 },
+  { open: 108, lift: 1 }
 ];
 const vertex = `#version 300 es
 layout(location=0) in vec3 vertex;
@@ -25,16 +24,20 @@ layout(location=1) in vec3 normal;
 uniform vec3 pivot,position,axis,target,right,up,eye;
 uniform float angle,aspect,zoom;
 out vec3 N;
+out float elevation;
 void main() {
   float c=cos(angle),s=sin(angle);
   mat3 r=c*mat3(1.)+(1.-c)*outerProduct(axis,axis)+s*mat3(0.,axis.z,-axis.y,-axis.z,0.,axis.x,axis.y,-axis.x,0.);
   N=r*normal;
-  vec3 p=r*(vertex*1000.-pivot)+pivot+position-target;
+  vec3 world=r*(vertex*1000.-pivot)+pivot+position;
+  elevation=world.y;
+  vec3 p=world-target;
   gl_Position=vec4(dot(p,right)/zoom/aspect,dot(p,up)/zoom,-dot(p,eye)/180.,1.);
 }`;
 const fragment = `#version 300 es
 precision highp float;
 in vec3 N;
+in float elevation;
 uniform vec3 eye,albedo;
 uniform float rough,metal;
 out vec4 color;
@@ -48,14 +51,16 @@ float panel(vec3 ray, vec3 dir,vec3 across,vec2 size) {
 void main() {
   vec3 n=normalize(N)*(gl_FrontFacing?1.:-1.);
   vec3 ray=reflect(-eye,n);
-  float key=panel(ray,vec3(-.9,1.,.65),vec3(0,1,0),vec2(.72,.32));
-  float rim=panel(ray,vec3(.7,.6,-.42),vec3(0,1,0),vec2(.95,.25));
+  float key=panel(ray,vec3(-.8,1.1,.8),vec3(0,1,0),vec2(.72,.32));
+  float rim=panel(ray,vec3(.9,.45,-.5),vec3(0,1,0),vec2(.95,.25));
   float top=panel(ray,vec3(.35,1.,.45),vec3(1,0,0),vec2(.95,.15));
   float fres=.046+.48*pow(1.-max(dot(n,eye),0.),3.);
-  vec3 lights=key*vec3(3.1,4.2,5.2)+rim*vec3(.46,1.6,4.4)+top*vec3(1.5,1.7,2.2);
-  vec3 diffuse=albedo*(.24+.65*max(dot(n,normalize(vec3(-.7,1,.65))),0.));
+  vec3 lights=key*vec3(2.1,2.65,3.15)+rim*vec3(.24,1.3,3.8)+top*vec3(.68,.90,1.22);
+  vec3 diffuse=albedo*(vec3(.065,.08,.12)+vec3(.53,.64,.78)*max(dot(n,normalize(vec3(-.7,1,.65))),0.));
   vec3 linear=diffuse+mix(vec3(fres),albedo,metal)*(lights+vec3(.045,.075,.14));
-  linear+=vec3(.08,.17,.33)*pow(1.-max(dot(n,eye),0.),3.);
+  float rimFacing=smoothstep(-.45,.75,dot(n,normalize(vec3(.86,.45,-.33))));
+  linear+=mix(vec3(.013,.025,.049),vec3(.085,.23,.47),rimFacing)*pow(1.-max(dot(n,eye),0.),3.);
+  linear*=mix(.39,1.,smoothstep(.15,9.,elevation));
   color=vec4(pow(linear,vec3(1./2.2)),1.);
 }`;
 export async function createRenderer(canvas: HTMLCanvasElement, signal: AbortSignal) {
@@ -115,13 +120,13 @@ export async function createRenderer(canvas: HTMLCanvasElement, signal: AbortSig
       if (width !== canvas.width || height !== canvas.height) { canvas.width = width; canvas.height = height; }
       gl.viewport(0,0,width,height);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      const sy = Math.sin(p.yaw), cy = Math.cos(p.yaw), sp = Math.sin(p.pitch), cp = Math.cos(p.pitch);
+      const sy = Math.sin(-.40), cy = Math.cos(-.40), sp = Math.sin(.36), cp = Math.cos(.36);
       gl.uniform3fv(uniform['eye'],[sy*cp,sp,cy*cp]);
       gl.uniform3fv(uniform['right'],[cy,0,-sy]);
       gl.uniform3fv(uniform['up'],[-sy*sp,cp,-cy*sp]);
-      gl.uniform3fv(uniform['target'],[p.centerX,p.centerY,p.lift*(p.centerX/4)-2]);
+      gl.uniform3fv(uniform['target'],[0,34,-2]);
       gl.uniform1f(uniform['aspect'],width/height);
-      gl.uniform1f(uniform['zoom'],p.zoom*Math.max(1,height/width));
+      gl.uniform1f(uniform['zoom'],50*Math.max(1,height/width));
       for (const part of parts) {
         let position: Vec3 = [0,0,0], angle = 0;
         const rightBud = part.group === 'right';

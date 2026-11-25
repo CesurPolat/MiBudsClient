@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, viewChild } from '@angular/core';
 
 @Component({
   selector: 'app-sound-waves', changeDetection: ChangeDetectionStrategy.OnPush,
@@ -6,7 +6,6 @@ import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, Elemen
   styles: [':host,canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}:host{z-index:-1;overflow:hidden}']
 })
 export class SoundWaves {
-  readonly paused = input(false);
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('surface');
   constructor() {
     const lifetime = inject(DestroyRef);
@@ -42,7 +41,7 @@ export class SoundWaves {
       const tick = (now: number) => {
         if (!visible || document.hidden || reduced.matches) { stop(); return; }
         if (now-last >= 48) {
-          if (!this.paused()) { phase += Math.min((now-last)/1000,.05); draw(); }
+          phase += Math.min((now-last)/1000,.05); draw();
           last = now;
         }
         frame = requestAnimationFrame(tick);

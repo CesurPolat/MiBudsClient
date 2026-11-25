@@ -13,9 +13,7 @@ export class Hero {
   private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');
   private readonly viewer = viewChild.required(BudsViewer);
   private readonly lifetime = inject(DestroyRef);
-  private scroll?: ScrollTrigger;
   protected readonly motionEnabled = signal(false);
-  protected readonly paused = signal(false);
 
   constructor() {
     afterNextRender(() => {
@@ -25,7 +23,7 @@ export class Hero {
         this.motionEnabled.set(true);
         const stage = this.stage().nativeElement;
         const playhead = { progress: 0 };
-        const tween = gsap.to(playhead, {
+        gsap.to(playhead, {
           progress: 1, ease: 'none',
           onUpdate: () => this.viewer().seek(playhead.progress),
           scrollTrigger: {
@@ -34,21 +32,13 @@ export class Hero {
             end: () => '+=' + Math.max(550, window.innerHeight * .95)
           }
         });
-        this.scroll = tween.scrollTrigger;
         return () => {
-          this.scroll = undefined;
           this.motionEnabled.set(false);
           this.viewer().seek(.48);
         };
       });
-      if (!this.scroll) this.viewer().seek(.48);
+      if (!this.motionEnabled()) this.viewer().seek(.48);
       this.lifetime.onDestroy(() => media.revert());
     });
-  }
-
-  choose(progress: number) {
-    if (!this.scroll) { this.viewer().seek(progress); return; }
-    window.scrollTo({ top: this.scroll.start + progress * (this.scroll.end - this.scroll.start), behavior: 'instant' });
-    ScrollTrigger.update();
   }
 }
