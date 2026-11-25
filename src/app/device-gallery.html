@@ -1,5 +1,5 @@
-<section #gallery id="devices" class="catalog wrap" aria-labelledby="devices-title" (focusin)="stopAutoplay()">
-  <div class="heading">
+<section id="devices" class="catalog wrap" aria-labelledby="devices-title" (focusin)="restAfterInput()">
+  <div class="heading" data-reveal>
     <div>
       <p class="kicker"><span></span> DEVICE CATALOG</p>
       <h2 id="devices-title">Supported devices.</h2>
@@ -11,7 +11,7 @@
     </div>
   </div>
   <ul #rail id="device-rail" class="rail" aria-label="Recognized Xiaomi and Redmi models" tabindex="0"
-      (pointerdown)="stopAutoplay()" (wheel)="stopAutoplay()">
+      (wheel)="restAfterInput()" (keydown)="restAfterInput()">
     @for (device of devices; track device.id) {
       <li class="device">
         <div class="visual">

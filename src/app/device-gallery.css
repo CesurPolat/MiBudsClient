@@ -41,3 +41,10 @@ h3 { margin: 5px 0 0; font-size: clamp(1.35rem, 2.1vw, 1.9rem); }
   .rail { grid-auto-columns: 77%; margin-top: 16px; gap: 10px; }
   .scope { font-size: .95rem; }
 }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .device img, .visual::before, .caption { transition: transform .4s cubic-bezier(.2,.7,.25,1), opacity .4s; }
+  .device:hover img { transform: translateY(-5px) rotate(-3deg) scale(1.06); }
+  .device:hover .visual::before { transform: scaleX(.82); opacity: .64; }
+  .device:hover .caption { transform: translateX(3px); }
+}
+

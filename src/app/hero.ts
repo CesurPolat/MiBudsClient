@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, inject, input, signal, viewChild } from '@angular/core';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BudsViewer } from './buds-viewer';
@@ -10,7 +10,8 @@ import { SoundWaves } from './sound-waves';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Hero {
-  private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');
+  readonly opening = input.required<HTMLElement>();
+  readonly frame = input.required<HTMLElement>();
   private readonly viewer = viewChild.required(BudsViewer);
   private readonly lifetime = inject(DestroyRef);
   protected readonly motionEnabled = signal(false);
@@ -21,18 +22,25 @@ export class Hero {
       const media = gsap.matchMedia();
       media.add('(prefers-reduced-motion: no-preference)', () => {
         this.motionEnabled.set(true);
-        const stage = this.stage().nativeElement;
+        const track = this.opening();
+        const frame = this.frame();
+        track.classList.add('unboxing');
+        const alignFrame = () => {
+          track.style.setProperty('--sticky-top', Math.min(0, window.innerHeight - frame.offsetHeight) + 'px');
+        };
+        alignFrame();
         const playhead = { progress: 0 };
         gsap.to(playhead, {
           progress: 1, ease: 'none',
           onUpdate: () => this.viewer().seek(playhead.progress),
           scrollTrigger: {
-            trigger: stage, pin: stage, scrub: .32, invalidateOnRefresh: true,
-            start: () => 'top ' + Math.min(0, window.innerHeight - stage.offsetHeight) + 'px',
-            end: () => '+=' + Math.max(550, window.innerHeight * .95)
+            trigger: track, start: 'top top', end: 'bottom bottom',
+            scrub: true, invalidateOnRefresh: true, onRefreshInit: alignFrame
           }
         });
         return () => {
+          track.classList.remove('unboxing');
+          track.style.removeProperty('--sticky-top');
           this.motionEnabled.set(false);
           this.viewer().seek(.48);
         };

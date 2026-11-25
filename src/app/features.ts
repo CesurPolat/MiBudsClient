@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-features', imports: [NgOptimizedImage], templateUrl: './features.html',
-  styleUrl: './features.css', changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./features.css', './feature-motion.css'], changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Features {
   protected readonly mode = signal(0);

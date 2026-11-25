@@ -1,0 +1,24 @@
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .feature {
+    transition: transform .28s ease-out, border-color .28s, box-shadow .28s;
+  }
+  .feature:hover {
+    transform: translateY(-4px);
+    border-color: #5d7894;
+    box-shadow: 0 10px 24px #02081078;
+  }
+  .showcase:hover .acoustic img { scale: 1.055; }
+  .acoustic img { transition: transform .65s, scale .4s; }
+  .batteries i { transition: translate .3s ease-out, filter .3s; }
+  .battery:hover .batteries i { translate: 0 -3px; filter: brightness(1.18); }
+  .batteries i:nth-child(2) { transition-delay: 45ms; }
+  .batteries i:nth-child(3) { transition-delay: 90ms; }
+  .profiles:hover .equalizer i { animation: mibuds-equalize .75s ease-in-out 2 alternate; }
+  .profiles:hover .equalizer i:nth-child(3n) { animation-delay: -.24s; }
+  .profiles:hover .equalizer i:nth-child(3n + 1) { animation-delay: -.46s; }
+  .gaming:hover .latency i { animation: mibuds-latency-pulse .72s ease-out; }
+  .gaming:hover .latency i:nth-child(2) { animation-delay: .05s; }
+  .gaming:hover .latency i:nth-child(3) { animation-delay: .10s; }
+  .gaming:hover .latency i:nth-child(4) { animation-delay: .15s; }
+  .gaming:hover .latency i:nth-child(5) { animation-delay: .20s; }
+}

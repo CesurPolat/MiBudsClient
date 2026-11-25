@@ -205,3 +205,33 @@ h3 {
     padding: 10px 13px;
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal].in-view { animation: section-entry .52s cubic-bezier(.22,.8,.28,1) both; }
+  @keyframes section-entry {
+    from { opacity: .78; translate: 0 12px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+  .button { transition: translate .22s ease-out, background-color .22s, box-shadow .22s; }
+  .button:active { translate: 0 1px; }
+  .download .app-icon { transition: rotate .45s ease-out, scale .45s ease-out; }
+  .download:focus-within .app-icon { rotate: 4deg; scale: 1.03; }
+  details[open] > p { animation: answer-entry .24s ease-out; }
+  @keyframes answer-entry {
+    from { opacity: .5; translate: 0 -3px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .button:hover { translate: 0 -2px; }
+    .download:hover .app-icon { rotate: 4deg; scale: 1.03; }
+  }
+}
+
+@keyframes mibuds-equalize {
+  0%, 100% { transform: scaleY(1); }
+  45% { transform: scaleY(.48); }
+  75% { transform: scaleY(1.14); }
+}
+@keyframes mibuds-latency-pulse {
+  45% { transform: translateX(6px); opacity: 1; filter: brightness(1.22); }
+}

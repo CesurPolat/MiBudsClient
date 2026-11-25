@@ -13,7 +13,7 @@ export class BudsViewer {
   private readonly lifetime = inject(DestroyRef);
   private readonly pose = { ...presets[0] };
   private readonly sequence = gsap.timeline({ paused: true })
-    .to(this.pose, { ...presets[1], duration: .48, ease: 'sine.inOut' })
+    .to(this.pose, { ...presets[1], duration: .48, ease: 'sine.out' })
     .to(this.pose, { ...presets[2], duration: .52, ease: 'sine.inOut' });
   private renderer?: Awaited<ReturnType<typeof createRenderer>>;
   protected readonly ready = signal(false);

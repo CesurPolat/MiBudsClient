@@ -1,5 +1,5 @@
 :host {
-  display: block;
+  display: grid;
 }
 
 .hero {
@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: clamp(620px,91svh,1000px);
+  min-height: 0;
   overflow: hidden;
   background: radial-gradient(ellipse at 75% 46%,#173f78 0,#0c2147 19%,#060f23 43%,#050912 75%);
   border-bottom: 1px solid #101826;

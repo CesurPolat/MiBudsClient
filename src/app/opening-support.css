@@ -1,0 +1,39 @@
+.opening-frame {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100svh;
+  background: #080c14;
+}
+.opening-track.unboxing::after {
+  content: '';
+  display: block;
+  height: clamp(320px, 60svh, 640px);
+}
+.unboxing .opening-frame {
+  position: sticky;
+  top: var(--sticky-top, 0px);
+}
+.issue-panel {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: clamp(18px, 3vw, 42px);
+  align-items: center;
+  margin-bottom: clamp(42px, 6vw, 84px);
+  padding: clamp(24px, 3.5vw, 44px);
+  border: 1px solid #32485a;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 0 0, #193641, transparent 65%), #0e1926;
+}
+.issue-icon {
+  display: grid; place-items: center; width: 56px; height: 56px;
+  border-radius: 15px; border: 1px solid #527581; color: #a8dfd3; background: #102c36;
+}
+.issue-icon svg { width: 32px; height: 32px; }
+.issue-copy h2 { margin: 0 0 8px; font-size: clamp(1.7rem, 2.8vw, 2.6rem); }
+.issue-copy p { max-width: 60ch; color: var(--muted); }
+.issue-actions { display: grid; justify-items: center; gap: 10px; }
+@media (max-width: 720px) {
+  .issue-panel { grid-template-columns: 1fr; }
+  .issue-actions { justify-items: start; }
+  .issue-icon { width: 44px; height: 44px; }
+}

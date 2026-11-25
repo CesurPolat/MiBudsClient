@@ -1,7 +1,7 @@
 <section class="features wrap" id="features" aria-labelledby="features-title">
   <p class="kicker"><span></span> LISTENING CONTROLS</p>
   <h2 id="features-title">Find your listening mode.</h2>
-  <div class="showcase">
+  <div class="showcase" data-reveal>
     <div class="acoustic" [class.ambient]="mode() === 1">
       <div class="rings" aria-hidden="true"></div>
       <img ngSrc="media/kulaklik.webp" fill alt="Detail of a Redmi earbud and its silicone tip">
@@ -17,7 +17,7 @@
       <small>Available on supported models. Hardware compatibility varies.</small>
     </div>
   </div>
-  <div class="cards">
+  <div class="cards" data-reveal>
     <article class="feature battery"><div class="batteries" aria-hidden="true"><i>L</i><i>R</i><i>Case</i></div><h3>Battery at a glance</h3><p>See separate charge readings for the left bud, right bud and case when your device reports them.</p></article>
     <article class="feature profiles"><div class="equalizer" aria-hidden="true">@for (height of levels; track $index) {<i [style.height.px]="height"></i>}</div><h3>EQ presets</h3><p>Pick a sound profile from your earbuds’ built-in presets and switch it from your desktop.</p></article>
     <article class="feature gaming"><div class="latency" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><h3>Game mode</h3><p>Enable low latency for a session or set it to switch on automatically with a chosen app.</p></article>
