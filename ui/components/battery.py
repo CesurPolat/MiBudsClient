@@ -112,13 +112,13 @@ class BatteryPanel(ft.Container):
                 spacing=4,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.symmetric(horizontal=8, vertical=6),
+            padding=ft.Padding.symmetric(horizontal=8, vertical=6),
             border_radius=16,
             bgcolor=COLOR_HOME_SURFACE,
             gradient=ft.LinearGradient(
                 begin=ft.Alignment.TOP_LEFT, end=ft.Alignment.BOTTOM_RIGHT,
                 colors=[COLOR_HOME_SURFACE_TOP, COLOR_HOME_SURFACE]),
-            border=ft.border.all(1, COLOR_HOME_BORDER),
+            border=ft.Border.all(1, COLOR_HOME_BORDER),
             expand=True,
         )
 

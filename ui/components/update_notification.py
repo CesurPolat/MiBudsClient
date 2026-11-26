@@ -53,7 +53,7 @@ def show_update_notification(page: ft.Page, latest_ver: str) -> None:
                     tight=True,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
-                ft.ElevatedButton(
+                ft.Button(
                     t("update.download"),
                     icon=ft.Icons.DOWNLOAD,
                     on_click=on_update_click,

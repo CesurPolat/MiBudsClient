@@ -75,6 +75,8 @@ async def main(page: ft.Page):
     page.title = APP_TITLE
     page.bgcolor = COLOR_BG
     page.padding = PAGE_PADDING
+    page.theme = ft.Theme(surfaces=ft.ThemeSurfaces.TONAL)
+    page.dark_theme = ft.Theme(surfaces=ft.ThemeSurfaces.TONAL)
     
     # Newer Flet API properties
     page.window.icon = "icon.ico" if page.platform == ft.PagePlatform.WINDOWS else "icon.png"  # Path relative to assets_dir

@@ -52,7 +52,7 @@ class DeviceStatusCard(ft.Container):
                 tight=True,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.symmetric(horizontal=12, vertical=10),
+            padding=ft.Padding.symmetric(horizontal=12, vertical=10),
             bgcolor=COLOR_BG,
             border_radius=CARD_BORDER_RADIUS,
         )

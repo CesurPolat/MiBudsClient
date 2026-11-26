@@ -215,9 +215,9 @@ class EqualizerSettings(ft.Column):
         enabled = self._connected and not self._busy and not self._needs_refresh
         self.refresh_button.disabled = not self._connected or self._busy
         current = self._state.profile if self._state else None
-        self.profile.options = [ft.dropdown.Option(str(p), t("eq." + PROFILE_KEYS[p])) for p in self._profiles]
+        self.profile.options = [ft.DropdownOption(str(p), t("eq." + PROFILE_KEYS[p])) for p in self._profiles]
         if current is not None and current != 10 and current not in self._profiles:
-            self.profile.options.append(ft.dropdown.Option(str(current), t("eq.current", code=f"{current:02X}"), disabled=True))
+            self.profile.options.append(ft.DropdownOption(str(current), t("eq.current", code=f"{current:02X}"), disabled=True))
         self.profile.value = str(current) if current is not None and current != 10 else None
         self.profile.disabled = not enabled or current is None or not self._profiles
         icons = {

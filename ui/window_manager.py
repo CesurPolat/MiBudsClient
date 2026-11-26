@@ -39,6 +39,7 @@ class WindowManager:
     def _setup_window(self) -> None:
         """Configure window properties."""
         self.page.window.prevent_close = True
+        self.page.window.resizable = False
         if not self._auto_resize:
             self.page.window.width = WINDOW_WIDTH
             self.page.window.height = WINDOW_HEIGHT
@@ -46,7 +47,6 @@ class WindowManager:
             self.page.window.min_height = WINDOW_HEIGHT
             self.page.window.max_width = WINDOW_WIDTH
             self.page.window.max_height = WINDOW_HEIGHT
-            self.page.window.resizable = False
             self.page.window.maximizable = False
             return
         width, height, min_width, min_height = fit_window_size(
@@ -59,9 +59,6 @@ class WindowManager:
         self.page.window.min_height = min_height
         self.page.window.max_width = None
         self.page.window.max_height = None
-        # GTK's non-resizable windows can reject programmatic size changes too.
-        # Keep Linux resizable so Home/Settings content fitting can take effect.
-        self.page.window.resizable = self.page.platform == ft.PagePlatform.LINUX
         self.page.window.maximizable = False
     
     def _setup_handlers(self) -> None:

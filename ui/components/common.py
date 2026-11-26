@@ -8,9 +8,24 @@ from utils.resource_manager import get_resource_path
 
 from ..constants import (
     COLOR_DISABLED,
+    COLOR_HOME_BORDER,
+    COLOR_HOME_SELECTED_BORDER,
     COLOR_TEXT_PRIMARY,
     DEVICE_IMAGE_SIZE,
 )
+
+
+def settings_input_border(radius: int) -> dict[ft.ControlState, ft.OutlineInputBorder]:
+    return {
+        ft.ControlState.DEFAULT: ft.OutlineInputBorder(
+            border_radius=radius,
+            side=ft.BorderSide(color=COLOR_HOME_BORDER),
+        ),
+        ft.ControlState.FOCUSED: ft.OutlineInputBorder(
+            border_radius=radius,
+            side=ft.BorderSide(width=2, color=COLOR_HOME_SELECTED_BORDER),
+        ),
+    }
 
 
 class StatusBar(ft.Text):
@@ -49,7 +64,7 @@ class DeviceImage(ft.Container):
             width=DEVICE_IMAGE_SIZE + 12,
             height=DEVICE_IMAGE_SIZE + 12,
             alignment=ft.Alignment.CENTER,
-            padding=ft.padding.all(4),
+            padding=ft.Padding.all(4),
             border_radius=(DEVICE_IMAGE_SIZE + 12) // 2,
             bgcolor=None,
         )

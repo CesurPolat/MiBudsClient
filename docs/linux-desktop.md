@@ -52,10 +52,10 @@ References: [Desktop Notifications](https://specifications.freedesktop.org/notif
 
 ## Window/taskbar icon
 
-The tray icon is independent of the window's taskbar/dock icon. Flet 0.82's
-`page.window.icon` API affects Windows only. Its prebuilt Linux GTK client uses
-`com.appveyor.flet`, so an AppDir entry with only `Name`, `Exec` and `Icon` does
-not establish a matching runtime identity on GNOME Wayland.
+The tray icon is independent of the window's taskbar/dock icon. The Linux
+package uses `assets/icon.png` and the Flet app ID `dev.mibuds.client`. On
+Wayland the desktop resolves the taskbar/dock icon from the matching desktop
+entry.
 
 Before launching Flet, MiBudsClient registers a hidden user desktop entry and
 copies `assets/icon.png` to a stable user data path. Its icon path never points
@@ -63,12 +63,9 @@ to an expired AppImage mount or PyInstaller extraction directory. The launch
 command uses `APPIMAGE` when available, otherwise the frozen executable or the
 source interpreter and script. The existing single-instance guard runs first.
 
-Flet 1.x uses `FLET_APP_ID=dev.mibuds.client`. With the current Flet 0.x client,
-a temporary compatibility entry also matches `com.appveyor.flet`; this shared
-legacy identity can cause other old Flet windows to share the label/icon while
-MiBudsClient is running. A unique native Linux client identity or a separately
-validated Flet upgrade is needed to eliminate that old-client limitation. The
-app never rewrites the shared Flet binary or shadows existing user/system entries.
+Flet 1.x applies `FLET_APP_ID=dev.mibuds.client` to the window. Older packages
+with Flet 0.x use the shared `com.appveyor.flet` identity, which can cause
+their window label and icon to be shared with other Flet 0.x apps.
 
 Owned runtime entries are removed on normal shutdown, unless modified by the
 user while the app was running. This enables the running-window icon; it does
@@ -122,5 +119,5 @@ Generated AppDirs and AppImages are ignored by Git; launcher templates and
 source assets remain tracked. Rebuild the executable before packaging source
 changes; wrapping an old executable does not include the new fixes.
 This preserves the existing packaging approach and does not bundle additional
-system libraries or install desktop integration. Linux dependencies described
-above still apply, including the current Flet client identity limitation.
+system libraries or install desktop integration. The Linux dependencies listed
+above still apply.

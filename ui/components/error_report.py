@@ -91,7 +91,7 @@ class ErrorReportDialog:
                 feedback.visible = True
                 dialog.update()
 
-        send_button = ft.ElevatedButton(t('report.send'), on_click=send)
+        send_button = ft.Button(t('report.send'), on_click=send)
         dialog = ft.AlertDialog(
             modal=True, title=ft.Text(t('report.title')),
             content=ft.Container(width=420, content=ft.Column([

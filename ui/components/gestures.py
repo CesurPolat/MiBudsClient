@@ -4,10 +4,7 @@ from utils.i18n import t, render
 
 import flet as ft
 from controllers.bluetooth.gestures import MFB_OPERATIONS, MFB_ACTION_KEYS
-from ..constants import (
-    COLOR_HOME_CONTROL, COLOR_HOME_SURFACE, COLOR_HOME_BORDER,
-    COLOR_HOME_SELECTED, COLOR_HOME_SELECTED_BORDER,
-)
+from ..constants import COLOR_HOME_CONTROL, COLOR_HOME_SURFACE
 
 GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long"), 5: t("gesture.swipe")}
 GESTURE_NAMES.update({4004: t("gesture.squeeze_double"), 4005: t("gesture.squeeze_triple"),
@@ -18,6 +15,7 @@ ACTION_NAMES = dict(enumerate(t("action." + key) for key in (
     "noise", "game", "none", "photo", "record", "volume", "translation", "track",
 )))
 from ..constants import COLOR_TEXT_PRIMARY, COLOR_DISABLED
+from .common import settings_input_border
 from .setting_items import SettingItem
 
 
@@ -138,16 +136,15 @@ class GestureSettings(ft.Column):
             for index, side in enumerate(("common",) if mfb else ("left", "right")):
                 current = self._assignments[gesture][index]
                 allowed = self._capabilities[gesture]
-                options = [ft.dropdown.Option(str(action), render(names[action])) for action in allowed]
+                options = [ft.DropdownOption(str(action), render(names[action])) for action in allowed]
                 if current not in allowed:
                     label = names.get(current, t("gesture.unknown", code=f"{current:02X}"))
-                    options.append(ft.dropdown.Option(str(current), t("gesture.current", label=label), disabled=True))
+                    options.append(ft.DropdownOption(str(current), t("gesture.current", label=label), disabled=True))
                 selector = ft.Dropdown(
                     label=t("side." + side), value=str(current), options=options,
                     disabled=self._busy or not self._connected or self._needs_refresh, expand=True,
                     color=COLOR_TEXT_PRIMARY, bgcolor=COLOR_HOME_CONTROL, filled=True,
-                    fill_color=COLOR_HOME_CONTROL, border_color=COLOR_HOME_BORDER,
-                    focused_border_color=COLOR_HOME_SELECTED_BORDER, border_radius=10,
+                    fill_color=COLOR_HOME_CONTROL, border=settings_input_border(10),
                     label_style=ft.TextStyle(color=COLOR_DISABLED), text_size=13,
                     on_select=lambda e, g=gesture, s=side: self._change(g, s, e),
                 )

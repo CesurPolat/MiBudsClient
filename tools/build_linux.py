@@ -26,8 +26,9 @@ def main():
     from flet_cli.cli import main as flet_main
 
     sys.argv = [
-        "flet", "pack", "main.py", "--icon", "assets/icon.ico",
+        "flet", "pack", "main.py", "--icon", "assets/icon.png",
         "--add-data", "assets:assets", "--name", "MiBudsClient",
+        "--bundle-id", "dev.mibuds.client",
         "--hidden-import", "optparse", "--yes",
         "--pyinstaller-build-args=--additional-hooks-dir=tools/pyinstaller_hooks",
     ]

@@ -28,7 +28,7 @@ from controllers.bluetooth.capabilities import DeviceCapabilities
 
 from .auto_mode import AutoModeSettingsAccordion
 from .connection import ConnectionPanel
-from .common import DeviceImage
+from .common import DeviceImage, settings_input_border
 from .latency import LowLatencyModeSettingItem
 from .setting_items import SettingItem, ToggleSettingItem
 from .gestures import GestureSettings
@@ -156,16 +156,14 @@ class SettingsCard(ft.Container):
         self.language_selector = ft.Dropdown(
             label=t("language.title"),
             value=get_language_preference(),
-            options=[ft.dropdown.Option("system", t("language.system"))] + [
-                ft.dropdown.Option(code, name) for code, name in LANGUAGES.items()
+            options=[ft.DropdownOption("system", t("language.system"))] + [
+                ft.DropdownOption(code, name) for code, name in LANGUAGES.items()
             ],
             on_select=on_language_change,
             color="white",
             filled=True,
             fill_color=COLOR_HOME_CONTROL,
-            border_color=COLOR_HOME_BORDER,
-            focused_border_color=COLOR_HOME_SELECTED_BORDER,
-            border_radius=12,
+            border=settings_input_border(12),
             expand=True,
         )
         self._language_container = ft.Container(content=self.language_selector, padding=10)

@@ -59,7 +59,7 @@ class LowLatencyModeSettingItem(ft.Column):
                     spacing=4,
                 ),
                 border_radius=10,
-                padding=ft.padding.symmetric(vertical=8),
+                padding=ft.Padding.symmetric(vertical=8),
                 alignment=ft.Alignment.CENTER,
                 expand=True,
                 ink=True,
@@ -188,7 +188,7 @@ class LowLatencyModeSettingItem(ft.Column):
             button.shadow = (ft.BoxShadow(
                 blur_radius=12, spread_radius=0, color="#402463FF",
                 offset=ft.Offset(0, 3)) if selected else None)
-            button.border = ft.border.all(
+            button.border = ft.Border.all(
                 1,
                 COLOR_HOME_SELECTED_BORDER if selected else COLOR_HOME_BORDER,
             )

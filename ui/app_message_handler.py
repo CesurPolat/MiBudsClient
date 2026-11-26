@@ -332,7 +332,7 @@ class AppMessageHandler:
         import flet as ft
         devices = message["devices"]
         selector = self._settings_card.connection_panel.device_selector
-        selector.options = [ft.dropdown.Option(address, name) for name, address in devices]
+        selector.options = [ft.DropdownOption(address, name) for name, address in devices]
         selector.visible = len(devices) > 1
         self._update_page()
 
