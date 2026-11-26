@@ -10,8 +10,8 @@ from unittest.mock import AsyncMock, Mock, patch
 import flet as ft
 
 from ui.window_manager import WindowManager
-from utils.window_geometry import fit_window_size
-from utils import window_geometry
+from utils.desktop.window_geometry import fit_window_size
+from utils.desktop import window_geometry
 
 
 class WindowGeometryTests(unittest.TestCase):

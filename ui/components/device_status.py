@@ -1,6 +1,6 @@
 """Device image, connection status, and battery summary card."""
 
-from utils.i18n import t, render
+from utils.app.i18n import t, render
 
 import flet as ft
 

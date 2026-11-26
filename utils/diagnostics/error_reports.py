@@ -1,7 +1,6 @@
 """Error reports with consent dialogs, automatic Bluetooth reports and durable delivery."""
 import hashlib
 import json
-import math
 import os
 from pathlib import Path
 import platform
@@ -15,12 +14,9 @@ import inspect
 from contextlib import nullcontext
 from dataclasses import fields, is_dataclass
 from datetime import datetime, timezone
-from email.utils import parsedate_to_datetime
-from urllib.error import HTTPError
-from urllib.request import Request, urlopen
-from uuid import UUID, uuid4
+from uuid import uuid4
 
-from .mibuds_api import API_BASE_URL
+from ..api.mibuds_api import DeliveryError, ErrorReportClient, encode_report
 
 
 def redact(value):
@@ -36,13 +32,6 @@ def redact(value):
     text = re.sub(r'(?i)\bBearer\s+\S+', 'Bearer [redacted]', text)
     text = re.sub(r'(?i)[a-z]:[\\/]users[\\/][^\\/\s]+|/home/[^/\s]+', '[user]', text)
     return text
-
-
-def encode_report(report):
-    body = json.dumps(report, ensure_ascii=False, separators=(',', ':'), allow_nan=False).encode('utf-8')
-    if len(body) > 65536:
-        raise ValueError('Report exceeds UTF-8 body limit')
-    return body
 
 
 def make_report(error, *, app_version='', device='', action='', tb=None, identity=None):
@@ -132,48 +121,6 @@ def queue_directory():
     else:
         root = Path(os.getenv('XDG_DATA_HOME') or Path.home() / '.local' / 'share')
     return root / 'MiBudsClient' / 'error_reports'
-
-
-class DeliveryError(Exception):
-    def __init__(self, retryable, delay=0):
-        self.retryable, self.delay = retryable, delay
-
-
-class ErrorReportClient:
-    def __init__(self, base_url=API_BASE_URL, transport=urlopen, clock=time.time):
-        self.url = base_url.rstrip('/') + '/v1/errors'
-        self.transport, self.clock = transport, clock
-
-    def send(self, report):
-        request = Request(self.url, data=encode_report(report), method='POST', headers={
-            'Content-Type': 'application/json', 'Accept': 'application/json',
-            'X-MiBuds-App-Version': report.get('app_version', ''),
-            'User-Agent': f"MiBudsClient/{report.get('app_version') or 'dev'}",
-        })
-        try:
-            with self.transport(request, timeout=10) as response:
-                if response.status != 201:
-                    raise DeliveryError(response.status == 429 or response.status >= 500)
-                result = json.loads(response.read(8193))
-                UUID(result['id'])
-                stamp = datetime.fromisoformat(result['received_at'].replace('Z', '+00:00'))
-                if stamp.utcoffset() is None or stamp.utcoffset().total_seconds() != 0:
-                    raise ValueError('Expected UTC timestamp')
-        except HTTPError as exc:
-            delay = 0
-            value = exc.headers.get('Retry-After') if exc.headers else None
-            try:
-                delay = float(value)
-            except (ValueError, TypeError):
-                try:
-                    delay = parsedate_to_datetime(value).timestamp() - self.clock()
-                except (ValueError, TypeError, OverflowError):
-                    pass
-            exc.close()
-            raise DeliveryError(exc.code == 429 or exc.code >= 500,
-                                max(0, delay) if math.isfinite(delay) else 0) from None
-        except (OSError, ValueError, KeyError, TypeError, AttributeError):
-            raise DeliveryError(True) from None
 
 
 class ReportQueue:

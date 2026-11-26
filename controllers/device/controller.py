@@ -1,6 +1,6 @@
 """Coordinate device callbacks, battery requests, and reconnects for the UI."""
 
-from utils.i18n import message as m
+from utils.app.i18n import message as m
 
 import threading
 from typing import Callable

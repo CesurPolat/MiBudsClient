@@ -9,7 +9,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from utils import wayland_setup as setup
+from utils.desktop import wayland_setup as setup
 
 
 class WaylandSetupTests(unittest.TestCase):

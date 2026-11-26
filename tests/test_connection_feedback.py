@@ -74,7 +74,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         self.assertEqual(card.connection_card.height, 292)
 
     def test_listener_publishes_retry_countdown_and_final_failure(self):
-        from utils.i18n import t
+        from utils.app.i18n import t
         controller, feedback = self.make_controller()
         controller.reconnect = Mock(return_value=False)
         controller._max_reconnect_attempts = 2
@@ -176,7 +176,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         card.update_connection_state("failed", "Test failure")
         summary.update_status("Other status")
         summary.update_battery(60, 70, 80)
-        from utils.i18n import t
+        from utils.app.i18n import t
         self.assertEqual(summary.status_bar.value, t("device_status.error"))
         self.assertEqual(summary.status_dot.bgcolor, "orange")
         for state, label, color in (("connecting", "connecting", "amber"),

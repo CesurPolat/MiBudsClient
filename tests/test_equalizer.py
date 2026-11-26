@@ -16,7 +16,7 @@ from controllers.bluetooth.rcsp import DeviceIdentity
 from controllers.bluetooth.rcsp import RcspStreamParser
 from ui.components.equalizer import EqualizerSettings
 from ui.app_message_handler import AppMessageHandler
-from utils.i18n import message as m, set_language, t
+from utils.app.i18n import message as m, set_language, t
 
 
 def record(config, value):

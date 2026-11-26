@@ -1,11 +1,11 @@
 """Settings card UI components."""
 
-from utils.i18n import t, render
+from utils.app.i18n import t, render
 
 import flet as ft
 from ui.localization import refresh_translations
-from utils.i18n import LANGUAGES
-from utils.user_preferences import get_language_preference
+from utils.app.i18n import LANGUAGES
+from utils.app.user_preferences import get_language_preference
 from typing import Callable, Optional
 
 from ..constants import (

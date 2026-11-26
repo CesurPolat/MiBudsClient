@@ -1,6 +1,6 @@
 """Main screen, settings screen, and their shared navigation layout."""
 
-from utils.i18n import t
+from utils.app.i18n import t
 
 from typing import Callable
 

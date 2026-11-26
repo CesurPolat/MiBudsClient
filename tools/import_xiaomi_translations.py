@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from utils.i18n import LANGUAGES
+from utils.app.i18n import LANGUAGES
 
 # Only equivalent UI concepts: ANC is not the broader "Noise control" action,
 # and Android "Automatic game mode" is not our desktop app-detection policy.

@@ -2,7 +2,7 @@
 import flet as ft
 
 from controllers.equalizer.protocol import EqBand, PROFILE_KEYS
-from utils.i18n import t, render
+from utils.app.i18n import t, render
 from .setting_items import SettingItem
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
 from ..constants import HOME_CONTROL_HEADER_HEIGHT

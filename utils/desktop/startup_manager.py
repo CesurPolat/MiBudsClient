@@ -5,6 +5,7 @@ import subprocess
 import configparser
 import io
 import tempfile
+from pathlib import Path
 
 if platform.system() == "Windows":
     import winreg
@@ -18,7 +19,7 @@ def get_executable_path():
         return sys.executable
     else:
         # Running as python script
-        return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "main.py")
+        return str(Path(__file__).absolute().parents[2] / "main.py")
 
 
 def _startup_arguments():

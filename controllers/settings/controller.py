@@ -1,12 +1,12 @@
-from utils.error_reports import publish_exception
+from utils.diagnostics.error_reports import publish_exception
 """Bind settings controls to startup, device, and latency actions."""
 
-from utils.i18n import message as m, error_message
+from utils.app.i18n import message as m, error_message
 
 import threading
 from typing import Callable
 
-from utils.startup_manager import reconcile_startup, set_startup
+from utils.desktop.startup_manager import reconcile_startup, set_startup
 from ui.components.settings_card import SettingsCard
 from ..gestures.controller import GestureSettingsController
 from ..equalizer.controller import EqSettingsController

@@ -5,7 +5,7 @@ import threading
 
 import flet as ft
 
-from utils.i18n import t
+from utils.app.i18n import t
 from ui.constants import COLOR_BG, COLOR_HOME_BORDER, COLOR_TEXT_PRIMARY
 from ui.localization import refresh_translations
 

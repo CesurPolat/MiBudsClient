@@ -9,11 +9,11 @@ from pathlib import Path
 from string import Formatter
 from unittest.mock import patch
 
-from utils.i18n import (
+from utils.app.i18n import (
     LANGUAGES, Message, error_message, get_language, is_rtl, load_catalog, message, render,
     resolve_language, set_language, system_language, t,
 )
-from utils.user_preferences import get_language_preference, set_language_preference
+from utils.app.user_preferences import get_language_preference, set_language_preference
 
 
 class TranslationTests(unittest.TestCase):
@@ -59,7 +59,7 @@ class TranslationTests(unittest.TestCase):
                 self.assertTrue(t("language.title"))
 
     def test_linux_locale_precedence(self):
-        with patch("utils.i18n.sys.platform", "linux"), patch.dict(
+        with patch("utils.app.i18n.sys.platform", "linux"), patch.dict(
             os.environ, {"LC_ALL": "tr_TR.UTF-8", "LC_MESSAGES": "zh_CN", "LANG": "en_US"}, clear=True
         ):
             self.assertEqual(system_language(), "tr")
@@ -70,21 +70,21 @@ class TranslationTests(unittest.TestCase):
         def get_locale(buffer, length):
             buffer.value = "zh-CN"
             return len(buffer.value) + 1
-        with patch("utils.i18n.sys.platform", "win32"), patch("utils.i18n.ctypes.windll", create=True) as api:
+        with patch("utils.app.i18n.sys.platform", "win32"), patch("utils.app.i18n.ctypes.windll", create=True) as api:
             api.kernel32.GetUserDefaultLocaleName.side_effect = get_locale
             self.assertEqual(system_language(), "zh-CN")
 
     def test_system_preference_is_resolved_each_time(self):
-        with patch("utils.i18n.system_language", return_value="tr"):
+        with patch("utils.app.i18n.system_language", return_value="tr"):
             self.assertEqual(set_language("system"), "tr")
-        with patch("utils.i18n.system_language", return_value="zh-CN"):
+        with patch("utils.app.i18n.system_language", return_value="zh-CN"):
             self.assertEqual(set_language("system"), "zh-CN")
 
     def test_fallback_to_english_for_missing_or_invalid_translation(self):
         def catalog(language):
             return {"test": "Value: {value}"} if language == "en" else {"test": "{wrong}"}
         set_language("tr")
-        with patch("utils.i18n.load_catalog", side_effect=catalog):
+        with patch("utils.app.i18n.load_catalog", side_effect=catalog):
             self.assertEqual(t("test", value=42), "Value: 42")
             self.assertEqual(t("missing"), "missing")
 
@@ -125,7 +125,7 @@ class TranslationTests(unittest.TestCase):
     def test_preferences_preserve_existing_settings_and_reject_invalid_values(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "settings.json"
-            with patch("utils.user_preferences._settings_file_path", return_value=str(path)):
+            with patch("utils.app.user_preferences._settings_file_path", return_value=str(path)):
                 self.assertEqual(get_language_preference(), "system")
                 path.write_text(json.dumps({"low_latency_mode": "auto", "skipped_update_version": "v1.2.3"}), encoding="utf-8")
                 for language in (*LANGUAGES, "system"):

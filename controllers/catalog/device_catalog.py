@@ -12,7 +12,7 @@ import sys
 import threading
 import hashlib
 
-from utils.mibuds_api import validate_catalog
+from utils.api.mibuds_api import validate_catalog
 
 
 def _load_app_catalog():

@@ -1,6 +1,6 @@
 """Connection feedback styled to match the home control panel."""
 
-from utils.i18n import Message, t, render
+from utils.app.i18n import Message, t, render
 
 import flet as ft
 from ..constants import HOME_CONTROLS_HEIGHT

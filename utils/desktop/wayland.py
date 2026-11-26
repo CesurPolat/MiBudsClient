@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 
-from .resource_manager import get_resource_path
+from ..app.resource_manager import get_resource_path
 
 
 def compositor():

@@ -8,9 +8,9 @@ import subprocess
 import threading
 import time
 from typing import Callable, Optional
-from utils.wayland import detect_wayland_fullscreen
-from utils.wayland_setup import ensure_wayland_support
-from utils.i18n import message as m
+from utils.desktop.wayland import detect_wayland_fullscreen
+from utils.desktop.wayland_setup import ensure_wayland_support
+from utils.app.i18n import message as m
 
 
 class FullscreenGameMonitor:

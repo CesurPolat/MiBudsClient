@@ -3,19 +3,19 @@
 from typing import Callable, Optional
 import threading
 import sys
-from utils.i18n import t, render
-from utils.image_notifications import ImageNotifications
-from utils.linux_notifications import LinuxNotifications
-from utils.tray_host import TrayHostMonitor
-from utils.battery import battery_state
+from utils.app.i18n import t, render
+from utils.notifications.image_notifications import ImageNotifications
+from utils.notifications.linux_notifications import LinuxNotifications
+from utils.desktop.tray_host import TrayHostMonitor
+from controllers.battery.stream import battery_state
 from controllers.equalizer.protocol import PROFILE_KEYS
 
-from utils.tray_backend import load_tray_module
+from utils.desktop.tray_backend import load_tray_module
 
 # pystray chooses its backend during import, so configure it first.
 pystray = load_tray_module()
 
-from utils.resource_manager import load_pil_image
+from utils.app.resource_manager import load_pil_image
 from .constants import TRAY_ICON_PATH, TRAY_ICON_SIZE
 
 

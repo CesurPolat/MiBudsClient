@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 
-from utils.linux_notifications import LinuxNotifications
+from utils.notifications.linux_notifications import LinuxNotifications
 from ui.system_tray import SystemTray
 
 
@@ -74,7 +74,7 @@ class LinuxNotificationTests(unittest.TestCase):
         self.assertFalse(self.service.notify('late', 'title'))
 
     def test_enqueue_never_performs_bus_calls_on_caller_thread(self):
-        with patch('utils.linux_notifications.threading.Thread') as thread:
+        with patch('utils.notifications.linux_notifications.threading.Thread') as thread:
             self.assertTrue(self.service.notify('body', 'title'))
         thread.return_value.start.assert_called_once()
         self.service._call.assert_not_called()
@@ -103,7 +103,7 @@ class LinuxNotificationTests(unittest.TestCase):
         connection.signal_subscribe.side_effect = [1, 2, 3]
         loop = glib.MainLoop.new.return_value
         loop.run.side_effect = service.close
-        with patch('utils.linux_notifications._ensure_gi_module', return_value=True), patch.dict(
+        with patch('utils.notifications.linux_notifications._ensure_gi_module', return_value=True), patch.dict(
             'sys.modules', {'gi': Mock(), 'gi.repository': SimpleNamespace(Gio=gio, GLib=glib)},
         ):
             service._run()

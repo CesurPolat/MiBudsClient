@@ -8,11 +8,11 @@ import unittest
 from unittest.mock import Mock, patch
 from urllib.error import HTTPError
 
-from utils.error_reports import (DeliveryError, ErrorReportClient, ErrorReportManager,
+from utils.diagnostics.error_reports import (DeliveryError, ErrorReportClient, ErrorReportManager,
                                  ReportQueue, encode_report, make_report, redact,
                                  guard_ui_callbacks, queue_directory)
 from ui.components.error_report import ErrorReportDialog
-from utils.debug_console import DebugConsoleManager
+from utils.diagnostics.debug_console import DebugConsoleManager
 
 
 class ErrorReportTests(unittest.TestCase):
@@ -58,9 +58,9 @@ class ErrorReportTests(unittest.TestCase):
         self.assertIsInstance(capture.call_args.args[0], ValueError)
 
     def test_platform_queue_paths(self):
-        with patch('utils.error_reports.sys.platform', 'win32'), patch.dict('os.environ', {'LOCALAPPDATA': 'local-data'}):
+        with patch('utils.diagnostics.error_reports.sys.platform', 'win32'), patch.dict('os.environ', {'LOCALAPPDATA': 'local-data'}):
             self.assertEqual(queue_directory(), Path('local-data/MiBudsClient/error_reports'))
-        with patch('utils.error_reports.sys.platform', 'linux'), patch.dict('os.environ', {'XDG_DATA_HOME': 'linux-data'}):
+        with patch('utils.diagnostics.error_reports.sys.platform', 'linux'), patch.dict('os.environ', {'XDG_DATA_HOME': 'linux-data'}):
             self.assertEqual(queue_directory(), Path('linux-data/MiBudsClient/error_reports'))
 
     def test_redaction_and_stack_excludes_source(self):

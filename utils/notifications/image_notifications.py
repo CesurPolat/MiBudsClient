@@ -10,8 +10,8 @@ from pathlib import Path
 
 from PIL import Image, ImageOps
 
-from .resource_manager import get_resource_path
-from .i18n import t
+from ..app.resource_manager import get_resource_path
+from ..app.i18n import t
 
 
 class ImageNotifications:

@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from utils import linux_desktop as desktop
+from utils.desktop import linux_desktop as desktop
 
 _real_legacy_client = desktop._legacy_client
 

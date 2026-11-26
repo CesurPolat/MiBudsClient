@@ -1,6 +1,6 @@
 """Shared serialized RCSP config transactions; only the listener receives bytes."""
 
-from utils.i18n import message as m
+from utils.app.i18n import message as m
 
 import threading
 import time

@@ -68,5 +68,5 @@ python -m unittest discover -s tests
 The default is a dry run. `--write` updates only the reviewed mappings and a few
 explicit context corrections, preserves desktop text, and refreshes the source
 ledger. It never edits the source folder or reads an APK. Adding a language also
-requires its native name in `utils/i18n.py`, a complete catalog, and source-ledger
+requires its native name in `utils/app/i18n.py`, a complete catalog, and source-ledger
 coverage. No new translation service or runtime dependency is required.

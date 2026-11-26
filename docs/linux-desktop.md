@@ -12,7 +12,7 @@ AppIndicator/Ayatana is preferred, with GTK and Xorg fallbacks as before.
 For AppIndicator, the app checks the StatusNotifierWatcher's
 `IsStatusNotifierHostRegistered` property using `gdbus`. GTK's legacy backend is
 checked through its embedded state on the GTK loop. Xorg uses pystray's current
-tray-manager reference. These probes are isolated in `utils/tray_host.py` because
+tray-manager reference. These probes are isolated in `utils/desktop/tray_host.py` because
 some backend integration uses private pystray attributes.
 
 Until hosting is detected, closing the window minimizes it and keeps a taskbar

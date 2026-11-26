@@ -5,8 +5,8 @@ from pathlib import Path
 import queue
 import threading
 
-from .resource_manager import get_resource_path
-from .tray_backend import _ensure_gi_module
+from ..app.resource_manager import get_resource_path
+from ..desktop.tray_backend import _ensure_gi_module
 
 SERVICE = "org.freedesktop.Notifications"
 PATH = "/org/freedesktop/Notifications"

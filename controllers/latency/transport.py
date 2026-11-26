@@ -1,5 +1,5 @@
 """Game mode config 002F; the shared listener owns all socket reads."""
-from utils.i18n import message as m
+from utils.app.i18n import message as m
 import time
 
 from ..bluetooth.packets.config_transport import parse_config_records

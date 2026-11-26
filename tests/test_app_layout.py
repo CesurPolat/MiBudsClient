@@ -91,7 +91,7 @@ class AppLayoutTests(unittest.TestCase):
         self.assertTrue(settings._sections["general"].visible)
 
     def test_settings_navigation_resize_keeps_selection_and_tooltips(self):
-        from utils.i18n import set_language
+        from utils.app.i18n import set_language
         from ui.localization import refresh_translations
         settings = SettingsCard(startup_enabled=True)
         settings.select_section("identity")

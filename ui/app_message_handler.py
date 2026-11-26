@@ -1,6 +1,6 @@
 """Route application pubsub messages to controllers and UI components."""
 
-from utils.i18n import t
+from utils.app.i18n import t
 
 import time
 import threading
@@ -11,9 +11,9 @@ from .constants import BATTERY_UNKNOWN
 from .components.update_notification import show_update_notification
 from .localization import refresh_translations
 from .battery_notifications import BatteryNotificationState
-from utils.i18n import LANGUAGE_CHOICES, is_rtl, set_language
-from utils.user_preferences import set_language_preference
-from utils.sound import play_connection_melody, play_disconnection_melody
+from utils.app.i18n import LANGUAGE_CHOICES, is_rtl, set_language
+from utils.app.user_preferences import set_language_preference
+from utils.notifications.sound import play_connection_melody, play_disconnection_melody
 
 
 class AppMessageHandler:

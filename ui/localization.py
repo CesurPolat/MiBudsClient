@@ -2,7 +2,7 @@
 
 from dataclasses import fields, is_dataclass
 
-from utils.i18n import Message, render
+from utils.app.i18n import Message, render
 
 
 def refresh_translations(root) -> None:

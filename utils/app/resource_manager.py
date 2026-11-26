@@ -2,6 +2,7 @@
 
 import os
 import sys
+from pathlib import Path
 from PIL import Image
 from typing import Tuple
 
@@ -18,7 +19,7 @@ def get_resource_path(relative_path: str) -> str:
     if hasattr(sys, '_MEIPASS'):
         return os.path.join(sys._MEIPASS, relative_path)
     # Login startup need not use the project directory as its working directory.
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    root = Path(__file__).absolute().parents[2]
     return os.path.join(root, relative_path)
 
 def load_pil_image(relative_path: str, fallback_size: Tuple[int, int] = (64, 64)) -> Image.Image:

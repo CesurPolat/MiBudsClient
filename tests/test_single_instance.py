@@ -5,7 +5,7 @@ import threading
 import unittest
 from unittest.mock import Mock, patch
 
-from utils import single_instance
+from utils.app import single_instance
 
 
 class SingleInstanceTests(unittest.TestCase):

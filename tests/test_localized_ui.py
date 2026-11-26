@@ -16,7 +16,7 @@ from ui.components import AppLayout, DeviceStatusCard, SettingsCard
 from ui.components.update_notification import show_update_notification
 from ui.localization import refresh_translations
 from ui.system_tray import SystemTray
-from utils.i18n import LANGUAGES, get_language, message, set_language, t
+from utils.app.i18n import LANGUAGES, get_language, message, set_language, t
 
 
 class LocalizedUITests(unittest.TestCase):

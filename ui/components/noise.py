@@ -4,7 +4,7 @@ import math
 import flet as ft
 
 from controllers.noise.protocol import NoiseCapabilities, wear_requirement
-from utils.i18n import t, render
+from utils.app.i18n import t, render
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS
 from ..constants import HOME_CONTROL_HEADER_HEIGHT
 from ..constants import (

@@ -1,7 +1,7 @@
 """RCSP EQ config codec; hardware-verified only on Redmi Buds 6 Play."""
 from dataclasses import dataclass
 
-from utils.i18n import message as m
+from utils.app.i18n import message as m
 from ..bluetooth.packets.config_transport import parse_config_records
 from ..bluetooth.packets.rcsp import build_command_frame
 

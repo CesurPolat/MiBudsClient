@@ -8,13 +8,13 @@ import subprocess
 from pathlib import Path
 from unittest.mock import Mock, call, patch
 
-from utils.sound import play_connection_melody, play_tones, _tone_wave
-from utils.tray_backend import configure_tray_backend
+from utils.notifications.sound import play_connection_melody, play_tones, _tone_wave
+from utils.desktop.tray_backend import configure_tray_backend
 
 
 class SoundTests(unittest.TestCase):
     def test_connection_uses_original_ascending_melody(self):
-        with patch("utils.sound.play_tones") as play:
+        with patch("utils.notifications.sound.play_tones") as play:
             play_connection_melody()
         play.assert_called_once_with([(880, 80), (1175, 90), (1568, 120)], delay=1.0)
 
@@ -38,8 +38,8 @@ class SoundTests(unittest.TestCase):
 
     def test_windows_playback_runs_in_background(self):
         sound = self.sound_mock()
-        with patch("utils.sound.sys.platform", "win32"), patch("utils.sound.winsound", sound), patch(
-            "utils.sound.threading.Thread",
+        with patch("utils.notifications.sound.sys.platform", "win32"), patch("utils.notifications.sound.winsound", sound), patch(
+            "utils.notifications.sound.threading.Thread",
         ) as thread:
             play_tones([(880, 80), (1175, 90)])
             sound.Beep.assert_not_called()
@@ -55,9 +55,9 @@ class SoundTests(unittest.TestCase):
         sound = self.sound_mock()
         order = Mock()
         order.attach_mock(sound.PlaySound, 'play')
-        with patch('utils.sound.sys.platform', 'win32'), patch('utils.sound.winsound', sound), patch(
-            'utils.sound.time.sleep', order.sleep,
-        ), patch('utils.sound.threading.Thread') as thread:
+        with patch('utils.notifications.sound.sys.platform', 'win32'), patch('utils.notifications.sound.winsound', sound), patch(
+            'utils.notifications.sound.time.sleep', order.sleep,
+        ), patch('utils.notifications.sound.threading.Thread') as thread:
             play_connection_melody()
             order.sleep.assert_not_called()
             thread.call_args.kwargs['target']()
@@ -67,8 +67,8 @@ class SoundTests(unittest.TestCase):
     def test_windows_wave_failure_falls_back_to_original_beeps(self):
         sound = self.sound_mock()
         sound.PlaySound.side_effect = RuntimeError('WAV unavailable')
-        with patch('utils.sound.sys.platform', 'win32'), patch('utils.sound.winsound', sound), patch(
-            'utils.sound.threading.Thread',
+        with patch('utils.notifications.sound.sys.platform', 'win32'), patch('utils.notifications.sound.winsound', sound), patch(
+            'utils.notifications.sound.threading.Thread',
         ) as thread:
             play_tones([(880, 80)])
             thread.call_args.kwargs['target']()
@@ -78,8 +78,8 @@ class SoundTests(unittest.TestCase):
         sound = self.sound_mock()
         sound.PlaySound.side_effect = RuntimeError('WAV unavailable')
         sound.Beep.side_effect = RuntimeError("Unavailable")
-        with patch("utils.sound.sys.platform", "win32"), patch("utils.sound.winsound", sound), patch(
-            "utils.sound.threading.Thread",
+        with patch("utils.notifications.sound.sys.platform", "win32"), patch("utils.notifications.sound.winsound", sound), patch(
+            "utils.notifications.sound.threading.Thread",
         ) as thread:
             play_tones([(880, 80)])
             thread.call_args.kwargs["target"]()
@@ -87,9 +87,9 @@ class SoundTests(unittest.TestCase):
 
     def test_linux_players_receive_complete_wave_and_temporary_file_is_removed(self):
         for available in ("pw-play", "paplay", "aplay", "play"):
-            with self.subTest(player=available), patch("utils.sound.sys.platform", "linux"), patch(
-                "utils.sound.shutil.which", side_effect=lambda name: f"/usr/bin/{name}" if name == available else None,
-            ), patch("utils.sound.subprocess.run") as run, patch("utils.sound.threading.Thread") as thread:
+            with self.subTest(player=available), patch("utils.notifications.sound.sys.platform", "linux"), patch(
+                "utils.notifications.sound.shutil.which", side_effect=lambda name: f"/usr/bin/{name}" if name == available else None,
+            ), patch("utils.notifications.sound.subprocess.run") as run, patch("utils.notifications.sound.threading.Thread") as thread:
                 paths = []
                 def playback(command, **kwargs):
                     path = Path(command[-1])
@@ -109,10 +109,10 @@ class SoundTests(unittest.TestCase):
     def test_linux_falls_back_after_error_exit_timeout_and_missing_binary(self):
         for failure in (Mock(returncode=1, stderr=b"No audio server"),
                         subprocess.TimeoutExpired("pw-play", 3), FileNotFoundError("gone")):
-            with self.subTest(failure=failure), patch("utils.sound.sys.platform", "linux"), patch(
-                "utils.sound.shutil.which", side_effect=lambda name: f"/usr/bin/{name}",
-            ), patch("utils.sound.subprocess.run", side_effect=[failure, Mock(returncode=0)]) as run, patch(
-                "utils.sound.threading.Thread",
+            with self.subTest(failure=failure), patch("utils.notifications.sound.sys.platform", "linux"), patch(
+                "utils.notifications.sound.shutil.which", side_effect=lambda name: f"/usr/bin/{name}",
+            ), patch("utils.notifications.sound.subprocess.run", side_effect=[failure, Mock(returncode=0)]) as run, patch(
+                "utils.notifications.sound.threading.Thread",
             ) as thread, patch("builtins.print"):
                 play_tones([(880, 80)])
                 thread.call_args.kwargs["target"]()
@@ -120,9 +120,9 @@ class SoundTests(unittest.TestCase):
                                  ["/usr/bin/pw-play", "/usr/bin/paplay"])
 
     def test_missing_linux_tools_falls_back_to_terminal_bell(self):
-        with patch("utils.sound.sys.platform", "linux"), patch("utils.sound.shutil.which", return_value=None), patch(
-            "utils.sound.sys.stdout",
-        ) as output, patch("utils.sound.time.sleep") as sleep, patch("utils.sound.threading.Thread") as thread:
+        with patch("utils.notifications.sound.sys.platform", "linux"), patch("utils.notifications.sound.shutil.which", return_value=None), patch(
+            "utils.notifications.sound.sys.stdout",
+        ) as output, patch("utils.notifications.sound.time.sleep") as sleep, patch("utils.notifications.sound.threading.Thread") as thread:
             play_tones([(880, 80)])
             thread.call_args.kwargs["target"]()
         self.assertIn(call("\a"), output.write.call_args_list)
@@ -132,24 +132,24 @@ class SoundTests(unittest.TestCase):
 class TrayBackendTests(unittest.TestCase):
     def test_linux_selects_available_backend_or_leaves_default(self):
         for appindicator, gi, expected in ((True, True, "appindicator"), (False, True, "gtk"), (False, False, None)):
-            with self.subTest(expected=expected), patch("utils.tray_backend.sys.platform", "linux"), patch(
-                "utils.tray_backend._has_appindicator_namespace", return_value=appindicator,
-            ), patch("utils.tray_backend._has_gtk_namespace", return_value=gi), patch.dict(
-                "utils.tray_backend.os.environ", {}, clear=True,
+            with self.subTest(expected=expected), patch("utils.desktop.tray_backend.sys.platform", "linux"), patch(
+                "utils.desktop.tray_backend._has_appindicator_namespace", return_value=appindicator,
+            ), patch("utils.desktop.tray_backend._has_gtk_namespace", return_value=gi), patch.dict(
+                "utils.desktop.tray_backend.os.environ", {}, clear=True,
             ) as environment:
                 configure_tray_backend()
                 self.assertEqual(environment.get("PYSTRAY_BACKEND"), expected)
 
     def test_explicit_linux_backend_is_preserved(self):
-        with patch("utils.tray_backend.sys.platform", "linux"), patch(
-            "utils.tray_backend._has_appindicator_namespace", return_value=True,
-        ), patch.dict("utils.tray_backend.os.environ", {"PYSTRAY_BACKEND": "xorg"}, clear=True) as environment:
+        with patch("utils.desktop.tray_backend.sys.platform", "linux"), patch(
+            "utils.desktop.tray_backend._has_appindicator_namespace", return_value=True,
+        ), patch.dict("utils.desktop.tray_backend.os.environ", {"PYSTRAY_BACKEND": "xorg"}, clear=True) as environment:
             configure_tray_backend()
             self.assertEqual(environment["PYSTRAY_BACKEND"], "xorg")
 
     def test_windows_does_not_probe_linux_backend(self):
-        with patch("utils.tray_backend.sys.platform", "win32"), patch(
-            "utils.tray_backend._has_appindicator_namespace",
+        with patch("utils.desktop.tray_backend.sys.platform", "win32"), patch(
+            "utils.desktop.tray_backend._has_appindicator_namespace",
         ) as probe:
             configure_tray_backend()
         probe.assert_not_called()

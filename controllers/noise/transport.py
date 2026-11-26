@@ -4,7 +4,7 @@ import threading
 import time
 from dataclasses import replace
 
-from utils.i18n import message as m
+from utils.app.i18n import message as m
 from .protocol import build_noise_mode, build_noise_level, build_noise_read, parse_noise_state, wear_requirement
 from ..bluetooth.packets.config_transport import parse_config_records
 from ..bluetooth.packets.rcsp import build_command_frame

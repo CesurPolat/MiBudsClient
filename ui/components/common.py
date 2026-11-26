@@ -1,10 +1,10 @@
 """Common UI components."""
 
-from utils.i18n import t, render
+from utils.app.i18n import t, render
 
 import flet as ft
 
-from utils.resource_manager import get_resource_path
+from utils.app.resource_manager import get_resource_path
 
 from ..constants import (
     COLOR_DISABLED,

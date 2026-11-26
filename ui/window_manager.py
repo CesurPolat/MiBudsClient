@@ -5,9 +5,9 @@ import asyncio
 import math
 import struct
 import flet as ft
-from utils.i18n import t
-from utils.sound import play_exit_melody
-from utils.window_geometry import fit_window_size, get_work_area_size
+from utils.app.i18n import t
+from utils.notifications.sound import play_exit_melody
+from utils.desktop.window_geometry import fit_window_size, get_work_area_size
 from .constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, PAGE_PADDING
 from .constants import SETTINGS_WINDOW_HEIGHT, NAVIGATION_TRANSITION_MS
 import subprocess

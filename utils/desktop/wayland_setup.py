@@ -10,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 
-from .resource_manager import get_resource_path
+from ..app.resource_manager import get_resource_path
 from .wayland import detect_gnome_fullscreen, compositor
 
 UUID = "fullscreen@mibudsclient"

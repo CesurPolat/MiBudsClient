@@ -1,7 +1,7 @@
-from utils.error_reports import publish_exception
+from utils.diagnostics.error_reports import publish_exception
 """Run gesture requests off the UI thread and publish versioned completions."""
 
-from utils.i18n import message as m, error_message
+from utils.app.i18n import message as m, error_message
 
 import threading
 

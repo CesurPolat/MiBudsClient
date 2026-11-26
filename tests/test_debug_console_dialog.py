@@ -5,8 +5,8 @@ import unittest
 from unittest.mock import Mock, patch
 
 from ui.components.debug_console import DebugConsoleDialog
-from utils.debug_console import DebugConsoleManager
-from utils.i18n import set_language, t
+from utils.diagnostics.debug_console import DebugConsoleManager
+from utils.app.i18n import set_language, t
 
 
 class DebugConsoleDialogTests(unittest.TestCase):

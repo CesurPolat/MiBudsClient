@@ -6,7 +6,7 @@ import re
 import sys
 import tempfile
 
-from .resource_manager import get_resource_path
+from ..app.resource_manager import get_resource_path
 from .startup_manager import _desktop_argument, _desktop_string
 
 APP_ID = "dev.mibuds.client"
@@ -70,7 +70,7 @@ def setup_linux_desktop():
         elif getattr(sys, "frozen", False):
             arguments = [sys.executable]
         else:
-            arguments = [sys.executable, str(Path(__file__).resolve().parents[1] / "main.py")]
+            arguments = [sys.executable, str(Path(__file__).resolve().parents[2] / "main.py")]
         command = " ".join(_desktop_argument(argument) for argument in arguments)
         data_dirs = os.getenv("XDG_DATA_DIRS", "/usr/local/share:/usr/share").split(":")
         for identity in ([APP_ID, LEGACY_ID] if legacy else [APP_ID]):

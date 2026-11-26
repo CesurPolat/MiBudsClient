@@ -7,7 +7,7 @@ from urllib.parse import unquote, urlsplit
 
 from controllers.catalog.capabilities import resolve_capabilities
 from controllers.catalog.device_catalog import get_device_models_by_name, install_catalog
-from utils.mibuds_api import CatalogClient
+from utils.api.mibuds_api import CatalogClient
 
 
 class CatalogSync:

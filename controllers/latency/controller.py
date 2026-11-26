@@ -1,6 +1,6 @@
 """Low latency mode policy, app rules, and hold-until-close handling."""
 
-from utils.i18n import message as m, error_message
+from utils.app.i18n import message as m, error_message
 
 import subprocess
 import sys
@@ -9,7 +9,7 @@ import time
 from typing import Callable
 from functools import wraps
 
-from utils.user_preferences import (
+from utils.app.user_preferences import (
     get_all_low_latency_exceptions,
     get_all_low_latency_includes,
     set_low_latency_exceptions,

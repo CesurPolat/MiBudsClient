@@ -39,7 +39,7 @@ class GestureSettingsTests(unittest.TestCase):
         self.assertEqual(self.refresh.call_count, 3)
 
     def test_loaded_status_is_hidden_but_loading_errors_and_empty_remain_visible(self):
-        from utils.i18n import message
+        from utils.app.i18n import message
         token = self.panel.begin(message("gesture.reading"))
         self.assertTrue(self.panel.status.visible)
         self.panel.complete(token, GestureResult(True, {1: (1, 3)}, message("gesture.loaded")), {1: (1, 3)})
@@ -76,7 +76,7 @@ class GestureSettingsTests(unittest.TestCase):
             self.assign.assert_called_with(4, side, 1)
 
     def test_single_tap_title_is_localized_in_all_languages(self):
-        from utils.i18n import render
+        from utils.app.i18n import render
         from ui.components.gestures import GESTURE_NAMES
         for language, expected in (("en", "Single tap"), ("tr", "Tek dokunuş"), ("zh-CN", "单击")):
             self.assertEqual(render(GESTURE_NAMES[4], language), expected)

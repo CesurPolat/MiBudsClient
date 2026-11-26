@@ -1,6 +1,6 @@
 """Auto mode UI components."""
 
-from utils.i18n import t
+from utils.app.i18n import t
 
 import flet as ft
 from ..constants import (

@@ -5,8 +5,8 @@ from unittest.mock import Mock, patch
 
 from ui.app_message_handler import AppMessageHandler
 from ui.battery_notifications import BatteryNotificationState
-from utils.battery import battery_state
-from utils.i18n import LANGUAGES, set_language, t
+from controllers.battery.stream import battery_state
+from utils.app.i18n import LANGUAGES, set_language, t
 
 
 class BatteryNotificationStateTests(unittest.TestCase):

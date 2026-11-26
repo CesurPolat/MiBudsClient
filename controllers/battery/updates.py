@@ -3,8 +3,8 @@
 import time
 from typing import Callable
 
-from utils.battery import battery_state
-from utils.sound import play_tones
+from .stream import battery_state
+from utils.notifications.sound import play_tones
 from ui.constants import BATTERY_UNKNOWN
 
 

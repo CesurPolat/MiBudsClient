@@ -6,7 +6,7 @@ import logging
 import time
 from dataclasses import dataclass
 from typing import Callable, Optional
-from utils.error_reports import redact
+from utils.diagnostics.error_reports import redact
 
 from .sdp import PlatformBackend, SERVICE_UUIDS, ConnectionCancelled
 from ..auth.auth_session import AuthPolicy, AuthError, CommandAuthSession

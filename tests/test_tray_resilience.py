@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 
 import flet as ft
 from tray_fakes import fake_tray_api
-from utils import tray_backend
+from utils.desktop import tray_backend
 from ui.system_tray import SystemTray
 from ui.window_manager import WindowManager
 

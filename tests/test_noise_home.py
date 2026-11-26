@@ -6,7 +6,7 @@ from controllers.catalog.capabilities import DeviceCapabilities, resolve_capabil
 from controllers.noise.protocol import NoiseState, noise_backend_enabled
 from controllers.bluetooth.controller import BTController
 from ui.components.settings_card import SettingsCard
-from utils.i18n import get_language, set_language, t
+from utils.app.i18n import get_language, set_language, t
 
 
 class NoiseHomeTests(unittest.TestCase):

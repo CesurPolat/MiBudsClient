@@ -11,7 +11,7 @@ import flet as ft
 
 from ui.system_tray import SystemTray
 from ui.window_manager import WindowManager
-from utils.image_notifications import ImageNotifications
+from utils.notifications.image_notifications import ImageNotifications
 
 
 class NotificationActivationTests(unittest.TestCase):
@@ -62,7 +62,7 @@ class NotificationActivationTests(unittest.TestCase):
         self.assertIs(icon._message_handlers[win32.WM_NOTIFY], replacement)
 
     def test_linux_default_action_is_localized_and_quiet_for_text_and_images(self):
-        from utils.i18n import set_language
+        from utils.app.i18n import set_language
         self.addCleanup(set_language, "en")
         set_language("tr")
         glib = Mock()
@@ -76,7 +76,7 @@ class NotificationActivationTests(unittest.TestCase):
         service = ImageNotifications(on_activate=activate)
         icon = SimpleNamespace(_notifier=notifier)
         modules = {"gi": Mock(), "gi.repository": SimpleNamespace(GLib=glib, Gio=gio)}
-        with patch.dict(sys.modules, modules), patch("utils.image_notifications.sys.platform", "linux"):
+        with patch.dict(sys.modules, modules), patch("utils.notifications.image_notifications.sys.platform", "linux"):
             for path in (None, Path(tempfile.gettempdir()) / "earbuds.png"):
                 proxy.call_sync.reset_mock()
                 fallback = Mock()

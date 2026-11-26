@@ -5,6 +5,15 @@ from ..bluetooth.packets.rcsp import RcspStreamParser, is_supported_target, pars
 from ..bluetooth.packets.protocol import BatteryStatus
 
 
+def battery_state(raw) -> tuple[int, bool] | None:
+    """Return (percent, charging) only for a valid byte with a 0–100 level."""
+    if type(raw) is not int or not 0 <= raw <= 255 or raw == 255:
+        return None
+    charging = raw >= 128
+    percent = raw - 128 if charging else raw
+    return (percent, charging) if percent <= 100 else None
+
+
 class BatteryStreamParser:
     def __init__(self):
         self._parser = RcspStreamParser()

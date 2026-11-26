@@ -1,7 +1,7 @@
 """Track real battery samples for notifications, independently of UI refreshes."""
 
-from utils.battery import battery_state
-from utils.i18n import t
+from controllers.battery.stream import battery_state
+from utils.app.i18n import t
 
 
 class BatteryNotificationState:

@@ -1,13 +1,13 @@
 """Display the available-update notification and its actions."""
 
-from utils.i18n import t
+from utils.app.i18n import t
 
 import webbrowser
 
 import flet as ft
 
 from ..constants import GITHUB_URL
-from utils.user_preferences import suppress_update_notification
+from utils.app.user_preferences import suppress_update_notification
 
 
 def show_update_notification(page: ft.Page, latest_ver: str) -> None:

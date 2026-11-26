@@ -10,8 +10,8 @@ from unittest.mock import Mock, patch
 from PIL import Image
 
 from ui.system_tray import SystemTray
-from utils.i18n import message, set_language
-from utils.image_notifications import ImageNotifications
+from utils.app.i18n import message, set_language
+from utils.notifications.image_notifications import ImageNotifications
 
 
 class ImageNotificationTests(unittest.TestCase):
@@ -26,9 +26,9 @@ class ImageNotificationTests(unittest.TestCase):
 
     def test_missing_image_and_unsupported_platform_do_not_send(self):
         icon = Mock()
-        with patch("utils.image_notifications.sys.platform", "win32"):
+        with patch("utils.notifications.image_notifications.sys.platform", "win32"):
             self.assertFalse(self.service.show(icon, "body", "title", str(self.path.with_suffix(".missing")), Mock()))
-        with patch("utils.image_notifications.sys.platform", "other"):
+        with patch("utils.notifications.image_notifications.sys.platform", "other"):
             self.assertFalse(self.service.show(icon, "body", "title", str(self.path), Mock()))
         icon._message.assert_not_called()
 
@@ -82,7 +82,7 @@ class ImageNotificationTests(unittest.TestCase):
         icon = SimpleNamespace(_notifier=notifier)
         fallback = Mock()
         modules = {"gi": Mock(), "gi.repository": SimpleNamespace(GLib=glib)}
-        with patch.dict(sys.modules, modules), patch("utils.image_notifications.sys.platform", "linux"):
+        with patch.dict(sys.modules, modules), patch("utils.notifications.image_notifications.sys.platform", "linux"):
             self.assertTrue(self.service.show(icon, "body", "title", str(self.path), fallback))
             notifier.notify.assert_not_called()
             callback = glib.idle_add.call_args.args[0]
@@ -98,7 +98,7 @@ class ImageNotificationTests(unittest.TestCase):
         glib = Mock()
         notifier = Mock()
         modules = {"gi": Mock(), "gi.repository": SimpleNamespace(GLib=glib)}
-        with patch.dict(sys.modules, modules), patch("utils.image_notifications.sys.platform", "linux"):
+        with patch.dict(sys.modules, modules), patch("utils.notifications.image_notifications.sys.platform", "linux"):
             self.assertTrue(self.service.show(SimpleNamespace(_notifier=notifier), "body", "title", str(self.path), Mock()))
             self.service.close()
             self.assertFalse(glib.idle_add.call_args.args[0]())
@@ -184,7 +184,7 @@ class ImageNotificationTests(unittest.TestCase):
         notifier = SimpleNamespace(notify=Mock(), _notify=Mock(), _nid=0)
         notifier._notify.call_sync.return_value.unpack.return_value = (12,)
         modules = {"gi": Mock(), "gi.repository": SimpleNamespace(GLib=glib, Gio=gio)}
-        with patch.dict(sys.modules, modules), patch("utils.image_notifications.sys.platform", "linux"):
+        with patch.dict(sys.modules, modules), patch("utils.notifications.image_notifications.sys.platform", "linux"):
             for path in (str(self.path), ""):
                 self.assertTrue(self.service.show(SimpleNamespace(_notifier=notifier), "body", "title", path, Mock(), silent=True))
                 self.assertFalse(glib.idle_add.call_args.args[0]())

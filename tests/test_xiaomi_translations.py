@@ -8,7 +8,7 @@ from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 from tools import import_xiaomi_translations as importer
-from utils.i18n import LANGUAGES, load_catalog
+from utils.app.i18n import LANGUAGES, load_catalog
 
 
 class XiaomiTranslationTests(unittest.TestCase):

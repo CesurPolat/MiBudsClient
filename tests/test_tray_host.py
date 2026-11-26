@@ -4,13 +4,13 @@ import subprocess
 import unittest
 from unittest.mock import Mock, patch
 
-from utils.tray_host import TrayHostMonitor
+from utils.desktop.tray_host import TrayHostMonitor
 from ui.system_tray import SystemTray
 
 
 class TrayHostTests(unittest.TestCase):
     def test_sni_host_property_is_required_and_alternative_namespace_is_supported(self):
-        with patch('utils.tray_host.subprocess.run', side_effect=[
+        with patch('utils.desktop.tray_host.subprocess.run', side_effect=[
             SimpleNamespace(returncode=0, stdout='(<false>,)'),
             SimpleNamespace(returncode=0, stdout='(<true>,)'),
         ]) as run:
@@ -21,7 +21,7 @@ class TrayHostTests(unittest.TestCase):
     def test_unavailable_or_slow_watcher_is_not_a_working_host(self):
         for result in (FileNotFoundError(), subprocess.TimeoutExpired('gdbus', 1),
                        SimpleNamespace(returncode=1, stdout=''), SimpleNamespace(returncode=0, stdout='(<false>,)')):
-            with self.subTest(result=result), patch('utils.tray_host.subprocess.run') as run:
+            with self.subTest(result=result), patch('utils.desktop.tray_host.subprocess.run') as run:
                 if isinstance(result, Exception):
                     run.side_effect = result
                 else:

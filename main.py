@@ -5,13 +5,13 @@ import os
 import threading
 
 from controllers.bluetooth import BTController
-from utils import (
-    start_update_check,
+from utils.app.single_instance import (
     check_for_existing_instance,
     start_instance_listener,
     reserve_instance_port,
     release_instance_port,
 )
+from utils.app.updater import start_update_check
 from ui import (
     APP_TITLE, COLOR_BG,
     WindowManager, SystemTray
@@ -24,17 +24,17 @@ from controllers.device.catalog_sync import CatalogSync
 from ui.constants import APP_VERSION, PAGE_PADDING
 from controllers.settings import SettingsController
 from ui.app_message_handler import AppMessageHandler
-from utils.debug_console import DebugConsoleManager
-from utils.game_monitor import FullscreenGameMonitor
+from utils.diagnostics.debug_console import DebugConsoleManager
+from utils.desktop.game_monitor import FullscreenGameMonitor
 from controllers.latency import LatencyController
-from utils.i18n import is_rtl, set_language
-from utils.user_preferences import get_language_preference
+from utils.app.i18n import is_rtl, set_language
+from utils.app.user_preferences import get_language_preference
 from ui.localization import refresh_translations
-from utils.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
+from utils.diagnostics.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
 from ui.components.error_report import ErrorReportDialog
 from ui.components.debug_console import DebugConsoleDialog
-from utils.app_shutdown import ApplicationShutdown
-from utils.linux_desktop import setup_linux_desktop
+from utils.app.app_shutdown import ApplicationShutdown
+from utils.desktop.linux_desktop import setup_linux_desktop
 
 application_shutdown = ApplicationShutdown()
 

@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from utils.updater import start_update_check
+from utils.app.updater import start_update_check
 
 
 class BackgroundUpdateCheckTests(unittest.TestCase):
@@ -15,11 +15,11 @@ class BackgroundUpdateCheckTests(unittest.TestCase):
             ((True, None), True, False),
         ):
             with self.subTest(result=result, allowed=allowed), patch(
-                "utils.updater.threading.Thread",
-            ) as thread, patch("utils.updater.time.sleep") as sleep, patch(
-                "utils.updater.check_for_updates", return_value=result,
+                "utils.app.updater.threading.Thread",
+            ) as thread, patch("utils.app.updater.time.sleep") as sleep, patch(
+                "utils.app.updater.check_for_updates", return_value=result,
             ) as check, patch(
-                "utils.updater.should_show_update_notification", return_value=allowed,
+                "utils.app.updater.should_show_update_notification", return_value=allowed,
             ) as preference:
                 callback = Mock()
                 worker = start_update_check(callback)

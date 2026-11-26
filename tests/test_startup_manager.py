@@ -7,8 +7,8 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, Mock, patch
 
-from utils import startup_manager as startup
-from utils.resource_manager import get_resource_path
+from utils.desktop import startup_manager as startup
+from utils.app.resource_manager import get_resource_path
 
 
 class LinuxStartupTests(unittest.TestCase):
@@ -161,5 +161,5 @@ class ResourcePathTests(unittest.TestCase):
                 os.chdir(previous)
 
     def test_packaged_assets_use_bundle_directory(self):
-        with patch('utils.resource_manager.sys._MEIPASS', '/tmp/example-bundle', create=True):
+        with patch('utils.app.resource_manager.sys._MEIPASS', '/tmp/example-bundle', create=True):
             self.assertEqual(get_resource_path('assets/icon.png'), os.path.join('/tmp/example-bundle', 'assets/icon.png'))

@@ -1,6 +1,6 @@
 """Flet gesture editor; only device-confirmed assignments are displayed."""
 
-from utils.i18n import t, render
+from utils.app.i18n import t, render
 
 import flet as ft
 from controllers.gestures.protocol import MFB_OPERATIONS, MFB_ACTION_KEYS

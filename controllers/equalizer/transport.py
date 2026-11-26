@@ -1,5 +1,5 @@
 """EQ transactions share the gesture channel's lock, counter and stream parser."""
-from utils.i18n import message as m, error_message
+from utils.app.i18n import message as m, error_message
 import time
 from .protocol import (
     EqResult, EqState, build_eq_request, build_profile, build_custom_eq,

@@ -5,7 +5,7 @@ import json
 import sys
 import os
 import threading
-from utils.error_reports import redact
+from utils.diagnostics.error_reports import redact
 from dataclasses import dataclass
 from typing import Optional
 

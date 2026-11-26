@@ -1,6 +1,6 @@
 """Background noise transactions, delivered through the existing UI pubsub."""
 import threading
-from utils.i18n import message as m, error_message
+from utils.app.i18n import message as m, error_message
 
 
 class NoiseSettingsController:

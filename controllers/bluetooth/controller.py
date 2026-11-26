@@ -1,14 +1,14 @@
 """Main Bluetooth Controller for Mi Buds."""
 
-from utils.i18n import message as m, error_message
+from utils.app.i18n import message as m, error_message
 
 import socket
 import errno
 import threading
 import time
 import traceback
-from utils.error_reports import redact
-from utils.user_preferences import get_selected_bluetooth_address, set_selected_bluetooth_address
+from utils.diagnostics.error_reports import redact
+from utils.app.user_preferences import get_selected_bluetooth_address, set_selected_bluetooth_address
 from dataclasses import dataclass
 from functools import partial
 from typing import Callable, Optional

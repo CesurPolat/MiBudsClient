@@ -1,8 +1,8 @@
-from utils.error_reports import publish_exception
+from utils.diagnostics.error_reports import publish_exception
 """Execute EQ work outside Flet and reject completions from old connections."""
 import threading
 
-from utils.i18n import message as m, error_message
+from utils.app.i18n import message as m, error_message
 from .protocol import EqResult
 
 

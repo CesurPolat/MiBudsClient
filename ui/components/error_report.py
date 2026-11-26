@@ -5,8 +5,8 @@ import threading
 from functools import wraps
 
 import flet as ft
-from utils.i18n import t
-from utils.error_reports import encode_report, redact
+from utils.app.i18n import t
+from utils.diagnostics.error_reports import encode_report, redact
 from ui.constants import COLOR_CARD_BG, COLOR_TEXT_PRIMARY, CARD_BORDER_RADIUS
 
 
