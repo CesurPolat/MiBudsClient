@@ -10,10 +10,10 @@ MiBudsClient is a compact desktop companion: dark, quiet, clear, and centered on
 - Home uses its natural content height. Opening Settings grows the window to 600 px, limited by the available desktop area; its shell fills the client area above the footer and scrolls internally. Returning Home restores content-based window sizing.
 - Enter Settings by sliding first, then resizing. Return Home by resizing first, then sliding. Native height changes are immediate.
 - Manual window resizing and maximizing are disabled on Windows and Linux. Keep automatic screen fitting and scrolling available for smaller displays and display scaling.
-- Settings uses a left navigation rail and one selected section on the right. Keep the shared section container in `ui/components/settings_card.py` transparent, borderless, and without card padding so content integrates with the Settings shell. Inner controls may have their own boundaries when they clarify an interaction.
+- Settings uses a left navigation rail and one selected section on the right. Keep the shared section container in `ui/components/settings/settings_card.py` transparent, borderless, and without card padding so content integrates with the Settings shell. Inner controls may have their own boundaries when they clarify an interaction.
 - Preserve the selected section and input state when resizing, switching screens, changing language, or receiving unrelated updates. If a device-specific section becomes unavailable, return to General.
 - The default window is 655 ? 430 and the minimum is 420 ? 400. At widths below 500, Settings uses the compact icon rail; preserve translated tooltips and the visible section heading. Ensure long content can be reached by scrolling and controls do not clip or overflow at minimum width.
-- Reuse the existing home layout breakpoint and sizing behavior in `ui/components/app_layout.py`; do not introduce a competing breakpoint without a concrete need.
+- Reuse the existing home layout breakpoint and sizing behavior in `ui/components/shell/app_layout.py`; do not introduce a competing breakpoint without a concrete need.
 
 ## Visual tokens
 

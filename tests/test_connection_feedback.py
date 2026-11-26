@@ -5,9 +5,9 @@ from unittest.mock import Mock, patch
 
 from controllers.bluetooth.controller import BTController
 from controllers.equalizer.protocol import EqResult, EqState
-from ui.components.device_status import DeviceStatusCard
-from ui.components.connection import ConnectionPanel
-from ui.components.settings_card import SettingsCard
+from ui.components.home.device_status import DeviceStatusCard
+from ui.components.home.connection import ConnectionPanel
+from ui.components.settings.settings_card import SettingsCard
 
 
 class ConnectionFeedbackTests(unittest.TestCase):

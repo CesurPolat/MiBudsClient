@@ -1,40 +1,30 @@
 """Settings card UI components."""
 
-from utils.app.i18n import t, render
-
-import flet as ft
-from ui.localization import refresh_translations
-from utils.app.i18n import LANGUAGES
-from utils.app.user_preferences import get_language_preference
 from typing import Callable, Optional
 
-from ..constants import (
-    COLOR_HOME_SURFACE,
-    COLOR_HOME_SURFACE_TOP,
-    COLOR_HOME_BORDER,
-    COLOR_HOME_CONTROL,
-    COLOR_HOME_SELECTED,
-    COLOR_HOME_SELECTED_BORDER,
-    COLOR_HOME_MUTED,
-    COLOR_HOME_HALO,
-    COLOR_BG,
-    COLOR_DIVIDER,
-    CARD_BORDER_RADIUS,
-    COLOR_DISABLED,
-    HOME_CONTROLS_HEIGHT,
-)
+import flet as ft
 
 from controllers.catalog.capabilities import DeviceCapabilities
-
-from .auto_mode import AutoModeSettingsAccordion
-from .connection import ConnectionPanel
-from .common import DeviceImage, settings_input_border
-from .latency import LowLatencyModeSettingItem
-from .setting_items import SettingItem, ToggleSettingItem
-from .gestures import GestureSettings
-from .equalizer import EqualizerSettings
-from .noise import NoiseSettings
 from controllers.noise.protocol import noise_capabilities, noise_backend_enabled
+from utils.app.i18n import t
+
+from ...constants import (
+    CARD_BORDER_RADIUS,
+    COLOR_BG,
+    COLOR_HOME_BORDER,
+    COLOR_HOME_MUTED,
+    COLOR_HOME_SELECTED,
+    COLOR_HOME_SELECTED_BORDER,
+)
+from ...localization import refresh_translations
+from ..home.controls import HomeControls
+from ..home.latency import LowLatencyModeSettingItem
+from ..home.noise import NoiseSettings
+from ..shared.equalizer import EqualizerSettings
+from .auto_mode import AutoModeSettingsAccordion
+from .device_info import DeviceInfoSection
+from .general import GeneralSection
+from .gestures import GestureSettings
 
 
 class SettingsCard(ft.Container):
@@ -85,95 +75,37 @@ class SettingsCard(ft.Container):
             on_set_item_mode=on_set_low_latency_item_mode,
         )
 
-        self.startup_item = ToggleSettingItem(
-            ft.Icons.ROCKET_LAUNCH, "deep_orange_700", t("startup.title"),
-            value=startup_enabled,
-            on_change=on_startup_toggle
-        )
-
-        self.identity_item = SettingItem(
-            ft.Icons.INFO_OUTLINE, "blue_grey_700", t("identity.title"),
-            on_click=on_check_device_identity,
-        )
-        self.identity_item.subtitle = ft.Text(
-            t("identity.not_queried"), size=12, color=COLOR_DISABLED, selectable=True,
-        )
-
+        self.identity_section = DeviceInfoSection(on_check_device_identity)
+        self.identity_item = self.identity_section.identity_item
+        self.identity_image = self.identity_section.device_image
+        self.identity_name = self.identity_section.name_text
+        self.identity_model = self.identity_section.model_text
+        self.identity_firmware = self.identity_section.firmware_text
         self._catalog_name = ""
         self._catalog_image = ""
-        self.identity_image = DeviceImage()
-        self.identity_image.width = self.identity_image.height = 130
-        self.identity_image._image_control.width = self.identity_image._image_control.height = 120
-        self.identity_image.content.gradient = ft.RadialGradient(
-            colors=[COLOR_HOME_HALO, COLOR_HOME_SURFACE], radius=0.65)
-        self.identity_name = ft.Text("\u2014", size=18, weight="w600", color="white",
-                                     text_align=ft.TextAlign.CENTER)
-        self.identity_model = ft.Text("\u2014", size=13, color="white", selectable=True, expand=True, text_align=ft.TextAlign.END)
-        self.identity_firmware = ft.Text("\u2014", size=13, color="white", selectable=True)
-        self.identity_section = ft.Container(
-            content=ft.Column([
-                ft.Container(content=self.identity_image, alignment=ft.Alignment.CENTER),
-                self.identity_name,
-                ft.Divider(color=COLOR_DIVIDER, thickness=0.5),
-                ft.Row([ft.Text(t("identity.model"), color=COLOR_DISABLED, size=12),
-                        self.identity_model], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                ft.Row([ft.Text(t("identity.firmware"), color=COLOR_DISABLED, size=12),
-                        self.identity_firmware], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            ], spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            padding=6,
-        )
-
-        self.connection_panel = ConnectionPanel()
-
-        def home_card(control):
-            return ft.Container(content=control, bgcolor=COLOR_HOME_SURFACE,
-                                gradient=ft.LinearGradient(
-                                    begin=ft.Alignment.TOP_LEFT, end=ft.Alignment.BOTTOM_RIGHT,
-                                    colors=[COLOR_HOME_SURFACE_TOP, COLOR_HOME_SURFACE]),
-                                border=ft.Border.all(1, COLOR_HOME_BORDER),
-                                border_radius=CARD_BORDER_RADIUS, padding=6)
-
-        self.connection_card = home_card(self.connection_panel)
-        self.connection_card.height = HOME_CONTROLS_HEIGHT
-        self.connected_controls = ft.Column(
-            spacing=8, visible=False, horizontal_alignment=ft.CrossAxisAlignment.STRETCH)
-        self.home_controls_card = ft.Container(
-            content=ft.Column([
-                self.connection_card,
-                self.connected_controls,
-            ], spacing=8, horizontal_alignment=ft.CrossAxisAlignment.STRETCH),
-        )
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
         self.equalizer = EqualizerSettings(on_eq_action, on_update)
         # Temporarily disable custom EQ while keeping presets available.
         self.equalizer.custom_supported = False
-        self.latency_card = home_card(self.latency_item)
-        self.equalizer_card = home_card(self.equalizer.quick_controls)
         self.noise = NoiseSettings(on_noise_action, on_update)
-        self.noise_card = home_card(self.noise.quick_controls)
-        self.device_components = {"gestures": self.gestures, "eq": self.equalizer}
-        self.language_selector = ft.Dropdown(
-            label=t("language.title"),
-            value=get_language_preference(),
-            options=[ft.DropdownOption("system", t("language.system"))] + [
-                ft.DropdownOption(code, name) for code, name in LANGUAGES.items()
-            ],
-            on_select=on_language_change,
-            color="white",
-            filled=True,
-            fill_color=COLOR_HOME_CONTROL,
-            border=settings_input_border(12),
-            expand=True,
+        self.home_controls_card = HomeControls(
+            self.latency_item, self.noise.quick_controls, self.equalizer.quick_controls,
         )
-        self._language_container = ft.Container(content=self.language_selector, padding=10)
+        self.connection_panel = self.home_controls_card.connection_panel
+        self.connection_card = self.home_controls_card.connection_card
+        self.connected_controls = self.home_controls_card.connected_controls
+        self.latency_card = self.home_controls_card.latency_card
+        self.noise_card = self.home_controls_card.noise_card
+        self.equalizer_card = self.home_controls_card.equalizer_card
+        self.device_components = {"gestures": self.gestures, "eq": self.equalizer}
+        general = GeneralSection(startup_enabled, on_startup_toggle, on_language_change)
+        self.startup_item = general.startup_item
+        self.language_selector = general.language_selector
         self._on_update = on_update
         self._selected_section = "general"
         self._sections = {
-            "general": ft.Container(
-                content=ft.Column([self.startup_item, ft.Divider(height=1, color=COLOR_DIVIDER),
-                                   self._language_container], spacing=6),
-                padding=0),
+            "general": general,
             "auto": self.auto_settings,
             "gestures": self.gestures, "identity": self.identity_section,
         }
@@ -304,7 +236,7 @@ class SettingsCard(ft.Container):
         self._on_update()
 
     def set_firmware_version(self, version: str | None) -> None:
-        self.identity_firmware.value = version or "\u2014"
+        self.identity_section.set_firmware_version(version)
 
     def set_catalog_device(self, name: str, image_path: str = "") -> None:
         self._catalog_name, self._catalog_image = name, image_path
@@ -312,11 +244,11 @@ class SettingsCard(ft.Container):
 
     def _render_identity(self):
         caps = self._capabilities
-        self.identity_name.value = caps.name if self._connected and caps.name else "\u2014"
-        self.identity_model.value = caps.model if self._connected and caps.model else "\u2014"
         image = self._catalog_image if (self._connected and caps.name and
                  self._catalog_name.casefold() == caps.name.casefold()) else ""
-        self.identity_image.set_catalog_image(image)
+        self.identity_section.set_device(
+            caps.name if self._connected else "", caps.model if self._connected else "", image,
+        )
 
     def update_connection_state(self, state: str, reason: str = "") -> None:
         """Show device controls only while the earbuds are connected."""
@@ -350,8 +282,7 @@ class SettingsCard(ft.Container):
         self.latency_item.set_mode(mode)
 
     def set_device_identity_result(self, text: str, pending: bool = False) -> None:
-        self.identity_item.subtitle.value = render(text)
-        self.identity_item.disabled = pending
+        self.identity_section.set_lookup_result(text, pending)
 
     def set_low_latency_rules(self, platform: str, exclusions: list[str], inclusions: list[str]) -> None:
         self.auto_settings.set_rules(platform, exclusions, inclusions)

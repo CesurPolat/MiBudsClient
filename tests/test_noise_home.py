@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 from controllers.catalog.capabilities import DeviceCapabilities, resolve_capabilities
 from controllers.noise.protocol import NoiseState, noise_backend_enabled
 from controllers.bluetooth.controller import BTController
-from ui.components.settings_card import SettingsCard
+from ui.components.settings.settings_card import SettingsCard
 from utils.app.i18n import get_language, set_language, t
 
 

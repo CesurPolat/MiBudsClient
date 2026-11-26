@@ -11,7 +11,7 @@ from controllers.catalog.capabilities import resolve_capabilities
 from controllers.bluetooth.config_transport import RcspConfigTransport
 from controllers.noise.protocol import noise_backend_enabled, noise_capabilities, NoiseState
 from controllers.noise.transport import NoiseTransport
-from ui.components.settings_card import SettingsCard
+from ui.components.settings.settings_card import SettingsCard
 from controllers.noise.capture import record
 
 

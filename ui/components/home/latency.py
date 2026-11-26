@@ -5,7 +5,7 @@ from utils.app.i18n import t
 import flet as ft
 from typing import Callable, Optional
 
-from ..constants import (
+from ...constants import (
     COLOR_DISABLED,
     COLOR_TEXT_PRIMARY,
     ICON_BORDER_RADIUS,

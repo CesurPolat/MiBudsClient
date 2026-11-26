@@ -31,8 +31,8 @@ from utils.app.i18n import is_rtl, set_language
 from utils.app.user_preferences import get_language_preference
 from ui.localization import refresh_translations
 from utils.diagnostics.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
-from ui.components.error_report import ErrorReportDialog
-from ui.components.debug_console import DebugConsoleDialog
+from ui.components.dialogs.error_report import ErrorReportDialog
+from ui.components.dialogs.debug_console import DebugConsoleDialog
 from utils.app.app_shutdown import ApplicationShutdown
 from utils.desktop.linux_desktop import setup_linux_desktop
 

@@ -13,7 +13,7 @@ from flet.messaging.protocol import configure_encode_object_for_msgpack
 from controllers.gestures.protocol import GestureResult
 from ui.app_message_handler import AppMessageHandler
 from ui.components import AppLayout, DeviceStatusCard, SettingsCard
-from ui.components.update_notification import show_update_notification
+from ui.components.dialogs.update_notification import show_update_notification
 from ui.localization import refresh_translations
 from ui.system_tray import SystemTray
 from utils.app.i18n import LANGUAGES, get_language, message, set_language, t
@@ -22,7 +22,7 @@ from utils.app.i18n import LANGUAGES, get_language, message, set_language, t
 class LocalizedUITests(unittest.TestCase):
     def setUp(self):
         set_language("en")
-        self.preference_patch = patch("ui.components.settings_card.get_language_preference", return_value="system")
+        self.preference_patch = patch("ui.components.settings.general.get_language_preference", return_value="system")
         self.preference_patch.start()
         self.addCleanup(self.preference_patch.stop)
         self.addCleanup(set_language, "en")

@@ -7,11 +7,11 @@ from typing import Callable
 import flet as ft
 from ui.localization import refresh_translations
 
-from ..constants import APP_VERSION, GITHUB_URL, WINDOW_WIDTH, PAGE_PADDING, HOME_WIDE_BREAKPOINT, HOME_CONTROLS_HEIGHT
-from ..constants import FOOTER_HEIGHT, NAVIGATION_TRANSITION_MS
-from .common import Spacer, Footer
-from .device_status import DeviceStatusCard
-from .settings_card import SettingsCard
+from ...constants import APP_VERSION, GITHUB_URL, WINDOW_WIDTH, PAGE_PADDING, HOME_WIDE_BREAKPOINT, HOME_CONTROLS_HEIGHT
+from ...constants import FOOTER_HEIGHT, NAVIGATION_TRANSITION_MS
+from ..shared.common import Spacer, Footer
+from ..home.device_status import DeviceStatusCard
+from ..settings.settings_card import SettingsCard
 
 
 class AppLayout(ft.Column):

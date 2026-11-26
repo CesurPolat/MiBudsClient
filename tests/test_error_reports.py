@@ -11,7 +11,7 @@ from urllib.error import HTTPError
 from utils.diagnostics.error_reports import (DeliveryError, ErrorReportClient, ErrorReportManager,
                                  ReportQueue, encode_report, make_report, redact,
                                  guard_ui_callbacks, queue_directory)
-from ui.components.error_report import ErrorReportDialog
+from ui.components.dialogs.error_report import ErrorReportDialog
 from utils.diagnostics.debug_console import DebugConsoleManager
 
 

@@ -220,7 +220,7 @@ class GestureTransportTests(unittest.TestCase):
 
 class GestureControllerTests(unittest.TestCase):
     def test_entrypoint_and_ui_import_in_fresh_processes(self):
-        for entrypoint in ("main", "controllers.bluetooth", "ui.components.gestures"):
+        for entrypoint in ("main", "controllers.bluetooth", "ui.components.settings.gestures"):
             with self.subTest(entrypoint=entrypoint):
                 result = subprocess.run([sys.executable, "-c", f"import {entrypoint}"],
                                         cwd=Path(__file__).resolve().parents[1],

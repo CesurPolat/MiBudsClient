@@ -1,13 +1,13 @@
 """Reusable UI components, exported through the original import path."""
 
-from .battery import BatteryIndicator, BatteryPanel
-from .device_status import DeviceStatusCard
-from .setting_items import SettingItem, ToggleSettingItem
-from .latency import LowLatencyModeSettingItem
-from .auto_mode import PlatformExceptionEditor, AutoModeSettingsAccordion
-from .settings_card import SettingsCard
-from .common import StatusBar, DeviceImage, AppTitle, Spacer, Footer
-from .app_layout import AppLayout
+from .home.battery import BatteryIndicator, BatteryPanel
+from .home.device_status import DeviceStatusCard
+from .shared.setting_items import SettingItem, ToggleSettingItem
+from .home.latency import LowLatencyModeSettingItem
+from .settings.auto_mode import PlatformExceptionEditor, AutoModeSettingsAccordion
+from .settings.settings_card import SettingsCard
+from .shared.common import StatusBar, DeviceImage, AppTitle, Spacer, Footer
+from .shell.app_layout import AppLayout
 
 __all__ = [
     "AppLayout",

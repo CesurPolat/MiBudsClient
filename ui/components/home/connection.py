@@ -3,7 +3,7 @@
 from utils.app.i18n import Message, t, render
 
 import flet as ft
-from ..constants import HOME_CONTROLS_HEIGHT
+from ...constants import HOME_CONTROLS_HEIGHT
 
 class ConnectionPanel(ft.Column):
     def __init__(self):

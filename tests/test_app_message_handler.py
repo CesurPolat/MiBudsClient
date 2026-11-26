@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import Mock, call, patch
 
 from ui.app_message_handler import AppMessageHandler
-from ui.components.update_notification import show_update_notification
+from ui.components.dialogs.update_notification import show_update_notification
 from ui.constants import BATTERY_UNKNOWN, GITHUB_URL
 
 
@@ -190,10 +190,10 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertTrue(snack.open)
         checkbox = snack.content.controls[1].controls[0]
         download = snack.content.controls[2]
-        with patch("ui.components.update_notification.suppress_update_notification") as suppress:
+        with patch("ui.components.dialogs.update_notification.suppress_update_notification") as suppress:
             checkbox.on_change(SimpleNamespace(control=SimpleNamespace(value=True)))
             suppress.assert_called_once_with("v1.2.3")
-        with patch("ui.components.update_notification.webbrowser.open") as open_url:
+        with patch("ui.components.dialogs.update_notification.webbrowser.open") as open_url:
             download.on_click(None)
             open_url.assert_called_once_with(GITHUB_URL + "/releases/latest")
         self.assertFalse(snack.open)

@@ -7,8 +7,8 @@ from unittest.mock import Mock, patch
 
 from controllers.gestures.protocol import GestureResult, gesture_capabilities
 from controllers.gestures.controller import GestureSettingsController
-from ui.components.gestures import GestureSettings
-from ui.components.settings_card import SettingsCard
+from ui.components.settings.gestures import GestureSettings
+from ui.components.settings.settings_card import SettingsCard
 from ui.app_message_handler import AppMessageHandler
 
 
@@ -77,7 +77,7 @@ class GestureSettingsTests(unittest.TestCase):
 
     def test_single_tap_title_is_localized_in_all_languages(self):
         from utils.app.i18n import render
-        from ui.components.gestures import GESTURE_NAMES
+        from ui.components.settings.gestures import GESTURE_NAMES
         for language, expected in (("en", "Single tap"), ("tr", "Tek dokunuş"), ("zh-CN", "单击")):
             self.assertEqual(render(GESTURE_NAMES[4], language), expected)
 

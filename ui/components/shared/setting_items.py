@@ -3,7 +3,7 @@
 import flet as ft
 from typing import Callable, Optional
 
-from ..constants import (
+from ...constants import (
     COLOR_DISABLED,
     COLOR_HOME_CONTROL,
     COLOR_HOME_BORDER,

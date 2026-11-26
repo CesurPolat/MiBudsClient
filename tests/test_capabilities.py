@@ -12,7 +12,7 @@ from controllers.catalog.device_catalog import get_device_models_by_name
 from controllers.bluetooth.controller import BTController
 from controllers.equalizer.protocol import EqResult, EqState
 from controllers.equalizer.transport import EqTransport
-from ui.components.settings_card import SettingsCard
+from ui.components.settings.settings_card import SettingsCard
 from ui.system_tray import SystemTray
 from controllers.latency.controller import LatencyController
 from controllers.device.catalog_sync import CatalogSync

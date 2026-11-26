@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 
-from ui.components.debug_console import DebugConsoleDialog
+from ui.components.dialogs.debug_console import DebugConsoleDialog
 from utils.diagnostics.debug_console import DebugConsoleManager
 from utils.app.i18n import set_language, t
 
@@ -59,7 +59,7 @@ class DebugConsoleDialogTests(unittest.TestCase):
                 self.manager._append_log('new message\n', 'stderr')
             else:
                 self.console.stop()
-        with patch('ui.components.debug_console.asyncio.sleep', side_effect=sleep):
+        with patch('ui.components.dialogs.debug_console.asyncio.sleep', side_effect=sleep):
             asyncio.run(self.console._refresh_logs(1))
         self.assertEqual(self.console.text.value, '[ERR] new message\n')
         self.page.update.assert_called_once_with()
@@ -69,7 +69,7 @@ class DebugConsoleDialogTests(unittest.TestCase):
         self.console.toggle()
         self.console.close()
         self.page.update.reset_mock()
-        with patch('ui.components.debug_console.asyncio.sleep'):
+        with patch('ui.components.dialogs.debug_console.asyncio.sleep'):
             asyncio.run(self.console._refresh_logs(1))
         self.page.update.assert_not_called()
 
@@ -81,7 +81,7 @@ class DebugConsoleDialogTests(unittest.TestCase):
             count += 1
             if count == 3:
                 self.console.stop()
-        with patch('ui.components.debug_console.asyncio.sleep', side_effect=sleep):
+        with patch('ui.components.dialogs.debug_console.asyncio.sleep', side_effect=sleep):
             asyncio.run(self.console._refresh_logs(1))
         self.page.update.assert_not_called()
 
@@ -108,6 +108,6 @@ class DebugConsoleDialogTests(unittest.TestCase):
         self.console.toggle()
         self.manager._append_log('late\n', 'stdout')
         self.page.update.side_effect = RuntimeError('An attempt to fetch destroyed session.')
-        with patch('ui.components.debug_console.asyncio.sleep'):
+        with patch('ui.components.dialogs.debug_console.asyncio.sleep'):
             asyncio.run(self.console._refresh_logs(1))
         self.page.update.assert_called_once_with()

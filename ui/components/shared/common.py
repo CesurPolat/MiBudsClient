@@ -6,7 +6,7 @@ import flet as ft
 
 from utils.app.resource_manager import get_resource_path
 
-from ..constants import (
+from ...constants import (
     COLOR_DISABLED,
     COLOR_HOME_BORDER,
     COLOR_HOME_SELECTED_BORDER,

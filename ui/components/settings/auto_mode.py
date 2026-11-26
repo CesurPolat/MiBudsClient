@@ -3,19 +3,19 @@
 from utils.app.i18n import t
 
 import flet as ft
-from ..constants import (
+from ...constants import (
     COLOR_HOME_CONTROL, COLOR_HOME_SURFACE, COLOR_HOME_BORDER,
     COLOR_HOME_SELECTED, COLOR_HOME_SELECTED_BORDER,
 )
 from typing import Callable, Optional
 
-from ..constants import (
+from ...constants import (
     COLOR_DISABLED,
     COLOR_TEXT_PRIMARY,
 )
 
-from .common import settings_input_border
-from .setting_items import ToggleSettingItem
+from ..shared.common import settings_input_border
+from ..shared.setting_items import ToggleSettingItem
 
 
 class PlatformExceptionEditor(ft.Column):

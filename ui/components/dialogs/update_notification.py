@@ -6,7 +6,7 @@ import webbrowser
 
 import flet as ft
 
-from ..constants import GITHUB_URL
+from ...constants import GITHUB_URL
 from utils.app.user_preferences import suppress_update_notification
 
 

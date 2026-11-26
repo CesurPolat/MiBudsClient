@@ -4,12 +4,12 @@ from utils.app.i18n import t, render
 
 import flet as ft
 
-from ..constants import (
+from ...constants import (
     DEVICE_IMAGE_SIZE, CARD_BORDER_RADIUS, COLOR_HOME_MUTED,
     COLOR_HOME_HALO, COLOR_BG,
 )
 from .battery import BatteryPanel
-from .common import DeviceImage
+from ..shared.common import DeviceImage
 
 
 class DeviceStatusCard(ft.Container):

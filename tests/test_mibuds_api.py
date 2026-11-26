@@ -15,7 +15,7 @@ from uuid import UUID
 from controllers.catalog.device_catalog import _load_app_catalog, install_catalog
 from controllers.bluetooth.rcsp import DeviceIdentity
 from controllers.device.catalog_sync import CatalogSync
-from ui.components.device_status import DeviceStatusCard
+from ui.components.home.device_status import DeviceStatusCard
 import flet as ft
 from PIL import Image
 from utils.api.mibuds_api import CatalogClient, parse_extra_data

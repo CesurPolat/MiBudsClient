@@ -4,7 +4,7 @@ from utils.app.i18n import t
 
 import flet as ft
 
-from ..constants import (
+from ...constants import (
     COLOR_DISABLED,
     COLOR_CHARGING,
     COLOR_BATTERY,

@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Callable
 
 from .constants import BATTERY_UNKNOWN
-from .components.update_notification import show_update_notification
+from .components.dialogs.update_notification import show_update_notification
 from .localization import refresh_translations
 from .battery_notifications import BatteryNotificationState
 from utils.app.i18n import LANGUAGE_CHOICES, is_rtl, set_language

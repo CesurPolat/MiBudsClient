@@ -4,7 +4,7 @@ from utils.app.i18n import t, render
 
 import flet as ft
 from controllers.gestures.protocol import MFB_OPERATIONS, MFB_ACTION_KEYS
-from ..constants import COLOR_HOME_CONTROL, COLOR_HOME_SURFACE
+from ...constants import COLOR_HOME_CONTROL, COLOR_HOME_SURFACE
 
 GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long"), 5: t("gesture.swipe")}
 GESTURE_NAMES.update({4004: t("gesture.squeeze_double"), 4005: t("gesture.squeeze_triple"),
@@ -14,9 +14,9 @@ ACTION_NAMES = dict(enumerate(t("action." + key) for key in (
     "assistant", "play", "previous", "next", "volume_up", "volume_down",
     "noise", "game", "none", "photo", "record", "volume", "translation", "track",
 )))
-from ..constants import COLOR_TEXT_PRIMARY, COLOR_DISABLED
-from .common import settings_input_border
-from .setting_items import SettingItem
+from ...constants import COLOR_TEXT_PRIMARY, COLOR_DISABLED
+from ..shared.common import settings_input_border
+from ..shared.setting_items import SettingItem
 
 
 class GestureSettings(ft.Column):

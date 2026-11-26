@@ -7,7 +7,7 @@ import threading
 from typing import Callable
 
 from utils.desktop.startup_manager import reconcile_startup, set_startup
-from ui.components.settings_card import SettingsCard
+from ui.components.settings.settings_card import SettingsCard
 from ..gestures.controller import GestureSettingsController
 from ..equalizer.controller import EqSettingsController
 from ..noise.controller import NoiseSettingsController

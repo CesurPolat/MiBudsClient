@@ -14,7 +14,7 @@ from controllers.equalizer.transport import EqTransport
 from controllers.gestures.transport import GestureTransport
 from controllers.bluetooth.rcsp import DeviceIdentity
 from controllers.bluetooth.rcsp import RcspStreamParser
-from ui.components.equalizer import EqualizerSettings
+from ui.components.shared.equalizer import EqualizerSettings
 from ui.app_message_handler import AppMessageHandler
 from utils.app.i18n import message as m, set_language, t
 
@@ -390,7 +390,7 @@ class EqUITests(unittest.TestCase):
         self.assertFalse(self.panel._feedback_active)
 
     def test_quick_controls_translate_with_settings_without_losing_selection(self):
-        from ui.components.settings_card import SettingsCard
+        from ui.components.settings.settings_card import SettingsCard
         self.load()
         card = SettingsCard()
         card.equalizer = self.panel
@@ -430,7 +430,7 @@ class EqUITests(unittest.TestCase):
     def test_settings_card_disables_custom_eq_even_if_device_supports_it(self):
         from dataclasses import replace
         from controllers.catalog.capabilities import DeviceCapabilities
-        from ui.components.settings_card import SettingsCard
+        from ui.components.settings.settings_card import SettingsCard
         card = SettingsCard(on_eq_action=self.action)
         caps = replace(DeviceCapabilities(), available=frozenset({"eq", "custom_eq"}))
         card.set_capabilities(caps)
