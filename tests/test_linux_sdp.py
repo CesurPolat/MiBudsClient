@@ -92,15 +92,15 @@ class LinuxQueryTests(unittest.TestCase):
         self.assertEqual(result, 7)
         self.assertEqual(self.popen.call_args.args[0], ['sdptool', 'browse', '--xml', ADDRESS])
 
-    def test_missing_sdptool_has_actionable_error_and_6_play_retains_fallback(self):
+    def test_missing_sdptool_has_actionable_error_and_blocks_6_play_connection(self):
         self.popen.side_effect = FileNotFoundError()
         with self.assertRaisesRegex(OSError, 'sdptool'):
             self.resolve()
         backend = PlatformBackend()
         backend.create_rfcomm_socket = Mock(return_value=Mock())
-        result = BluetoothConnection(backend).connect(ADDRESS, 'Redmi Buds 6 Play')
-        self.assertEqual((result.channel, result.service_uuid, result.resolution_source),
-                         (6, None, 'profile_fallback'))
+        with self.assertRaisesRegex(ConnectionError, 'No usable RFCOMM service'):
+            BluetoothConnection(backend).connect(ADDRESS, 'Redmi Buds 6 Play')
+        backend.create_rfcomm_socket.assert_not_called()
 
     def test_absent_service_returns_none_but_process_failure_is_reported(self):
         self.process.communicate.return_value = (record(SERVICE_UUIDS[2], 7), b'')

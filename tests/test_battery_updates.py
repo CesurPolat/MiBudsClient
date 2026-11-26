@@ -3,15 +3,15 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from controllers.device.battery_updates import BatteryUpdates
+from controllers.battery.updates import BatteryUpdates
 
 
 class BatteryUpdatesTests(unittest.TestCase):
     def test_refresh_messages_and_original_charging_transition_melodies(self):
         publish = Mock()
         updates = BatteryUpdates(publish)
-        with patch("controllers.device.battery_updates.time.sleep"), patch(
-            "controllers.device.battery_updates.play_tones",
+        with patch("controllers.battery.updates.time.sleep"), patch(
+            "controllers.battery.updates.play_tones",
         ) as play:
             updates.update(60, 70, 255)
             play.assert_not_called()
@@ -32,8 +32,8 @@ class BatteryUpdatesTests(unittest.TestCase):
 
     def test_right_side_melody_and_invalid_values_do_not_create_false_transitions(self):
         updates = BatteryUpdates(Mock())
-        with patch("controllers.device.battery_updates.time.sleep"), patch(
-            "controllers.device.battery_updates.play_tones",
+        with patch("controllers.battery.updates.time.sleep"), patch(
+            "controllers.battery.updates.play_tones",
         ) as play:
             updates.update(60, 70, 255)
             updates.update(60, 198, 255)

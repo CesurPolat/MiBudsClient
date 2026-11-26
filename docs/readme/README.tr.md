@@ -40,7 +40,7 @@ Windows ve Linux için Python ve Flet ile geliştirildi.
 | Model tanıma | Adlar, VID/PID kimlikleri, görseller ve yetenekler [cihaz kataloğundan](../../assets/device_catalog.json) gelir. Modelin tanınması tek başına çalışan bir protokol oturumunu garanti etmez. |
 | Uygulanmış kontroller | Pil, ANC/şeffaflık, EQ ön ayarları, desteklenen dokunma hareketleri ve düşük gecikme. Kontroller ve seçenekler modele; pil verisi cihazın bildirdiği değerlere bağlıdır. |
 | Windows bağlantısı | Cihazın Bluetooth servisinden RFCOMM kanalını bulur. MIUI SPP (FD2D) için komutlu, XiaoAI/standart SPP için ham doğrulamayı destekler. |
-| Linux bağlantısı | BlueZ SDP kayıtlarından tam servis UUID'sine göre RFCOMM kanalını bulur. Doğrulama servise göre seçilir. Kanal çözülemezse yalnız Redmi Buds 6 Play için kanal 6 yedeği kullanılır. Donanım uyumluluğu cihaz ve firmware'e bağlıdır. |
+| Linux bağlantısı | BlueZ SDP kayıtlarından tam servis UUID'sine göre RFCOMM kanalını bulur. Bağlantı için bir servis kanalının bulunması gerekir. Kimlik doğrulama servise göre seçilir. Donanım uyumluluğu cihaz ve firmware'e bağlıdır. |
 | Donanım kanıtı | Redmi Buds 6 Play, projenin donanım referansıdır; pil/düşük gecikme kullanımı ve aşağıdaki tarihli EQ/jest kontrolleri kaydedilmiştir. Bu, her modelin her özelliğini doğrulamaz; ANC/şeffaflık ve ham doğrulama için gerçek cihaz denemesi hâlâ gerekir. |
 
 Custom EQ ileri bir sürüme bırakıldı; özel profil dahil gizlidir. Katalogdaki diğer özellikler kendiliğinden uygulama kontrolüne dönüşmez. Özelliklerin görünürlüğünü katalog, işlemin tamamlanmasını bağlantı ve cihaz yanıtları belirler. Firmware ve bölgesel sürümler farklı davranabilir.

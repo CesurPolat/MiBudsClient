@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 import json
 import re
 from .device_catalog import get_device_models_by_name
-from .equalizer import PROFILE_KEYS
-from .gestures import GESTURE_FUNCTION_TYPES, actions_for_gesture, gesture_config
+from ..equalizer.protocol import PROFILE_KEYS
+from ..gestures.protocol import GESTURE_FUNCTION_TYPES, actions_for_gesture, gesture_config
 from .catalog_options import resolve_options
 
 FUNCTIONS = {

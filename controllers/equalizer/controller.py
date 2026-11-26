@@ -3,7 +3,7 @@ from utils.error_reports import publish_exception
 import threading
 
 from utils.i18n import message as m, error_message
-from controllers.bluetooth.equalizer import EqResult
+from .protocol import EqResult
 
 
 class EqSettingsController:

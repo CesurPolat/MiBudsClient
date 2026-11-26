@@ -1,12 +1,12 @@
-from controllers.bluetooth.capabilities import resolve_capabilities
+from controllers.catalog.capabilities import resolve_capabilities
 """Flet states and background gesture completion routing without hardware."""
 
 import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from controllers.bluetooth.gestures import GestureResult, gesture_capabilities
-from controllers.settings.gestures import GestureSettingsController
+from controllers.gestures.protocol import GestureResult, gesture_capabilities
+from controllers.gestures.controller import GestureSettingsController
 from ui.components.gestures import GestureSettings
 from ui.components.settings_card import SettingsCard
 from ui.app_message_handler import AppMessageHandler
@@ -144,7 +144,7 @@ class GestureSettingsTests(unittest.TestCase):
         device.gesture_capabilities = {1: (1, 3)}
         device.request_gesture_settings.return_value = GestureResult(True, {1: (1, 3)}, "Loaded")
         worker = GestureSettingsController(device, self.panel, publish)
-        with patch("controllers.settings.gestures.threading.Thread") as thread:
+        with patch("controllers.gestures.controller.threading.Thread") as thread:
             worker.refresh()
             worker.refresh()
             thread.assert_called_once()
@@ -161,7 +161,7 @@ class GestureSettingsTests(unittest.TestCase):
         device, publish = Mock(), Mock()
         device.request_gesture_settings.side_effect = RuntimeError("Failed")
         worker = GestureSettingsController(device, self.panel, publish)
-        with patch("controllers.settings.gestures.threading.Thread") as thread:
+        with patch("controllers.gestures.controller.threading.Thread") as thread:
             worker.refresh()
             thread.call_args.kwargs["target"]()
         message = publish.call_args.args[0]

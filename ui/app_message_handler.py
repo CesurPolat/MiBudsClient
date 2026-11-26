@@ -315,7 +315,7 @@ class AppMessageHandler:
         if message.get("eq") is not None:
             self._settings_card.equalizer.notification(message["eq"])
         if 2 in records or 80 in records:
-            from controllers.bluetooth.gestures import parse_gesture_records
+            from controllers.gestures.protocol import parse_gesture_records
             config = 80 if 80 in records else 2
             value = records[config]
             try:

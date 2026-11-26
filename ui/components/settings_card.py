@@ -24,7 +24,7 @@ from ..constants import (
     HOME_CONTROLS_HEIGHT,
 )
 
-from controllers.bluetooth.capabilities import DeviceCapabilities
+from controllers.catalog.capabilities import DeviceCapabilities
 
 from .auto_mode import AutoModeSettingsAccordion
 from .connection import ConnectionPanel
@@ -34,7 +34,7 @@ from .setting_items import SettingItem, ToggleSettingItem
 from .gestures import GestureSettings
 from .equalizer import EqualizerSettings
 from .noise import NoiseSettings
-from controllers.bluetooth.noise import noise_capabilities, noise_backend_enabled
+from controllers.noise.protocol import noise_capabilities, noise_backend_enabled
 
 
 class SettingsCard(ft.Container):

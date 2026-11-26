@@ -1,9 +1,9 @@
 """ANC codec and function-list capabilities; not hardware certification."""
 from dataclasses import dataclass
 
-from .config_transport import parse_config_records
-from .equalizer import _frame
-from .catalog_options import firmware_at_least
+from ..bluetooth.packets.config_transport import parse_config_records
+from ..bluetooth.packets.rcsp import build_command_frame
+from ..catalog.catalog_options import firmware_at_least
 
 
 ANC_FUNCTIONS = (1002, 1003, 1006, 1007)
@@ -121,18 +121,18 @@ def wear_requirement(capabilities, wear, mode):
 def build_noise_mode(counter, mode):
     if type(mode) is not int or mode not in (0, 1, 2):
         raise ValueError("Unknown noise mode")
-    return _frame(0x08, counter, bytes((2, 4, mode)))
+    return build_command_frame(0x08, counter, bytes((2, 4, mode)))
 
 
 def build_noise_level(counter, mode, level, supported_levels):
     if (type(mode) is not int or mode not in (1, 2) or type(level) is not int
             or not 0 <= level <= 255 or level not in supported_levels):
         raise ValueError("Unsupported noise level")
-    return _frame(0xF2, counter, bytes((4, 0, 11, mode, level)))
+    return build_command_frame(0xF2, counter, bytes((4, 0, 11, mode, level)))
 
 
 def build_noise_read(counter):
-    return _frame(0xF3, counter, bytes.fromhex("00 0b"))
+    return build_command_frame(0xF3, counter, bytes.fromhex("00 0b"))
 
 
 def parse_noise_state(data):

@@ -8,7 +8,7 @@ from utils.image_notifications import ImageNotifications
 from utils.linux_notifications import LinuxNotifications
 from utils.tray_host import TrayHostMonitor
 from utils.battery import battery_state
-from controllers.bluetooth.equalizer import PROFILE_KEYS
+from controllers.equalizer.protocol import PROFILE_KEYS
 
 from utils.tray_backend import load_tray_module
 

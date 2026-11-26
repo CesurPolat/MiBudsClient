@@ -2,7 +2,7 @@
 
 `RawAuthSession` implements the alternative Xiaomi SPP handshake. AUTO selects it
 only after connecting to the XiaoAI or standard SPP UUID. FD2D continues using
-command auth; the existing unknown-UUID Redmi Buds 6 Play fallback stays direct.
+command auth. All connections require a resolved service UUID.
 Authentication errors close the socket, without changing UUID or bypassing auth.
 No model allowlist or experimental opt-in is used.
 

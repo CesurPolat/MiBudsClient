@@ -71,7 +71,7 @@ class AppLayoutTests(unittest.TestCase):
         self.assertEqual(update.call_count, 4)
 
     def test_settings_sections_trigger_reads_and_fall_back_on_disconnect(self):
-        from controllers.bluetooth.capabilities import resolve_capabilities
+        from controllers.catalog.capabilities import resolve_capabilities
         gesture_read, eq_action = Mock(), Mock()
         settings = SettingsCard(on_gesture_refresh=gesture_read, on_eq_action=eq_action)
         settings.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
@@ -123,7 +123,7 @@ class AppLayoutTests(unittest.TestCase):
         self.assertFalse(settings._sections["general"].visible)
 
     def test_device_info_uses_connected_catalog_data_and_clears_on_disconnect(self):
-        from controllers.bluetooth.capabilities import resolve_capabilities
+        from controllers.catalog.capabilities import resolve_capabilities
         settings = SettingsCard()
         settings.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
         settings.update_connection_state("connected")

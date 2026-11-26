@@ -8,9 +8,9 @@ from typing import Callable
 
 from utils.startup_manager import reconcile_startup, set_startup
 from ui.components.settings_card import SettingsCard
-from .gestures import GestureSettingsController
-from .equalizer import EqSettingsController
-from .noise import NoiseSettingsController
+from ..gestures.controller import GestureSettingsController
+from ..equalizer.controller import EqSettingsController
+from ..noise.controller import NoiseSettingsController
 
 
 class SettingsController:

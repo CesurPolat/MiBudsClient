@@ -1,4 +1,4 @@
-from controllers.bluetooth.capabilities import resolve_capabilities
+from controllers.catalog.capabilities import resolve_capabilities
 """Live language changes preserve controls, pending requests, and user input."""
 
 import unittest
@@ -10,7 +10,7 @@ import msgpack
 from flet.controls.base_control import BaseControl
 from flet.messaging.protocol import configure_encode_object_for_msgpack
 
-from controllers.bluetooth.gestures import GestureResult
+from controllers.gestures.protocol import GestureResult
 from ui.app_message_handler import AppMessageHandler
 from ui.components import AppLayout, DeviceStatusCard, SettingsCard
 from ui.components.update_notification import show_update_notification

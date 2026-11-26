@@ -6,12 +6,12 @@ from types import SimpleNamespace
 from unittest.mock import Mock
 
 from controllers.bluetooth.controller import BTController
-from controllers.bluetooth.equalizer import (
+from controllers.equalizer.protocol import (
     EqBand, EqState, EqResult, build_eq_request, build_profile, build_custom_mode,
     build_custom_eq, build_eq_reset, parse_custom_eq, parse_profile, eq_profiles,
 )
-from controllers.bluetooth.eq_transport import EqTransport
-from controllers.bluetooth.gesture_transport import GestureTransport
+from controllers.equalizer.transport import EqTransport
+from controllers.gestures.transport import GestureTransport
 from controllers.bluetooth.rcsp import DeviceIdentity
 from controllers.bluetooth.rcsp import RcspStreamParser
 from ui.components.equalizer import EqualizerSettings
@@ -243,8 +243,8 @@ class EqUITests(unittest.TestCase):
         self.action.reset_mock()
 
     def test_all_model_specific_buttons_are_selectable(self):
-        from controllers.bluetooth.capabilities import resolve_capabilities
-        from controllers.bluetooth.device_catalog import _APP_CATALOG
+        from controllers.catalog.capabilities import resolve_capabilities
+        from controllers.catalog.device_catalog import _APP_CATALOG
         for model in _APP_CATALOG["result"]["tw_product_list"]:
             caps = resolve_capabilities(model["name"])
             if not caps.supports("eq"):
@@ -429,7 +429,7 @@ class EqUITests(unittest.TestCase):
 
     def test_settings_card_disables_custom_eq_even_if_device_supports_it(self):
         from dataclasses import replace
-        from controllers.bluetooth.capabilities import DeviceCapabilities
+        from controllers.catalog.capabilities import DeviceCapabilities
         from ui.components.settings_card import SettingsCard
         card = SettingsCard(on_eq_action=self.action)
         caps = replace(DeviceCapabilities(), available=frozenset({"eq", "custom_eq"}))

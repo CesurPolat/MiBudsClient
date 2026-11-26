@@ -7,11 +7,11 @@ from functools import lru_cache
 @lru_cache(maxsize=1)
 def implementation_diagnostics():
     from ui.constants import APP_VERSION
-    directory = Path(__file__).resolve().parent
+    directory = Path(__file__).resolve().parents[1]
     digest = hashlib.sha256()
     try:
-        for path in sorted(directory.glob("*.py")):
-            digest.update(path.name.encode("utf-8"))
+        for path in sorted(directory.rglob("*.py")):
+            digest.update(path.relative_to(directory).as_posix().encode("utf-8"))
             digest.update(path.read_bytes())
         fingerprint = digest.hexdigest() if (directory / "controller.py").is_file() else None
     except OSError:

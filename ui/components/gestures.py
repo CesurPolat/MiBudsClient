@@ -3,7 +3,7 @@
 from utils.i18n import t, render
 
 import flet as ft
-from controllers.bluetooth.gestures import MFB_OPERATIONS, MFB_ACTION_KEYS
+from controllers.gestures.protocol import MFB_OPERATIONS, MFB_ACTION_KEYS
 from ..constants import COLOR_HOME_CONTROL, COLOR_HOME_SURFACE
 
 GESTURE_NAMES = {4: t("gesture.single"), 1: t("gesture.double"), 2: t("gesture.triple"), 3: t("gesture.long"), 5: t("gesture.swipe")}

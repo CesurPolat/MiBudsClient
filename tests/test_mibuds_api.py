@@ -12,7 +12,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlsplit
 from uuid import UUID
 
-from controllers.bluetooth.device_catalog import _load_app_catalog, install_catalog
+from controllers.catalog.device_catalog import _load_app_catalog, install_catalog
 from controllers.bluetooth.rcsp import DeviceIdentity
 from controllers.device.catalog_sync import CatalogSync
 from ui.components.device_status import DeviceStatusCard

@@ -1,8 +1,8 @@
 """Gesture operations using the shared RCSP config transaction channel."""
 from utils.i18n import message as m, error_message
 import time
-from .config_transport import RcspConfigTransport
-from .gestures import GestureResult, build_gesture_assignment, build_gesture_request, parse_gesture_records, gesture_config
+from ..bluetooth.packets.config_transport import RcspConfigTransport
+from .protocol import GestureResult, build_gesture_assignment, build_gesture_request, parse_gesture_records, gesture_config
 
 
 class GestureTransport(RcspConfigTransport):

@@ -40,7 +40,7 @@ class GestureResult:
 
 
 def gesture_capabilities(device_name: str, identity=None) -> dict[int, tuple[int, ...]]:
-    from .capabilities import resolve_capabilities
+    from ..catalog.capabilities import resolve_capabilities
     caps = resolve_capabilities(device_name, identity)
     return caps.gestures if caps.supports("gestures") else {}
 
@@ -79,7 +79,7 @@ def parse_gesture_records(data: bytes, *, physical=False) -> dict[int, tuple[int
     """Validate the complete record list before returning any assignments."""
     assignments = {}
     found = False
-    from .config_transport import parse_config_records
+    from ..bluetooth.packets.config_transport import parse_config_records
     for config_id, value in parse_config_records(data).items():
         if config_id == 2:
             found = True

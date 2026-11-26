@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 
 from controllers.bluetooth.discovery import BluetoothDiscovery
-from controllers.bluetooth.device_catalog import _load_app_catalog, install_catalog
+from controllers.catalog.device_catalog import _load_app_catalog, install_catalog
 
 
 class DiscoveryTests(unittest.TestCase):

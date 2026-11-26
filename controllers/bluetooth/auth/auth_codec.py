@@ -1,7 +1,7 @@
 """RCSP command-auth framing, separate from the cipher and session policy."""
 from dataclasses import dataclass
 
-from .rcsp import RcspPacket, is_supported_target
+from ..packets.rcsp import RcspPacket, is_supported_target
 
 
 @dataclass(frozen=True)

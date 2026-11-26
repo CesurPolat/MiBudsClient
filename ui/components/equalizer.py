@@ -1,7 +1,7 @@
 """Flet EQ controls with separate local draft and device-confirmed state."""
 import flet as ft
 
-from controllers.bluetooth.equalizer import EqBand, PROFILE_KEYS
+from controllers.equalizer.protocol import EqBand, PROFILE_KEYS
 from utils.i18n import t, render
 from .setting_items import SettingItem
 from ..constants import COLOR_DISABLED, COLOR_TEXT_PRIMARY, ICON_BORDER_RADIUS

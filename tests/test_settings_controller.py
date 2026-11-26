@@ -1,4 +1,4 @@
-from controllers.bluetooth.capabilities import resolve_capabilities
+from controllers.catalog.capabilities import resolve_capabilities
 """Settings callbacks preserve startup and device identity behavior."""
 
 import unittest

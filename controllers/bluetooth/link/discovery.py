@@ -9,7 +9,7 @@ from utils.error_reports import redact
 from dataclasses import dataclass
 from typing import Optional
 
-from .device_catalog import get_device_models_by_name
+from ...catalog.device_catalog import get_device_models_by_name
 
 
 # ─────────────────────────────────────────────────────────────────────────────

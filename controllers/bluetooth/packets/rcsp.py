@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Optional
 import time
 
-from .device_catalog import get_device_codes, get_device_name, get_device_models
+from ...catalog.device_catalog import get_device_codes, get_device_name, get_device_models
 
 
 SUPPORTED_TARGET_ROLES = frozenset((0, 4, 7))
@@ -63,6 +63,13 @@ def build_identity_request(counter: int) -> bytes:
     if not 0 <= counter <= 0xFF:
         raise ValueError("RCSP counter must fit in one byte")
     return bytes.fromhex(f"fe dc ba c4 02 00 05 {counter:02x} ff ff ff ff ef")
+
+
+def build_command_frame(opcode: int, counter: int, payload: bytes) -> bytes:
+    if type(counter) is not int or not 0 <= counter <= 255:
+        raise ValueError("RCSP counter must fit in one byte")
+    body = bytes([counter]) + payload
+    return bytes.fromhex(f"fe dc ba c4 {opcode:02x} {len(body):04x}") + body + bytes.fromhex("ef")
 
 
 def decode_version(data: bytes) -> str:

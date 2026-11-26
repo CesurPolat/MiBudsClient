@@ -1,25 +1,26 @@
 """Bluetooth socket connection handler."""
 
 import socket
-import os
 import threading
 import logging
 import time
 from dataclasses import dataclass
-from typing import Optional
+from typing import Callable, Optional
 from utils.error_reports import redact
 
 from .sdp import PlatformBackend, SERVICE_UUIDS, ConnectionCancelled
-from .auth_session import AuthPolicy, AuthError, CommandAuthSession
-from .raw_auth import RawAuthSession
+from ..auth.auth_session import AuthPolicy, AuthError, CommandAuthSession
+from ..auth.raw_auth import RawAuthSession
 
-from .constants import RFCOMM_PORT, SOCKET_TIMEOUT, RECV_BUFFER_SIZE
+
+SOCKET_TIMEOUT = 2
+RECV_BUFFER_SIZE = 1024
 
 
 @dataclass(frozen=True)
 class ConnectionResult:
     socket: object
-    service_uuid: str | None
+    service_uuid: str
     channel: int
     resolution_source: str
 
@@ -30,11 +31,12 @@ log = logging.getLogger(__name__)
 class BluetoothConnection:
     """Manages Bluetooth socket connection."""
     
-    def __init__(self, backend=None):
+    def __init__(self, backend=None, *, on_send: Callable[[bytes], None] | None = None):
         self._sock: Optional[socket.socket] = None
         self._lock = threading.Lock()
         self._connected = False
         self._backend = backend if backend is not None else PlatformBackend()
+        self._on_send = on_send
         self._state_lock = threading.Lock()
         self._connect_lock = threading.Lock()
         self._cancel = threading.Event()
@@ -73,7 +75,7 @@ class BluetoothConnection:
     
     def connect(self, address: str, device_name: str = "", timeout: float = 18,
                 *, session_policy: AuthPolicy | str | None = None) -> ConnectionResult:
-        """Resolve each exact service on this peer; keep the legacy 6 Play path.
+        """Resolve the RFCOMM channel by exact service UUID on this peer.
 
         Called by the controller's background connection worker. A disconnect
         cancels both SDP and a pending socket. No authentication is inferred.
@@ -94,7 +96,6 @@ class BluetoothConnection:
                 self._cancel = cancel
             deadline = time.monotonic() + timeout
             last_error = None
-            resolved = False
             source = getattr(self._backend, "resolution_source", None)
             # Older injected backends may not provide platform metadata.
             source = source if isinstance(source, str) else "windows_sdp"
@@ -130,13 +131,8 @@ class BluetoothConnection:
                         self._connected = session_policy is None
                     log.info("RFCOMM connected uuid=%s channel=%s source=%s", uuid, channel, source)
                     # The F12 debug console captures stdout; INFO logging may be disabled.
-                    method = (
-                        "legacy method (6 Play channel 6 fallback)"
-                        if source == "profile_fallback"
-                        else "SDP service discovery"
-                    )
                     print(
-                        f"[Bluetooth] RFCOMM transport connected: {method}; "
+                        "[Bluetooth] RFCOMM transport connected: SDP service discovery; "
                         f"channel={channel}; service_uuid={uuid}; resolution_source={source}"
                     )
                     return result
@@ -165,7 +161,6 @@ class BluetoothConnection:
                     continue
                 if type(channel) is not int or not 1 <= channel <= 30:
                     raise ValueError("Backend returned invalid RFCOMM channel")
-                resolved = True
                 try:
                     result = open_channel(uuid, channel, source)
                 except ConnectionCancelled:
@@ -175,10 +170,6 @@ class BluetoothConnection:
                     self.trace("connection", error=f"{type(exc).__name__}: {exc}")
                     log.warning("RFCOMM stage=connection uuid=%s channel=%s source=%s error=%s", uuid, channel, source, exc)
                     continue
-                return self._activate_session(result, session_policy, cancel)
-            # Only when SDP could not resolve any service. Never label this FD2D.
-            if not resolved and " ".join(device_name.split()).casefold() == "redmi buds 6 play":
-                result = open_channel(None, RFCOMM_PORT, "profile_fallback")
                 return self._activate_session(result, session_policy, cancel)
             budget(SOCKET_TIMEOUT)
             raise ConnectionError("No usable RFCOMM service for selected device") from last_error
@@ -192,9 +183,6 @@ class BluetoothConnection:
                     policy = AuthPolicy.COMMAND
                 elif result.service_uuid in SERVICE_UUIDS[1:]:
                     policy = AuthPolicy.RAW
-                elif result.service_uuid is None and result.resolution_source == "profile_fallback":
-                    # The existing fallback is exclusively the legacy 6 Play path.
-                    policy = AuthPolicy.DIRECT
                 else:
                     raise AuthError("Cannot select authentication without a known service UUID")
             if policy == AuthPolicy.UNKNOWN:
@@ -298,9 +286,8 @@ class BluetoothConnection:
             if self._sock is None:
                 raise ConnectionError("RFCOMM socket is unavailable")
             self._sock.sendall(data)
-            if os.environ.get("MIBUDS_ANC_CAPTURE"):
-                from .noise_capture import record
-                record("TX", data)
+            if self._on_send is not None:
+                self._on_send(data)
     
     def receive(self) -> bytes:
         """Receive data from device.

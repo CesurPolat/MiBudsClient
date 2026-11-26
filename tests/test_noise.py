@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from controllers.bluetooth.capabilities import resolve_capabilities
-from controllers.bluetooth.noise import (
+from controllers.catalog.capabilities import resolve_capabilities
+from controllers.noise.protocol import (
     noise_capabilities, build_noise_mode, build_noise_level, build_noise_read,
     parse_noise_state, parse_noise_notification, NoiseState,
 )
-from controllers.bluetooth.noise_transport import NoiseTransport
+from controllers.noise.transport import NoiseTransport
 from controllers.bluetooth.rcsp import RcspPacket
 
 
@@ -46,6 +46,6 @@ class NoiseTests(unittest.TestCase):
         channel.exchange.side_effect = [b"arbitrary ACK", bytes.fromhex("04 00 0b 02 00")]
         caps = noise_capabilities(resolve_capabilities("Redmi Buds 5 Pro"))
         # An ACK followed by a different reported mode is not a successful write.
-        with patch("controllers.bluetooth.noise_transport.time.monotonic", side_effect=[0] * 7 + [3]), self.assertRaisesRegex(TimeoutError, "readback"):
+        with patch("controllers.noise.transport.time.monotonic", side_effect=[0] * 7 + [3]), self.assertRaisesRegex(TimeoutError, "readback"):
             NoiseTransport(channel).apply(caps, 7, 1)
         self.assertEqual([call.args[0] for call in channel.exchange.call_args_list], [8, 243])

@@ -5,7 +5,7 @@ from utils.i18n import message as m, error_message
 
 import threading
 
-from controllers.bluetooth.gestures import GestureResult
+from .protocol import GestureResult
 
 
 class GestureSettingsController:

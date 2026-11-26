@@ -2,7 +2,8 @@
 from dataclasses import dataclass
 
 from utils.i18n import message as m
-from .config_transport import parse_config_records
+from ..bluetooth.packets.config_transport import parse_config_records
+from ..bluetooth.packets.rcsp import build_command_frame
 
 
 # APK labels are catalog metadata, not permission to send these IDs.
@@ -43,29 +44,22 @@ class EqResult:
 
 
 def eq_profiles(device_name, identity=None):
-    from .capabilities import resolve_capabilities
+    from ..catalog.capabilities import resolve_capabilities
     caps = resolve_capabilities(device_name, identity)
     return caps.profiles if caps.supports("eq") else ()
-
-
-def _frame(opcode, counter, payload):
-    if type(counter) is not int or not 0 <= counter <= 255:
-        raise ValueError("RCSP counter must fit in one byte")
-    body = bytes([counter]) + payload
-    return bytes.fromhex(f"fe dc ba c4 {opcode:02x} {len(body):04x}") + body + bytes.fromhex("ef")
 
 
 def build_eq_request(counter, config):
     if config not in (7, 55):
         raise ValueError(m("eq.invalid"))
-    return _frame(0xF3, counter, config.to_bytes(2, "big"))
+    return build_command_frame(0xF3, counter, config.to_bytes(2, "big"))
 
 
 def _write(counter, config, value):
     length = 2 + len(value)
     if length > 255:
         raise ValueError(m("eq.invalid"))
-    return _frame(0xF2, counter, bytes([length]) + config.to_bytes(2, "big") + value)
+    return build_command_frame(0xF2, counter, bytes([length]) + config.to_bytes(2, "big") + value)
 
 
 def build_profile(counter, profile):

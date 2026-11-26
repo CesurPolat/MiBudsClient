@@ -7,12 +7,12 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch, Mock
 
-from controllers.bluetooth.capabilities import resolve_capabilities
+from controllers.catalog.capabilities import resolve_capabilities
 from controllers.bluetooth.config_transport import RcspConfigTransport
-from controllers.bluetooth.noise import noise_backend_enabled, noise_capabilities, NoiseState
-from controllers.bluetooth.noise_transport import NoiseTransport
+from controllers.noise.protocol import noise_backend_enabled, noise_capabilities, NoiseState
+from controllers.noise.transport import NoiseTransport
 from ui.components.settings_card import SettingsCard
-from controllers.bluetooth.noise_capture import record
+from controllers.noise.capture import record
 
 
 MODEL = "miwear.headphone.n76g"

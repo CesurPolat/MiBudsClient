@@ -74,17 +74,14 @@ class ServiceConnectionTests(unittest.TestCase):
         result.socket.close.assert_called_once()
         self.assertFalse(connection.connected)
 
-    def test_profile_fallback_is_explicit_and_only_for_6_play(self):
-        backend = self.backend([None] * 3)
-        result = BluetoothConnection(backend).connect("AA:BB:CC:DD:EE:FF", "Redmi Buds 6 Play")
-        self.assertEqual((result.service_uuid, result.channel, result.resolution_source), (None, 6, "profile_fallback"))
-        for name in ("", "Redmi Buds 6", "Redmi Buds 6 Pro"):
+    def test_unresolved_services_do_not_open_a_socket(self):
+        for name in ("Redmi Buds 6 Play", "", "Redmi Buds 6", "Redmi Buds 6 Pro"):
             backend = self.backend([None] * 3)
             with self.assertRaises(ConnectionError):
                 BluetoothConnection(backend).connect("AA:BB:CC:DD:EE:FF", name)
             backend.create_rfcomm_socket.assert_not_called()
 
-    def test_failed_resolved_service_does_not_trigger_profile_fallback(self):
+    def test_failed_resolved_service_closes_socket(self):
         backend = self.backend([24, None, None])
         sock = Mock()
         sock.connect.side_effect = OSError("refused")
@@ -95,9 +92,10 @@ class ServiceConnectionTests(unittest.TestCase):
         sock.close.assert_called_once()
         self.assertFalse(connection.connected)
 
-    def test_resolution_errors_allow_profile_fallback_but_bugs_propagate(self):
+    def test_resolution_errors_fail_connection_and_unexpected_errors_propagate(self):
         backend = self.backend([TimeoutError("SDP timeout"), OSError("SDP failed"), None])
-        self.assertIsNone(BluetoothConnection(backend).connect("AA:BB:CC:DD:EE:FF", "Redmi Buds 6 Play").service_uuid)
+        with self.assertRaisesRegex(ConnectionError, "No usable RFCOMM service"):
+            BluetoothConnection(backend).connect("AA:BB:CC:DD:EE:FF", "Redmi Buds 6 Play")
         backend = self.backend([RuntimeError("bug")])
         with self.assertRaisesRegex(RuntimeError, "bug"):
             BluetoothConnection(backend).connect("AA:BB:CC:DD:EE:FF", "Redmi Buds 6 Play")

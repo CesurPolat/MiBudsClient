@@ -21,14 +21,8 @@ on disconnect. A transport connection is not authentication or protocol support.
 The existing single reader, framing, and 6 Play command flow remain in place.
 This change does not implement SAFER+ or enable additional model backends.
 
-If no service channel could be resolved, only the exact normalized name
-`Redmi Buds 6 Play` permits the existing channel 6 fallback. That result has
-`service_uuid=None` and `resolution_source="profile_fallback"`. No service/auth
-identity is inferred from that channel. If a service was resolved but its
-connection failed, no speculative profile fallback is attempted. Linux keeps
-the existing socket transport and the same restricted 6 Play fallback.
-Callers providing only a MAC address must also supply the known device name to
-qualify for fallback; an unknown peer never inherits channel 6.
+If SDP cannot resolve a usable service channel, the connection attempt fails,
+including for Redmi Buds 6 Play.
 
 Linux requires the BlueZ `sdptool` executable. Its `search` command does not
 accept arbitrary 128-bit UUID strings. Bluetooth-base UUIDs are queried directly
@@ -46,7 +40,7 @@ Successful Linux results record `resolution_source="linux_sdp"`; Windows keeps
 ## Validation
 
 `tests/test_rfcomm_services.py` uses fake backends/processes to check per-peer
-channels, UUID order, failed socket cleanup, profile restrictions, cancellation,
+channels, UUID order, failed socket cleanup, unresolved services, cancellation,
 the total budget, and query process termination. These are software tests,
 not earbud validation. The native C# adapter can also be compiled on Windows
 without querying a device. Actual SDP and command behavior must be checked
@@ -55,8 +49,7 @@ with Redmi Buds 6 Play hardware; no additional model is marked verified.
 For hardware validation, connect the paired 6 Play, check the logged UUID,
 channel and resolution source, then exercise battery, latency, gestures and EQ.
 Test disconnect during SDP and retry. When SDP is unavailable, confirm that
-the result records the explicit unknown-UUID profile fallback and that the
-existing direct commands still work. Record hardware results separately from
+the connection fails before opening a socket. Record hardware results separately from
 fake backend results.
 
 Native API reference:

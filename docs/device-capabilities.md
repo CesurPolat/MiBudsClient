@@ -1,6 +1,6 @@
 # Device capabilities
 
-`controllers/bluetooth/capabilities.py` separates APK UI function IDs from
+`controllers/catalog/capabilities.py` separates APK UI function IDs from
 Bluetooth configuration IDs. `FUNCTIONS` records the constants supplied by
 `com.mi.earphone.device.manager.export.Function`; unspecified IDs such as 1001
 remain raw metadata. No command is derived from a function number.
@@ -66,8 +66,7 @@ Custom EQ is explicitly deferred and never granted, even when effects has 10.
 
 Auth uses the connected service, not a model name: AUTO selects command auth
 for FD2D. XiaoAI/standard SPP select mutual raw auth (see `raw-auth.md`).
-The existing unknown-UUID 6 Play fallback retains its direct
-path. An auth failure never silently switches to direct or another UUID.
+A resolved service UUID is required to connect. An auth failure ends the attempt.
 
 The bundled catalog contains the base lists. Xiaomi Buds 5 firmware 3.0.7.6
 replaces default (0) with Harman (14), and Redmi Buds 6 firmware 1.1.5.1 adds

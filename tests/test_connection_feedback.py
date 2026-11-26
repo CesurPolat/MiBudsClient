@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from controllers.bluetooth.controller import BTController
-from controllers.bluetooth.equalizer import EqResult, EqState
+from controllers.equalizer.protocol import EqResult, EqState
 from ui.components.device_status import DeviceStatusCard
 from ui.components.connection import ConnectionPanel
 from ui.components.settings_card import SettingsCard
@@ -12,7 +12,7 @@ from ui.components.settings_card import SettingsCard
 
 class ConnectionFeedbackTests(unittest.TestCase):
     def test_settings_navigation_items_survive_reconnect_without_duplicates(self):
-        from controllers.bluetooth.capabilities import resolve_capabilities
+        from controllers.catalog.capabilities import resolve_capabilities
         card = SettingsCard()
         items = list(card._menu.controls)
         caps = resolve_capabilities(device_name="Redmi Buds 6 Play")
@@ -26,7 +26,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         self.assertEqual(len(card._menu.controls), len(card._menu_items))
 
     def test_home_quick_controls_and_settings_automation_placement(self):
-        from controllers.bluetooth.capabilities import resolve_capabilities
+        from controllers.catalog.capabilities import resolve_capabilities
         card = SettingsCard()
         card.set_capabilities(resolve_capabilities(device_name="Redmi Buds 6 Play"))
         card.update_connection_state("connected")
@@ -48,7 +48,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         self.assertTrue(card.connection_card.visible)
 
     def test_eq_failure_retries_read_and_ignores_old_connection_result(self):
-        from controllers.bluetooth.capabilities import resolve_capabilities
+        from controllers.catalog.capabilities import resolve_capabilities
         card = SettingsCard()
         card.set_capabilities(resolve_capabilities("Redmi Buds 6 Play"))
         card.update_connection_state("connected")
@@ -90,7 +90,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         feedback.assert_called_with("failed", t("connection.retry_limit"))
 
     def test_latency_state_survives_detached_selector_and_reconnect(self):
-        from controllers.bluetooth.capabilities import resolve_capabilities
+        from controllers.catalog.capabilities import resolve_capabilities
         card = SettingsCard()
         caps = resolve_capabilities(device_name='Redmi Buds 6 Play')
         card.set_capabilities(caps)

@@ -10,25 +10,30 @@ import traceback
 from utils.error_reports import redact
 from utils.user_preferences import get_selected_bluetooth_address, set_selected_bluetooth_address
 from dataclasses import dataclass
+from functools import partial
 from typing import Callable, Optional
 
-from .capabilities import resolve_capabilities, DeviceCapabilities
-from .connection import BluetoothConnection
-from .auth_session import AuthPolicy, AuthError, CommandAuthSession
-from .sdp import ConnectionCancelled
-from .discovery import BluetoothDiscovery
-from .protocol import BudsProtocol
-from .battery_stream import BatteryStreamParser
-from .config_transport import parse_config_records
-from .gesture_transport import GestureTransport
-from .eq_transport import EqTransport
-from .latency_transport import LatencyTransport
-from .noise import noise_capabilities, noise_backend_enabled, parse_noise_notification
-from .noise_transport import NoiseTransport
-from .equalizer import EqResult, eq_profiles
-from .gestures import GestureResult, gesture_capabilities, gesture_config
-from .constants import RECONNECT_DELAY
-from .rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, is_supported_target, parse_identity_fields
+from ..battery.stream import BatteryStreamParser
+from ..catalog.capabilities import resolve_capabilities, DeviceCapabilities
+from ..catalog.device_catalog import catalog_diagnostics
+from ..equalizer.protocol import EqResult, eq_profiles
+from ..equalizer.transport import EqTransport
+from ..gestures.protocol import GestureResult, gesture_capabilities, gesture_config, parse_gesture_records
+from ..gestures.transport import GestureTransport
+from ..latency.transport import LatencyTransport
+from ..noise.capture import record
+from ..noise.protocol import noise_capabilities, noise_backend_enabled, parse_noise_notification
+from ..noise.transport import NoiseTransport
+from .link.connection import BluetoothConnection
+from .auth.auth_session import AuthPolicy, AuthError, CommandAuthSession
+from .link.sdp import ConnectionCancelled
+from .link.discovery import BluetoothDiscovery
+from .packets.protocol import BudsProtocol
+from .packets.config_transport import parse_config_records
+from .packets.rcsp import DeviceIdentity, RcspStreamParser, build_identity_request, is_supported_target, parse_identity_fields
+
+
+RECONNECT_DELAY = 5
 
 
 @dataclass
@@ -73,7 +78,7 @@ class BTController:
         auth_policy: AuthPolicy | str | None = None,
         error_callback: Optional[Callable] = None,
     ):
-        self._connection = BluetoothConnection()
+        self._connection = BluetoothConnection(on_send=partial(record, "TX"))
         self._auth_policy = AuthPolicy(auth_policy) if auth_policy is not None else None
         self._protocol = BudsProtocol()
         self._battery_parser = BatteryStreamParser()
@@ -280,7 +285,6 @@ class BTController:
                     self._connection.disconnect()
                     return False
                 if noise_backend_enabled(connected_caps):
-                    from .noise_capture import record
                     result = self._connection.result
                     record("SESSION", model=connected_caps.model, device_name=self._device_name,
                            service_uuid=result.service_uuid, channel=result.channel,
@@ -328,8 +332,7 @@ class BTController:
 
     def _report_connection_error(self, error, action):
         """Forward handled transport failures to automatic reporting."""
-        from .device_catalog import catalog_diagnostics
-        from .diagnostics import implementation_diagnostics
+        from .debug.diagnostics import implementation_diagnostics
         error.bluetooth_diagnostics = {
             "device": self._device_name,
             "device_check": self._device_check,
@@ -802,8 +805,6 @@ class BTController:
             config_response = self._gestures.feed_packets(packets)
             statuses = self._battery_parser.feed_packets(packets)
             capture_noise = noise_backend_enabled(self.capabilities)
-            if capture_noise:
-                from .noise_capture import record
             for packet in packets:
                 if packet.opcode in (0x50, 0x51):
                     auth = self._connection.auth_session
@@ -826,7 +827,6 @@ class BTController:
                     self._latency.notify(session, records)
                     eq = self._equalizer.notify(session, records)
                     if 2 in records or 80 in records:
-                        from .gestures import parse_gesture_records
                         try:
                             self._gestures._last_read = parse_gesture_records(packet.payload[offset:], physical=True)
                         except ValueError:
@@ -848,7 +848,7 @@ class BTController:
                     if self.config_callback:
                         self.config_callback(session, records, eq)
                 elif packet.opcode == 0x0E:
-                    from .rcsp import parse_info_fields
+                    from .packets.rcsp import parse_info_fields
                     try:
                         if not packet.flags & 0x80 or not packet.payload:
                             continue

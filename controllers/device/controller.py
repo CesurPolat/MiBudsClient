@@ -5,7 +5,7 @@ from utils.i18n import message as m
 import threading
 from typing import Callable
 
-from .battery_updates import BatteryUpdates
+from ..battery.updates import BatteryUpdates
 
 
 class DeviceConnection:

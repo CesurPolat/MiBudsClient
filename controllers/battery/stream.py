@@ -1,8 +1,8 @@
 ﻿"""Battery telemetry from complete target-info and status RCSP frames."""
 import threading
 
-from .rcsp import RcspStreamParser, is_supported_target, parse_info_fields
-from .protocol import BatteryStatus
+from ..bluetooth.packets.rcsp import RcspStreamParser, is_supported_target, parse_info_fields
+from ..bluetooth.packets.protocol import BatteryStatus
 
 
 class BatteryStreamParser:

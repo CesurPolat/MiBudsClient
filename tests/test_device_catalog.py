@@ -6,8 +6,8 @@ import tempfile
 from pathlib import Path
 import unittest
 
-from controllers.bluetooth.device_catalog import DEVICE_MODEL_NAMES, get_device_models
-from controllers.bluetooth.device_catalog import _load_app_catalog
+from controllers.catalog.device_catalog import DEVICE_MODEL_NAMES, get_device_models
+from controllers.catalog.device_catalog import _load_app_catalog
 from controllers.bluetooth.rcsp import DeviceIdentity
 
 

@@ -9,10 +9,8 @@ is required. Runtime auth selection is independent of feature visibility.
 
 The controller defaults to `auto` for every model. After SDP/socket connection,
 FD2D selects `command_auth`; XiaoAI/standard SPP select mutual `raw_auth`
-(implemented separately in `raw_auth.py`; see [Raw authentication](raw-auth.md)). The existing 6 Play
-unknown-UUID `profile_fallback` selects `direct`. This preserves its old path
-without inferring a service from channel 6. An explicit developer API policy
-override is still available; no environment opt-in is required.
+(implemented in `raw_auth.py`). A resolved service UUID is required to connect.
+The developer API accepts an explicit policy override. See [Raw authentication](raw-auth.md).
 
 ## Earlier 6 Play hardware evidence (2026-10-31)
 
@@ -38,15 +36,12 @@ or ready protocol session. The app controller always supplies an explicit policy
 
 Command auth requires an SDP-resolved MIUI SPP UUID. AUTO selects it when the
 connected service is FD2D; per-model validation or an extra opt-in is not required.
-XiaoAI, standard SPP and unknown-UUID channel 6 fallback cannot silently substitute
-for this mode. A failed auth closes the selected socket and ends the attempt;
-there is no direct/UUID fallback. A later controller retry starts a fresh socket
+A failed auth closes the selected socket and ends the attempt. A later controller retry starts a fresh socket
 and session under the same policy.
 
 6 Play's explicitly selected `direct` diagnostic path keeps the existing initialization/command bytes,
 including its existing setup packet. `ready=True` in direct mode is never
-reported as `authenticated=True`. The known channel 6 fallback remains available
-for that model when SDP cannot resolve a service.
+reported as `authenticated=True`. The diagnostic path still requires a resolved service.
 
 ## Structure and lifecycle
 
@@ -100,7 +95,7 @@ in its original docstring is not a hardware test performed by this project.
 table inversion, wrong sizes/answers, mutual completion, early ACK, wrong
 sequence/target, malformed version/status, peer rejection, partial/coalesced
 frames (including embedded EF), timeouts/retries, state reset, cancellation,
-single-reader handoff, policy restrictions and the 6 Play direct fallback.
+single-reader handoff, policy restrictions and failure when SDP cannot resolve a service.
 These are software/fake-peer tests, not hardware verification.
 
 Still required: actual Redmi Buds 6 Play direct regression (battery, latency,

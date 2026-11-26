@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import Mock
 
-from controllers.bluetooth.battery_stream import BatteryStreamParser
+from controllers.battery.stream import BatteryStreamParser
 def battery_frame(values):
     # A target-info response: STATUS/SEQ followed by length/type attributes.
     payload = bytes.fromhex("00 0b 02 06 02") + bytes((len(values) + 1, 7)) + bytes(values)

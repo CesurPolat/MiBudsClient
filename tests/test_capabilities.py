@@ -5,13 +5,13 @@ from copy import deepcopy
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from controllers.bluetooth.capabilities import (
+from controllers.catalog.capabilities import (
     DeviceCapabilities, FUNCTIONS, resolve_capabilities,
 )
-from controllers.bluetooth.device_catalog import get_device_models_by_name
+from controllers.catalog.device_catalog import get_device_models_by_name
 from controllers.bluetooth.controller import BTController
-from controllers.bluetooth.equalizer import EqResult, EqState
-from controllers.bluetooth.eq_transport import EqTransport
+from controllers.equalizer.protocol import EqResult, EqState
+from controllers.equalizer.transport import EqTransport
 from ui.components.settings_card import SettingsCard
 from ui.system_tray import SystemTray
 from controllers.latency.controller import LatencyController
@@ -42,7 +42,7 @@ class CapabilityTests(unittest.TestCase):
             "gestures": {4006, 4001, 4002, 4003, 4004, 4005, 4011, 4012, 4013, 4014, 4018},
             "latency": {3011}, "noise": {1002, 1003, 1004, 1005, 1006, 1007},
         }
-        from controllers.bluetooth.device_catalog import _APP_CATALOG
+        from controllers.catalog.device_catalog import _APP_CATALOG
         for model in _APP_CATALOG["result"]["tw_product_list"]:
             caps = self.resolve([model], model["name"])
             self.assertEqual(caps.model, model["model"])

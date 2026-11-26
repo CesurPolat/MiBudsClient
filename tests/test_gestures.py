@@ -9,11 +9,11 @@ from types import SimpleNamespace
 from unittest.mock import Mock
 
 from controllers.bluetooth.controller import BTController
-from controllers.bluetooth.gestures import (
+from controllers.gestures.protocol import (
     build_gesture_request, build_gesture_assignment, parse_gesture_records,
     gesture_capabilities,
 )
-from controllers.bluetooth.gesture_transport import GestureTransport
+from controllers.gestures.transport import GestureTransport
 from controllers.bluetooth.rcsp import DeviceIdentity, RcspStreamParser
 
 

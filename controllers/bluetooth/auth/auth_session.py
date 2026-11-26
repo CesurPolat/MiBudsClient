@@ -11,7 +11,7 @@ from functools import wraps
 from enum import Enum
 
 from .auth_codec import decode_auth, encode_auth
-from .rcsp import RcspStreamParser
+from ..packets.rcsp import RcspStreamParser
 from .safer_plus import challenge_response
 
 

@@ -5,10 +5,9 @@ import time
 from dataclasses import replace
 
 from utils.i18n import message as m
-from .noise import build_noise_mode, build_noise_level, build_noise_read, parse_noise_state
-from .noise import wear_requirement
-from .config_transport import parse_config_records
-from .equalizer import _frame
+from .protocol import build_noise_mode, build_noise_level, build_noise_read, parse_noise_state, wear_requirement
+from ..bluetooth.packets.config_transport import parse_config_records
+from ..bluetooth.packets.rcsp import build_command_frame
 
 
 class NoiseTransport:
@@ -66,7 +65,7 @@ class NoiseTransport:
     def read_aux(self, capabilities, session, timeout=0.4):
         for config in (12, 37) if capabilities.adaptive == "switch" else (12,):
             try:
-                data = self.channel.exchange(0xF3, lambda ss: _frame(0xF3, ss, config.to_bytes(2, "big")),
+                data = self.channel.exchange(0xF3, lambda ss: build_command_frame(0xF3, ss, config.to_bytes(2, "big")),
                                              timeout, session, config, namespace="noise")
                 self.notify_aux(session, parse_config_records(data))
             except (OSError, ValueError):
@@ -78,7 +77,7 @@ class NoiseTransport:
         with self.channel.transaction():
             revision = self.channel.revision
             deadline = time.monotonic() + timeout
-            self.channel.exchange(0xF2, lambda ss: _frame(0xF2, ss, bytes((3, 0, 37, int(enabled)))),
+            self.channel.exchange(0xF2, lambda ss: build_command_frame(0xF2, ss, bytes((3, 0, 37, int(enabled)))),
                                   timeout, session, 37, namespace="noise")
             def parse(data):
                 value = parse_config_records(data).get(37)
@@ -87,7 +86,7 @@ class NoiseTransport:
                 return value == b"\x01"
             confirmed, actual = self.channel.confirm(
                 37, parse,
-                lambda remaining: parse(self.channel.exchange(0xF3, lambda ss: _frame(0xF3, ss, b"\x00\x25"),
+                lambda remaining: parse(self.channel.exchange(0xF3, lambda ss: build_command_frame(0xF3, ss, b"\x00\x25"),
                                        remaining, session, 37, namespace="noise")),
                 lambda value: value == enabled, max(0, deadline - time.monotonic()), session, revision, namespace="noise")
             self._aux_session, self._adaptive = session, actual

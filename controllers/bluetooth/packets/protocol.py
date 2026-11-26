@@ -3,13 +3,13 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from .constants import (
-    BATTERY_PATTERN,
-    BATTERY_REQUEST_PAYLOAD,
-    MODE_COMMAND_TEMPLATE,
-    COUNTER_VALUE,
-    PACKET_SIZE_MODE_ACK
-)
+# Legacy battery values. Live queries use the target-info frame builder.
+BATTERY_PATTERN = bytes.fromhex("02020407")
+BATTERY_REQUEST_PAYLOAD = "fedcbac40200050bffffffffef"
+
+MODE_COMMAND_TEMPLATE = "fedcbac4f20005{counter}03002f{param}ef"
+COUNTER_VALUE = 0x90
+PACKET_SIZE_MODE_ACK = 14
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ class BudsProtocol:
         Returns:
             BatteryStatus if found, None otherwise
         """
-        from .battery_stream import BatteryStreamParser
+        from ...battery.stream import BatteryStreamParser
         statuses = BatteryStreamParser().feed(data)
         return statuses[-1] if statuses else None
     

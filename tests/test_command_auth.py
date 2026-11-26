@@ -200,25 +200,24 @@ class AuthConnectionTests(unittest.TestCase):
         self.assertFalse(connection.session_ready)
         self.sock.close.assert_called_once()
 
-    def test_command_auth_never_runs_on_other_service_or_unknown_fallback(self):
-        for channels, name in (([None, 7], ''), ([None, None, None], 'Redmi Buds 6 Play')):
-            backend = self.backend()
-            backend.resolve_rfcomm_channel.side_effect = channels
-            with self.assertRaises(AuthError):
-                BluetoothConnection(backend).connect('AA:BB:CC:DD:EE:FF', name, session_policy='command_auth')
-            self.sock.sendall.assert_not_called()
-            self.sock.recv.assert_not_called()
+    def test_command_auth_never_runs_on_other_service(self):
+        backend = self.backend()
+        backend.resolve_rfcomm_channel.side_effect = [None, 7]
+        with self.assertRaises(AuthError):
+            BluetoothConnection(backend).connect('AA:BB:CC:DD:EE:FF', session_policy='command_auth')
+        self.sock.sendall.assert_not_called()
+        self.sock.recv.assert_not_called()
 
-    def test_6_play_sdp_failure_preserves_direct_profile_fallback(self):
+    def test_6_play_direct_policy_requires_resolved_service(self):
         backend = self.backend()
         backend.resolve_rfcomm_channel.return_value = None
         connection = BluetoothConnection(backend)
-        result = connection.connect('AA:BB:CC:DD:EE:FF', 'Redmi Buds 6 Play', session_policy=AuthPolicy.DIRECT)
-        self.assertEqual(result.channel, 6)
-        self.assertIsNone(result.service_uuid)
-        self.assertTrue(connection.session_ready)
+        with self.assertRaisesRegex(ConnectionError, 'No usable RFCOMM service'):
+            connection.connect('AA:BB:CC:DD:EE:FF', 'Redmi Buds 6 Play', session_policy=AuthPolicy.DIRECT)
+        self.assertIsNone(connection.result)
+        self.assertFalse(connection.session_ready)
         self.assertFalse(connection.session_authenticated)
-        self.sock.sendall.assert_not_called()
+        backend.create_rfcomm_socket.assert_not_called()
 
     def test_auth_policy_is_selected_from_service_not_model(self):
         self.assertEqual(profile_auth_policy('Redmi Buds 6 Play'), AuthPolicy.AUTO)
