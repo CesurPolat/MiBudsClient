@@ -30,6 +30,33 @@ class HomeControls(ft.Container):
             ),
         )
 
+    def update_available_controls(
+        self, *, connected: bool, latency: bool, noise: bool, equalizer: bool,
+    ) -> None:
+        controls = []
+        for card, available in (
+            (self.latency_card, latency),
+            (self.noise_card, noise),
+            (self.equalizer_card, equalizer),
+        ):
+            card.visible = card.content.visible = available
+            if available:
+                controls.append(card)
+        self.connected_controls.controls = controls
+        self.visible = not connected or bool(controls)
+
+    def refresh_connection_panel(
+        self, *, connected: bool, waiting_for_eq: bool, eq_failure_reason: str | None = None,
+    ) -> None:
+        ready = connected and not waiting_for_eq
+        self.connection_card.visible = self.connection_panel.visible = not ready
+        self.connected_controls.visible = ready
+        if waiting_for_eq:
+            if eq_failure_reason is None:
+                self.connection_panel.update_connection_state("loading")
+            else:
+                self.connection_panel.update_connection_state("failed", eq_failure_reason)
+
     @staticmethod
     def _card(control, height=None):
         return ft.Container(

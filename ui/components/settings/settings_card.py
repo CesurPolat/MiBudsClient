@@ -81,8 +81,6 @@ class SettingsCard(ft.Container):
         self.identity_name = self.identity_section.name_text
         self.identity_model = self.identity_section.model_text
         self.identity_firmware = self.identity_section.firmware_text
-        self._catalog_name = ""
-        self._catalog_image = ""
 
         self.gestures = GestureSettings(on_gesture_refresh, on_gesture_assignment, on_update)
         self.equalizer = EqualizerSettings(on_eq_action, on_update)
@@ -147,27 +145,27 @@ class SettingsCard(ft.Container):
 
     def _render_capabilities(self):
         caps = self._capabilities
-        self._render_identity()
-        self.latency_item.visible = self.auto_settings.visible = self._connected and caps.supports("latency")
-        self.equalizer.quick_controls.visible = self._connected and caps.supports("eq")
+        self.identity_section.set_device(
+            caps.name if self._connected else "", caps.model if self._connected else "",
+        )
+        available = {
+            feature: self._connected and caps.supports(feature)
+            for feature in ("latency", "eq", "gestures")
+        }
         self.noise.capabilities = noise_capabilities(caps)
-        self.noise.quick_controls.visible = self._connected and bool(self.noise.capabilities.modes)
-        self.noise.set_connection(self._connected and bool(self.noise.capabilities.modes),
-                                  noise_backend_enabled(caps))
-        controls = []
-        for card in (self.latency_card, self.noise_card, self.equalizer_card):
-            card.visible = card.content.visible
-            if card.visible:
-                controls.append(card)
-        self.connected_controls.controls = controls
-        self.home_controls_card.visible = not self._connected or bool(controls)
+        noise_available = self._connected and bool(self.noise.capabilities.modes)
+        self.home_controls_card.update_available_controls(
+            connected=self._connected, latency=available["latency"],
+            noise=noise_available, equalizer=available["eq"],
+        )
+        self.noise.set_connection(noise_available, noise_backend_enabled(caps))
         for feature, panel in self.device_components.items():
-            panel.visible = self._connected and caps.supports(feature)
+            panel.visible = available[feature]
             panel.set_connection(panel.visible)
         self.refresh_connection_panel()
         self._available_sections = {
-            "general": True, "auto": self._connected and caps.supports("latency"),
-            "gestures": self._connected and caps.supports("gestures"),
+            "general": True, "auto": available["latency"],
+            "gestures": available["gestures"],
             "identity": True,
         }
         if not self._available_sections[self._selected_section]:
@@ -239,16 +237,7 @@ class SettingsCard(ft.Container):
         self.identity_section.set_firmware_version(version)
 
     def set_catalog_device(self, name: str, image_path: str = "") -> None:
-        self._catalog_name, self._catalog_image = name, image_path
-        self._render_identity()
-
-    def _render_identity(self):
-        caps = self._capabilities
-        image = self._catalog_image if (self._connected and caps.name and
-                 self._catalog_name.casefold() == caps.name.casefold()) else ""
-        self.identity_section.set_device(
-            caps.name if self._connected else "", caps.model if self._connected else "", image,
-        )
+        self.identity_section.set_catalog_device(name, image_path)
 
     def update_connection_state(self, state: str, reason: str = "") -> None:
         """Show device controls only while the earbuds are connected."""
@@ -259,19 +248,21 @@ class SettingsCard(ft.Container):
             self.set_firmware_version(None)
         self._render_capabilities()
 
+    def _waiting_for_initial_eq(self) -> bool:
+        return self._connected and self._capabilities.supports("eq") and not self.equalizer.ready
+
     def refresh_connection_panel(self):
-        """Keep the home shell in place until the first EQ read succeeds."""
-        waiting = self._connected and self._capabilities.supports("eq") and not self.equalizer.ready
-        ready = self._connected and not waiting
-        self.connection_card.visible = self.connection_panel.visible = not ready
-        self.connected_controls.visible = ready
-        if waiting:
-            failed = self.equalizer.initial_read_failed
-            self.connection_panel.update_connection_state(
-                "failed" if failed else "loading", self.equalizer.status.value if failed else "")
+        waiting = self._waiting_for_initial_eq()
+        failure_reason = None
+        if waiting and self.equalizer.initial_read_failed:
+            failure_reason = self.equalizer.status.value or ""
+        self.home_controls_card.refresh_connection_panel(
+            connected=self._connected, waiting_for_eq=waiting,
+            eq_failure_reason=failure_reason,
+        )
 
     def retry_connection(self, reconnect):
-        if self._connected and self._capabilities.supports("eq") and not self.equalizer.ready:
+        if self._waiting_for_initial_eq():
             self.equalizer.retry_initial_read()
             self.refresh_connection_panel()
             self._on_update()

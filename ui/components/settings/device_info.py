@@ -11,6 +11,8 @@ from ..shared.setting_items import SettingItem
 
 class DeviceInfoSection(ft.Container):
     def __init__(self, on_check_device_identity):
+        self._device_name = ""
+        self._catalog_device = ("", "")
         self.identity_item = SettingItem(
             ft.Icons.INFO_OUTLINE, "blue_grey_700", t("identity.title"),
             on_click=on_check_device_identity,
@@ -47,10 +49,20 @@ class DeviceInfoSection(ft.Container):
             padding=6,
         )
 
-    def set_device(self, name: str, model: str, image_path: str) -> None:
+    def set_device(self, name: str, model: str) -> None:
+        self._device_name = name
         self.name_text.value = name or "\u2014"
         self.model_text.value = model or "\u2014"
-        self.device_image.set_catalog_image(image_path)
+        self._refresh_device_image()
+
+    def set_catalog_device(self, name: str, image_path: str) -> None:
+        self._catalog_device = (name, image_path)
+        self._refresh_device_image()
+
+    def _refresh_device_image(self) -> None:
+        catalog_name, image_path = self._catalog_device
+        matches = self._device_name and self._device_name.casefold() == catalog_name.casefold()
+        self.device_image.set_catalog_image(image_path if matches else "")
 
     def set_firmware_version(self, version: str | None) -> None:
         self.firmware_text.value = version or "\u2014"
