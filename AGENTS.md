@@ -25,7 +25,7 @@
 ## Repo-specific conventions
 
 - **Protocol payloads are hex strings.** Follow the `.fromhex()` convention in `controllers/bluetooth/packets/protocol.py` for Bluetooth command/response data.
-- **Battery encoding.** Raw byte values >= 128 indicate charging (subtract 128 for actual %). See `BatteryIndicator._format_battery()` in `ui/components/home/battery.py`.
+- **Battery encoding.** `0xFF` means unknown. Valid raw values >= 128 indicate charging (subtract 128 for actual %). Use `battery_state()` in `controllers/battery/stream.py`.
 - **Callbacks over events.** BT controller uses callback functions (`status_callback`, `battery_callback`) instead of events. Maintain this pattern.
 - **Resource paths via `get_resource_path()`** in `utils/app/resource_manager.py`. Use this for assets in UI code.
 - **Version string format.** Semantic versioning with optional pre-release tags: `v1.2.3`, `v1.2.3-alpha.1`, `v1.2.3-beta.2`, `v1.2.3-rc1`. Parser in `utils/app/updater.py` supports these formats.

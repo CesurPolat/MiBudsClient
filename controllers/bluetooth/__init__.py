@@ -3,7 +3,6 @@
 import sys as _sys
 
 from .auth import auth_codec, auth_session, raw_auth, safer_plus
-from .debug import diagnostics
 from .link import connection, discovery, sdp, windows_discovery
 from .link.discovery import BluetoothDiscovery, BluetoothDevice
 from .packets import config_transport, protocol, rcsp
@@ -13,7 +12,6 @@ from .packets.rcsp import DeviceIdentity
 # Preserve flat import paths with the same module instances as the subpackages.
 for _module in (
     auth_codec, auth_session, raw_auth, safer_plus,
-    diagnostics,
     connection, discovery, sdp, windows_discovery,
     config_transport, protocol, rcsp,
 ):

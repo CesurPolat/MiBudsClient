@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from functools import partial
 from typing import Callable, Optional
 
-from ..battery.stream import BatteryStreamParser
+from ..battery.stream import BATTERY_UNKNOWN, BatteryStreamParser, battery_state
 from ..catalog.capabilities import resolve_capabilities, DeviceCapabilities
 from ..catalog.device_catalog import catalog_diagnostics
 from ..equalizer.protocol import EqResult, eq_profiles
@@ -332,7 +332,6 @@ class BTController:
 
     def _report_connection_error(self, error, action):
         """Forward handled transport failures to automatic reporting."""
-        from .debug.diagnostics import implementation_diagnostics
         error.bluetooth_diagnostics = {
             "device": self._device_name,
             "device_check": self._device_check,
@@ -342,7 +341,6 @@ class BTController:
             "authentication": self._connection.auth_diagnostics,
             "identity": self.diagnostic_identity,
             "catalog": catalog_diagnostics(),
-            "implementation": implementation_diagnostics(),
             "catalog_match": {"model": resolve_capabilities(self._device_name).model,
                               "source": "bluetooth_name", "device_identity_verified": False},
         }
@@ -469,7 +467,7 @@ class BTController:
                 self._battery_attempts = 0
                 self._battery_next_check_at = now + self._BATTERY_REFRESH_INTERVAL
         if invalidate:
-            self._notify_battery(255, 255, 255)
+            self._notify_battery(BATTERY_UNKNOWN, BATTERY_UNKNOWN, BATTERY_UNKNOWN)
         if unresponsive:
             raise ConnectionError("No response to repeated battery health probes")
         if exhausted:
@@ -627,7 +625,7 @@ class BTController:
             self._battery_attempts = 0
             self._battery_next_check_at = 0.0
         if invalidate:
-            self._notify_battery(255, 255, 255)
+            self._notify_battery(BATTERY_UNKNOWN, BATTERY_UNKNOWN, BATTERY_UNKNOWN)
         self._battery_parser.reset()
         self._noise_parser.reset()
         self._gestures.reset(m("gesture.connection_changed"))
@@ -872,10 +870,13 @@ class BTController:
                 for status in statuses:
                     values = []
                     for label, raw in (("left", status.left), ("right", status.right), ("case", status.case)):
-                        percent = raw - 128 if raw >= 128 else raw
-                        value = "unknown" if raw == 255 or not 0 <= percent <= 100 else f"{percent}%"
-                        if value != "unknown" and raw >= 128:
-                            value += " (charging)"
+                        state = battery_state(raw)
+                        value = "unknown"
+                        if state is not None:
+                            percent, charging = state
+                            value = f"{percent}%"
+                            if charging:
+                                value += " (charging)"
                         values.append(f"{label}={value} [raw={raw}]")
                     print("[Bluetooth] Battery received: " + "; ".join(values))
                     self._notify_battery(status.left, status.right, status.case)

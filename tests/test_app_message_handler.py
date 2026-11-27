@@ -11,7 +11,8 @@ from unittest.mock import Mock, call, patch
 
 from ui.app_message_handler import AppMessageHandler
 from ui.components.dialogs.update_notification import show_update_notification
-from ui.constants import BATTERY_UNKNOWN, GITHUB_URL
+from controllers.battery.stream import BATTERY_UNKNOWN
+from ui.constants import GITHUB_URL
 
 
 class AppMessageHandlerTests(unittest.TestCase):

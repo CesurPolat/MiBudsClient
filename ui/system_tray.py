@@ -7,7 +7,7 @@ from utils.app.i18n import t, render
 from utils.notifications.image_notifications import ImageNotifications
 from utils.notifications.linux_notifications import LinuxNotifications
 from utils.desktop.tray_host import TrayHostMonitor
-from controllers.battery.stream import battery_state
+from controllers.battery.stream import BATTERY_UNKNOWN, battery_state
 from controllers.equalizer.protocol import PROFILE_KEYS
 
 from utils.desktop.tray_backend import load_tray_module
@@ -151,7 +151,7 @@ class SystemTray:
     @staticmethod
     def _battery_values(state):
         values = {}
-        for side, raw in zip(("left", "right", "case"), state.get("battery", (255, 255, 255))):
+        for side, raw in zip(("left", "right", "case"), state.get("battery", (BATTERY_UNKNOWN,) * 3)):
             if state.get("single_body"):
                 if side != "left":
                     continue

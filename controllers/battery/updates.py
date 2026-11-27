@@ -3,9 +3,9 @@
 import time
 from typing import Callable
 
-from .stream import battery_state
 from utils.notifications.sound import play_tones
-from ui.constants import BATTERY_UNKNOWN
+
+from .stream import BATTERY_UNKNOWN, battery_state
 
 
 class BatteryUpdates:

@@ -19,6 +19,25 @@ from uuid import uuid4
 from ..api.mibuds_api import DeliveryError, ErrorReportClient, encode_report
 
 
+@functools.lru_cache(maxsize=1)
+def implementation_diagnostics():
+    """Identify the Bluetooth implementation using the available source files."""
+    from ui.constants import APP_VERSION
+
+    directory = Path(__file__).resolve().parents[2] / 'controllers' / 'bluetooth'
+    fingerprint = None
+    try:
+        if (directory / 'controller.py').is_file():
+            digest = hashlib.sha256()
+            for path in sorted(directory.rglob('*.py')):
+                digest.update(path.relative_to(directory).as_posix().encode('utf-8'))
+                digest.update(path.read_bytes())
+            fingerprint = digest.hexdigest()
+    except OSError:
+        pass
+    return {'app_version': APP_VERSION, 'bluetooth_source_sha256': fingerprint}
+
+
 def redact(value):
     text = str(value)
     for root in {str(Path.home()), os.environ.get('USERPROFILE', ''), os.environ.get('HOME', '')}:
@@ -47,6 +66,8 @@ def make_report(error, *, app_version='', device='', action='', tb=None, identit
         current = current.__cause__ or (None if current.__suppress_context__ else current.__context__)
     diagnostics = getattr(error, 'bluetooth_diagnostics', None)
     if diagnostics is not None:
+        if 'implementation' not in diagnostics:
+            diagnostics = {**diagnostics, 'implementation': implementation_diagnostics()}
         stack += '\n\nBluetooth diagnostics:\n' + json.dumps(diagnostics, ensure_ascii=False, default=str)
         stack += '\nCauses:\n' + '\n'.join(causes)
     if identity is not None and diagnostics is None:

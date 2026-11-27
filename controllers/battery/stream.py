@@ -5,12 +5,16 @@ from ..bluetooth.packets.rcsp import RcspStreamParser, is_supported_target, pars
 from ..bluetooth.packets.protocol import BatteryStatus
 
 
+BATTERY_UNKNOWN = 0xFF
+BATTERY_CHARGING_OFFSET = 128
+
+
 def battery_state(raw) -> tuple[int, bool] | None:
     """Return (percent, charging) only for a valid byte with a 0–100 level."""
-    if type(raw) is not int or not 0 <= raw <= 255 or raw == 255:
+    if type(raw) is not int or not 0 <= raw < BATTERY_UNKNOWN:
         return None
-    charging = raw >= 128
-    percent = raw - 128 if charging else raw
+    charging = raw >= BATTERY_CHARGING_OFFSET
+    percent = raw - BATTERY_CHARGING_OFFSET if charging else raw
     return (percent, charging) if percent <= 100 else None
 
 
@@ -18,12 +22,12 @@ class BatteryStreamParser:
     def __init__(self):
         self._parser = RcspStreamParser()
         self._lock = threading.Lock()
-        self._values = [255, 255, 255]
+        self._values = [BATTERY_UNKNOWN] * 3
 
     def reset(self):
         with self._lock:
             self._parser.reset()
-            self._values = [255, 255, 255]
+            self._values = [BATTERY_UNKNOWN] * 3
 
     def feed(self, data):
         return self.feed_packets(self._parser.feed(data))
@@ -50,7 +54,7 @@ class BatteryStreamParser:
                     continue
                 if values is None or not 1 <= len(values) <= 3:
                     continue
-                if any(value != 255 and (value & 127) > 100 for value in values):
+                if any(value != BATTERY_UNKNOWN and battery_state(value) is None for value in values):
                     continue
                 # Omitted components retain their last value; FF explicitly
                 # means unknown, and zero is a valid empty battery.

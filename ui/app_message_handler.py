@@ -7,7 +7,7 @@ import threading
 from datetime import datetime
 from typing import Callable
 
-from .constants import BATTERY_UNKNOWN
+from controllers.battery.stream import BATTERY_UNKNOWN
 from .components.dialogs.update_notification import show_update_notification
 from .localization import refresh_translations
 from .battery_notifications import BatteryNotificationState

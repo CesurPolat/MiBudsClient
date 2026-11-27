@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiBudsClient tanılama akışı</title>
+<style>
+  :root { color-scheme:dark; --page:#080b0e; --paper:#0d1218; --panel:#191f24; --text:#f3f6fb; --muted:#c5ceda; --line:#455466; --accent:#8cb2f6; --tint:#192941; --sans:system-ui,"Segoe UI",sans-serif; --mono:ui-monospace,Consolas,monospace; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--text); font-family:var(--sans); line-height:1.55; }
+  main { max-width:1450px; margin:auto; padding:40px clamp(16px,4vw,68px) 60px; }
+  header { border-top:1px solid var(--line); padding-top:24px; margin-bottom:24px; }
+  h1,h2,p,figure { margin:0; }
+  h1 { font:400 clamp(2.4rem,5.5vw,4.7rem)/1.06 Georgia,serif; letter-spacing:-.045em; }
+  header p { margin-top:12px; max-width:68ch; }
+  p { color:var(--muted); }
+  a { color:#a6c3ff; text-underline-offset:.22em; }
+  a:focus-visible,.diagram:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+  code,.technical,.edge-label { font-family:var(--mono); }
+  code { font-size:.88em; overflow-wrap:anywhere; }
+  .diagram { overflow-x:auto; border:1px solid var(--line); border-radius:8px; }
+  svg { display:block; width:100%; min-width:1280px; height:auto; }
+  .surface { fill:var(--paper); }
+  .box { fill:var(--panel); stroke:var(--line); }
+  .focal { fill:var(--tint); stroke:var(--accent); stroke-width:1.5; }
+  .arrow { fill:none; stroke:#acb9c8; stroke-width:1.6; marker-end:url(#diagnostics-arrow); }
+  .remote { stroke:var(--accent); stroke-dasharray:5 4; marker-end:url(#diagnostics-remote); }
+  .node-title { fill:var(--text); font-size:18px; font-weight:650; }
+  .node-copy,.technical,.edge-label { fill:var(--muted); font-size:13px; }
+  .decision-source { font-size:12px; }
+  .notes { display:grid; grid-template-columns:1.2fr 1fr 1.05fr; gap:24px; margin-top:20px; }
+  .notes > div { border-top:1px solid var(--line); padding-top:10px; }
+  h2 { font-size:1rem; }
+  .notes p { margin:5px 0 8px; font-size:.9rem; }
+  .notes a { font-size:.85rem; }
+  @media (max-width:760px) { .notes { grid-template-columns:1fr; gap:16px; } }
+  @media print { main { padding:0; } .diagram { overflow:visible; } svg { min-width:0; } * { print-color-adjust:exact; -webkit-print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>MiBudsClient tanılama akışı</h1>
+    <p>Bluetooth ve uygulama hatalarının yakalanmasından, hassas değerlerin maskelenmesine ve raporun API’ye gönderilmesine kadar.</p>
+  </header>
+  <figure>
+    <div class="diagram" tabindex="0" role="region" aria-label="Yatay kaydırılabilir tanılama akış şeması">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="diagnostics-title diagnostics-desc">
+        <title id="diagnostics-title">MiBudsClient tanılama ve hata raporu</title>
+        <desc id="diagnostics-desc">Bluetooth keşif, bağlantı ve okuma hataları otomatik kuyruğa alınır, diğer raporlar kullanıcı Gönder’i seçtiğinde aynı kuyruğa girer ve arka planda API’ye iletilir.</desc>
+        <defs>
+          <marker id="diagnostics-arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#acb9c8"/></marker>
+          <marker id="diagnostics-remote" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#8cb2f6"/></marker>
+        </defs>
+        <rect width="1280" height="720" class="surface"/>
+
+        <path d="M248 144V168H448V192" class="arrow"/>
+        <path d="M776 144V168H640V192" class="arrow"/>
+        <path d="M544 296V332" class="arrow"/>
+        <path d="M544 460V536" class="arrow"/>
+        <path d="M704 396H864" class="arrow"/>
+        <path d="M1048 456V500H680V536" class="arrow"/>
+        <path d="M728 590H864" class="arrow remote"/>
+        <rect x="396" y="487" width="132" height="20" class="surface"/>
+        <rect x="718" y="367" width="142" height="20" class="surface"/>
+        <rect x="846" y="471" width="64" height="20" class="surface"/>
+        <rect x="748" y="561" width="96" height="20" class="surface"/>
+        <text x="520" y="502" text-anchor="end" class="edge-label">Evet · otomatik</text>
+        <text x="724" y="382" class="edge-label">Hayır · onay iste</text>
+        <text x="852" y="486" class="edge-label">Gönder</text>
+        <text x="796" y="576" text-anchor="middle" class="edge-label">HTTP POST</text>
+
+        <g>
+          <rect x="48" y="40" width="400" height="104" rx="20" class="box"/>
+          <text x="68" y="63" class="technical">controllers/bluetooth/controller.py</text>
+          <text x="68" y="81" class="technical">BTController._report_connection_error()</text>
+          <text x="68" y="105" class="node-title">Bluetooth hatası</text>
+          <text x="68" y="127" class="node-copy">Keşif, bağlantı veya okuma · tanılama anlık görüntüsü</text>
+        </g>
+        <g>
+          <rect x="608" y="40" width="336" height="104" rx="20" class="box"/>
+          <text x="628" y="63" class="technical">main.py · Flet bağlantıları</text>
+          <text x="628" y="81" class="technical">utils/diagnostics/debug_console.py</text>
+          <text x="628" y="105" class="node-title">Uygulama hatası</text>
+          <text x="628" y="127" class="node-copy">Flet, callback ve yakalanmamış istisnalar</text>
+        </g>
+        <g>
+          <rect x="368" y="192" width="352" height="104" rx="8" class="box"/>
+          <text x="388" y="215" class="technical">utils/diagnostics/error_reports.py</text>
+          <text x="388" y="233" class="technical">ErrorReportManager.capture()</text>
+          <text x="388" y="257" class="node-title">Raporu hazırla</text>
+          <text x="388" y="279" class="node-copy">Hassas değerleri maskele ve tekrarları ele</text>
+        </g>
+        <g>
+          <polygon points="544,332 704,396 544,460 384,396" class="focal"/>
+          <text x="544" y="398" text-anchor="middle" class="technical decision-source">utils/diagnostics/error_reports.py</text>
+          <text x="544" y="419" text-anchor="middle" class="node-title">Otomatik rapor mu?</text>
+        </g>
+        <g>
+          <rect x="864" y="336" width="368" height="120" rx="8" class="box"/>
+          <text x="884" y="359" class="technical">ui/components/dialogs/error_report.py</text>
+          <text x="884" y="377" class="technical">ErrorReportDialog</text>
+          <text x="884" y="400" class="node-title">Kullanıcı onayı</text>
+          <text x="884" y="422" class="node-copy">Önizleme, isteğe bağlı açıklama ve Gönder</text>
+          <text x="884" y="440" class="node-copy">İptal, raporun gönderim akışını sonlandırır</text>
+        </g>
+        <g>
+          <rect x="368" y="536" width="360" height="108" rx="8" class="focal"/>
+          <text x="388" y="559" class="technical">utils/diagnostics/error_reports.py</text>
+          <text x="388" y="577" class="technical">ReportQueue</text>
+          <text x="388" y="601" class="node-title">Yerel JSON kuyruğu</text>
+          <text x="388" y="623" class="node-copy">Önce diske yaz, sonra arka planda gönder</text>
+        </g>
+        <g>
+          <rect x="864" y="536" width="368" height="108" rx="8" class="box"/>
+          <text x="884" y="559" class="technical">utils/api/mibuds_api.py</text>
+          <text x="884" y="577" class="technical">ErrorReportClient.send() · /v1/errors</text>
+          <text x="884" y="601" class="node-title">MiBuds API istemcisi</text>
+          <text x="884" y="623" class="node-copy">Geçerli 201 yanıtında kuyruğa başarı döner</text>
+        </g>
+
+        <line x1="48" y1="672" x2="1232" y2="672" stroke="#354150"/>
+        <path d="M48 696H84" class="arrow"/>
+        <text x="96" y="700" class="node-copy">Uygulama içi akış</text>
+        <path d="M280 696H316" class="arrow remote"/>
+        <text x="328" y="700" class="node-copy">Ağ isteği</text>
+      </svg>
+    </div>
+    <figcaption class="notes">
+      <div>
+        <h2>Bluetooth anlık görüntüsü</h2>
+        <p>Keşif ve cihaz durumu, hata aşaması, en fazla 20 taşıma kaydı, varsa kimlik doğrulama özeti, cihaz kimliği ve katalog bilgisi.</p>
+        <a href="../controllers/bluetooth/controller.py">Bluetooth denetleyicisi</a>
+      </div>
+      <div>
+        <h2>Rapor içeriği</h2>
+        <p><code>make_report()</code>, Bluetooth ayrıntılarını ve en fazla sekiz istisna nedenini raporun <code>stack</code> alanına ekler. Uygulama sürümü ve kaynak dosyaları erişilebiliyorsa Bluetooth kodunun SHA-256 özeti bu aşamada eklenir. Hassas değerler maskelenir ve aynı hata adı, mesaj ve yığın özetine sahip raporlar elenir.</p>
+        <a href="../utils/diagnostics/error_reports.py">Rapor oluşturma</a> · <a href="../ui/components/dialogs/error_report.py">Onay penceresi</a>
+      </div>
+      <div>
+        <h2>Kuyruk ve yeniden deneme</h2>
+        <p>Kuyruk en fazla 20 rapor tutar. Geçici hatalarda 1, 5, 30 ve 120 dakika sonra tekrar denenir. Sunucunun <code>Retry-After</code> değeri beklemeyi uzatabilir. En fazla 5 deneme yapılır ve 7 günlük kayıtlar temizlenir.</p>
+        <a href="../utils/diagnostics/error_reports.py">Yerel kuyruk</a> · <a href="../utils/api/mibuds_api.py">HTTP istemcisi</a>
+      </div>
+    </figcaption>
+  </figure>
+</main>
+</body>
+</html>
