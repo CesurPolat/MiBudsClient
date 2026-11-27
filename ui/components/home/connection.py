@@ -57,6 +57,7 @@ class ConnectionPanel(ft.Column):
         # Automatic retries must not replace the actionable failure with a
         # countdown or briefly hide it while the next connection is attempted.
         display_reason = self._failure_reason if state in {"connecting", "retrying"} and self._failure_reason else reason
+        no_device = getattr(display_reason, "key", None) == "connection.no_device"
         self.connection_label.value = {
             "connecting": t("connection.connecting"),
             "retrying": t("connection.connecting"),
@@ -64,22 +65,25 @@ class ConnectionPanel(ft.Column):
             "connected": t("connection.connected"),
             "failed": t("connection.failed"),
         }.get(state, t("connection.waiting"))
+        if no_device:
+            self.connection_label.value = render(display_reason)
+            self.report_status.visible = False
         self.connection_label.color = "white"
-        self.connection_progress.visible = connecting
-        self._progress_slot.visible = connecting
+        self.connection_progress.visible = self._progress_slot.visible = connecting and not no_device
         short_reason = display_reason
         if isinstance(display_reason, Message) and display_reason.key == "connection.technical":
             short_reason = display_reason.params.get("reason", display_reason)
         self.connection_reason.value = render(short_reason)
         self.connection_reason.tooltip = render(display_reason) if display_reason else None
-        self.connection_reason.visible = bool(display_reason)
-        self._reason_slot.visible = bool(display_reason) or self.report_status.visible
+        self.connection_reason.visible = bool(display_reason) and not no_device
+        self._reason_slot.visible = self.connection_reason.visible or self.report_status.visible
         self.retry_button.visible = failed
         self._retry_slot.visible = failed
         self.retry_button.disabled = connecting
 
     def update_report_status(self, state):
-        if state not in {"queued", "sent", "failed"}:
+        if (state not in {"queued", "sent", "failed"}
+                or getattr(self._failure_reason, "key", None) == "connection.no_device"):
             return
         self.report_status.value = t("report." + state)
         self.report_status.visible = True

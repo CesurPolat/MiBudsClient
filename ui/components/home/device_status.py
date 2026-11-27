@@ -76,6 +76,8 @@ class DeviceStatusCard(ft.Container):
         self.status_row.tooltip = render(text)
 
     def update_connection_state(self, state: str, reason: str = "") -> None:
+        if getattr(reason, "key", None) == "connection.no_device":
+            state = "disconnected"
         label, color = {
             "connected": ("connected", "green"),
             "connecting": ("connecting", "amber"),

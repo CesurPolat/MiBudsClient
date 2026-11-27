@@ -266,11 +266,9 @@ class BTController:
                         device = devices[0]
                     self._discovery_devices = BluetoothDiscovery.discovery_diagnostics()
                     if not device or not device.address:
-                        reason = m("connection.choose_device" if devices else "connection.no_catalog")
+                        reason = m("connection.choose_device" if devices else "connection.no_device")
                         self._notify_connection_state("failed", reason)
-                        self._update_status(reason if devices else m("connection.no_device"), "red")
-                        if not devices:
-                            self._report_connection_error(ConnectionError(str(reason)), "bluetooth_discovery")
+                        self._update_status(reason, "red")
                         return False
                     self._bd_addr = device.address
                     self._device_name = device.name
@@ -302,11 +300,22 @@ class BTController:
                 if not self._running or isinstance(e, ConnectionCancelled):
                     return False
                 self._connection.connected = False
+                if isinstance(e, OSError) and self._peer_is_disconnected():
+                    reason = m("connection.no_device")
+                    self._update_status(reason, "red")
+                    self._notify_connection_state("failed", reason)
+                    return False
                 self._update_status(m("connection.failure_details", details=str(e)), "red")
                 reason = self._connection_failure_reason(e)
                 self._notify_connection_state("failed", m("connection.technical", reason=reason, details=str(e) or type(e).__name__))
                 self._report_connection_error(e, "bluetooth_connect")
                 return False
+
+    def _peer_is_disconnected(self) -> bool:
+        if not self._bd_addr:
+            return False
+        self._device_check = BluetoothDiscovery.connection_state(self._bd_addr)
+        return self._device_check.get("state") == "disconnected"
 
     def _connection_failure_reason(self, error):
         """Classify wrapped SDP/socket errors using their original causes."""
@@ -317,8 +326,6 @@ class BTController:
             error = error.__cause__ or (None if error.__suppress_context__ else error.__context__)
         if any(isinstance(cause, AuthError) for cause in causes):
             return m("connection.auth_failed")
-        if self._device_check.get("state") == "disconnected":
-            return m("connection.disconnected_reason")
         if any(isinstance(cause, PermissionError)
                or getattr(cause, "errno", None) in (errno.EACCES, errno.EPERM, 10013)
                or getattr(cause, "winerror", None) in (5, 10013) for cause in causes):
@@ -741,12 +748,14 @@ class BTController:
 
                 if not self.reconnect(force_rediscovery=force_rediscovery):
                     attempts, reached_limit = self._record_reconnect_failure()
+                    failure = self._last_connection_failure
+                    no_device = getattr(failure, "key", None) == "connection.no_device"
                     if reached_limit:
-                        self._update_status(m("connection.retry_limit"), "red")
+                        self._update_status(failure if no_device else m("connection.retry_limit"), "red")
                         self._notify_connection_state(
-                            "failed", self._last_connection_failure or m("connection.retry_limit"))
+                            "failed", failure or m("connection.retry_limit"))
                         self._notify_connection_event("reconnect_failed_limit")
-                    else:
+                    elif not no_device:
                         self._update_status(
                             m("connection.retrying", attempts=attempts, maximum=self._max_reconnect_attempts, delay=RECONNECT_DELAY),
                             "orange"
@@ -755,7 +764,7 @@ class BTController:
                         if not self._running or self.connected:
                             break
                         if not reached_limit:
-                            self._notify_connection_state("retrying", m(
+                            self._notify_connection_state("retrying", failure if no_device else m(
                                 "connection.retrying", attempts=attempts,
                                 maximum=self._max_reconnect_attempts, delay=remaining))
                         time.sleep(1)
@@ -772,9 +781,12 @@ class BTController:
                 # The next loop checks the health deadline even on idle sockets.
                 continue
             except Exception as exc:
+                peer_disconnected = False
                 if self._running and self._connection.connected:
-                    self._report_connection_error(exc, "bluetooth_receive")
-                self._handle_disconnect()
+                    peer_disconnected = isinstance(exc, OSError) and self._peer_is_disconnected()
+                    if not peer_disconnected:
+                        self._report_connection_error(exc, "bluetooth_receive")
+                self._handle_disconnect(peer_disconnected=peer_disconnected)
     
     def _process_data(self, last_packet_size: int) -> int:
         """Process incoming data packet."""
@@ -888,16 +900,15 @@ class BTController:
             
         return packet_size
     
-    def _handle_disconnect(self) -> None:
+    def _handle_disconnect(self, *, peer_disconnected: bool = False) -> None:
         """Handle connection loss."""
         if not self._running:
             return
         self._reset_identity_state(m("identity.disconnected"))
         self._connection.disconnect()
-        self._update_status(m("connection.lost"), "red")
-        self._notify_connection_state(
-            "failed", m("connection.disconnected_reason")
-        )
+        reason = m("connection.no_device" if peer_disconnected else "connection.disconnected_reason")
+        self._update_status(reason if peer_disconnected else m("connection.lost"), "red")
+        self._notify_connection_state("failed", reason)
         self._notify_connection_event("disconnected")
         time.sleep(2)
     
