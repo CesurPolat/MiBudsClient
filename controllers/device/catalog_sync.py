@@ -51,7 +51,7 @@ class CatalogSync:
         capabilities = resolve_capabilities(device_name, identity)
         if capabilities != self._last_capabilities:
             self._last_capabilities = capabilities
-            self._publish({"type": PubSubTopic.CAPABILITIES_CHANGED.value})
+            self._publish(PubSubTopic.CAPABILITIES_CHANGED)
         normalized_name = " ".join(device_name.split()).casefold()
         model = next((item for item in models
                       if " ".join(item["name"].split()).casefold() == normalized_name),
@@ -80,7 +80,7 @@ class CatalogSync:
         if presentation != self._last_presentation:
             if image_path:
                 self.client.remember_device_image(presentation[0], image_path)
-            self._publish({"type": PubSubTopic.CATALOG_DEVICE.value, "name": presentation[0], "image_path": image_path})
+            self._publish(PubSubTopic.CATALOG_DEVICE, name=presentation[0], image_path=image_path)
             self._last_presentation = presentation
 
     def _run(self):

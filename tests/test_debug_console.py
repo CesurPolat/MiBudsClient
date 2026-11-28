@@ -15,7 +15,7 @@ class DebugKeyboardTests(unittest.TestCase):
             manager, "toggle_console",
         ) as toggle:
             manager.handle_keyboard_event(SimpleNamespace(key="f12"))
-        publish.assert_called_once_with({"type": "debug_console", "action": "toggle"})
+        publish.assert_called_once_with("debug_console", action="toggle")
         toggle.assert_not_called()
 
     def test_f12_publishes_toggle_on_linux(self):
@@ -23,7 +23,7 @@ class DebugKeyboardTests(unittest.TestCase):
         manager = DebugConsoleManager(publish=publish)
         with patch("utils.diagnostics.debug_console.sys.platform", "linux"):
             manager.handle_keyboard_event(SimpleNamespace(key="F12"))
-        publish.assert_called_once_with({"type": "debug_console", "action": "toggle"})
+        publish.assert_called_once_with("debug_console", action="toggle")
 
     def test_linux_toggle_uses_bound_flet_console(self):
         manager = DebugConsoleManager()

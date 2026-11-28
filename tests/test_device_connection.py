@@ -14,7 +14,7 @@ class DeviceConnectionTests(unittest.TestCase):
 
     def test_status_and_battery_updates_use_publisher(self):
         self.connection.update_status("Connected")
-        self.publish.assert_called_once_with({"type": "status", "text": "Connected", "color": "white"})
+        self.publish.assert_called_once_with("status", text="Connected", color="white")
         with patch.object(self.connection._battery_updates, "update") as update:
             self.connection.update_battery(188, 70, 80)
         update.assert_called_once_with(188, 70, 80)
@@ -45,9 +45,9 @@ class DeviceConnectionTests(unittest.TestCase):
             self.connection.reconnect_on_show()
             self.assertEqual(thread.call_count, 2)
         self.controller.reconnect.assert_called_once_with(force_rediscovery=True)
-        self.publish.assert_called_once_with({
-            "type": "status", "text": "Connection lost. Reconnecting...", "color": "orange",
-        })
+        self.publish.assert_called_once_with(
+            "status", text="Connection lost. Reconnecting...", color="orange",
+        )
 
     def test_connected_or_uninitialized_device_does_not_reconnect(self):
         with patch("controllers.device.controller.threading.Thread") as thread:

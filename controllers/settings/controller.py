@@ -2,7 +2,7 @@ from utils.diagnostics.error_reports import publish_exception
 """Bind settings controls to startup, device, and latency actions."""
 
 from utils.app.i18n import message as m, error_message
-from utils.app.pubsub_topics import PubSubTopic
+from utils.app.pubsub_topics import Publisher, PubSubTopic
 
 import threading
 from typing import Callable
@@ -18,7 +18,7 @@ class SettingsController:
     """Build the settings controls and handle their application callbacks."""
 
     def __init__(self, *, controller, latency, device_connection,
-                 publish: Callable[[dict], None], on_update: Callable[[], None],
+                 publish: Publisher, on_update: Callable[[], None],
                  on_language_change: Callable | None = None):
         self._controller = controller
         self._device_connection = device_connection
@@ -81,7 +81,7 @@ class SettingsController:
             except Exception as exc:
                 publish_exception(self._publish, exc, "device_identity")
                 success, message = False, m("identity.failed", details=error_message(exc))
-            self._publish({"type": PubSubTopic.DEVICE_IDENTITY.value, "text": message})
+            self._publish(PubSubTopic.DEVICE_IDENTITY, text=message)
             self._device_connection.update_status(message, "green" if success else "red")
 
         threading.Thread(target=query_identity, daemon=True).start()

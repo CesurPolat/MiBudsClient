@@ -1,6 +1,7 @@
 """Message types shared by application PubSub publishers and subscribers."""
 
 from enum import Enum
+from typing import Protocol
 
 
 class PubSubTopic(str, Enum):
@@ -32,3 +33,7 @@ class PubSubTopic(str, Enum):
     TRAY_DEVICE_ACTION = "tray_device_action"
     UPDATE_NOTIFICATION = "update_notification"
     WINDOW = "window"
+
+
+class Publisher(Protocol):
+    def __call__(self, topic: PubSubTopic, /, **message: object) -> None: ...

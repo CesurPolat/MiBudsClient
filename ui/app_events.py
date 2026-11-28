@@ -24,13 +24,13 @@ class AppEvents:
         self._update_page = update_page
         self._last_debug_toggle_at = 0.0
 
-    def routes(self):
+    def topic_handlers(self):
         return {
-            PubSubTopic.APP.value: self.on_app,
-            PubSubTopic.WINDOW.value: self.on_window,
-            PubSubTopic.LANGUAGE.value: self.on_language,
-            PubSubTopic.UPDATE_NOTIFICATION.value: self.on_update_notification,
-            PubSubTopic.DEBUG_CONSOLE.value: self.on_debug_console,
+            PubSubTopic.APP: self.on_app,
+            PubSubTopic.WINDOW: self.on_window,
+            PubSubTopic.LANGUAGE: self.on_language,
+            PubSubTopic.UPDATE_NOTIFICATION: self.on_update_notification,
+            PubSubTopic.DEBUG_CONSOLE: self.on_debug_console,
         }
 
     def on_app(self, message):

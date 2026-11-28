@@ -52,7 +52,7 @@ class SettingsControllerTests(unittest.TestCase):
             self.assertTrue(thread.call_args.kwargs["daemon"])
             thread.return_value.start.assert_called_once_with()
             thread.call_args.kwargs["target"]()
-        self.publish.assert_called_once_with({"type": "device_identity", "text": "Redmi Buds 6 Play"})
+        self.publish.assert_called_once_with("device_identity", text="Redmi Buds 6 Play")
         self.connection.update_status.assert_called_once_with("Redmi Buds 6 Play", "green")
 
     def test_failed_identity_query_still_publishes_completion(self):
@@ -66,7 +66,7 @@ class SettingsControllerTests(unittest.TestCase):
                 self.device.request_device_identity.side_effect = error
                 self.settings.on_check_device_identity(None)
                 thread.call_args.kwargs["target"]()
-                self.publish.assert_called_with({"type": "device_identity", "text": expected})
+                self.publish.assert_called_with("device_identity", text=expected)
                 self.connection.update_status.assert_called_with(expected, "red")
 
     def test_initial_settings_and_automatic_battery_layout_remain_wired(self):

@@ -1,9 +1,8 @@
 """Publish battery refreshes and play the app's own case-transition melodies."""
 
 import time
-from typing import Callable
 
-from utils.app.pubsub_topics import PubSubTopic
+from utils.app.pubsub_topics import Publisher, PubSubTopic
 from utils.notifications.sound import play_tones
 
 from .stream import BATTERY_UNKNOWN, battery_state
@@ -12,7 +11,7 @@ from .stream import BATTERY_UNKNOWN, battery_state
 class BatteryUpdates:
     """Adapt the Bluetooth callback into UI messages without touching controls."""
 
-    def __init__(self, publish: Callable[[dict], None]):
+    def __init__(self, publish: Publisher):
         self._publish = publish
         self._previous_charging_state = {"left": None, "right": None}
 
@@ -37,18 +36,18 @@ class BatteryUpdates:
 
         # UX hint: briefly clear battery fields before showing the latest values,
         # even when values are unchanged.
-        self._publish({
-            "type": PubSubTopic.BATTERY.value,
-            "left": BATTERY_UNKNOWN,
-            "right": BATTERY_UNKNOWN,
-            "case": BATTERY_UNKNOWN,
-            "transient": True
-        })
+        self._publish(
+            PubSubTopic.BATTERY,
+            left=BATTERY_UNKNOWN,
+            right=BATTERY_UNKNOWN,
+            case=BATTERY_UNKNOWN,
+            transient=True,
+        )
         time.sleep(0.2)
-        self._publish({
-            "type": PubSubTopic.BATTERY.value,
-            "left": left,
-            "right": right,
-            "case": case,
-            "transient": False
-        })
+        self._publish(
+            PubSubTopic.BATTERY,
+            left=left,
+            right=right,
+            case=case,
+            transient=False,
+        )

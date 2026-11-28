@@ -29,22 +29,22 @@ class DeviceEvents:
         self._latest_report = float("-inf")
         self._report_state = None
 
-    def routes(self):
+    def topic_handlers(self):
         return {
-            PubSubTopic.BATTERY.value: self.on_battery,
-            PubSubTopic.STATUS.value: self.on_status,
-            PubSubTopic.CONNECTION_STATE.value: self.on_connection_state,
-            PubSubTopic.CONNECTION_REPORT_STATUS.value: self.on_report_status,
-            PubSubTopic.DEVICE_CANDIDATES.value: self.on_candidates,
-            PubSubTopic.CATALOG_DEVICE.value: self.on_catalog_device,
-            PubSubTopic.CAPABILITIES_CHANGED.value: self.on_capabilities_changed,
-            PubSubTopic.DEVICE_IDENTITY.value: self.on_identity,
-            PubSubTopic.FIRMWARE_INFO.value: self.on_firmware,
-            PubSubTopic.GESTURE_SETTINGS.value: self.on_gesture_settings,
-            PubSubTopic.EQ_SETTINGS.value: self.on_eq_settings,
-            PubSubTopic.NOISE_SETTINGS.value: self.on_noise_settings,
-            PubSubTopic.NOISE_NOTIFICATION.value: self.on_noise_notification,
-            PubSubTopic.CONFIG_NOTIFICATION.value: self.on_config_notification,
+            PubSubTopic.BATTERY: self.on_battery,
+            PubSubTopic.STATUS: self.on_status,
+            PubSubTopic.CONNECTION_STATE: self.on_connection_state,
+            PubSubTopic.CONNECTION_REPORT_STATUS: self.on_report_status,
+            PubSubTopic.DEVICE_CANDIDATES: self.on_candidates,
+            PubSubTopic.CATALOG_DEVICE: self.on_catalog_device,
+            PubSubTopic.CAPABILITIES_CHANGED: self.on_capabilities_changed,
+            PubSubTopic.DEVICE_IDENTITY: self.on_identity,
+            PubSubTopic.FIRMWARE_INFO: self.on_firmware,
+            PubSubTopic.GESTURE_SETTINGS: self.on_gesture_settings,
+            PubSubTopic.EQ_SETTINGS: self.on_eq_settings,
+            PubSubTopic.NOISE_SETTINGS: self.on_noise_settings,
+            PubSubTopic.NOISE_NOTIFICATION: self.on_noise_notification,
+            PubSubTopic.CONFIG_NOTIFICATION: self.on_config_notification,
         }
 
     def on_battery(self, message):

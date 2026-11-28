@@ -141,13 +141,13 @@ class WindowManager:
         """Show and bring window to front via pubsub."""
         if self._is_closing or self._session_closed:
             return
-        self.page.pubsub.send_all({"type": PubSubTopic.WINDOW.value, "action": "show"})
+        self.page.pubsub.send_all_on_topic(PubSubTopic.WINDOW.value, {"action": "show"})
     
     def hide(self) -> None:
         """Hide window to tray via pubsub."""
         if self._is_closing or self._session_closed:
             return
-        self.page.pubsub.send_all({"type": PubSubTopic.WINDOW.value, "action": "hide"})
+        self.page.pubsub.send_all_on_topic(PubSubTopic.WINDOW.value, {"action": "hide"})
 
     def close(self) -> None:
         """Close the application with a guarded, graceful flow."""

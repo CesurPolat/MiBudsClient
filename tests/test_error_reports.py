@@ -1,3 +1,4 @@
+import asyncio
 import io
 import json
 from pathlib import Path
@@ -17,17 +18,19 @@ from utils.diagnostics.debug_console import DebugConsoleManager
 
 class ErrorReportTests(unittest.TestCase):
     def test_pubsub_dispatch_serializes_control_updates(self):
-        from ui.app_message_handler import AppMessageHandler
-        handler = AppMessageHandler.__new__(AppMessageHandler)
-        handler._closing = False
-        handler._dispatch_lock = threading.RLock()
+        from ui.app_subscriptions import subscribe_ui_topic
+        from utils.app.pubsub_topics import PubSubTopic
+
+        pubsub = Mock()
+        lock = threading.RLock()
         first_entered, release_first, second_entered = (threading.Event() for _ in range(3))
         def first(message):
             first_entered.set()
             release_first.wait(2)
-        handler._routes = {'first': first, 'second': lambda message: second_entered.set()}
-        threads = [threading.Thread(target=handler.handle, args=({'type': kind},))
-                   for kind in ('first', 'second')]
+        for topic, handler in ((PubSubTopic.STATUS, first), (PubSubTopic.BATTERY, lambda message: second_entered.set())):
+            subscribe_ui_topic(pubsub, topic, handler, ui_lock=lock, is_closing=lambda: False)
+        threads = [threading.Thread(target=asyncio.run, args=(callback(topic, {}),))
+                   for topic, callback in (item.args for item in pubsub.subscribe_topic.call_args_list)]
         threads[0].start()
         self.assertTrue(first_entered.wait(2))
         threads[1].start()

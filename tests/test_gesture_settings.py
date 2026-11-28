@@ -9,7 +9,7 @@ from controllers.gestures.protocol import GestureResult, gesture_capabilities
 from controllers.gestures.controller import GestureSettingsController
 from ui.components.settings.gestures import GestureSettings
 from ui.components.settings.settings_card import SettingsCard
-from ui.app_message_handler import AppMessageHandler
+from pubsub_fakes import subscribe_test_ui
 
 
 class GestureSettingsTests(unittest.TestCase):
@@ -153,7 +153,7 @@ class GestureSettingsTests(unittest.TestCase):
             thread.call_args.kwargs["target"]()
         device.request_gesture_settings.assert_called_once_with(session=7)
         self.assertEqual(self.panel.selectors, {})
-        message = publish.call_args.args[0]
+        message = publish.call_args.kwargs
         self.panel.complete(message["token"], message["result"], message["capabilities"])
         self.assertEqual(self.panel.selectors[(1, "left")].value, "1")
 
@@ -164,18 +164,18 @@ class GestureSettingsTests(unittest.TestCase):
         with patch("controllers.gestures.controller.threading.Thread") as thread:
             worker.refresh()
             thread.call_args.kwargs["target"]()
-        message = publish.call_args.args[0]
+        message = publish.call_args.kwargs
         self.panel.complete(message["token"], message["result"], message["capabilities"])
         self.assertIn("Failed", self.panel.status.value)
         self.assertFalse(self.panel.refresh_button.disabled)
 
     def test_message_handler_routes_result_to_panel(self):
         card, page = Mock(), Mock()
-        handler = AppMessageHandler(page=page, device_status_card=Mock(), settings_card=card,
+        deliver = subscribe_test_ui(page=page, device_status_card=Mock(), settings_card=card,
                                     window_manager=Mock(), latency=Mock(), tray=Mock(), debug_console=Mock(),
                                     on_window_show=Mock())
         result = GestureResult(True, {1: (1, 3)}, "Loaded")
-        handler.handle({"type": "gesture_settings", "token": 4, "result": result, "capabilities": {1: (1, 3)}})
+        deliver("gesture_settings", token=4, result=result, capabilities={1: (1, 3)})
         card.gestures.complete.assert_called_once_with(4, result, {1: (1, 3)})
         page.update.assert_called_once()
 

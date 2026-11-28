@@ -19,8 +19,8 @@ class TrayDeviceEvents:
         self._session = None
         self._battery = (BATTERY_UNKNOWN,) * 3
 
-    def routes(self):
-        return {PubSubTopic.TRAY_DEVICE_ACTION.value: self.on_action}
+    def topic_handlers(self):
+        return {PubSubTopic.TRAY_DEVICE_ACTION: self.on_action}
 
     def sync(self):
         if self._get_capabilities is None or self._get_session is None or self._is_connected is None:

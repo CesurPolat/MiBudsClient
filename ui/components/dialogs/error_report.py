@@ -129,13 +129,13 @@ class ErrorReportEvents:
         self._reports = reports
         self._queue = queue
 
-    def routes(self):
+    def topic_handlers(self):
         handlers = {
-            PubSubTopic.REPORT_EXCEPTION.value: lambda message: self._reports.capture(
+            PubSubTopic.REPORT_EXCEPTION: lambda message: self._reports.capture(
                 message["error"], message.get("action", "")
             ),
-            PubSubTopic.ERROR_REPORT.value: lambda message: self._dialog.receive(message["report"]),
-            PubSubTopic.ERROR_REPORT_STATUS.value: lambda message: self._dialog.status(message["state"]),
+            PubSubTopic.ERROR_REPORT: lambda message: self._dialog.receive(message["report"]),
+            PubSubTopic.ERROR_REPORT_STATUS: lambda message: self._dialog.status(message["state"]),
         }
         return {topic: partial(self._deliver, handler) for topic, handler in handlers.items()}
 

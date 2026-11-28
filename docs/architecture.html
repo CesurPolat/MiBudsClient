@@ -124,7 +124,7 @@
 </g>
 <g>
   <rect x="480" y="296" width="320" height="112" rx="8" class="focal"/>
-  <text x="496" y="320" class="node-meta">AppMessageHandler · *_events.py</text>
+  <text x="496" y="320" class="node-meta">app_subscriptions.py · *_events.py</text>
   <text x="496" y="347" class="node-title">Flet olay yönlendirmesi</text>
   <text x="496" y="372" class="node-copy">Tek PubSub aboneliği ve UI döngüsü</text>
   <text x="496" y="390" class="node-copy">Mesaj türüne göre işleyici</text>
@@ -278,13 +278,13 @@
 <section id="olaylar" aria-labelledby="olaylar-baslik">
   <div class="section-head">
     <h2 id="olaylar-baslik">Arka plan olaylarından Flet’e</h2>
-    <p>Üreticiler <code>type</code> alanlı sözlükler yayınlar. <code>AppMessageHandler</code>, modüllerin <code>routes()</code> tablolarını birleştirir. Tek Flet abonesi mesajı UI döngüsünde uygun işleyiciye aktarır.</p>
+    <p>Üreticiler <code>PubSubTopic</code> üyesini ve mesaj verisini ayrı geçirir. Flet, mesajı ilgili asenkron aboneye UI döngüsünde ulaştırır. İşleyiciler ortak UI kilidi altında çalışır.</p>
   </div>
   <figure>
     <div class="diagram-container" tabindex="0" role="region" aria-label="Flet PubSub ve cihaz olayları">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-olaylar-title architecture-olaylar-desc">
 <title id="architecture-olaylar-title">Flet PubSub ve cihaz olayları</title>
-<desc id="architecture-olaylar-desc">İşçiler ve arayüz olayları aynı aboneye ulaşır, işleyiciler Home, Settings, tepsi, bildirim ve uygulama durumunu günceller.</desc>
+<desc id="architecture-olaylar-desc">İşçiler ve arayüz olayları Flet konuları üzerinden ilgili abonelere ulaşır. İşleyiciler Home, Settings, tepsi, bildirim ve uygulama durumunu günceller.</desc>
 <defs><marker id="architecture-olaylar-data" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#acb9c8"/></marker><marker id="architecture-olaylar-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#8cb2f6"/></marker><marker id="architecture-olaylar-network" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#9bd8ba"/></marker></defs>
 <rect width="1280" height="720" class="paper"/>
 <path d="M368 148H480" class="edge event" marker-end="url(#architecture-olaylar-event)"/>
@@ -312,16 +312,16 @@
 </g>
 <g>
   <rect x="480" y="92" width="320" height="112" rx="8" class="node"/>
-  <text x="496" y="116" class="node-meta">page.pubsub.send_all(message)</text>
+  <text x="496" y="116" class="node-meta">send_all_on_topic(topic, message)</text>
   <text x="496" y="143" class="node-title">Flet PubSub</text>
-  <text x="496" y="168" class="node-copy">type alanı taşıyan mesaj sözlükleri</text>
+  <text x="496" y="168" class="node-copy">Konu adı ve mesaj verisi</text>
   <text x="496" y="186" class="node-copy">Arka plan işçisinden UI döngüsüne</text>
 </g>
 <g>
   <rect x="912" y="92" width="320" height="112" rx="8" class="focal"/>
-  <text x="928" y="116" class="node-meta">ui/app_message_handler.py</text>
-  <text x="928" y="143" class="node-title">Tek abone ve mesaj yönü</text>
-  <text x="928" y="168" class="node-copy">handle_on_ui_loop ve ortak UI kilidi</text>
+  <text x="928" y="116" class="node-meta">ui/app_subscriptions.py</text>
+  <text x="928" y="143" class="node-title">Konu abonelikleri</text>
+  <text x="928" y="168" class="node-copy">Asenkron abone ve ortak UI kilidi</text>
   <text x="928" y="186" class="node-copy">Konu → ilgili işleyici</text>
 </g>
 <g>
@@ -487,11 +487,11 @@
     </article>
     <article>
       <div><span class="priority">Orta öncelik</span><h3>UI yenilemelerini olay bazında birleştir</h3></div>
-      <div><p><strong>Bulgu.</strong> Genel sayfa yenilemesi tepsiyi eşitliyor, çevirileri dolaşıyor ve pencere ölçümü istiyor. Pil işleyicisi yenilemeden önce de tepsiyi eşitliyor. Gecikme kaydı içeren yapılandırma bildiriminde iç ve dış işleyici sayfayı ayrı ayrı yeniliyor.</p><p><strong>Öneri.</strong> Önce değişen bileşenleri ve durum kopyasını hazırla. Aynı olay için tek sayfa güncellemesi yap. Çeviri ve içerik ölçümünü bunları etkileyen değişikliklere bağla.</p><p><strong>Doğrulama.</strong> Bir pil veya birleşik yapılandırma olayı bir kez commit edilsin. Dil, pencere boyutu ve tepsi güncellemeleri doğru çalışmaya devam etsin.</p><p class="refs"><a href="../ui/app_message_handler.py#L72">Ortak yenileme</a> · <a href="../ui/device_events.py#L49">Pil işleyicisi</a> · <a href="../ui/latency_events.py#L26">Düşük gecikme görünümü</a></p></div>
+      <div><p><strong>Bulgu.</strong> Genel sayfa yenilemesi tepsiyi eşitliyor, çevirileri dolaşıyor ve pencere ölçümü istiyor. Pil işleyicisi yenilemeden önce de tepsiyi eşitliyor. Gecikme kaydı içeren yapılandırma bildiriminde iç ve dış işleyici sayfayı ayrı ayrı yeniliyor.</p><p><strong>Öneri.</strong> Önce değişen bileşenleri ve durum kopyasını hazırla. Aynı olay için tek sayfa güncellemesi yap. Çeviri ve içerik ölçümünü bunları etkileyen değişikliklere bağla.</p><p><strong>Doğrulama.</strong> Bir pil veya birleşik yapılandırma olayı bir kez commit edilsin. Dil, pencere boyutu ve tepsi güncellemeleri doğru çalışmaya devam etsin.</p><p class="refs"><a href="../ui/page_updates.py#L6">Ortak yenileme</a> · <a href="../ui/device_events.py#L49">Pil işleyicisi</a> · <a href="../ui/latency_events.py#L26">Düşük gecikme görünümü</a></p></div>
     </article>
     <article>
       <div><span class="priority">Orta öncelik</span><h3>PubSub sözleşmesini belirt</h3></div>
-      <div><p><strong>Bulgu.</strong> Konular ve mesaj alanları sözlük anahtarlarına bağlı. Tablo birleştirmede aynı konu adı sessizce önceki işleyicinin üzerine yazabilir. İşleyicinin beklediği alanların sözleşmesi üreticiyle ortak bir yerde belirtilmiyor.</p><p><strong>Öneri.</strong> Önce oturum taşıyan olaylara ortak konu adları ve <code>TypedDict</code> veya veri sınıfı ekle. Rotayı kaydederken tekrar eden konu adını başlangıçta yakala. Tek Flet aboneliğini ve sıralı UI uygulamasını koru.</p><p><strong>Doğrulama.</strong> Yanlış alan adı geliştirme sırasında fark edilsin. Aynı konu adı iki kez kaydedildiğinde başlangıç açık bir hata versin.</p><p class="refs"><a href="../ui/app_message_handler.py#L53">Rota birleştirme</a> · <a href="../main.py#L178">Olay üreticileri</a></p></div>
+      <div><p><strong>Bulgu.</strong> Konu adları ortak enum’da tanımlı ve Flet abonelikleri konu bazında kayıtlı. İşleyicinin beklediği mesaj alanları için üreticiyle paylaşılan bir tip tanımı bulunmuyor.</p><p><strong>Öneri.</strong> Önce oturum taşıyan olayların mesaj alanlarını <code>TypedDict</code> veya veri sınıfı ile tanımla.</p><p><strong>Doğrulama.</strong> Yanlış alan adı geliştirme sırasında fark edilsin.</p><p class="refs"><a href="../ui/app_subscriptions.py#L10">Konu aboneliği</a> · <a href="../main.py#L178">Olay üreticileri</a></p></div>
     </article>
     <article>
       <div><span class="priority">API sözleşmesine bağlı</span><h3>Rapor tekrarlarını sunucuyla birlikte yönet</h3></div>

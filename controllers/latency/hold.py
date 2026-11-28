@@ -95,7 +95,7 @@ class HoldWatcher:
                             return
                         if self._active_app() != app_id:
                             continue
-                        self._publish({"type": PubSubTopic.AUTO_HOLD_RELEASED.value, "app_id": app_id})
+                        self._publish(PubSubTopic.AUTO_HOLD_RELEASED, app_id=app_id)
                     return
 
                 if self._stopped.wait(2):

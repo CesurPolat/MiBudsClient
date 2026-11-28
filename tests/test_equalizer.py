@@ -15,7 +15,7 @@ from controllers.gestures.transport import GestureTransport
 from controllers.bluetooth.rcsp import DeviceIdentity
 from controllers.bluetooth.rcsp import RcspStreamParser
 from ui.components.shared.equalizer import EqualizerSettings
-from ui.app_message_handler import AppMessageHandler
+from pubsub_fakes import subscribe_test_ui
 from utils.app.i18n import message as m, set_language, t
 
 
@@ -477,12 +477,12 @@ class EqUITests(unittest.TestCase):
     def test_pubsub_route(self):
         self.panel.set_connection(True)
         token = self.panel.begin("read")
-        page = SimpleNamespace(controls=[], overlay=[], update=Mock())
-        handler = AppMessageHandler(page=page, device_status_card=Mock(),
+        page = SimpleNamespace(controls=[], overlay=[], update=Mock(), pubsub=Mock())
+        deliver = subscribe_test_ui(page=page, device_status_card=Mock(),
                                     settings_card=SimpleNamespace(equalizer=self.panel, refresh_connection_panel=Mock()),
                                     window_manager=Mock(), latency=Mock(), tray=Mock(), debug_console=Mock(),
                                     on_window_show=Mock())
-        handler.handle({"type": "eq_settings", "token": token, "result": EqResult(True, self.state, "loaded"),
-                        "profiles": (0, 1), "operation": "read"})
+        deliver("eq_settings", token=token, result=EqResult(True, self.state, "loaded"),
+                profiles=(0, 1), operation="read")
         self.assertEqual(self.panel._state, self.state)
         page.update.assert_called_once()

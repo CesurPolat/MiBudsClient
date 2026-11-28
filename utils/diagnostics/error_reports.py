@@ -93,7 +93,7 @@ def publish_exception(publish, error, action):
     if isinstance(error, (OSError, TimeoutError)):
         return
     try:
-        publish({'type': PubSubTopic.REPORT_EXCEPTION.value, 'error': error, 'action': action})
+        publish(PubSubTopic.REPORT_EXCEPTION, error=error, action=action)
     except Exception:
         pass
 
@@ -287,9 +287,9 @@ class ErrorReportManager:
                     with self.lock:
                         self.seen.discard(signature)
                     print('[Error reports] Could not queue automatic Bluetooth report.')
-                    self.publish({'type': PubSubTopic.ERROR_REPORT_STATUS.value, 'state': 'failed'})
+                    self.publish(PubSubTopic.ERROR_REPORT_STATUS, state='failed')
                 return
-            self.publish({'type': PubSubTopic.ERROR_REPORT.value, 'report': report})
+            self.publish(PubSubTopic.ERROR_REPORT, report=report)
         except Exception as exc:
             print(f'[Error reports] Could not prepare report: {redact(exc)}')
             if signature is not None:

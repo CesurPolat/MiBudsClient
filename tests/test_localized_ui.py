@@ -11,7 +11,7 @@ from flet.controls.base_control import BaseControl
 from flet.messaging.protocol import configure_encode_object_for_msgpack
 
 from controllers.gestures.protocol import GestureResult
-from ui.app_message_handler import AppMessageHandler
+from pubsub_fakes import subscribe_test_ui
 from ui.components import AppLayout, DeviceStatusCard, SettingsCard
 from ui.components.dialogs.update_notification import show_update_notification
 from ui.localization import refresh_translations
@@ -34,7 +34,7 @@ class LocalizedUITests(unittest.TestCase):
         self.layout = AppLayout(self.device, self.settings, Mock())
         self.page = SimpleNamespace(controls=[self.layout], overlay=[], update=Mock(), pubsub=Mock())
         self.tray = Mock()
-        self.handler = AppMessageHandler(
+        self.deliver = subscribe_test_ui(
             page=self.page, device_status_card=self.device, settings_card=self.settings,
             window_manager=Mock(), latency=Mock(), tray=self.tray, debug_console=Mock(),
             on_window_show=Mock(),
@@ -42,7 +42,7 @@ class LocalizedUITests(unittest.TestCase):
 
     def switch(self, language):
         with patch("ui.app_events.set_language_preference") as save:
-            self.handler.handle({"type": "language", "language": language})
+            self.deliver("language", language=language)
         save.assert_called_once_with(language)
 
     def test_change_preserves_navigation_user_input_and_pending_gesture(self):
@@ -89,9 +89,9 @@ class LocalizedUITests(unittest.TestCase):
 
     def test_failure_reason_status_identity_and_open_update_translate_in_place(self):
         reason = message("connection.technical", reason=message("connection.permission"), details="winerror 5")
-        self.handler.handle({"type": "connection_state", "state": "failed", "reason": reason})
-        self.handler.handle({"type": "status", "text": message("connection.retry_limit"), "color": "red"})
-        self.handler.handle({"type": "device_identity", "text": message("identity.timeout")})
+        self.deliver("connection_state", state="failed", reason=reason)
+        self.deliver("status", text=message("connection.retry_limit"), color="red")
+        self.deliver("device_identity", text=message("identity.timeout"))
         show_update_notification(self.page, "v9.8.7")
         notice = self.page.overlay[0]
         checkbox = notice.content.controls[1].controls[0]
@@ -152,7 +152,7 @@ class LocalizedUITests(unittest.TestCase):
     def test_invalid_language_events_do_not_save_or_refresh(self):
         with patch("ui.app_events.set_language_preference") as save:
             for value in (None, "zz", [], {}):
-                self.handler.handle({"type": "language", "language": value})
+                self.deliver("language", language=value)
         save.assert_not_called()
         self.tray.refresh_menu.assert_not_called()
         self.assertEqual(get_language(), "en")

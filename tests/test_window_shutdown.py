@@ -37,7 +37,7 @@ class WindowShutdownTests(unittest.TestCase):
         manager.apply_hide()
         page.update.assert_not_called()
         page.run_task.assert_not_called()
-        page.pubsub.send_all.assert_not_called()
+        page.pubsub.send_all_on_topic.assert_not_called()
         manager.show_closing_screen.assert_not_called()
         self.assertTrue(manager._session_closed)
 
@@ -99,7 +99,7 @@ class WindowShutdownTests(unittest.TestCase):
     def test_title_bar_close_still_hides_to_tray(self):
         manager, page = self.manager()
         page.window.on_event(SimpleNamespace(type=ft.WindowEventType.CLOSE))
-        page.pubsub.send_all.assert_called_once_with({'type': 'window', 'action': 'hide'})
+        page.pubsub.send_all_on_topic.assert_called_once_with('window', {'action': 'hide'})
         self.assertFalse(manager._is_closing)
         self.exit_melody.assert_not_called()
 

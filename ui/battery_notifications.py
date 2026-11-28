@@ -75,10 +75,10 @@ class BatteryNotifications:
         self._token = 0
         self._stopped = False
 
-    def routes(self):
+    def topic_handlers(self):
         return {
-            PubSubTopic.CONNECTION_EVENT.value: self.on_connection_event,
-            PubSubTopic.CONNECTION_NOTIFICATION_TIMEOUT.value: self.on_connection_timeout,
+            PubSubTopic.CONNECTION_EVENT: self.on_connection_event,
+            PubSubTopic.CONNECTION_NOTIFICATION_TIMEOUT: self.on_connection_timeout,
         }
 
     def set_single_body(self, single_body):
@@ -109,7 +109,7 @@ class BatteryNotifications:
                 token = self._token
                 # The timer only publishes. Notifications run on the UI event path.
                 self._timer = threading.Timer(3.0, lambda: self._publish(
-                    {"type": PubSubTopic.CONNECTION_NOTIFICATION_TIMEOUT.value, "token": token}
+                    PubSubTopic.CONNECTION_NOTIFICATION_TIMEOUT, token=token
                 ))
                 self._timer.daemon = True
                 self._timer.start()

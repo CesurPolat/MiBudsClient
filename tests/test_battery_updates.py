@@ -24,7 +24,7 @@ class BatteryUpdatesTests(unittest.TestCase):
             updates.update(255, 255, 255)
             updates.update(188, 198, 255)
             self.assertEqual(play.call_count, 2)
-        messages = [call.args[0] for call in publish.call_args_list]
+        messages = [call.kwargs for call in publish.call_args_list]
         self.assertTrue(all(message["transient"] and message["left"] == 255 for message in messages[::2]))
         self.assertTrue(all(not message["transient"] for message in messages[1::2]))
         self.assertEqual(messages[-1]["left"], 188)

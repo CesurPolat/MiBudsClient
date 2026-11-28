@@ -116,7 +116,7 @@ class LatencyControllerTests(unittest.TestCase):
     def test_failed_device_command_publishes_error(self):
         self.device.send_command.return_value = (False, "Disconnected")
         self.controller.set_selected_latency_mode("on")
-        self.publish.assert_any_call({"type": "status", "text": "Disconnected", "color": "red"})
+        self.publish.assert_any_call("status", text="Disconnected", color="red")
         self.assertIsNone(self.controller.state["effective_low_latency"])
         self.assertEqual(self.controller.get_display_state()["error"], "Disconnected")
         self.device.send_command.return_value = (True, "OK")
@@ -197,9 +197,7 @@ class LatencyControllerTests(unittest.TestCase):
 
     def test_mode_change_publishes_even_without_a_device_transition(self):
         self.controller.set_selected_latency_mode("auto")
-        self.publish.assert_any_call({
-            "type": "latency", "enabled": False, "mode": "auto", "source": "manual",
-        })
+        self.publish.assert_any_call("latency", enabled=False, mode="auto", source="manual")
 
     def test_concurrent_mode_selections_serialize_device_commands(self):
         entered, release, second_started = Event(), Event(), Event()
@@ -252,7 +250,7 @@ class LatencyControllerTests(unittest.TestCase):
             c.start_hold_watcher_if_needed()
             thread.assert_called_once()
             thread.call_args.kwargs["target"]()
-        self.publish.assert_called_with({"type": "auto_hold_released", "app_id": "game.exe"})
+        self.publish.assert_called_with("auto_hold_released", app_id="game.exe")
         self.assertFalse(c.state["hold_watcher_running"])
 
     def test_process_discovery_on_windows_and_linux(self):

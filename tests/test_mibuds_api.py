@@ -85,8 +85,8 @@ class MiBudsApiTests(unittest.TestCase):
         publish.assert_not_called()
         name.return_value = 'Redmi Buds 6'
         sync._publish_device()
-        self.assertEqual(' '.join(publish.call_args.args[0]['name'].split()), 'Redmi Buds 6')
-        self.assertNotEqual(publish.call_args.args[0]['image_path'], image_path)
+        self.assertEqual(' '.join(publish.call_args.kwargs['name'].split()), 'Redmi Buds 6')
+        self.assertNotEqual(publish.call_args.kwargs['image_path'], image_path)
 
     def test_existing_image_cache_is_recovered_without_last_device_record(self):
         with patch('utils.api.mibuds_api.urlopen', return_value=self.png_response()):
@@ -236,7 +236,7 @@ class MiBudsApiTests(unittest.TestCase):
         sync = CatalogSync(publish=Mock(), get_identity=lambda: None, app_version='v0.2.0', client=client,
                            get_device_name=lambda: 'Redmi Buds 6')
         sync._publish_device()
-        self.assertEqual(' '.join(sync._publish.call_args.args[0]['name'].split()), 'Redmi Buds 6')
+        self.assertEqual(' '.join(sync._publish.call_args.kwargs['name'].split()), 'Redmi Buds 6')
 
     def test_asset_urls_and_extra_data_are_resolved_without_changing_raw_metadata(self):
         self.assertEqual(self.client.resolve_asset_url('/assets/png/example.png'), self.client.base_url + 'assets/png/example.png')
@@ -261,7 +261,7 @@ class MiBudsApiTests(unittest.TestCase):
         image_path = str(Path(self.directory.name, 'device.png'))
         with patch.object(self.client, 'cache_image', return_value=image_path):
             sync._publish_device()
-        message = publish.call_args.args[0]
+        message = publish.call_args.kwargs
         self.assertEqual(message['name'], 'Updated catalog name')
         card = DeviceStatusCard()
         card.update_catalog_device(message['name'], message['image_path'])
@@ -292,14 +292,14 @@ class MiBudsApiTests(unittest.TestCase):
                            app_version='v0.2.0', client=self.client)
         with patch.object(self.client, 'cache_image', side_effect=lambda url: str(Path(self.directory.name, url.rsplit('/', 1)[-1]))) as cache:
             sync._publish_device()
-            self.assertTrue(publish.call_args.args[0]['image_path'].endswith('a-black.png'))
+            self.assertTrue(publish.call_args.kwargs['image_path'].endswith('a-black.png'))
             self.assertTrue(cache.call_args.args[0].endswith('/a-black.png'))
             name.return_value = 'Model B'
             sync._publish_device()
-            self.assertTrue(publish.call_args.args[0]['image_path'].endswith('b-blue.png'))
+            self.assertTrue(publish.call_args.kwargs['image_path'].endswith('b-blue.png'))
             name.return_value = ''
             sync._publish_device()
-            self.assertEqual(publish.call_args.args[0]['image_path'], '')
+            self.assertEqual(publish.call_args.kwargs['image_path'], '')
 
 
 if __name__ == '__main__':

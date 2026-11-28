@@ -32,7 +32,7 @@ class EqSettingsController:
                 publish_exception(self._publish, exc, "equalizer")
                 result = EqResult(False, message=m("eq.failed", details=error_message(exc)))
                 profiles = ()
-            self._publish({"type": PubSubTopic.EQ_SETTINGS.value, "token": token, "result": result,
-                           "profiles": profiles, "operation": operation})
+            self._publish(PubSubTopic.EQ_SETTINGS, token=token, result=result,
+                           profiles=profiles, operation=operation)
 
         threading.Thread(target=work, daemon=True).start()

@@ -8,7 +8,7 @@ class NoiseSettingsController:
     def __init__(self, controller, panel, publish):
         self.controller, self.panel, self.publish = controller, panel, publish
         controller.noise_callback = lambda session, state: publish(
-            {"type": PubSubTopic.NOISE_NOTIFICATION.value, "session": session, "state": state})
+            PubSubTopic.NOISE_NOTIFICATION, session=session, state=state)
 
     def action(self, operation, **kwargs):
         session = self.controller.eq_session
@@ -30,7 +30,7 @@ class NoiseSettingsController:
             except (OSError, ValueError) as exc:
                 error = m("noise.failed", details=error_message(exc))
             if session == self.controller.eq_session:
-                self.publish({"type": PubSubTopic.NOISE_SETTINGS.value, "token": token,
-                              "state": state, "error": error})
+                self.publish(PubSubTopic.NOISE_SETTINGS, token=token,
+                              state=state, error=error)
 
         threading.Thread(target=work, daemon=True).start()

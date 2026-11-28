@@ -20,10 +20,10 @@ class NotificationActivationTests(unittest.TestCase):
         manager = WindowManager(page)
         tray = SystemTray(manager.show, Mock())
         tray._image_notifications._activate()
-        page.pubsub.send_all.assert_called_once_with({"type": "window", "action": "show"})
+        page.pubsub.send_all_on_topic.assert_called_once_with("window", {"action": "show"})
         tray._image_notifications.close()
         tray._image_notifications._activate()
-        self.assertEqual(page.pubsub.send_all.call_count, 1)
+        self.assertEqual(page.pubsub.send_all_on_topic.call_count, 1)
 
     def test_windows_click_legacy_and_version_four_focus_but_other_events_delegate(self):
         if sys.platform != "win32":

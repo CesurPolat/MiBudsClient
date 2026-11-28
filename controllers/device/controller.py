@@ -1,7 +1,7 @@
 """Coordinate device callbacks, battery requests, and reconnects for the UI."""
 
 from utils.app.i18n import message as m
-from utils.app.pubsub_topics import PubSubTopic
+from utils.app.pubsub_topics import Publisher, PubSubTopic
 
 import threading
 from typing import Callable
@@ -12,7 +12,7 @@ from ..battery.updates import BatteryUpdates
 class DeviceConnection:
     """Publish device updates and run connection work outside UI callbacks."""
 
-    def __init__(self, publish: Callable[[dict], None], get_controller: Callable):
+    def __init__(self, publish: Publisher, get_controller: Callable):
         self._publish = publish
         self._get_controller = get_controller
         self._battery_updates = BatteryUpdates(publish)
@@ -26,7 +26,7 @@ class DeviceConnection:
     def update_status(self, text: str, color: str = "white") -> None:
         if self._stopped.is_set():
             return
-        self._publish({"type": PubSubTopic.STATUS.value, "text": text, "color": color})
+        self._publish(PubSubTopic.STATUS, text=text, color=color)
 
     def update_battery(self, left: int, right: int, case: int) -> None:
         if self._stopped.is_set():

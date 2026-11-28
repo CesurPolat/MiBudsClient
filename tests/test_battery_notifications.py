@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from ui.app_message_handler import AppMessageHandler
+from pubsub_fakes import subscribe_test_ui
 from ui.battery_notifications import BatteryNotificationState
 from controllers.battery.stream import battery_state
 from utils.app.i18n import LANGUAGES, set_language, t
@@ -103,25 +103,29 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
         melody_patch = patch("ui.battery_notifications.play_connection_melody")
         melody_patch.start()
         self.addCleanup(melody_patch.stop)
-        self.handler = AppMessageHandler(
+        self.deliver = subscribe_test_ui(
             page=self.page, tray=self.tray, latency=self.latency,
             device_status_card=Mock(), settings_card=Mock(), window_manager=Mock(),
             debug_console=Mock(), on_window_show=Mock(),
         )
 
     def event(self, event):
-        self.handler.handle({"type": "connection_event", "event": event})
+        self.deliver("connection_event", event=event)
 
     def battery(self, left, right, case=255, *, transient=False):
-        self.handler.handle({"type": "battery", "left": left, "right": right,
-                             "case": case, "transient": transient})
+        self.deliver("battery", left=left, right=right,
+                             case=case, transient=transient)
 
     def timeout(self, token):
-        self.handler.handle({"type": "connection_notification_timeout", "token": token})
+        self.deliver("connection_notification_timeout", token=token)
+
+    def scheduled_timeout_token(self):
+        self.timer.call_args.args[1]()
+        return self.page.pubsub.send_all_on_topic.call_args.args[1]["token"]
 
     def test_connected_notification_waits_for_fresh_battery_then_cancels_timer(self):
         self.event("connected")
-        token = self.handler._notifications._token
+        token = self.scheduled_timeout_token()
         self.tray.notify.assert_not_called()
         self.timer.assert_called_once()
         self.timer.return_value.start.assert_called_once()
@@ -138,9 +142,8 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
 
     def test_timer_only_posts_to_pubsub_and_timeout_sends_one_unknown_summary(self):
         self.event("connected")
-        token = self.handler._notifications._token
-        self.timer.call_args.args[1]()
-        self.page.pubsub.send_all.assert_called_once_with({"type": "connection_notification_timeout", "token": token})
+        token = self.scheduled_timeout_token()
+        self.page.pubsub.send_all_on_topic.assert_called_once_with("connection_notification_timeout", {"token": token})
         self.tray.notify.assert_not_called()
         self.timeout(token)
         self.tray.notify.assert_called_once_with("Earbuds connected\nLEFT: — · RIGHT: — · CASE: —", device=True, silent=True)
@@ -213,7 +216,7 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
     def test_disconnect_uses_last_known_data_and_late_samples_cannot_leak_to_reconnect(self):
         self.event("connected")
         self.battery(188, 198, 80)
-        self.handler.handle({"type": "connection_state", "state": "failed"})
+        self.deliver("connection_state", state="failed")
         self.battery(60, 70, 90)  # late sample from failed connection
         self.event("disconnected")
         self.tray.notify.assert_called_with(
@@ -226,14 +229,14 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
 
     def test_disconnect_and_close_cancel_pending_connection_notifications(self):
         self.event("connected")
-        old_token = self.handler._notifications._token
+        old_token = self.scheduled_timeout_token()
         self.event("disconnected")
         self.timeout(old_token)
         self.assertEqual(self.tray.notify.call_count, 1)
         self.event("connected")
         self.timeout(old_token)
-        token = self.handler._notifications._token
-        self.handler.handle({"type": "app", "action": "close"})
+        token = self.scheduled_timeout_token()
+        self.deliver("app", action="close")
         self.timeout(token)
         self.assertEqual(self.tray.notify.call_count, 1)
 

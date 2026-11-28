@@ -179,7 +179,7 @@ class CapabilityTests(unittest.TestCase):
         with patch("controllers.device.catalog_sync.resolve_capabilities", side_effect=[before, after]):
             sync._publish_device()
             sync._publish_device()
-        types = [call.args[0]["type"] for call in publish.call_args_list]
+        types = [call.args[0] for call in publish.call_args_list]
         self.assertEqual(types.count("capabilities_changed"), 2)
         self.assertEqual(types.count("catalog_device"), 1)
 

@@ -14,11 +14,11 @@ class LatencyEvents:
         self._update_page = update_page
         self._display_lock = threading.Lock()
 
-    def routes(self):
+    def topic_handlers(self):
         return {
-            PubSubTopic.LATENCY.value: self.on_latency,
-            PubSubTopic.AUTO_HOLD_RELEASED.value: self.on_hold_released,
-            PubSubTopic.FULLSCREEN_STATE.value: self.on_fullscreen_state,
+            PubSubTopic.LATENCY: self.on_latency,
+            PubSubTopic.AUTO_HOLD_RELEASED: self.on_hold_released,
+            PubSubTopic.FULLSCREEN_STATE: self.on_fullscreen_state,
         }
 
     def on_latency(self, message):
@@ -39,7 +39,7 @@ class LatencyEvents:
                 text, color = t("latency.low_set"), "blue"
             else:
                 text, color = t("latency.standard_set"), "white"
-            self._publish({"type": PubSubTopic.STATUS.value, "text": text, "color": color})
+            self._publish(PubSubTopic.STATUS, text=text, color=color)
             self._update_page()
 
     def on_hold_released(self, message):

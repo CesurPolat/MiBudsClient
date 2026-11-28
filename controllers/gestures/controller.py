@@ -37,7 +37,7 @@ class GestureSettingsController:
                 publish_exception(self._publish, exc, "gestures")
                 result = GestureResult(False, message=m("gesture.failed", details=error_message(exc)))
                 capabilities = {}
-            self._publish({"type": PubSubTopic.GESTURE_SETTINGS.value, "token": token,
-                           "result": result, "capabilities": capabilities})
+            self._publish(PubSubTopic.GESTURE_SETTINGS, token=token,
+                           result=result, capabilities=capabilities)
 
         threading.Thread(target=work, daemon=True).start()
