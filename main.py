@@ -31,7 +31,7 @@ from utils.app.i18n import is_rtl, set_language
 from utils.app.user_preferences import get_language_preference
 from ui.localization import refresh_translations
 from utils.diagnostics.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
-from ui.components.dialogs.error_report import ErrorReportDialog
+from ui.components.dialogs.error_report import ErrorReportDialog, ErrorReportEvents
 from ui.components.dialogs.debug_console import DebugConsoleDialog
 from utils.app.app_shutdown import ApplicationShutdown
 from utils.desktop.linux_desktop import setup_linux_desktop
@@ -263,29 +263,10 @@ async def main(page: ft.Page):
         get_identity=lambda: controller.device_identity if controller.connected else None,
         get_device_session=lambda: controller.eq_session,
         is_connected=lambda: controller.connected,
+        report_events=ErrorReportEvents(dialog=report_dialog, reports=reports, queue=report_queue),
     )
     message_handler.sync_tray()
     application_shutdown.register("UI notifications", message_handler.begin_shutdown)
-    def handle_message(message):
-        try:
-            if isinstance(message, dict):
-                kind = message.get('type')
-                if kind == 'report_exception':
-                    reports.capture(message['error'], message.get('action', ''))
-                    return True
-                if kind == 'error_report':
-                    report_dialog.receive(message['report'])
-                    return True
-                if kind == 'error_report_status':
-                    report_dialog.status(message['state'])
-                    return True
-                if kind == 'app' and message.get('action') == 'close':
-                    report_queue.stop()
-        except Exception as exc:
-            if not isinstance(message, dict) or message.get('type') not in {'error_report', 'error_report_status', 'report_exception'}:
-                reports.capture(exc, 'ui_message')
-    message_handler.report_message = handle_message
-    message_handler.report_on_show = report_dialog.show_pending
     page.pubsub.subscribe(message_handler.handle_on_ui_loop)
     if SHOW_STARTUP_TEST_ERROR:
         try:

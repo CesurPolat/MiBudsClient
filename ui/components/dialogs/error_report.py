@@ -2,7 +2,7 @@
 import copy
 import json
 import threading
-from functools import wraps
+from functools import partial, wraps
 
 import flet as ft
 from utils.app.i18n import t
@@ -120,3 +120,35 @@ class ErrorReportDialog:
         )
         self.snack = snack
         self.page.show_dialog(snack)
+
+
+class ErrorReportEvents:
+    def __init__(self, *, dialog, reports, queue):
+        self._dialog = dialog
+        self._reports = reports
+        self._queue = queue
+
+    def routes(self):
+        handlers = {
+            "report_exception": lambda message: self._reports.capture(message["error"], message.get("action", "")),
+            "error_report": lambda message: self._dialog.receive(message["report"]),
+            "error_report_status": lambda message: self._dialog.status(message["state"]),
+        }
+        return {topic: partial(self._deliver, handler) for topic, handler in handlers.items()}
+
+    @staticmethod
+    def _deliver(handler, message):
+        try:
+            handler(message)
+        except Exception:
+            # A report-handling failure must not generate another report.
+            pass
+
+    def show_pending(self):
+        self._dialog.show_pending()
+
+    def stop(self):
+        try:
+            self._queue.stop()
+        except Exception as exc:
+            self._reports.capture(exc, "ui_message")

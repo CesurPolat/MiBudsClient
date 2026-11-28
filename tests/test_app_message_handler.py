@@ -32,13 +32,13 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.debug = Mock()
         self.reconnect = Mock()
         self.monitor = Mock()
-        self.timer_patch = patch("ui.app_message_handler.threading.Timer")
+        self.timer_patch = patch("ui.battery_notifications.threading.Timer")
         self.timer_patch.start()
         self.addCleanup(self.timer_patch.stop)
-        self.melody_patch = patch("ui.app_message_handler.play_connection_melody")
+        self.melody_patch = patch("ui.battery_notifications.play_connection_melody")
         self.melody = self.melody_patch.start()
         self.addCleanup(self.melody_patch.stop)
-        self.disconnect_melody_patch = patch("ui.app_message_handler.play_disconnection_melody")
+        self.disconnect_melody_patch = patch("ui.battery_notifications.play_disconnection_melody")
         self.disconnect_melody = self.disconnect_melody_patch.start()
         self.addCleanup(self.disconnect_melody_patch.stop)
         self.handler = AppMessageHandler(
@@ -75,10 +75,10 @@ class AppMessageHandlerTests(unittest.TestCase):
 
     def test_firmware_update_rejects_stale_session(self):
         identity = SimpleNamespace(firmware_version="2.0.2.2")
-        self.handler._get_identity = lambda: identity
+        self.handler._device_events._get_identity = lambda: identity
         self.handler.handle({"type": "firmware_info", "identity": identity})
         self.settings.set_firmware_version.assert_called_once_with("2.0.2.2")
-        self.handler._get_identity = lambda: None
+        self.handler._device_events._get_identity = lambda: None
         self.handler.handle({"type": "firmware_info", "identity": identity})
         self.settings.set_firmware_version.assert_called_once()
 
@@ -156,7 +156,7 @@ class AppMessageHandlerTests(unittest.TestCase):
 
     def test_debug_toggle_is_debounced(self):
         self.debug.toggle_console.return_value = "opened"
-        with patch("ui.app_message_handler.time.monotonic", side_effect=[10, 10.1, 10.5]):
+        with patch("ui.app_events.time.monotonic", side_effect=[10, 10.1, 10.5]):
             for _ in range(3):
                 self.handler.handle({"type": "debug_console", "action": "toggle"})
         self.assertEqual(self.debug.toggle_console.call_count, 2)
@@ -223,17 +223,17 @@ class AppMessageHandlerTests(unittest.TestCase):
 
         subscriber = self.page.pubsub.subscribe.call_args.args[0]
         self.assertTrue(inspect.iscoroutinefunction(subscriber))
-        handler = subscriber.__self__
+        devices = subscriber.__self__._device_events
         layout = self.page.add.call_args.args[0].content
         home, settings = layout.page_content.controls
-        self.assertIs(home.content.controls[0].controls[0].content, handler._device_status_card)
-        self.assertIs(home.content.controls[1], handler._settings_card.home_controls_card)
-        self.assertIs(settings.content, handler._settings_card)
-        self.assertEqual(handler._device_status_card.device_name.value, 'Saved earbuds')
-        self.assertTrue(handler._device_status_card.device_image._image_control.src.endswith('MiBuds6Play.png'))
-        handler._tray.set_device.assert_called_once_with('Saved earbuds', 'assets/images/MiBuds6Play.png')
-        self.assertIs(settings.content._sections["general"].content.controls[0], handler._settings_card.startup_item)
-        self.assertIs(settings.content._sections["identity"], handler._settings_card.identity_section)
+        self.assertIs(home.content.controls[0].controls[0].content, devices._status_card)
+        self.assertIs(home.content.controls[1], devices._settings.home_controls_card)
+        self.assertIs(settings.content, devices._settings)
+        self.assertEqual(devices._status_card.device_name.value, 'Saved earbuds')
+        self.assertTrue(devices._status_card.device_image._image_control.src.endswith('MiBuds6Play.png'))
+        devices._tray.set_device.assert_called_once_with('Saved earbuds', 'assets/images/MiBuds6Play.png')
+        self.assertIs(settings.content._sections["general"].content.controls[0], devices._settings.startup_item)
+        self.assertIs(settings.content._sections["identity"], devices._settings.identity_section)
         calls = [c[0] for c in self.page.mock_calls]
         self.assertLess(calls.index("add"), calls.index("pubsub.subscribe"))
 

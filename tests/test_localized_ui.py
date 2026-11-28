@@ -41,7 +41,7 @@ class LocalizedUITests(unittest.TestCase):
         )
 
     def switch(self, language):
-        with patch("ui.app_message_handler.set_language_preference") as save:
+        with patch("ui.app_events.set_language_preference") as save:
             self.handler.handle({"type": "language", "language": language})
         save.assert_called_once_with(language)
 
@@ -150,7 +150,7 @@ class LocalizedUITests(unittest.TestCase):
         self.refresh.assert_not_called()
 
     def test_invalid_language_events_do_not_save_or_refresh(self):
-        with patch("ui.app_message_handler.set_language_preference") as save:
+        with patch("ui.app_events.set_language_preference") as save:
             for value in (None, "zz", [], {}):
                 self.handler.handle({"type": "language", "language": value})
         save.assert_not_called()

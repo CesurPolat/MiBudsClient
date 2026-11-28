@@ -97,10 +97,10 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
         set_language("en")
         self.addCleanup(set_language, "en")
         self.page, self.tray, self.latency = Mock(), Mock(), Mock()
-        self.timer_patch = patch("ui.app_message_handler.threading.Timer")
+        self.timer_patch = patch("ui.battery_notifications.threading.Timer")
         self.timer = self.timer_patch.start()
         self.addCleanup(self.timer_patch.stop)
-        melody_patch = patch("ui.app_message_handler.play_connection_melody")
+        melody_patch = patch("ui.battery_notifications.play_connection_melody")
         melody_patch.start()
         self.addCleanup(melody_patch.stop)
         self.handler = AppMessageHandler(
@@ -121,7 +121,7 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
 
     def test_connected_notification_waits_for_fresh_battery_then_cancels_timer(self):
         self.event("connected")
-        token = self.handler._connection_notification_token
+        token = self.handler._notifications._token
         self.tray.notify.assert_not_called()
         self.timer.assert_called_once()
         self.timer.return_value.start.assert_called_once()
@@ -138,7 +138,7 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
 
     def test_timer_only_posts_to_pubsub_and_timeout_sends_one_unknown_summary(self):
         self.event("connected")
-        token = self.handler._connection_notification_token
+        token = self.handler._notifications._token
         self.timer.call_args.args[1]()
         self.page.pubsub.send_all.assert_called_once_with({"type": "connection_notification_timeout", "token": token})
         self.tray.notify.assert_not_called()
@@ -226,13 +226,13 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
 
     def test_disconnect_and_close_cancel_pending_connection_notifications(self):
         self.event("connected")
-        old_token = self.handler._connection_notification_token
+        old_token = self.handler._notifications._token
         self.event("disconnected")
         self.timeout(old_token)
         self.assertEqual(self.tray.notify.call_count, 1)
         self.event("connected")
         self.timeout(old_token)
-        token = self.handler._connection_notification_token
+        token = self.handler._notifications._token
         self.handler.handle({"type": "app", "action": "close"})
         self.timeout(token)
         self.assertEqual(self.tray.notify.call_count, 1)
