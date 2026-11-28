@@ -212,7 +212,7 @@
 <text x="364" y="220" class="node-copy">İkinci mesaj callback değerlerini taşır</text></g>
 <g><rect x="672" y="108" width="252" height="132" rx="8" fill="#192941" stroke="#5085ff" stroke-width="1.8"/>
 <text x="688" y="132" class="node-meta">FLET PUBSUB</text>
-<text x="688" y="160" class="node-title">AppMessageHandler</text>
+<text x="688" y="160" class="node-title">DeviceEvents</text>
 <text x="688" y="184" class="node-copy">Pil mesajlarını UI döngüsünde işler</text>
 <text x="688" y="202" class="node-copy">Gerçek ve geçici mesajı ayırır</text></g>
 <g><rect x="1000" y="108" width="232" height="132" rx="8" fill="#191f24" stroke="#455466" stroke-width="1.15"/>
@@ -242,13 +242,13 @@
 <line x1="344" y1="674" x2="380" y2="674" stroke="#8cb2f6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#battery-management-dagitim-event)"/><text x="392" y="678" class="legend">Olay, asenkron mesaj veya zaman aşımı</text>
       </svg>
     </div>
-    <figcaption class="notes"><div><h3>Geçici yenileme</h3><p><code>transient=True</code> mesajı Home’da kısa bir bekleme görünümü oluşturur. Tepsi ve bildirim takibi <code>transient=False</code> mesajını işler. Bu mesaj, controller önceki değeri geçersiz kıldığında yalnızca <code>0xFF</code> alanları da taşıyabilir.</p><a href="../ui/app_message_handler.py">Pil mesajı yönlendirme</a></div>
+    <figcaption class="notes"><div><h3>Geçici yenileme</h3><p><code>transient=True</code> mesajı Home’da kısa bir bekleme görünümü oluşturur. Tepsi ve bildirim takibi <code>transient=False</code> mesajını işler. Bu mesaj, controller önceki değeri geçersiz kıldığında yalnızca <code>0xFF</code> alanları da taşıyabilir.</p><a href="../ui/device_events.py">Pil mesajı işleyicisi</a></div>
 <div><h3>Görünüm kuralları</h3><p>Şarj olmayan bir pil %20 veya altındaysa Home düşük pil rengini kullanır. Tek gövdeli cihazda tek gösterge kalır. Tepsi, bilinmeyen kutu değerini pil özetinden çıkarır.</p><a href="../ui/components/home/battery.py">Pil göstergesi</a></div>
 <div><h3>Sesin kaynağı</h3><p>Model başına ton seçimi bu akışta yoktur. Uygulama şarj geçişinde kendi tonunu çalar ve masaüstü pil bildirimleri sessiz istenir.</p><a href="../controllers/battery/updates.py">Pil güncellemeleri ve tonlar</a></div></figcaption>
   </figure>
 </section>
 <section id="bildirim" aria-labelledby="battery-management-bildirim-heading">
-  <div class="section-head"><h2 id="battery-management-bildirim-heading">Bağlantı ve kutu bildirimleri ne zaman çıkıyor?</h2><p><code>BatteryNotificationState</code> şarj geçişlerini ve bildirim metnini hazırlar. <code>AppMessageHandler</code> ne zaman gönderileceğini seçer. <code>SystemTray</code> platforma göre teslim eder.</p></div>
+  <div class="section-head"><h2 id="battery-management-bildirim-heading">Bağlantı ve kutu bildirimleri ne zaman çıkıyor?</h2><p><code>BatteryNotificationState</code> şarj geçişlerini ve bildirim metnini hazırlar. <code>BatteryNotifications</code> gönderim zamanını seçer. <code>SystemTray</code> platforma göre teslim eder.</p></div>
   <figure>
     <div class="diagram-container" tabindex="0" role="region" aria-label="Bildirim yaşam döngüsü diyagramı">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="battery-management-bildirim-title battery-management-bildirim-desc">
@@ -314,7 +314,7 @@
 <line x1="344" y1="674" x2="380" y2="674" stroke="#8cb2f6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#battery-management-bildirim-event)"/><text x="392" y="678" class="legend">Olay, asenkron mesaj veya zaman aşımı</text>
       </svg>
     </div>
-    <figcaption class="notes"><div><h3>İlk verinin önceliği</h3><p>Bağlantı bildirimi beklerken gelen ilk geçerli kulaklık verisi, o örnekte kutu bildirimi yerine Bağlandı bildirimini tamamlar. Yalnızca kutu verisi erken gönderimi tetiklemez.</p><a href="../ui/app_message_handler.py">Bağlantı ve pil bildirim sırası</a></div>
+    <figcaption class="notes"><div><h3>İlk verinin önceliği</h3><p>Bağlantı bildirimi beklerken gelen ilk geçerli kulaklık verisi, o örnekte kutu bildirimi yerine Bağlandı bildirimini tamamlar. Yalnızca kutu verisi erken gönderimi tetiklemez.</p><a href="../ui/battery_notifications.py">Bağlantı ve pil bildirim sırası</a></div>
 <div><h3>Geçişin kaynağı</h3><p>Kutu olayları sol ve sağ kulaklığın şarj bayrağından çıkarılır. Örneğin <code>208 → 80</code> geçişinde yüzde aynı kalır ve şarj durumu değişir.</p><a href="../ui/battery_notifications.py">Bildirim örnekleri ve metinleri</a></div>
 <div><h3>Bağlantı kesilince</h3><p>Zamanlayıcı iptal edilir. Mevcut özet “son bilinen pil” olarak kullanılır ve takip sıfırlanır. Bağlantı hatasında takip kapatılarak geç gelen verinin bu özeti değiştirmesi önlenir.</p><a href="../ui/system_tray.py">Masaüstü bildirim gönderimi</a></div></figcaption>
   </figure>

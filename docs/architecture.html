@@ -25,13 +25,16 @@
   code { font-family:var(--mono); font-size:.9em; overflow-wrap:anywhere; }
   .diagram-container { width:100%; overflow-x:auto; border:1px solid var(--line); border-radius:8px; scrollbar-color:#687a90 #0d1218; }
   svg { display:block; width:100%; min-width:1280px; height:auto; }
-  .zone-label,.node-meta,.edge-label { font-family:var(--mono); fill:#bdc8d6; }
-  .zone-label { font-size:12px; font-weight:600; letter-spacing:1px; }
-  .node-meta { font-size:10.5px; letter-spacing:.16px; }
-  .node-title { font-size:16px; font-weight:650; fill:#f3f6fb; }
-  .node-copy { font-size:12px; fill:#c5ceda; }
-  .edge-label { font-size:10px; letter-spacing:.25px; }
-  .legend { font-size:12px; fill:#c5ceda; }
+  .paper { fill:#0d1218; }
+  .node { fill:#191f24; stroke:#455466; stroke-width:1.2; }
+  .focal { fill:#192941; stroke:#8cb2f6; stroke-width:1.6; }
+  .edge { fill:none; stroke:#acb9c8; stroke-width:1.6; }
+  .edge.event { stroke:#8cb2f6; stroke-dasharray:5 4; }
+  .edge.network { stroke:#9bd8ba; }
+  .divider { fill:none; stroke:var(--line); }
+  .node-meta,.edge-label { font:11px var(--mono); fill:#bdc8d6; }
+  .node-title { font-size:17px; font-weight:650; fill:var(--text); }
+  .node-copy { font-size:13px; fill:#c5ceda; }
   .notes { display:grid; grid-template-columns:1.15fr 1fr .95fr; gap:24px; padding:18px 0 0; }
   .notes > div { border-top:1px solid var(--line); padding-top:10px; }
   h3 { font-size:.9375rem; font-weight:650; }
@@ -39,312 +42,463 @@
   .notes p { margin:4px 0 6px; color:var(--muted); }
   @media (max-width:750px) { header { margin-bottom:36px; } .notes { grid-template-columns:1fr; gap:12px; } }
   @media print { main { max-width:none; padding:0; } nav { display:none; } .diagram-container { overflow:visible; } svg { min-width:0; } section { break-inside:avoid; } section + section { break-before:page; margin-top:0; } * { print-color-adjust:exact; -webkit-print-color-adjust:exact; } }
+  .recommendations { margin-top:24px; border-top:1px solid var(--line); }
+  .recommendations article { display:grid; grid-template-columns:minmax(190px,.65fr) minmax(0,1.7fr); gap:24px; padding:18px 0; border-bottom:1px solid var(--line); }
+  .recommendations h3 { font-size:1.02rem; }
+  .recommendations p + p { margin-top:6px; }
+  .recommendations .refs { font-size:.875rem; margin-top:8px; }
+  .priority { display:block; color:var(--link); font-size:.82rem; margin-bottom:4px; }
+  .invariants { border-top:1px solid var(--line); margin-top:22px; padding-top:14px; color:var(--muted); }
+  @media (max-width:750px) { .recommendations article { grid-template-columns:1fr; gap:8px; } }
 </style>
 </head>
 <body>
 <main>
 <header>
   <h1>MiBudsClient mimarisi</h1>
-  <p>Windows ve Linux masaüstü uygulamasında bir kulaklık komutunun, cihaz bildirimlerinin ve sunucu isteklerinin izlediği yollar.</p>
-  <nav aria-label="Diyagram bölümleri"><a href="#genel">Genel mimari</a><a href="#bluetooth">Bluetooth</a><a href="#api">API ve tanılama</a></nav>
+  <p>Windows ve Linux’ta kullanıcı komutlarının kulaklığa, cihaz olaylarının Flet’e ve arka plan işlerinin yerel dosyalara veya sunucuya nasıl ulaştığı. Son bölümde mevcut koddan çıkan mimari düzeltmeler var.</p>
+  <nav aria-label="Mimari belge bölümleri">
+    <a href="#genel">Sistem haritası</a><a href="#bluetooth">Bluetooth ve paketler</a><a href="#olaylar">Flet ve PubSub</a><a href="#api">API ve raporlar</a><a href="#oneriler">Düzeltme önerileri</a>
+  </nav>
 </header>
-<section id="genel" aria-labelledby="architecture-genel-heading">
-  <div class="section-head"><h2 id="architecture-genel-heading">Uygulamanın genel mimarisi</h2><p><code>main.py</code> pencereyi, controller’ları ve arka plan çalışanlarını bağlar. Kullanıcı komutları özellik controller’larından geçer. Cihaz ve arka plan sonuçları Flet pubsub üzerinden ekrana ve tepsiye döner.</p></div>
+
+<section id="genel" aria-labelledby="genel-baslik">
+  <div class="section-head">
+    <h2 id="genel-baslik">Sistem haritası</h2>
+    <p><code>main.py</code> arayüzü, controller’ları ve işçileri kurar. Komutlar ilgili özellik controller’ından Bluetooth’a gider. Bluetooth callback’leri ve arka plan sonuçları Flet olay akışında yeniden birleşir.</p>
+  </div>
   <figure>
-  <div class="diagram-container" tabindex="0" role="region" aria-label="Genel mimari diyagramı">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-genel-title architecture-genel-desc">
-<title id="architecture-genel-title">Uygulamanın genel mimarisi</title>
-<desc id="architecture-genel-desc">Flet ekranı ve tepsiden gelen işlemlerin özellik controller’larına, Bluetooth’a ve kulaklığa ulaştığı, arka plan durumlarının Flet mesaj dağıtıcısıyla ekrana döndüğü masaüstü mimarisi.</desc>
-<defs><marker id="architecture-genel-call" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#a8b5c6"/></marker>
-<marker id="architecture-genel-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#a8b5c6"/></marker>
-<marker id="architecture-genel-http" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#8bb3ff"/></marker></defs>
-<rect x="0" y="0" width="1280" height="720" fill="#0d1218"/>
-<rect x="24" y="64" width="980" height="500" rx="8" fill="#101417" stroke="#354150" stroke-dasharray="5 5"/><text x="40" y="88" class="zone-label">MIBUDSCLIENT · MASAÜSTÜ SÜRECİ</text>
-<path d="M 268 172 L 340 172" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-genel-call)"/>
-<path d="M 588 172 L 680 172" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-genel-call)"/>
-<path d="M 960 172 L 1056 172" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-genel-call)" marker-start="url(#architecture-genel-call)"/>
-<path d="M 268 432 L 340 432" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-genel-event)"/>
-<path d="M 424 368 L 424 300 Q 424 292 416 292 L 164 292 Q 156 292 156 284 L 156 236" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-genel-event)"/>
-<path d="M 756 236 L 756 320 Q 756 328 748 328 L 520 328 Q 512 328 512 336 L 512 368" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-genel-event)"/>
-<path d="M 884 236 L 884 368" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-genel-event)"/>
-<path d="M 680 448 L 588 448" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-genel-event)"/>
-<path d="M 960 432 L 1056 432" fill="none" stroke="#8bb3ff" stroke-width="1.6" marker-end="url(#architecture-genel-http)"/>
-<rect x="282" y="147" width="44" height="16" rx="2" fill="#101417"/><text x="304" y="159" text-anchor="middle" class="edge-label">KOMUT</text>
-<rect x="614" y="147" width="40" height="16" rx="2" fill="#101417"/><text x="634" y="159" text-anchor="middle" class="edge-label">AYAR</text>
-<rect x="982" y="147" width="52" height="16" rx="2" fill="#101417"/><text x="1008" y="159" text-anchor="middle" class="edge-label">RFCOMM</text>
-<rect x="274" y="407" width="60" height="16" rx="2" fill="#101417"/><text x="304" y="419" text-anchor="middle" class="edge-label">OYUN</text>
-<rect x="244" y="267" width="96" height="16" rx="2" fill="#101417"/><text x="292" y="279" text-anchor="middle" class="edge-label">UI GÜNCELLEME</text>
-<rect x="586" y="303" width="84" height="16" rx="2" fill="#101417"/><text x="628" y="315" text-anchor="middle" class="edge-label">DURUM / PİL</text>
-<rect x="604" y="423" width="60" height="16" rx="2" fill="#101417"/><text x="634" y="435" text-anchor="middle" class="edge-label">KATALOG</text>
-<rect x="986" y="407" width="44" height="16" rx="2" fill="#101417"/><text x="1008" y="419" text-anchor="middle" class="edge-label">HTTPS</text>
+    <div class="diagram-container" tabindex="0" role="region" aria-label="MiBudsClient sistem haritası">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-genel-title architecture-genel-desc">
+<title id="architecture-genel-title">MiBudsClient sistem haritası</title>
+<desc id="architecture-genel-desc">Kullanıcı komutları Bluetooth’a gider, cihaz ve arka plan olayları tek Flet aboneliği üzerinden Home, Settings ve tepsiye ulaşır.</desc>
+<defs><marker id="architecture-genel-data" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#acb9c8"/></marker><marker id="architecture-genel-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#8cb2f6"/></marker><marker id="architecture-genel-network" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#9bd8ba"/></marker></defs>
+<rect width="1280" height="720" class="paper"/>
+<path d="M368 148H480" class="edge data" marker-end="url(#architecture-genel-data)"/>
+<path d="M800 148H912" class="edge data" marker-end="url(#architecture-genel-data)"/>
+<path d="M1072 204V296" class="edge data" marker-end="url(#architecture-genel-data)"/>
+<path d="M912 352H800" class="edge event" marker-end="url(#architecture-genel-event)"/>
+<path d="M480 352H368" class="edge data" marker-end="url(#architecture-genel-data)"/>
+<path d="M1072 408V504" class="edge data" marker-end="url(#architecture-genel-data)"/>
+<path d="M640 504V408" class="edge event" marker-end="url(#architecture-genel-event)"/>
+<path d="M480 560H368" class="edge network" marker-end="url(#architecture-genel-network)"/>
+<path d="M284 204V236Q284 244 292 244H632Q640 244 640 252V296" class="edge event" marker-end="url(#architecture-genel-event)"/>
+<path d="M1232 172H1248Q1256 172 1256 180V560Q1256 568 1248 568H1232" class="edge data" marker-end="url(#architecture-genel-data)"/>
+<rect x="400.5" y="119" width="47" height="16" rx="2" class="paper"/><text x="424" y="131" text-anchor="middle" class="edge-label">İSTEK</text>
+<rect x="832.5" y="119" width="47" height="16" rx="2" class="paper"/><text x="856" y="131" text-anchor="middle" class="edge-label">KOMUT</text>
+<rect x="1093" y="234" width="54" height="16" rx="2" class="paper"/><text x="1120" y="246" text-anchor="middle" class="edge-label">OTURUM</text>
+<rect x="822" y="323" width="68" height="16" rx="2" class="paper"/><text x="856" y="335" text-anchor="middle" class="edge-label">CALLBACK</text>
+<rect x="386.5" y="323" width="75" height="16" rx="2" class="paper"/><text x="424" y="335" text-anchor="middle" class="edge-label">UI DURUMU</text>
+<rect x="1093" y="443" width="54" height="16" rx="2" class="paper"/><text x="1120" y="455" text-anchor="middle" class="edge-label">RFCOMM</text>
+<rect x="660" y="443" width="40" height="16" rx="2" class="paper"/><text x="680" y="455" text-anchor="middle" class="edge-label">OLAY</text>
+<rect x="379.5" y="531" width="89" height="16" rx="2" class="paper"/><text x="424" y="543" text-anchor="middle" class="edge-label">HTTP / DİSK</text>
+<rect x="382" y="215" width="96" height="16" rx="2" class="paper"/><text x="430" y="227" text-anchor="middle" class="edge-label">TEPSİ / İZLEME</text>
+<rect x="1201" y="444" width="47" height="16" rx="2" class="paper"/><text x="1224.5" y="456" text-anchor="middle" class="edge-label">YAZMA</text>
 <g>
-<rect x="48" y="108" width="220" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="64" y="132" class="node-meta">ui/</text>
-<text x="64" y="160" class="node-title">Flet ekranı ve tepsi</text>
-<text x="64" y="184" class="node-copy">Ana ekran · Ayarlar</text>
-<text x="64" y="201" class="node-copy">Pil, cihaz durumu ve hızlı kontroller</text>
-<text x="64" y="218" class="node-copy">WindowManager · SystemTray</text>
+  <rect x="48" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="116" class="node-meta">Flet düğmeleri · pystray · tam ekran</text>
+  <text x="64" y="143" class="node-title">Kullanıcı ve işletim sistemi</text>
+  <text x="64" y="168" class="node-copy">Home ve Settings işlemleri</text>
+  <text x="64" y="186" class="node-copy">Tepsi ve pencere olayları</text>
 </g>
 <g>
-<rect x="340" y="108" width="248" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="356" y="132" class="node-meta">controllers/</text>
-<text x="356" y="160" class="node-title">Özellik controller’ları</text>
-<text x="356" y="184" class="node-copy">SettingsController · ANC · EQ</text>
-<text x="356" y="201" class="node-copy">Dokunma · Latency On / Off / Auto</text>
-<text x="356" y="218" class="node-copy">DeviceConnection · pil güncellemeleri</text>
+  <rect x="480" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="116" class="node-meta">controllers/{settings,equalizer,…}</text>
+  <text x="496" y="143" class="node-title">Özellik controller’ları</text>
+  <text x="496" y="168" class="node-copy">İstekler ve arka plan işlemleri</text>
+  <text x="496" y="186" class="node-copy">Otomatik Oyun Modu kararları</text>
 </g>
 <g>
-<rect x="680" y="108" width="280" height="128" rx="8" fill="#18263c" stroke="#5085ff" stroke-width="1.8" />
-<text x="696" y="132" class="node-meta">controllers/bluetooth/</text>
-<text x="696" y="160" class="node-title">BTController</text>
-<text x="696" y="184" class="node-copy">Cihaz seçimi ve yeniden bağlanma</text>
-<text x="696" y="201" class="node-copy">Tek dinleyici · ortak RCSP kanalı</text>
-<text x="696" y="218" class="node-copy">Paketleri ilgili özelliğe yönlendirme</text>
+  <rect x="912" y="92" width="320" height="112" rx="8" class="focal"/>
+  <text x="928" y="116" class="node-meta">bluetooth/controller.py · commands.py</text>
+  <text x="928" y="143" class="node-title">BTController ve komutlar</text>
+  <text x="928" y="168" class="node-copy">Cihaz yeteneği, oturum ve komut API’si</text>
+  <text x="928" y="186" class="node-copy">Özellik transport’larını bir araya getirir</text>
 </g>
 <g>
-<rect x="1056" y="108" width="176" height="128" rx="8" fill="#111a24" stroke="#687a90" stroke-width="1.15" stroke-dasharray="5 4"/>
-<text x="1072" y="132" class="node-meta">BLUETOOTH CİHAZI</text>
-<text x="1072" y="160" class="node-title">Kulaklık</text>
-<text x="1072" y="184" class="node-copy">RFCOMM oturumu</text>
-<text x="1072" y="201" class="node-copy">Pil, ayarlar ve bildirimler</text>
+  <rect x="48" y="296" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="320" class="node-meta">ui/components · system_tray.py</text>
+  <text x="64" y="347" class="node-title">Home, Settings ve tepsi</text>
+  <text x="64" y="372" class="node-copy">Pil, bağlantı ve ayar görünümleri</text>
+  <text x="64" y="390" class="node-copy">Tepsiye oturuma ait durum kopyası</text>
 </g>
 <g>
-<rect x="48" y="368" width="220" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="64" y="392" class="node-meta">utils/desktop/</text>
-<text x="64" y="420" class="node-title">Masaüstü entegrasyonu</text>
-<text x="64" y="444" class="node-copy">Tam ekran ve uygulama kimliği</text>
-<text x="64" y="461" class="node-copy">Windows · Linux / X11 / Wayland</text>
-<text x="64" y="478" class="node-copy">Başlangıç ve tepsi altyapısı</text>
+  <rect x="480" y="296" width="320" height="112" rx="8" class="focal"/>
+  <text x="496" y="320" class="node-meta">AppMessageHandler · *_events.py</text>
+  <text x="496" y="347" class="node-title">Flet olay yönlendirmesi</text>
+  <text x="496" y="372" class="node-copy">Tek PubSub aboneliği ve UI döngüsü</text>
+  <text x="496" y="390" class="node-copy">Mesaj türüne göre işleyici</text>
 </g>
 <g>
-<rect x="340" y="368" width="248" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="356" y="392" class="node-meta">page.pubsub → UI</text>
-<text x="356" y="420" class="node-title">AppMessageHandler</text>
-<text x="356" y="444" class="node-copy">Durum, pil ve ayar bildirimleri</text>
-<text x="356" y="461" class="node-copy">Yetenek ve bağlantı güncellemeleri</text>
-<text x="356" y="478" class="node-copy">UI döngüsü · tepsi senkronizasyonu</text>
+  <rect x="912" y="296" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="320" class="node-meta">bluetooth/link/session.py</text>
+  <text x="928" y="347" class="node-title">Bluetooth oturumu</text>
+  <text x="928" y="372" class="node-copy">Cihaz seçimi, bağlantı ve yeniden deneme</text>
+  <text x="928" y="390" class="node-copy">Callback’ler main.py üzerinden yayınlanır</text>
 </g>
 <g>
-<rect x="680" y="368" width="280" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="696" y="392" class="node-meta">controllers/device/</text>
-<text x="696" y="420" class="node-title">CatalogSync ve katalog</text>
-<text x="696" y="444" class="node-copy">Cihaz adı / VID–PID ile model seçimi</text>
-<text x="696" y="461" class="node-copy">func_list ve extra_data seçenekleri</text>
-<text x="696" y="478" class="node-copy">Görsel ve yetenek bildirimi</text>
+  <rect x="48" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="528" class="node-meta">mibuds_api.py · user_preferences.py</text>
+  <text x="64" y="555" class="node-title">API ve yerel depolama</text>
+  <text x="64" y="580" class="node-copy">Katalog, görseller, hata API’si</text>
+  <text x="64" y="598" class="node-copy">Önbellek, rapor kuyruğu ve tercihler</text>
 </g>
 <g>
-<rect x="1056" y="368" width="176" height="128" rx="8" fill="#111a24" stroke="#687a90" stroke-width="1.15" stroke-dasharray="5 4"/>
-<text x="1072" y="392" class="node-meta">HTTPS</text>
-<text x="1072" y="420" class="node-title">MiBuds API</text>
-<text x="1072" y="444" class="node-copy">Katalog sürümü ve JSON</text>
-<text x="1072" y="461" class="node-copy">Cihaz görselleri</text>
-<text x="1072" y="478" class="node-copy">Hata raporu gönderimi</text>
+  <rect x="480" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="528" class="node-meta">CatalogSync · ReportQueue · updater</text>
+  <text x="496" y="555" class="node-title">Arka plan işleri</text>
+  <text x="496" y="580" class="node-copy">Meta veri, görsel ve rapor işleri</text>
+  <text x="496" y="598" class="node-copy">Sürüm denetimi GitHub Releases’ta</text>
 </g>
-<line x1="48" y1="660" x2="1232" y2="660" stroke="#354150"/>
-<line x1="48" y1="684" x2="84" y2="684" stroke="#a8b5c6" stroke-width="1.6"  marker-end="url(#architecture-genel-call)"/><text x="96" y="688" class="legend">Komut veya doğrudan çağrı</text>
-<line x1="320" y1="684" x2="356" y2="684" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-genel-event)"/><text x="368" y="688" class="legend">Oturum verisi veya asenkron bildirim</text>
-<line x1="644" y1="684" x2="680" y2="684" stroke="#8bb3ff" stroke-width="1.6"  marker-end="url(#architecture-genel-http)"/><text x="692" y="688" class="legend">HTTP isteği</text>
-  </svg></div>
-  <figcaption class="notes">
-    <div><h3>Başlatma ve kapanış</h3><p><code>main.py</code> başlangıçta tek örnek kontrolü ve <code>65432</code> dinleyicisini kurar. <code>ApplicationShutdown</code> çalışanları durdurur ve kapanış akışı portu serbest bırakır.</p><a href="../main.py">Giriş noktası <span aria-hidden="true">↗</span></a></div>
-<div><h3>Cihaza göre arayüz</h3><p>Uygulanan kontroller, seçili modelin <code>func_list</code> ve <code>extra_data</code> seçeneklerinden çözülür. Cihaz bildirimleri mevcut oturumla eşleştirilir.</p><a href="../controllers/catalog/capabilities.py">Cihaz yetenekleri <span aria-hidden="true">↗</span></a></div>
-<div><h3>Yerel ayarlar ve kaynaklar</h3><p>Dil, seçili cihaz ve Auto kuralları kullanıcı tercihlerinde saklanır. Simgeler, çeviri katalogları ve çevrimdışı cihaz listesi <code>assets/</code> altında paketlenir.</p><a href="../utils/app/user_preferences.py">Kullanıcı tercihleri <span aria-hidden="true">↗</span></a></div>
-  </figcaption></figure>
+<g>
+  <rect x="912" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="528" class="node-meta">BluetoothConnection · PacketDispatcher</text>
+  <text x="928" y="555" class="node-title">RFCOMM ve kulaklık</text>
+  <text x="928" y="580" class="node-copy">Windows veya Linux üzerinden SDP</text>
+  <text x="928" y="598" class="node-copy">Tek uygulama okuma yolu ve RCSP</text>
+</g>
+<path d="M48 656H1232" class="divider"/>
+<path d="M48 684h36" class="edge data" marker-end="url(#architecture-genel-data)"/><text x="96" y="688" class="node-copy">Çağrı, veri veya arayüz güncellemesi</text>
+<path d="M394 684h36" class="edge event" marker-end="url(#architecture-genel-event)"/><text x="442" y="688" class="node-copy">Asenkron olay</text>
+<path d="M740 684h36" class="edge network" marker-end="url(#architecture-genel-network)"/><text x="788" y="688" class="node-copy">HTTP veya yerel depolama</text>
+</svg>
+</div>
+    <figcaption class="notes">
+      <div><h3>Başlatma ve kapanış</h3><p>Tek örnek kontrolü 65432 portunu kullanır. <code>ApplicationShutdown</code> kayıtlı kapatma işlemlerini ters sırada yürütür.</p><a href="../main.py">main.py</a> · <a href="../utils/app/app_shutdown.py">app_shutdown.py</a></div>
+      <div><h3>Özellik sınırı</h3><p><code>DeviceCommands</code> katalog ve oturum koşullarını değerlendirir. Özellik transport’ları komutu ortak RFCOMM bağlantısına yazar. Oturum yönetimi bağlantıyı açma, yeniden deneme ve kapatma işlerini yürütür.</p><a href="../controllers/bluetooth/controller.py">BTController</a> · <a href="../controllers/bluetooth/commands.py">DeviceCommands</a></div>
+      <div><h3>Yerel kaynaklar</h3><p>Seçili cihaz, dil ve otomatik mod kuralları kullanıcı tercihlerindedir. Çeviri, görseller ve çevrimdışı katalog <code>assets/</code> altında durur.</p><a href="../utils/app/user_preferences.py">Kullanıcı tercihleri</a> · <a href="../assets/device_catalog.json">Paket kataloğu</a></div>
+    </figcaption>
+  </figure>
 </section>
-<section id="bluetooth" aria-labelledby="architecture-bluetooth-heading">
-  <div class="section-head"><h2 id="architecture-bluetooth-heading">Bluetooth bağlantısı ve paket akışı</h2><p>Windows Winsock SDP, Linux ise BlueZ <code>sdptool</code> kullanır. Bağlantı için seçilen eşin tam servis UUID’sine ait bir RFCOMM kanalı gerekir. Kimlik doğrulama servis UUID’sine göre seçilir.</p></div>
+
+<section id="bluetooth" aria-labelledby="bluetooth-baslik">
+  <div class="section-head">
+    <h2 id="bluetooth-baslik">Cihaz seçiminden RCSP paketine</h2>
+    <p>Keşif bağlı adayları bulur. Seçilen eşin RFCOMM kanalı tam servis UUID’siyle çözülür. Auth sırasında socket’i doğrulama kodu okur, oturum hazır olunca okuma yolu uygulama dinleyicisine devredilir.</p>
+  </div>
   <figure>
-  <div class="diagram-container" tabindex="0" role="region" aria-label="Bluetooth diyagramı">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-bluetooth-title architecture-bluetooth-desc">
-<title id="architecture-bluetooth-title">Bluetooth bağlantısı ve paket akışı</title>
-<desc id="architecture-bluetooth-desc">Cihaz keşfinden servis UUID çözümüne ve kimlik doğrulamaya uzanan bağlantı yolu ile tek dinleyicinin RCSP paketlerini komut kanalına ve özelliklere dağıtması.</desc>
-<defs><marker id="architecture-bluetooth-call" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#a8b5c6"/></marker>
-<marker id="architecture-bluetooth-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#a8b5c6"/></marker>
-<marker id="architecture-bluetooth-http" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#8bb3ff"/></marker></defs>
-<rect x="0" y="0" width="1280" height="720" fill="#0d1218"/>
-<rect x="24" y="64" width="952" height="204" rx="8" fill="#101417" stroke="#354150" stroke-dasharray="5 5"/><text x="40" y="88" class="zone-label">BAĞLANTI KURULUMU</text>
-<rect x="24" y="316" width="1232" height="236" rx="8" fill="#101417" stroke="#354150" stroke-dasharray="5 5"/><text x="40" y="340" class="zone-label">HAZIR OTURUM · KOMUT VE BİLDİRİM</text>
-<path d="M 272 160 L 356 160" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-bluetooth-call)"/>
-<path d="M 580 160 L 664 160" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-bluetooth-call)"/>
-<path d="M 944 160 L 1000 160" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-bluetooth-call)" marker-start="url(#architecture-bluetooth-call)"/>
-<path d="M 1116 220 L 1116 276 Q 1116 284 1108 284 L 820 284 Q 812 284 812 292 L 812 368" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-bluetooth-event)"/>
-<path d="M 888 432 L 1000 432" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-bluetooth-event)"/>
-<path d="M 664 432 L 580 432" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-bluetooth-event)"/>
-<path d="M 272 432 L 356 432" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-bluetooth-call)" marker-start="url(#architecture-bluetooth-call)"/>
-<path d="M 468 368 L 468 308 Q 468 300 476 300 L 708 300 Q 716 300 716 292 L 716 220" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-bluetooth-call)"/>
-<rect x="292" y="135" width="44" height="16" rx="2" fill="#101417"/><text x="314" y="147" text-anchor="middle" class="edge-label">CİHAZ</text>
-<rect x="596" y="135" width="52" height="16" rx="2" fill="#101417"/><text x="622" y="147" text-anchor="middle" class="edge-label">KANAL</text>
-<rect x="950" y="259" width="88" height="16" rx="2" fill="#101417"/><text x="994" y="271" text-anchor="middle" class="edge-label">RFCOMM AKIŞI</text>
-<rect x="912" y="407" width="64" height="16" rx="2" fill="#101417"/><text x="944" y="419" text-anchor="middle" class="edge-label">CALLBACK</text>
-<rect x="600" y="407" width="44" height="16" rx="2" fill="#101417"/><text x="622" y="419" text-anchor="middle" class="edge-label">YANIT</text>
-<rect x="292" y="407" width="44" height="16" rx="2" fill="#101417"/><text x="314" y="419" text-anchor="middle" class="edge-label">İŞLEM</text>
-<rect x="570" y="275" width="44" height="16" rx="2" fill="#101417"/><text x="592" y="287" text-anchor="middle" class="edge-label">YAZMA</text>
+    <div class="diagram-container" tabindex="0" role="region" aria-label="Bluetooth bağlantısı ve RCSP paket akışı">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-bluetooth-title architecture-bluetooth-desc">
+<title id="architecture-bluetooth-title">Bluetooth bağlantısı ve RCSP paket akışı</title>
+<desc id="architecture-bluetooth-desc">Seçili cihaz keşiften servis çözümü ve doğrulamaya, ardından tek okuyucu ve paket dağıtıcısı yoluyla ilgili özellik işleyicilerine ilerler.</desc>
+<defs><marker id="architecture-bluetooth-data" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#acb9c8"/></marker><marker id="architecture-bluetooth-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#8cb2f6"/></marker><marker id="architecture-bluetooth-network" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#9bd8ba"/></marker></defs>
+<rect width="1280" height="720" class="paper"/>
+<path d="M368 148H480" class="edge data" marker-end="url(#architecture-bluetooth-data)"/>
+<path d="M800 148H912" class="edge data" marker-end="url(#architecture-bluetooth-data)"/>
+<path d="M1072 204V296" class="edge data" marker-end="url(#architecture-bluetooth-data)"/>
+<path d="M912 352H800" class="edge data" marker-end="url(#architecture-bluetooth-data)"/>
+<path d="M480 352H368" class="edge data" marker-end="url(#architecture-bluetooth-data)"/>
+<path d="M112 408V504" class="edge data" marker-end="url(#architecture-bluetooth-data)"/>
+<path d="M216 408V452Q216 460 224 460H632Q640 460 640 468V504" class="edge data" marker-end="url(#architecture-bluetooth-data)"/>
+<path d="M312 408V424Q312 432 320 432H1064Q1072 432 1072 440V504" class="edge event" marker-end="url(#architecture-bluetooth-event)"/>
+<rect x="393.5" y="119" width="61" height="16" rx="2" class="paper"/><text x="424" y="131" text-anchor="middle" class="edge-label">KEŞFET</text>
+<rect x="818.5" y="119" width="75" height="16" rx="2" class="paper"/><text x="856" y="131" text-anchor="middle" class="edge-label">SEÇİLİ EŞ</text>
+<rect x="1086.5" y="235" width="47" height="16" rx="2" class="paper"/><text x="1110" y="247" text-anchor="middle" class="edge-label">KANAL</text>
+<rect x="832.5" y="323" width="47" height="16" rx="2" class="paper"/><text x="856" y="335" text-anchor="middle" class="edge-label">HAZIR</text>
+<rect x="393.5" y="323" width="61" height="16" rx="2" class="paper"/><text x="424" y="335" text-anchor="middle" class="edge-label">BAYTLAR</text>
+<rect x="121.5" y="440" width="89" height="16" rx="2" class="paper"/><text x="166" y="452" text-anchor="middle" class="edge-label">0x02 / 0x0E</text>
+<rect x="479" y="466" width="110" height="16" rx="2" class="paper"/><text x="534" y="478" text-anchor="middle" class="edge-label">RCSP KAYITLARI</text>
+<rect x="925.5" y="412" width="89" height="16" rx="2" class="paper"/><text x="970" y="424" text-anchor="middle" class="edge-label">BİLDİRİMLER</text>
 <g>
-<rect x="48" y="108" width="224" height="112" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="64" y="132" class="node-meta">link/discovery.py</text>
-<text x="64" y="160" class="node-title">Cihaz keşfi</text>
-<text x="64" y="184" class="node-copy">Windows ve Linux işletim sistemi</text>
-<text x="64" y="201" class="node-copy">Adayları listele · cihazı seç</text>
+  <rect x="48" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="116" class="node-meta">bluetooth/link/session.py</text>
+  <text x="64" y="143" class="node-title">Cihazı seç ve bağlan</text>
+  <text x="64" y="168" class="node-copy">Tercih edilen veya tek katalog adayı</text>
+  <text x="64" y="186" class="node-copy">Bağlantı, yeniden deneme, kapanış</text>
 </g>
 <g>
-<rect x="356" y="108" width="224" height="112" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="372" y="132" class="node-meta">link/sdp.py</text>
-<text x="372" y="160" class="node-title">Tam UUID ile SDP</text>
-<text x="372" y="184" class="node-copy">FD2D → XiaoAI → standart SPP</text>
-<text x="372" y="201" class="node-copy">Servis kaydından RFCOMM kanalı</text>
+  <rect x="480" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="116" class="node-meta">bluetooth/link/discovery.py</text>
+  <text x="496" y="143" class="node-title">Bağlı cihaz keşfi</text>
+  <text x="496" y="168" class="node-copy">Windows native ve PnP yedeği</text>
+  <text x="496" y="186" class="node-copy">Linux bluetoothctl</text>
 </g>
 <g>
-<rect x="664" y="108" width="280" height="112" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="680" y="132" class="node-meta">link/connection.py + auth/</text>
-<text x="680" y="160" class="node-title">RFCOMM ve kimlik doğrulama</text>
-<text x="680" y="184" class="node-copy">FD2D → komut tabanlı auth</text>
-<text x="680" y="201" class="node-copy">XiaoAI / SPP → ham auth</text>
+  <rect x="912" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="116" class="node-meta">bluetooth/link/sdp.py</text>
+  <text x="928" y="143" class="node-title">Tam UUID ile kanal çöz</text>
+  <text x="928" y="168" class="node-copy">Windows Winsock · Linux BlueZ SDP</text>
+  <text x="928" y="186" class="node-copy">Çözülen kanal üzerinden RFCOMM</text>
 </g>
 <g>
-<rect x="1000" y="108" width="232" height="112" rx="8" fill="#111a24" stroke="#687a90" stroke-width="1.15" stroke-dasharray="5 4"/>
-<text x="1016" y="132" class="node-meta">BLUETOOTH CİHAZI</text>
-<text x="1016" y="160" class="node-title">Kulaklık</text>
-<text x="1016" y="184" class="node-copy">Ayarlar, pil ve kimlik</text>
-<text x="1016" y="201" class="node-copy">RFCOMM bayt akışı</text>
+  <rect x="912" y="296" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="320" class="node-meta">bluetooth/link/connection.py</text>
+  <text x="928" y="347" class="node-title">Servise göre doğrula</text>
+  <text x="928" y="372" class="node-copy">AUTO · FD2D command auth</text>
+  <text x="928" y="390" class="node-copy">XiaoAI ve standart SPP raw auth</text>
 </g>
 <g>
-<rect x="48" y="368" width="224" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="64" y="392" class="node-meta">controllers/&lt;özellik&gt;/</text>
-<text x="64" y="420" class="node-title">Özellik transport’ları</text>
-<text x="64" y="444" class="node-copy">ANC · EQ · dokunma · latency</text>
-<text x="64" y="461" class="node-copy">Okuma, yazma ve sonuç doğrulama</text>
+  <rect x="480" y="296" width="320" height="112" rx="8" class="focal"/>
+  <text x="496" y="320" class="node-meta">BluetoothSession.listen() · BTController</text>
+  <text x="496" y="347" class="node-title">Tek uygulama okuyucusu</text>
+  <text x="496" y="372" class="node-copy">Önceden okunan baytlar ve socket verisi</text>
+  <text x="496" y="390" class="node-copy">Oturum ve transport eşleşmesi</text>
 </g>
 <g>
-<rect x="356" y="368" width="224" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="372" y="392" class="node-meta">packets/config_transport.py</text>
-<text x="372" y="420" class="node-title">Ortak RCSP kanalı</text>
-<text x="372" y="444" class="node-copy">Oturum, sayaç, istek / yanıt</text>
-<text x="372" y="461" class="node-copy">Timeout ve doğrulama</text>
+  <rect x="48" y="296" width="320" height="112" rx="8" class="focal"/>
+  <text x="64" y="320" class="node-meta">bluetooth/packets/dispatch.py</text>
+  <text x="64" y="347" class="node-title">RCSP paket dağıtıcısı</text>
+  <text x="64" y="372" class="node-copy">Parçalı baytları tam çerçeveye çevirir</text>
+  <text x="64" y="390" class="node-copy">Kimlik, pil, yapılandırma ve ACK</text>
 </g>
 <g>
-<rect x="664" y="368" width="224" height="128" rx="8" fill="#18263c" stroke="#5085ff" stroke-width="1.8" />
-<text x="680" y="392" class="node-meta">BTController.listen()</text>
-<text x="680" y="420" class="node-title">Tek dinleyici ve ayrıştırıcı</text>
-<text x="680" y="444" class="node-copy">RCSP çerçevelerini ayırır</text>
-<text x="680" y="461" class="node-copy">Yanıtları dağıtır · gerekli ACK’i yollar</text>
+  <rect x="48" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="528" class="node-meta">IdentitySession · BatteryPolling</text>
+  <text x="64" y="555" class="node-title">Kimlik ve pil</text>
+  <text x="64" y="580" class="node-copy">Ortak GetTargetInfo sıra sayacı</text>
+  <text x="64" y="598" class="node-copy">Pil akışı ve bağlantı sağlığı</text>
 </g>
 <g>
-<rect x="1000" y="368" width="232" height="128" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="1016" y="392" class="node-meta">CALLBACK → UI</text>
-<text x="1016" y="420" class="node-title">Telemetri ve bildirimler</text>
-<text x="1016" y="444" class="node-copy">Pil ve cihaz kimliği</text>
-<text x="1016" y="461" class="node-copy">Ayar değişikliği · durum mesajı</text>
+  <rect x="480" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="528" class="node-meta">config_transport.py · */transport.py</text>
+  <text x="496" y="555" class="node-title">Özellik transport’ları</text>
+  <text x="496" y="580" class="node-copy">EQ, dokunma, ANC ve gecikme</text>
+  <text x="496" y="598" class="node-copy">Oturuma bağlı komut ve bildirimler</text>
 </g>
-<line x1="48" y1="660" x2="1232" y2="660" stroke="#354150"/>
-<line x1="48" y1="684" x2="84" y2="684" stroke="#a8b5c6" stroke-width="1.6"  marker-end="url(#architecture-bluetooth-call)"/><text x="96" y="688" class="legend">Komut veya doğrudan çağrı</text>
-<line x1="320" y1="684" x2="356" y2="684" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-bluetooth-event)"/><text x="368" y="688" class="legend">Oturum verisi veya asenkron bildirim</text>
-<line x1="644" y1="684" x2="680" y2="684" stroke="#8bb3ff" stroke-width="1.6"  marker-end="url(#architecture-bluetooth-http)"/><text x="692" y="688" class="legend">HTTP isteği</text>
-  </svg></div>
-  <figcaption class="notes">
-    <div><h3>Servis bulunamazsa</h3><p>Bağlantı kullanılabilir bir kanal bulunamadığında hata verir. Kimlik doğrulama başarısız olduğunda seçili socket kapanır.</p><a href="../controllers/bluetooth/link/connection.py">SDP, RFCOMM ve auth <span aria-hidden="true">↗</span></a></div>
-<div><h3>Cihazın verdiği yanıt</h3><p>Ortak kanal komut yanıtını oturumla eşleştirir. Özelliğe göre yazılan ayar bildirimle veya yeniden okumayla doğrulanır.</p><a href="../controllers/bluetooth/packets/config_transport.py">RCSP işlem kanalı <span aria-hidden="true">↗</span></a></div>
-<div><h3>Auto gecikme</h3><p>Tam ekran ve uygulama kuralları <code>LatencyController</code>’da değerlendirilir. <code>LatencyTransport</code> cihazdaki <code>0x002F</code> ayarını okur ve yazar.</p><a href="../controllers/latency/transport.py">Latency transport <span aria-hidden="true">↗</span></a></div>
-  </figcaption></figure>
+<g>
+  <rect x="912" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="528" class="node-meta">PacketDispatcher · BTController</text>
+  <text x="928" y="555" class="node-title">ACK ve olaylar</text>
+  <text x="928" y="580" class="node-copy">Gerektiğinde RFCOMM ACK</text>
+  <text x="928" y="598" class="node-copy">config_callback ve noise_callback</text>
+</g>
+<path d="M48 656H1232" class="divider"/>
+<path d="M48 684h36" class="edge data" marker-end="url(#architecture-bluetooth-data)"/><text x="96" y="688" class="node-copy">Çağrı, veri veya arayüz güncellemesi</text>
+<path d="M394 684h36" class="edge event" marker-end="url(#architecture-bluetooth-event)"/><text x="442" y="688" class="node-copy">Asenkron olay</text>
+</svg>
+</div>
+    <figcaption class="notes">
+      <div><h3>Bağlantı sınırı</h3><p>Kullanılabilir servis kanalı bulunamazsa deneme başarısız olur. Auth hatasında socket kapanır. Bir sonraki yeniden bağlanma denemesini <code>BluetoothSession</code> yönetir.</p><a href="../controllers/bluetooth/link/session.py">Oturum ve yeniden deneme</a> · <a href="../controllers/bluetooth/link/connection.py">RFCOMM ve auth</a></div>
+      <div><h3>Paket sırası ve oturum</h3><p>Tek dinleyici gelen baytları <code>PacketDispatcher</code>’a verir. Kimlik ve pil kayıtları tamamlanmış çerçevelerden okunur. Ortak yapılandırma kanalı bekleyen yanıtı eşleştirir. Bildirim ACK’sini dağıtıcı gönderir.</p><a href="../controllers/bluetooth/packets/dispatch.py">Paket dağıtımı</a> · <a href="../controllers/bluetooth/packets/config_transport.py">Yapılandırma kanalı</a></div>
+      <div><h3>Pil kontrolü</h3><p>Otomatik sorgu uygulama etkinliğine bağlıdır. Üç yanıtsız denemeden sonra pil göstergesi ve bağlantı sağlığı ayrı değerlendirilir. Sağlık kararı son RFCOMM trafiğini dikkate alır.</p><a href="../controllers/battery/polling.py">BatteryPolling</a> · <a href="battery-management.html">Ayrıntılı pil diyagramı</a></div>
+    </figcaption>
+  </figure>
 </section>
-<section id="api" aria-labelledby="architecture-api-heading">
-  <div class="section-head"><h2 id="architecture-api-heading">MiBuds API, önbellek ve hata raporları</h2><p>Katalog, cihaz görseli ve hata raporu isteklerinin HTTP kodu <code>utils/api/mibuds_api.py</code> içinde. Rapor hazırlama ve kuyruk <code>utils/diagnostics/</code> tarafında çalışır.</p></div>
+
+<section id="olaylar" aria-labelledby="olaylar-baslik">
+  <div class="section-head">
+    <h2 id="olaylar-baslik">Arka plan olaylarından Flet’e</h2>
+    <p>Üreticiler <code>type</code> alanlı sözlükler yayınlar. <code>AppMessageHandler</code>, modüllerin <code>routes()</code> tablolarını birleştirir. Tek Flet abonesi mesajı UI döngüsünde uygun işleyiciye aktarır.</p>
+  </div>
   <figure>
-  <div class="diagram-container" tabindex="0" role="region" aria-label="API ve tanılama diyagramı">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-api-title architecture-api-desc">
-<title id="architecture-api-title">MiBuds API, önbellek ve hata raporları</title>
-<desc id="architecture-api-desc">Katalog ve hata raporu HTTP istemcilerinin tek MiBuds API modülünde toplandığı, yerel önbellek, rapor kuyruğu ve GitHub sürüm sorgusuyla ilişkili akışlar.</desc>
-<defs><marker id="architecture-api-call" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#a8b5c6"/></marker>
-<marker id="architecture-api-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#a8b5c6"/></marker>
-<marker id="architecture-api-http" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#8bb3ff"/></marker></defs>
-<rect x="0" y="0" width="1280" height="720" fill="#0d1218"/>
-<rect x="648" y="64" width="292" height="444" rx="8" fill="#101417" stroke="#354150" stroke-dasharray="5 5"/><text x="664" y="88" class="zone-label">ORTAK MODÜL · utils/api/mibuds_api.py</text>
-<path d="M 272 160 L 672 160" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-api-call)"/>
-<path d="M 916 160 L 984 160" fill="none" stroke="#8bb3ff" stroke-width="1.6" marker-end="url(#architecture-api-http)"/>
-<path d="M 744 212 L 744 264 Q 744 272 736 272 L 600 272" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-api-call)" marker-start="url(#architecture-api-call)"/>
-<path d="M 272 420 L 356 420" fill="none" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-api-event)"/>
-<path d="M 600 420 L 672 420" fill="none" stroke="#a8b5c6" stroke-width="1.6" marker-end="url(#architecture-api-call)"/>
-<path d="M 916 420 L 984 420" fill="none" stroke="#8bb3ff" stroke-width="1.6" marker-end="url(#architecture-api-http)"/>
-<path d="M 272 600 L 984 600" fill="none" stroke="#8bb3ff" stroke-width="1.6" marker-end="url(#architecture-api-http)"/>
-<rect x="446" y="135" width="52" height="16" rx="2" fill="#101417"/><text x="472" y="147" text-anchor="middle" class="edge-label">YENİLE</text>
-<rect x="934" y="135" width="32" height="16" rx="2" fill="#101417"/><text x="950" y="147" text-anchor="middle" class="edge-label">GET</text>
-<rect x="632" y="247" width="64" height="16" rx="2" fill="#101417"/><text x="664" y="259" text-anchor="middle" class="edge-label">ÖNBELLEK</text>
-<rect x="292" y="395" width="44" height="16" rx="2" fill="#101417"/><text x="314" y="407" text-anchor="middle" class="edge-label">RAPOR</text>
-<rect x="610" y="395" width="52" height="16" rx="2" fill="#101417"/><text x="636" y="407" text-anchor="middle" class="edge-label">GÖNDER</text>
-<rect x="930" y="395" width="40" height="16" rx="2" fill="#101417"/><text x="950" y="407" text-anchor="middle" class="edge-label">POST</text>
-<rect x="580" y="575" width="96" height="16" rx="2" fill="#101417"/><text x="628" y="587" text-anchor="middle" class="edge-label">SÜRÜM SORGUSU</text>
+    <div class="diagram-container" tabindex="0" role="region" aria-label="Flet PubSub ve cihaz olayları">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-olaylar-title architecture-olaylar-desc">
+<title id="architecture-olaylar-title">Flet PubSub ve cihaz olayları</title>
+<desc id="architecture-olaylar-desc">İşçiler ve arayüz olayları aynı aboneye ulaşır, işleyiciler Home, Settings, tepsi, bildirim ve uygulama durumunu günceller.</desc>
+<defs><marker id="architecture-olaylar-data" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#acb9c8"/></marker><marker id="architecture-olaylar-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#8cb2f6"/></marker><marker id="architecture-olaylar-network" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#9bd8ba"/></marker></defs>
+<rect width="1280" height="720" class="paper"/>
+<path d="M368 148H480" class="edge event" marker-end="url(#architecture-olaylar-event)"/>
+<path d="M800 148H912" class="edge event" marker-end="url(#architecture-olaylar-event)"/>
+<path d="M980 204V240Q980 248 972 248H216Q208 248 208 256V296" class="edge data" marker-end="url(#architecture-olaylar-data)"/>
+<path d="M1072 204V296" class="edge data" marker-end="url(#architecture-olaylar-data)"/>
+<path d="M912 352H800" class="edge data" marker-end="url(#architecture-olaylar-data)"/>
+<path d="M628 408V504" class="edge event" marker-end="url(#architecture-olaylar-event)"/>
+<path d="M1072 408V504" class="edge data" marker-end="url(#architecture-olaylar-data)"/>
+<path d="M968 408V460Q968 468 960 468H700Q692 468 692 476V504" class="edge data" marker-end="url(#architecture-olaylar-data)"/>
+<rect x="400.5" y="119" width="47" height="16" rx="2" class="paper"/><text x="424" y="131" text-anchor="middle" class="edge-label">YAYIN</text>
+<rect x="815" y="119" width="82" height="16" rx="2" class="paper"/><text x="856" y="131" text-anchor="middle" class="edge-label">UI DÖNGÜSÜ</text>
+<rect x="714" y="219" width="68" height="16" rx="2" class="paper"/><text x="748" y="231" text-anchor="middle" class="edge-label">UYGULAMA</text>
+<rect x="1088.5" y="246" width="47" height="16" rx="2" class="paper"/><text x="1112" y="258" text-anchor="middle" class="edge-label">CİHAZ</text>
+<rect x="811.5" y="323" width="89" height="16" rx="2" class="paper"/><text x="856" y="335" text-anchor="middle" class="edge-label">PİL / DURUM</text>
+<rect x="538" y="440" width="68" height="16" rx="2" class="paper"/><text x="572" y="452" text-anchor="middle" class="edge-label">BİLDİRİM</text>
+<rect x="1085.5" y="442" width="75" height="16" rx="2" class="paper"/><text x="1123" y="454" text-anchor="middle" class="edge-label">UI DURUMU</text>
+<rect x="748.5" y="440" width="103" height="16" rx="2" class="paper"/><text x="800" y="452" text-anchor="middle" class="edge-label">DURUM KOPYASI</text>
 <g>
-<rect x="48" y="108" width="224" height="104" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="64" y="130" class="node-meta">controllers/device/catalog_sync.py</text>
-<text x="64" y="153" class="node-title">CatalogSync</text>
-<text x="64" y="172" class="node-copy">Arka planda sürüm kontrolü</text>
-<text x="64" y="189" class="node-copy">Değişince kataloğu kurar</text>
+  <rect x="48" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="116" class="node-meta">main.py · controller callback’leri</text>
+  <text x="64" y="143" class="node-title">Olay üreticileri</text>
+  <text x="64" y="168" class="node-copy">Bluetooth, katalog, oyun izleyicisi</text>
+  <text x="64" y="186" class="node-copy">Pencere ve sistem tepsisi</text>
 </g>
 <g>
-<rect x="672" y="108" width="244" height="104" rx="8" fill="#18263c" stroke="#5085ff" stroke-width="1.8" />
-<text x="688" y="130" class="node-meta">HTTP GET</text>
-<text x="688" y="153" class="node-title">CatalogClient</text>
-<text x="688" y="172" class="node-copy">Katalog kontrolü, JSON ve PNG</text>
-<text x="688" y="189" class="node-copy">Hash ve içerik doğrulaması</text>
+  <rect x="480" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="116" class="node-meta">page.pubsub.send_all(message)</text>
+  <text x="496" y="143" class="node-title">Flet PubSub</text>
+  <text x="496" y="168" class="node-copy">type alanı taşıyan mesaj sözlükleri</text>
+  <text x="496" y="186" class="node-copy">Arka plan işçisinden UI döngüsüne</text>
 </g>
 <g>
-<rect x="984" y="108" width="248" height="372" rx="8" fill="#111a24" stroke="#687a90" stroke-width="1.15" stroke-dasharray="5 4"/>
-<text x="1000" y="132" class="node-meta">HARİCİ SERVİS</text>
-<text x="1000" y="160" class="node-title">MiBuds API</text>
-<text x="1000" y="194" class="node-copy">GET /v1/models/check</text>
-<text x="1000" y="214" class="node-copy">GET katalog JSON ve cihaz PNG</text>
-<line x1="1000" y1="332" x2="1216" y2="332" stroke="#354150"/>
-<text x="1000" y="384" class="node-meta">RAPOR GÖNDERİMİ</text>
-<text x="1000" y="415" class="node-copy">POST /v1/errors</text>
+  <rect x="912" y="92" width="320" height="112" rx="8" class="focal"/>
+  <text x="928" y="116" class="node-meta">ui/app_message_handler.py</text>
+  <text x="928" y="143" class="node-title">Tek abone ve mesaj yönü</text>
+  <text x="928" y="168" class="node-copy">handle_on_ui_loop ve ortak UI kilidi</text>
+  <text x="928" y="186" class="node-copy">Konu → ilgili işleyici</text>
 </g>
 <g>
-<rect x="356" y="228" width="244" height="88" rx="8" fill="#151d25" stroke="#687a90" stroke-width="1.15" />
-<text x="372" y="250" class="node-meta">YEREL DİSK</text>
-<text x="372" y="273" class="node-title">Katalog ve görsel önbelleği</text>
-<text x="372" y="292" class="node-copy">Paketle gelen katalog · kayıtlı PNG</text>
+  <rect x="48" y="296" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="320" class="node-meta">AppEvents · LatencyEvents · Raporlar</text>
+  <text x="64" y="347" class="node-title">Uygulama ve özellik olayları</text>
+  <text x="64" y="372" class="node-copy">Pencere, dil, debug, güncelleme</text>
+  <text x="64" y="390" class="node-copy">Tam ekran, gecikme, rapor geri bildirimi</text>
 </g>
 <g>
-<rect x="48" y="356" width="224" height="124" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="64" y="380" class="node-meta">diagnostics/ + Flet diyaloğu</text>
-<text x="64" y="408" class="node-title">Rapor hazırlama</text>
-<text x="64" y="432" class="node-copy">Hata yakalama ve maskeleme</text>
-<text x="64" y="449" class="node-copy">Bluetooth otomatik · diğerleri onaylı</text>
+  <rect x="480" y="296" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="320" class="node-meta">ui/battery_notifications.py</text>
+  <text x="496" y="347" class="node-title">Pil ve bağlantı bildirimi</text>
+  <text x="496" y="372" class="node-copy">Bağlandı bildirimi en çok 3 sn bekler</text>
+  <text x="496" y="390" class="node-copy">Kutu geçişleri ve son bilinen pil</text>
 </g>
 <g>
-<rect x="356" y="356" width="244" height="124" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="372" y="380" class="node-meta">utils/diagnostics/error_reports.py</text>
-<text x="372" y="408" class="node-title">ReportQueue</text>
-<text x="372" y="432" class="node-copy">Yerel JSON kuyruk dosyaları</text>
-<text x="372" y="449" class="node-copy">Arka planda gönderim ve tekrar</text>
+  <rect x="912" y="296" width="320" height="112" rx="8" class="focal"/>
+  <text x="928" y="320" class="node-meta">ui/device_events.py</text>
+  <text x="928" y="347" class="node-title">DeviceEvents</text>
+  <text x="928" y="372" class="node-copy">Pil, katalog, kimlik ve cihaz ayarları</text>
+  <text x="928" y="390" class="node-copy">Cihaz verisini bileşenlere dağıtır</text>
 </g>
 <g>
-<rect x="672" y="356" width="244" height="124" rx="8" fill="#18263c" stroke="#5085ff" stroke-width="1.8" />
-<text x="688" y="380" class="node-meta">HTTP POST</text>
-<text x="688" y="408" class="node-title">ErrorReportClient</text>
-<text x="688" y="432" class="node-copy">Rapor JSON’unu gönderir</text>
-<text x="688" y="449" class="node-copy">HTTP 201, UUID ve UTC doğrulaması</text>
+  <rect x="480" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="528" class="node-meta">tray_device.py · system_tray.py</text>
+  <text x="496" y="555" class="node-title">Sistem tepsisi</text>
+  <text x="496" y="580" class="node-copy">Geçerli oturumun durum kopyası</text>
+  <text x="496" y="598" class="node-copy">Platform bildirimi ve tepsi komutları</text>
 </g>
 <g>
-<rect x="48" y="552" width="224" height="92" rx="8" fill="#191f24" stroke="#3c4856" stroke-width="1.15" />
-<text x="64" y="574" class="node-meta">utils/app/updater.py</text>
-<text x="64" y="597" class="node-title">Sürüm kontrolü</text>
-<text x="64" y="616" class="node-copy">Yayın sürümünü kontrol eder</text>
+  <rect x="912" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="528" class="node-meta">HomeControls · SettingsCard</text>
+  <text x="928" y="555" class="node-title">Home ve Settings</text>
+  <text x="928" y="580" class="node-copy">Pil ve bağlantı durumunu gösterir</text>
+  <text x="928" y="598" class="node-copy">Yetenek ve oturuma göre kontroller</text>
+</g>
+<path d="M48 656H1232" class="divider"/>
+<path d="M48 684h36" class="edge data" marker-end="url(#architecture-olaylar-data)"/><text x="96" y="688" class="node-copy">Çağrı, veri veya arayüz güncellemesi</text>
+<path d="M394 684h36" class="edge event" marker-end="url(#architecture-olaylar-event)"/><text x="442" y="688" class="node-copy">Asenkron olay</text>
+</svg>
+</div>
+    <figcaption class="notes">
+      <div><h3>Tek pil örneği</h3><p><code>BatteryUpdates</code> geçici temizleme ve gerçek örnek için iki mesaj üretir. <code>DeviceEvents</code> gerçek örneği tepsi, bildirimler ve Home için işler. Geçici mesaj Home’da gösterilir.</p><a href="../controllers/battery/updates.py">Pil yayını</a> · <a href="../ui/device_events.py">Cihaz olayları</a></div>
+      <div><h3>Komutun tepsiden dönüşü</h3><p>Tepsi eylemi durum kopyasının oturum numarasını taşır. İşleyici aktif oturumu ve özelliğin desteğini kontrol eder. Profil 10 tepsi seçimlerine açılmaz.</p><a href="../ui/tray_device.py">Tepsi durum kopyası ve eylemleri</a></div>
+      <div><h3>Görünürlük ve Oyun Modu</h3><p>Home ve Settings kullanılabilir kontrolleri katalog yeteneklerinden seçer. Desteklenen EQ için ilk okuma, bağlantı panelinin durumunu etkiler. Tam ekran olayları düşük gecikme controller’ına gider.</p><a href="../ui/components/settings/settings_card.py">Cihaz kontrolleri</a> · <a href="../ui/latency_events.py">Düşük gecikme olayları</a></div>
+    </figcaption>
+  </figure>
+</section>
+
+<section id="api" aria-labelledby="api-baslik">
+  <div class="section-head">
+    <h2 id="api-baslik">Katalog ve hata raporu akışları</h2>
+    <p>Katalog ve görsel istekleri arka plan işçisinde çalışır. Raporlanabilir Bluetooth hataları otomatik kuyruğa alınır. Diğer raporlar kullanıcı onayıyla aynı kuyruğa girer.</p>
+  </div>
+  <figure>
+    <div class="diagram-container" tabindex="0" role="region" aria-label="Katalog, önbellek ve hata raporlama">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="architecture-api-title architecture-api-desc">
+<title id="architecture-api-title">Katalog, önbellek ve hata raporlama</title>
+<desc id="architecture-api-desc">Katalog arka planda güncellenirken raporlar otomatik veya onaylı olarak yerel kuyruğa alınır ve HTTP işçisi tarafından gönderilir.</desc>
+<defs><marker id="architecture-api-data" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#acb9c8"/></marker><marker id="architecture-api-event" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#8cb2f6"/></marker><marker id="architecture-api-network" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L8 4L0 8Z" fill="#9bd8ba"/></marker></defs>
+<rect width="1280" height="720" class="paper"/>
+<path d="M368 148H480" class="edge data" marker-end="url(#architecture-api-data)"/>
+<path d="M800 148H912" class="edge data" marker-end="url(#architecture-api-data)"/>
+<path d="M368 352H480" class="edge data" marker-end="url(#architecture-api-data)"/>
+<path d="M800 352H912" class="edge data" marker-end="url(#architecture-api-data)"/>
+<path d="M640 408V504" class="edge data" marker-end="url(#architecture-api-data)"/>
+<path d="M800 556H840Q848 556 848 548V464Q848 456 856 456H984Q992 456 992 448V408" class="edge data" marker-end="url(#architecture-api-data)"/>
+<path d="M1072 408V504" class="edge network" marker-end="url(#architecture-api-network)"/>
+<rect x="390" y="119" width="68" height="16" rx="2" class="paper"/><text x="424" y="131" text-anchor="middle" class="edge-label">YENİLEME</text>
+<rect x="818.5" y="119" width="75" height="16" rx="2" class="paper"/><text x="856" y="131" text-anchor="middle" class="edge-label">DOĞRULAMA</text>
+<rect x="393.5" y="323" width="61" height="16" rx="2" class="paper"/><text x="424" y="335" text-anchor="middle" class="edge-label">İSTİSNA</text>
+<rect x="822" y="323" width="68" height="16" rx="2" class="paper"/><text x="856" y="335" text-anchor="middle" class="edge-label">OTOMATİK</text>
+<rect x="652.5" y="442" width="75" height="16" rx="2" class="paper"/><text x="690" y="454" text-anchor="middle" class="edge-label">ONAY İSTE</text>
+<rect x="877" y="427" width="54" height="16" rx="2" class="paper"/><text x="904" y="439" text-anchor="middle" class="edge-label">GÖNDER</text>
+<rect x="1089.5" y="442" width="75" height="16" rx="2" class="paper"/><text x="1127" y="454" text-anchor="middle" class="edge-label">HTTP POST</text>
+<g>
+  <rect x="48" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="116" class="node-meta">controllers/device/catalog_sync.py</text>
+  <text x="64" y="143" class="node-title">CatalogSync</text>
+  <text x="64" y="168" class="node-copy">Tarama ve cihaz kimliğiyle katalog eşleme</text>
+  <text x="64" y="186" class="node-copy">Yetenek ve katalog görseli olayları</text>
 </g>
 <g>
-<rect x="984" y="552" width="248" height="92" rx="8" fill="#111a24" stroke="#687a90" stroke-width="1.15" stroke-dasharray="5 4"/>
-<text x="1000" y="574" class="node-meta">HARİCİ SERVİS</text>
-<text x="1000" y="597" class="node-title">GitHub Releases</text>
-<text x="1000" y="616" class="node-copy">GitHub API · releases/latest</text>
+  <rect x="480" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="116" class="node-meta">utils/api/mibuds_api.py</text>
+  <text x="496" y="143" class="node-title">CatalogClient</text>
+  <text x="496" y="168" class="node-copy">Katalog sürümü, veri ve görsel istekleri</text>
+  <text x="496" y="186" class="node-copy">Doğrulama ve yerel görsel önbelleği</text>
 </g>
-<line x1="48" y1="660" x2="1232" y2="660" stroke="#354150"/>
-<line x1="48" y1="684" x2="84" y2="684" stroke="#a8b5c6" stroke-width="1.6"  marker-end="url(#architecture-api-call)"/><text x="96" y="688" class="legend">Komut veya doğrudan çağrı</text>
-<line x1="320" y1="684" x2="356" y2="684" stroke="#a8b5c6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#architecture-api-event)"/><text x="368" y="688" class="legend">Oturum verisi veya asenkron bildirim</text>
-<line x1="644" y1="684" x2="680" y2="684" stroke="#8bb3ff" stroke-width="1.6"  marker-end="url(#architecture-api-http)"/><text x="692" y="688" class="legend">HTTP isteği</text>
-  </svg></div>
-  <figcaption class="notes">
-    <div><h3>Katalog güncelleme</h3><p>İstemci önce doğrulanmış yerel kataloğu veya paketle gelen kopyayı açar. Sunucu sürümü değiştiğinde yeni JSON’u doğrulayıp yazar.</p><a href="../utils/api/mibuds_api.py">MiBuds API istemcileri <span aria-hidden="true">↗</span></a></div>
-<div><h3>Gönderim politikası</h3><p>Bağlantı, keşif ve veri alma hataları otomatik kuyruğa girer. Diğer raporlar Flet onay diyaloğundan geçer. Geçici gönderim hataları zamanlanarak yeniden denenir.</p><a href="../utils/diagnostics/error_reports.py">Rapor yöneticisi ve kuyruk <span aria-hidden="true">↗</span></a></div>
-<div><h3>GitHub güncellemeleri</h3><p>Sürüm kontrolü GitHub Releases üzerinden çalışır. Yeni sürüm bilgisi Flet’e bir güncelleme bildirimi olarak iletilir.</p><a href="../utils/app/updater.py">Güncelleme kontrolü <span aria-hidden="true">↗</span></a></div>
-  </figcaption></figure>
+<g>
+  <rect x="912" y="92" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="116" class="node-meta">device_catalog.py · device_catalog.json</text>
+  <text x="928" y="143" class="node-title">Aktif katalog ve yerel kopya</text>
+  <text x="928" y="168" class="node-copy">Doğrulanmış yerel veya paket kopyası</text>
+  <text x="928" y="186" class="node-copy">func_list ve extra_data → yetenekler</text>
+</g>
+<g>
+  <rect x="48" y="296" width="320" height="112" rx="8" class="node"/>
+  <text x="64" y="320" class="node-meta">link/failures.py · UI hata yakalama</text>
+  <text x="64" y="347" class="node-title">Rapor kaynakları</text>
+  <text x="64" y="372" class="node-copy">Bluetooth bağlantı ve okuma hataları</text>
+  <text x="64" y="390" class="node-copy">Uygulama istisnaları</text>
+</g>
+<g>
+  <rect x="480" y="296" width="320" height="112" rx="8" class="focal"/>
+  <text x="496" y="320" class="node-meta">ErrorReportManager · make_report()</text>
+  <text x="496" y="347" class="node-title">Raporu hazırla</text>
+  <text x="496" y="372" class="node-copy">Maskeleme ve oturum içi tekrar denetimi</text>
+  <text x="496" y="390" class="node-copy">Tanılama bağlamı ve kaynak özeti</text>
+</g>
+<g>
+  <rect x="912" y="296" width="320" height="112" rx="8" class="focal"/>
+  <text x="928" y="320" class="node-meta">ReportQueue · error_reports/</text>
+  <text x="928" y="347" class="node-title">Yerel rapor kuyruğu</text>
+  <text x="928" y="372" class="node-copy">Geçici dosyadan JSON kaydına geçiş</text>
+  <text x="928" y="390" class="node-copy">En fazla 20 kayıt ve 5 deneme</text>
+</g>
+<g>
+  <rect x="480" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="496" y="528" class="node-meta">ui/components/dialogs/error_report.py</text>
+  <text x="496" y="555" class="node-title">Flet onay diyaloğu</text>
+  <text x="496" y="580" class="node-copy">Önizleme, açıklama, Gönder veya İptal</text>
+  <text x="496" y="598" class="node-copy">Gönder seçilirse kuyruğa ekler</text>
+</g>
+<g>
+  <rect x="912" y="504" width="320" height="112" rx="8" class="node"/>
+  <text x="928" y="528" class="node-meta">ErrorReportClient · POST /v1/errors</text>
+  <text x="928" y="555" class="node-title">Hata API’si</text>
+  <text x="928" y="580" class="node-copy">Geçerli 201 yanıtı kaydı tamamlar</text>
+  <text x="928" y="598" class="node-copy">Geçici hata yeniden deneme planlar</text>
+</g>
+<path d="M48 656H1232" class="divider"/>
+<path d="M48 684h36" class="edge data" marker-end="url(#architecture-api-data)"/><text x="96" y="688" class="node-copy">Çağrı, veri veya arayüz güncellemesi</text>
+<path d="M394 684h36" class="edge network" marker-end="url(#architecture-api-network)"/><text x="442" y="688" class="node-copy">HTTP veya yerel depolama</text>
+</svg>
+</div>
+    <figcaption class="notes">
+      <div><h3>Katalog yayını</h3><p><code>CatalogSync</code> kurulu kataloğu günceller ve cihaz için gerekirse <code>capabilities_changed</code> ve <code>catalog_device</code> olaylarını yayınlar. Yetenekler seçili modelin <code>func_list</code> ve <code>extra_data</code> alanlarından gelir.</p><a href="../controllers/device/catalog_sync.py">Katalog işçisi</a> · <a href="../controllers/catalog/capabilities.py">Yetenek çözümü</a></div>
+      <div><h3>Normal bağlantısızlık</h3><p>Keşifte uygun bağlı cihaz bulunmaması veya işletim sisteminin kesintiyi doğrulaması bağlantı durumu olarak gösterilir. Bu yollar yeni hata raporu üretmez.</p><a href="../controllers/bluetooth/link/session.py">Bağlantı ve hata ayrımı</a> · <a href="diagnostics.html">Ayrıntılı tanılama diyagramı</a></div>
+      <div><h3>Kalıcı gönderim</h3><p>Gönderimden önce deneme kayda yazılır. Geçici hatalar 1, 5, 30 ve 120 dakika sonra yeniden denenir. <code>Retry-After</code> beklemeyi uzatabilir. Kayıtlar en fazla yedi gün tutulur.</p><a href="../utils/diagnostics/error_reports.py">Rapor kuyruğu</a> · <a href="../utils/api/mibuds_api.py">HTTP istemcileri</a></div>
+    </figcaption>
+  </figure>
+</section>
+
+<section id="oneriler" aria-labelledby="oneriler-baslik">
+  <div class="section-head">
+    <h2 id="oneriler-baslik">Öncelikli mimari düzeltmeler</h2>
+    <p>Sıralama, mevcut koddan görülebilen etkileri esas alıyor. Her öneri için değişikliğin hangi davranışla doğrulanabileceği belirtiliyor.</p>
+  </div>
+  <div class="recommendations">
+    <article>
+      <div><span class="priority">Yüksek öncelik</span><h3>Pil animasyonunu UI döngüsüne taşı</h3></div>
+      <div><p><strong>Bulgu.</strong> Bluetooth okuyucusu <code>_rx_lock</code> içinden pil callback’ini çağırıyor. <code>BatteryUpdates.update()</code> geçici ve gerçek pil mesajları arasında 200 ms uyuyor. Bu sırada aynı okuyucu yeni RCSP verisini dağıtamıyor.</p><p><strong>Öneri.</strong> Gerçek örneği hemen yayınla. Mevcut temizleme görünümü isteniyorsa gecikmeyi Home bileşenine al ve yeni örnekte veya oturum değişiminde iptal et. Tepsi ile bildirimler gerçek örneği hemen kullanabilsin.</p><p><strong>Doğrulama.</strong> Art arda pil ve EQ yanıtları geldiğinde pil görünümünün geçişi EQ yanıtını geciktirmesin.</p><p class="refs"><a href="../controllers/bluetooth/controller.py#L157">Okuma yolu</a> · <a href="../controllers/battery/updates.py#L29">Pil callback’i</a></p></div>
+    </article>
+    <article>
+      <div><span class="priority">Yüksek öncelik</span><h3>Asenkron olaylara cihaz oturumu ekle</h3></div>
+      <div><p><strong>Bulgu.</strong> Tepsi eylemleri ve bazı yapılandırma olayları oturum doğruluyor. Pil mesajları ve katalog görseli güncellemeleri oturum numarası taşımıyor. <code>CatalogSync</code> cihazı okuyup görsel I/O’sundan sonra yeniden doğrulamadan yayınlayabiliyor.</p><p><strong>Öneri.</strong> Olay üretilirken aktif oturumu sabitle. Pil ve katalog olaylarını aynı oturum denetimiyle uygula. Görsel indirildikten sonra cihazı yeniden doğrula. Dil gibi uygulama genelindeki olaylar bağımsız kalsın.</p><p><strong>Doğrulama.</strong> A cihazından B’ye geçerken geç gelen A örneği veya görseli B’nin Home ve tepsi durumuna uygulanmasın.</p><p class="refs"><a href="../controllers/battery/updates.py">Pil mesajları</a> · <a href="../controllers/device/catalog_sync.py#L34">Katalog yayını</a> · <a href="../ui/tray_device.py#L49">Mevcut oturum denetimi</a></p></div>
+    </article>
+    <article>
+      <div><span class="priority">Orta öncelik</span><h3>Dokunma bildirimini bir kez ayrıştır</h3></div>
+      <div><p><strong>Bulgu.</strong> <code>PacketDispatcher</code> dokunma kaydını ayrıştırıp <code>GestureTransport._last_read</code> alanına yazıyor. <code>DeviceEvents</code> aynı veriden tekrar protokol baytları oluşturup ikinci kez ayrıştırıyor.</p><p><strong>Öneri.</strong> <code>GestureTransport</code> geçerli oturuma ait dokunma durumunu tek yerde çözsün ve yapılandırılmış atamayı yayınlasın. UI sonucu doğrudan uygulasın.</p><p><strong>Doğrulama.</strong> 0x0002 ve 0x0050 kayıtları aynı atamaları üretmeye devam etsin ve bozuk kayıtlar UI’a ulaşmasın.</p><p class="refs"><a href="../controllers/bluetooth/packets/dispatch.py#L56">Paket dağıtıcısı</a> · <a href="../ui/device_events.py#L147">UI ayrıştırması</a> · <a href="../controllers/gestures/transport.py">GestureTransport</a></p></div>
+    </article>
+    <article>
+      <div><span class="priority">Orta öncelik</span><h3>UI yenilemelerini olay bazında birleştir</h3></div>
+      <div><p><strong>Bulgu.</strong> Genel sayfa yenilemesi tepsiyi eşitliyor, çevirileri dolaşıyor ve pencere ölçümü istiyor. Pil işleyicisi yenilemeden önce de tepsiyi eşitliyor. Gecikme kaydı içeren yapılandırma bildiriminde iç ve dış işleyici sayfayı ayrı ayrı yeniliyor.</p><p><strong>Öneri.</strong> Önce değişen bileşenleri ve durum kopyasını hazırla. Aynı olay için tek sayfa güncellemesi yap. Çeviri ve içerik ölçümünü bunları etkileyen değişikliklere bağla.</p><p><strong>Doğrulama.</strong> Bir pil veya birleşik yapılandırma olayı bir kez commit edilsin. Dil, pencere boyutu ve tepsi güncellemeleri doğru çalışmaya devam etsin.</p><p class="refs"><a href="../ui/app_message_handler.py#L72">Ortak yenileme</a> · <a href="../ui/device_events.py#L49">Pil işleyicisi</a> · <a href="../ui/latency_events.py#L26">Düşük gecikme görünümü</a></p></div>
+    </article>
+    <article>
+      <div><span class="priority">Orta öncelik</span><h3>PubSub sözleşmesini belirt</h3></div>
+      <div><p><strong>Bulgu.</strong> Konular ve mesaj alanları sözlük anahtarlarına bağlı. Tablo birleştirmede aynı konu adı sessizce önceki işleyicinin üzerine yazabilir. İşleyicinin beklediği alanların sözleşmesi üreticiyle ortak bir yerde belirtilmiyor.</p><p><strong>Öneri.</strong> Önce oturum taşıyan olaylara ortak konu adları ve <code>TypedDict</code> veya veri sınıfı ekle. Rotayı kaydederken tekrar eden konu adını başlangıçta yakala. Tek Flet aboneliğini ve sıralı UI uygulamasını koru.</p><p><strong>Doğrulama.</strong> Yanlış alan adı geliştirme sırasında fark edilsin. Aynı konu adı iki kez kaydedildiğinde başlangıç açık bir hata versin.</p><p class="refs"><a href="../ui/app_message_handler.py#L53">Rota birleştirme</a> · <a href="../main.py#L178">Olay üreticileri</a></p></div>
+    </article>
+    <article>
+      <div><span class="priority">API sözleşmesine bağlı</span><h3>Rapor tekrarlarını sunucuyla birlikte yönet</h3></div>
+      <div><p><strong>Bulgu.</strong> Kuyruk sabit bir yerel dosya adına sahip. HTTP istemcisi bu kimliği istekle göndermiyor. Sunucu raporu kabul edip yanıt istemciye ulaşmazsa, istemci aynı kaydı yeniden gönderebilir. Sunucu tarafındaki tekrar yönetimi bu istemci deposundan doğrulanamıyor.</p><p><strong>Öneri.</strong> Sunucu sözleşmesi destekliyorsa yerel rapor kimliğini her denemede aynı idempotency anahtarı olarak kullan. Önce mevcut API davranışını doğrula.</p><p><strong>Doğrulama.</strong> Başarılı yazımdan sonra HTTP yanıtı kaybolduğunda yeniden deneme ikinci rapor oluşturmadan tamamlanabilsin.</p><p class="refs"><a href="../utils/diagnostics/error_reports.py#L194">Kuyruk kaydı ve denemeler</a> · <a href="../utils/api/mibuds_api.py#L44">HTTP isteği</a></p></div>
+    </article>
+  </div>
+  <p class="invariants">Refactor sırasında tam UUID ile servis çözümünü, servise göre auth seçimini, tek RFCOMM okuyucusunu, tek Flet UI aboneliğini ve katalog destekli kontrolleri koru. Özel EQ kapalı kalır.</p>
 </section>
 </main>
 </body>
