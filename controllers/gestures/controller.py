@@ -2,6 +2,7 @@ from utils.diagnostics.error_reports import publish_exception
 """Run gesture requests off the UI thread and publish versioned completions."""
 
 from utils.app.i18n import message as m, error_message
+from utils.app.pubsub_topics import PubSubTopic
 
 import threading
 
@@ -36,7 +37,7 @@ class GestureSettingsController:
                 publish_exception(self._publish, exc, "gestures")
                 result = GestureResult(False, message=m("gesture.failed", details=error_message(exc)))
                 capabilities = {}
-            self._publish({"type": "gesture_settings", "token": token,
+            self._publish({"type": PubSubTopic.GESTURE_SETTINGS.value, "token": token,
                            "result": result, "capabilities": capabilities})
 
         threading.Thread(target=work, daemon=True).start()

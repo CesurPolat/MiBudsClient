@@ -173,7 +173,7 @@ class GestureSettingsTests(unittest.TestCase):
         card, page = Mock(), Mock()
         handler = AppMessageHandler(page=page, device_status_card=Mock(), settings_card=card,
                                     window_manager=Mock(), latency=Mock(), tray=Mock(), debug_console=Mock(),
-                                    on_window_show=Mock(), get_game_monitor=Mock())
+                                    on_window_show=Mock())
         result = GestureResult(True, {1: (1, 3)}, "Loaded")
         handler.handle({"type": "gesture_settings", "token": 4, "result": result, "capabilities": {1: (1, 3)}})
         card.gestures.complete.assert_called_once_with(4, result, {1: (1, 3)})

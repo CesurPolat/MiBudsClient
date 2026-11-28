@@ -7,6 +7,7 @@ from functools import partial, wraps
 import flet as ft
 from utils.app.i18n import t
 from utils.diagnostics.error_reports import encode_report, redact
+from utils.app.pubsub_topics import PubSubTopic
 from ui.constants import COLOR_CARD_BG, COLOR_TEXT_PRIMARY, CARD_BORDER_RADIUS
 
 
@@ -130,9 +131,11 @@ class ErrorReportEvents:
 
     def routes(self):
         handlers = {
-            "report_exception": lambda message: self._reports.capture(message["error"], message.get("action", "")),
-            "error_report": lambda message: self._dialog.receive(message["report"]),
-            "error_report_status": lambda message: self._dialog.status(message["state"]),
+            PubSubTopic.REPORT_EXCEPTION.value: lambda message: self._reports.capture(
+                message["error"], message.get("action", "")
+            ),
+            PubSubTopic.ERROR_REPORT.value: lambda message: self._dialog.receive(message["report"]),
+            PubSubTopic.ERROR_REPORT_STATUS.value: lambda message: self._dialog.status(message["state"]),
         }
         return {topic: partial(self._deliver, handler) for topic, handler in handlers.items()}
 

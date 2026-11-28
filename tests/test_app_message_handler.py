@@ -31,7 +31,6 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.tray = Mock()
         self.debug = Mock()
         self.reconnect = Mock()
-        self.monitor = Mock()
         self.timer_patch = patch("ui.battery_notifications.threading.Timer")
         self.timer_patch.start()
         self.addCleanup(self.timer_patch.stop)
@@ -45,7 +44,7 @@ class AppMessageHandlerTests(unittest.TestCase):
             page=self.page, device_status_card=self.status,
             settings_card=self.settings, window_manager=self.window,
             latency=self.latency, tray=self.tray, debug_console=self.debug,
-            on_window_show=self.reconnect, get_game_monitor=lambda: self.monitor,
+            on_window_show=self.reconnect,
         )
 
     def test_ignores_unrelated_messages(self):
@@ -162,9 +161,8 @@ class AppMessageHandlerTests(unittest.TestCase):
         self.assertEqual(self.debug.toggle_console.call_count, 2)
         self.status.update_status.assert_called_with("Debug console opened", "blue")
 
-    def test_close_stops_monitor_and_hotkey_before_closing_window(self):
+    def test_close_delegates_to_window_manager(self):
         order = Mock()
-        order.attach_mock(self.monitor.stop, "monitor")
         order.attach_mock(self.debug.stop_f12_hotkey_listener, "hotkey")
         order.attach_mock(self.window.close, "close")
         self.handler.handle({"type": "app", "action": "other"})

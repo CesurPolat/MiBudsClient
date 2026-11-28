@@ -3,6 +3,7 @@
 import threading
 
 from utils.app.i18n import t
+from utils.app.pubsub_topics import PubSubTopic
 
 
 class LatencyEvents:
@@ -15,9 +16,9 @@ class LatencyEvents:
 
     def routes(self):
         return {
-            "latency": self.on_latency,
-            "auto_hold_released": self.on_hold_released,
-            "fullscreen_state": self.on_fullscreen_state,
+            PubSubTopic.LATENCY.value: self.on_latency,
+            PubSubTopic.AUTO_HOLD_RELEASED.value: self.on_hold_released,
+            PubSubTopic.FULLSCREEN_STATE.value: self.on_fullscreen_state,
         }
 
     def on_latency(self, message):
@@ -38,7 +39,7 @@ class LatencyEvents:
                 text, color = t("latency.low_set"), "blue"
             else:
                 text, color = t("latency.standard_set"), "white"
-            self._publish({"type": "status", "text": text, "color": color})
+            self._publish({"type": PubSubTopic.STATUS.value, "text": text, "color": color})
             self._update_page()
 
     def on_hold_released(self, message):

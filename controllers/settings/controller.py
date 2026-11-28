@@ -2,6 +2,7 @@ from utils.diagnostics.error_reports import publish_exception
 """Bind settings controls to startup, device, and latency actions."""
 
 from utils.app.i18n import message as m, error_message
+from utils.app.pubsub_topics import PubSubTopic
 
 import threading
 from typing import Callable
@@ -80,7 +81,7 @@ class SettingsController:
             except Exception as exc:
                 publish_exception(self._publish, exc, "device_identity")
                 success, message = False, m("identity.failed", details=error_message(exc))
-            self._publish({"type": "device_identity", "text": message})
+            self._publish({"type": PubSubTopic.DEVICE_IDENTITY.value, "text": message})
             self._device_connection.update_status(message, "green" if success else "red")
 
         threading.Thread(target=query_identity, daemon=True).start()

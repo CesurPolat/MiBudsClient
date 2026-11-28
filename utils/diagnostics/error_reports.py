@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from ..api.mibuds_api import DeliveryError, ErrorReportClient, encode_report
+from utils.app.pubsub_topics import PubSubTopic
 
 
 @functools.lru_cache(maxsize=1)
@@ -92,7 +93,7 @@ def publish_exception(publish, error, action):
     if isinstance(error, (OSError, TimeoutError)):
         return
     try:
-        publish({'type': 'report_exception', 'error': error, 'action': action})
+        publish({'type': PubSubTopic.REPORT_EXCEPTION.value, 'error': error, 'action': action})
     except Exception:
         pass
 
@@ -286,9 +287,9 @@ class ErrorReportManager:
                     with self.lock:
                         self.seen.discard(signature)
                     print('[Error reports] Could not queue automatic Bluetooth report.')
-                    self.publish({'type': 'error_report_status', 'state': 'failed'})
+                    self.publish({'type': PubSubTopic.ERROR_REPORT_STATUS.value, 'state': 'failed'})
                 return
-            self.publish({'type': 'error_report', 'report': report})
+            self.publish({'type': PubSubTopic.ERROR_REPORT.value, 'report': report})
         except Exception as exc:
             print(f'[Error reports] Could not prepare report: {redact(exc)}')
             if signature is not None:

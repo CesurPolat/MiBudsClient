@@ -3,6 +3,7 @@
 import threading
 
 from controllers.battery.stream import BATTERY_UNKNOWN
+from utils.app.pubsub_topics import PubSubTopic
 
 
 class TrayDeviceEvents:
@@ -19,7 +20,7 @@ class TrayDeviceEvents:
         self._battery = (BATTERY_UNKNOWN,) * 3
 
     def routes(self):
-        return {"tray_device_action": self.on_action}
+        return {PubSubTopic.TRAY_DEVICE_ACTION.value: self.on_action}
 
     def sync(self):
         if self._get_capabilities is None or self._get_session is None or self._is_connected is None:

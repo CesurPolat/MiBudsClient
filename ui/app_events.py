@@ -3,6 +3,7 @@
 import time
 
 from utils.app.i18n import LANGUAGE_CHOICES, is_rtl, set_language, t
+from utils.app.pubsub_topics import PubSubTopic
 from utils.app.user_preferences import set_language_preference
 
 from .components.dialogs.update_notification import show_update_notification
@@ -25,11 +26,11 @@ class AppEvents:
 
     def routes(self):
         return {
-            "app": self.on_app,
-            "window": self.on_window,
-            "language": self.on_language,
-            "update_notification": self.on_update_notification,
-            "debug_console": self.on_debug_console,
+            PubSubTopic.APP.value: self.on_app,
+            PubSubTopic.WINDOW.value: self.on_window,
+            PubSubTopic.LANGUAGE.value: self.on_language,
+            PubSubTopic.UPDATE_NOTIFICATION.value: self.on_update_notification,
+            PubSubTopic.DEBUG_CONSOLE.value: self.on_debug_console,
         }
 
     def on_app(self, message):

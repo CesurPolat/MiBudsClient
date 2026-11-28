@@ -481,7 +481,7 @@ class EqUITests(unittest.TestCase):
         handler = AppMessageHandler(page=page, device_status_card=Mock(),
                                     settings_card=SimpleNamespace(equalizer=self.panel, refresh_connection_panel=Mock()),
                                     window_manager=Mock(), latency=Mock(), tray=Mock(), debug_console=Mock(),
-                                    on_window_show=Mock(), get_game_monitor=Mock())
+                                    on_window_show=Mock())
         handler.handle({"type": "eq_settings", "token": token, "result": EqResult(True, self.state, "loaded"),
                         "profiles": (0, 1), "operation": "read"})
         self.assertEqual(self.panel._state, self.state)

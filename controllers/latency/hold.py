@@ -4,6 +4,8 @@ import subprocess
 import sys
 import threading
 
+from utils.app.pubsub_topics import PubSubTopic
+
 
 def is_process_running(app_id: str) -> bool:
     app_name = (app_id or "").strip().lower()
@@ -93,7 +95,7 @@ class HoldWatcher:
                             return
                         if self._active_app() != app_id:
                             continue
-                        self._publish({"type": "auto_hold_released", "app_id": app_id})
+                        self._publish({"type": PubSubTopic.AUTO_HOLD_RELEASED.value, "app_id": app_id})
                     return
 
                 if self._stopped.wait(2):

@@ -4,6 +4,7 @@ import threading
 
 from controllers.battery.stream import battery_state
 from utils.app.i18n import t
+from utils.app.pubsub_topics import PubSubTopic
 from utils.notifications.sound import play_connection_melody, play_disconnection_melody
 
 
@@ -76,8 +77,8 @@ class BatteryNotifications:
 
     def routes(self):
         return {
-            "connection_event": self.on_connection_event,
-            "connection_notification_timeout": self.on_connection_timeout,
+            PubSubTopic.CONNECTION_EVENT.value: self.on_connection_event,
+            PubSubTopic.CONNECTION_NOTIFICATION_TIMEOUT.value: self.on_connection_timeout,
         }
 
     def set_single_body(self, single_body):
@@ -108,7 +109,7 @@ class BatteryNotifications:
                 token = self._token
                 # The timer only publishes. Notifications run on the UI event path.
                 self._timer = threading.Timer(3.0, lambda: self._publish(
-                    {"type": "connection_notification_timeout", "token": token}
+                    {"type": PubSubTopic.CONNECTION_NOTIFICATION_TIMEOUT.value, "token": token}
                 ))
                 self._timer.daemon = True
                 self._timer.start()

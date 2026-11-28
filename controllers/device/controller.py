@@ -1,6 +1,7 @@
 """Coordinate device callbacks, battery requests, and reconnects for the UI."""
 
 from utils.app.i18n import message as m
+from utils.app.pubsub_topics import PubSubTopic
 
 import threading
 from typing import Callable
@@ -25,7 +26,7 @@ class DeviceConnection:
     def update_status(self, text: str, color: str = "white") -> None:
         if self._stopped.is_set():
             return
-        self._publish({"type": "status", "text": text, "color": color})
+        self._publish({"type": PubSubTopic.STATUS.value, "text": text, "color": color})
 
     def update_battery(self, left: int, right: int, case: int) -> None:
         if self._stopped.is_set():

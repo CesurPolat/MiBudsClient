@@ -10,6 +10,8 @@ import traceback
 from collections import deque
 from typing import Callable, Deque, Optional
 
+from utils.app.pubsub_topics import PubSubTopic
+
 
 class _TeeStream(io.TextIOBase):
     """Write to original stream and debug manager simultaneously."""
@@ -75,7 +77,7 @@ class DebugConsoleManager:
         """Publish a toggle request without opening a console on the input thread."""
         if self._publish is None:
             return
-        self._publish({"type": "debug_console", "action": "toggle"})
+        self._publish({"type": PubSubTopic.DEBUG_CONSOLE.value, "action": "toggle"})
 
     def set_ui_console(self, toggle) -> None:
         """Bind a Flet console without coupling stream capture to the UI layer."""

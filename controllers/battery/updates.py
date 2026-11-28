@@ -3,6 +3,7 @@
 import time
 from typing import Callable
 
+from utils.app.pubsub_topics import PubSubTopic
 from utils.notifications.sound import play_tones
 
 from .stream import BATTERY_UNKNOWN, battery_state
@@ -37,7 +38,7 @@ class BatteryUpdates:
         # UX hint: briefly clear battery fields before showing the latest values,
         # even when values are unchanged.
         self._publish({
-            "type": "battery",
+            "type": PubSubTopic.BATTERY.value,
             "left": BATTERY_UNKNOWN,
             "right": BATTERY_UNKNOWN,
             "case": BATTERY_UNKNOWN,
@@ -45,7 +46,7 @@ class BatteryUpdates:
         })
         time.sleep(0.2)
         self._publish({
-            "type": "battery",
+            "type": PubSubTopic.BATTERY.value,
             "left": left,
             "right": right,
             "case": case,

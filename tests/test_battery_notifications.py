@@ -106,7 +106,7 @@ class BatteryNotificationRoutingTests(unittest.TestCase):
         self.handler = AppMessageHandler(
             page=self.page, tray=self.tray, latency=self.latency,
             device_status_card=Mock(), settings_card=Mock(), window_manager=Mock(),
-            debug_console=Mock(), on_window_show=Mock(), get_game_monitor=Mock(),
+            debug_console=Mock(), on_window_show=Mock(),
         )
 
     def event(self, event):

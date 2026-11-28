@@ -1,13 +1,14 @@
 """Background noise transactions, delivered through the existing UI pubsub."""
 import threading
 from utils.app.i18n import message as m, error_message
+from utils.app.pubsub_topics import PubSubTopic
 
 
 class NoiseSettingsController:
     def __init__(self, controller, panel, publish):
         self.controller, self.panel, self.publish = controller, panel, publish
         controller.noise_callback = lambda session, state: publish(
-            {"type": "noise_notification", "session": session, "state": state})
+            {"type": PubSubTopic.NOISE_NOTIFICATION.value, "session": session, "state": state})
 
     def action(self, operation, **kwargs):
         session = self.controller.eq_session
@@ -29,7 +30,7 @@ class NoiseSettingsController:
             except (OSError, ValueError) as exc:
                 error = m("noise.failed", details=error_message(exc))
             if session == self.controller.eq_session:
-                self.publish({"type": "noise_settings", "token": token,
+                self.publish({"type": PubSubTopic.NOISE_SETTINGS.value, "token": token,
                               "state": state, "error": error})
 
         threading.Thread(target=work, daemon=True).start()

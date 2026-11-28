@@ -6,6 +6,7 @@ import flet as ft
 
 from controllers.battery.stream import BATTERY_UNKNOWN
 from controllers.gestures.protocol import parse_gesture_records
+from utils.app.pubsub_topics import PubSubTopic
 
 
 class DeviceEvents:
@@ -30,20 +31,20 @@ class DeviceEvents:
 
     def routes(self):
         return {
-            "battery": self.on_battery,
-            "status": self.on_status,
-            "connection_state": self.on_connection_state,
-            "connection_report_status": self.on_report_status,
-            "device_candidates": self.on_candidates,
-            "catalog_device": self.on_catalog_device,
-            "capabilities_changed": self.on_capabilities_changed,
-            "device_identity": self.on_identity,
-            "firmware_info": self.on_firmware,
-            "gesture_settings": self.on_gesture_settings,
-            "eq_settings": self.on_eq_settings,
-            "noise_settings": self.on_noise_settings,
-            "noise_notification": self.on_noise_notification,
-            "config_notification": self.on_config_notification,
+            PubSubTopic.BATTERY.value: self.on_battery,
+            PubSubTopic.STATUS.value: self.on_status,
+            PubSubTopic.CONNECTION_STATE.value: self.on_connection_state,
+            PubSubTopic.CONNECTION_REPORT_STATUS.value: self.on_report_status,
+            PubSubTopic.DEVICE_CANDIDATES.value: self.on_candidates,
+            PubSubTopic.CATALOG_DEVICE.value: self.on_catalog_device,
+            PubSubTopic.CAPABILITIES_CHANGED.value: self.on_capabilities_changed,
+            PubSubTopic.DEVICE_IDENTITY.value: self.on_identity,
+            PubSubTopic.FIRMWARE_INFO.value: self.on_firmware,
+            PubSubTopic.GESTURE_SETTINGS.value: self.on_gesture_settings,
+            PubSubTopic.EQ_SETTINGS.value: self.on_eq_settings,
+            PubSubTopic.NOISE_SETTINGS.value: self.on_noise_settings,
+            PubSubTopic.NOISE_NOTIFICATION.value: self.on_noise_notification,
+            PubSubTopic.CONFIG_NOTIFICATION.value: self.on_config_notification,
         }
 
     def on_battery(self, message):

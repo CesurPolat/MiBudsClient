@@ -6,6 +6,7 @@ import math
 import struct
 import flet as ft
 from utils.app.i18n import t
+from utils.app.pubsub_topics import PubSubTopic
 from utils.notifications.sound import play_exit_melody
 from utils.desktop.window_geometry import fit_window_size, get_work_area_size
 from .constants import WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, PAGE_PADDING
@@ -140,13 +141,13 @@ class WindowManager:
         """Show and bring window to front via pubsub."""
         if self._is_closing or self._session_closed:
             return
-        self.page.pubsub.send_all({"type": "window", "action": "show"})
+        self.page.pubsub.send_all({"type": PubSubTopic.WINDOW.value, "action": "show"})
     
     def hide(self) -> None:
         """Hide window to tray via pubsub."""
         if self._is_closing or self._session_closed:
             return
-        self.page.pubsub.send_all({"type": "window", "action": "hide"})
+        self.page.pubsub.send_all({"type": PubSubTopic.WINDOW.value, "action": "hide"})
 
     def close(self) -> None:
         """Close the application with a guarded, graceful flow."""

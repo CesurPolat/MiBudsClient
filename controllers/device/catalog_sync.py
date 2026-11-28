@@ -8,6 +8,7 @@ from urllib.parse import unquote, urlsplit
 from controllers.catalog.capabilities import resolve_capabilities
 from controllers.catalog.device_catalog import get_device_models_by_name, install_catalog
 from utils.api.mibuds_api import CatalogClient
+from utils.app.pubsub_topics import PubSubTopic
 
 
 class CatalogSync:
@@ -50,7 +51,7 @@ class CatalogSync:
         capabilities = resolve_capabilities(device_name, identity)
         if capabilities != self._last_capabilities:
             self._last_capabilities = capabilities
-            self._publish({"type": "capabilities_changed"})
+            self._publish({"type": PubSubTopic.CAPABILITIES_CHANGED.value})
         normalized_name = " ".join(device_name.split()).casefold()
         model = next((item for item in models
                       if " ".join(item["name"].split()).casefold() == normalized_name),
@@ -79,7 +80,7 @@ class CatalogSync:
         if presentation != self._last_presentation:
             if image_path:
                 self.client.remember_device_image(presentation[0], image_path)
-            self._publish({"type": "catalog_device", "name": presentation[0], "image_path": image_path})
+            self._publish({"type": PubSubTopic.CATALOG_DEVICE.value, "name": presentation[0], "image_path": image_path})
             self._last_presentation = presentation
 
     def _run(self):

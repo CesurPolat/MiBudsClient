@@ -37,7 +37,7 @@ class LocalizedUITests(unittest.TestCase):
         self.handler = AppMessageHandler(
             page=self.page, device_status_card=self.device, settings_card=self.settings,
             window_manager=Mock(), latency=Mock(), tray=self.tray, debug_console=Mock(),
-            on_window_show=Mock(), get_game_monitor=Mock(),
+            on_window_show=Mock(),
         )
 
     def switch(self, language):

@@ -4,6 +4,7 @@ from typing import Callable, Optional
 import threading
 import sys
 from utils.app.i18n import t, render
+from utils.app.pubsub_topics import PubSubTopic
 from utils.notifications.image_notifications import ImageNotifications
 from utils.notifications.linux_notifications import LinuxNotifications
 from utils.desktop.tray_host import TrayHostMonitor
@@ -192,7 +193,7 @@ class SystemTray:
 
         def action(feature, operation, **values):
             # Bind the snapshot's session, so an old open menu cannot affect a new device.
-            request = {"type": "tray_device_action", "session": state.get("session"),
+            request = {"type": PubSubTopic.TRAY_DEVICE_ACTION.value, "session": state.get("session"),
                        "feature": feature, "operation": operation, **values}
             def invoke(icon, entry):
                 if self.on_device_action and not self._stopped.is_set():

@@ -6,6 +6,7 @@ from functools import wraps
 from typing import Callable
 
 from utils.app.i18n import message as m
+from utils.app.pubsub_topics import PubSubTopic
 from utils.app.user_preferences import (
     get_low_latency_hold_until_app_close,
     get_low_latency_mode,
@@ -86,7 +87,7 @@ class LatencyController:
 
     def _publish_latency(self, source: str) -> None:
         self._publish({
-            "type": "latency",
+            "type": PubSubTopic.LATENCY.value,
             "enabled": self.state["effective_low_latency"],
             "mode": self.state["selected_mode"],
             "source": source,
@@ -101,7 +102,7 @@ class LatencyController:
         )
 
     def _status(self, text: str, color: str = "white") -> None:
-        self._publish({"type": "status", "text": text, "color": color})
+        self._publish({"type": PubSubTopic.STATUS.value, "text": text, "color": color})
 
     @_serialized
     def on_monitor_state(self, is_fullscreen: bool, app_id: str) -> None:

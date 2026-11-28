@@ -3,6 +3,7 @@ from utils.diagnostics.error_reports import publish_exception
 import threading
 
 from utils.app.i18n import message as m, error_message
+from utils.app.pubsub_topics import PubSubTopic
 from .protocol import EqResult
 
 
@@ -31,7 +32,7 @@ class EqSettingsController:
                 publish_exception(self._publish, exc, "equalizer")
                 result = EqResult(False, message=m("eq.failed", details=error_message(exc)))
                 profiles = ()
-            self._publish({"type": "eq_settings", "token": token, "result": result,
+            self._publish({"type": PubSubTopic.EQ_SETTINGS.value, "token": token, "result": result,
                            "profiles": profiles, "operation": operation})
 
         threading.Thread(target=work, daemon=True).start()

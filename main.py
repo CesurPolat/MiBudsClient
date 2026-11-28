@@ -29,8 +29,9 @@ from utils.desktop.game_monitor import FullscreenGameMonitor
 from controllers.latency import LatencyController
 from utils.app.i18n import is_rtl, set_language
 from utils.app.user_preferences import get_language_preference
-from ui.localization import refresh_translations
+from ui.page_updates import refresh_page
 from utils.diagnostics.error_reports import ErrorReportManager, ReportQueue, guard_ui_callbacks
+from utils.app.pubsub_topics import PubSubTopic
 from ui.components.dialogs.error_report import ErrorReportDialog, ErrorReportEvents
 from ui.components.dialogs.debug_console import DebugConsoleDialog
 from utils.app.app_shutdown import ApplicationShutdown
@@ -47,7 +48,6 @@ async def main(page: ft.Page):
     page.rtl = is_rtl()
 
     ui_lock = threading.RLock()
-    window_mgr = None
     message_handler = None
 
     def publish(message):
@@ -55,16 +55,11 @@ async def main(page: ft.Page):
             page.pubsub.send_all(message)
 
     def update_ui():
-        if application_shutdown.started.is_set():
-            return
         with ui_lock:
-            if message_handler is not None:
-                message_handler.sync_tray()
-            refresh_translations(page.controls)
-            refresh_translations(page.overlay)
-            page.update()
-            if window_mgr is not None:
-                window_mgr.request_content_fit()
+            if application_shutdown.started.is_set():
+                return
+            sync_tray = message_handler.sync_tray if message_handler is not None else None
+            refresh_page(page, window_mgr, sync_tray=sync_tray)
 
     debug_console = DebugConsoleManager(publish=publish)
     debug_console.install()
@@ -90,20 +85,16 @@ async def main(page: ft.Page):
     # Initialize Managers
     # ─────────────────────────────────────────────────────────────────────────
     
-    # Controller will be set after initialization
-    controller_ref = {
-        "instance": None,
-        "game_monitor": None,
-    }
+    controller: BTController | None = None
     report_queue = ReportQueue(
-        notify=lambda state: publish({'type': 'error_report_status', 'state': state}),
-        on_report_status=lambda status: publish({'type': 'connection_report_status', **status}),
+        notify=lambda state: publish({'type': PubSubTopic.ERROR_REPORT_STATUS.value, 'state': state}),
+        on_report_status=lambda status: publish({'type': PubSubTopic.CONNECTION_REPORT_STATUS.value, **status}),
     )
     reports = ErrorReportManager(
         publish=publish, app_version=APP_VERSION,
-        get_device=lambda: (getattr(controller_ref['instance'], 'diagnostic_identity', None) or {}).get('device_name', ''),
+        get_device=lambda: (getattr(controller, 'diagnostic_identity', None) or {}).get('device_name', ''),
         auto_submit=report_queue.enqueue,
-        get_identity=lambda: getattr(controller_ref['instance'], 'diagnostic_identity', None),
+        get_identity=lambda: getattr(controller, 'diagnostic_identity', None),
     )
     application_shutdown.register("F12 listener", debug_console.stop_f12_hotkey_listener)
     application_shutdown.register("error reports", report_queue.stop)
@@ -111,31 +102,28 @@ async def main(page: ft.Page):
     debug_console.on_exception = reports.capture
     page.on_error = lambda e: reports.capture(RuntimeError(str(getattr(e, 'data', '') or 'Flet error').splitlines()[0]), 'ui')
 
-    tray_ref = {
-        "instance": None
-    }
+    tray: SystemTray | None = None
 
     latency = LatencyController(
         publish=publish,
-        get_controller=lambda: controller_ref["instance"],
-        get_tray=lambda: tray_ref["instance"],
+        get_controller=lambda: controller,
+        get_tray=lambda: tray,
         on_rules_change=lambda *args: settings_card.set_low_latency_rules(*args),
         on_ui_update=update_ui,
     )
     application_shutdown.register("latency watcher", latency.stop)
 
     def tray_exit_request() -> None:
-        publish({"type": "app", "action": "close"})
+        publish({"type": PubSubTopic.APP.value, "action": "close"})
 
     tray = SystemTray(
         on_show=window_mgr.show,
         on_exit=tray_exit_request,
         on_latency_mode_select=latency.select_latency_mode_from_tray,
         get_latency_mode=lambda: latency.state["selected_mode"],
-        latency_available=lambda: controller_ref["instance"] is not None and controller_ref["instance"].capabilities.supports("latency"),
+        latency_available=lambda: controller is not None and controller.capabilities.supports("latency"),
         on_device_action=publish,
     )
-    tray_ref["instance"] = tray
     window_mgr.tray_available = lambda: tray.available
     application_shutdown.register("system tray", tray.stop)
 
@@ -149,7 +137,7 @@ async def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     device_connection = DeviceConnection(
         publish=publish,
-        get_controller=lambda: controller_ref["instance"],
+        get_controller=lambda: controller,
     )
     application_shutdown.register("device requests", device_connection.stop)
 
@@ -160,10 +148,8 @@ async def main(page: ft.Page):
         application_shutdown.register("debug console", debug_dialog.stop)
     catalog_sync = CatalogSync(
         publish=publish,
-        get_identity=lambda: controller_ref["instance"].device_identity
-        if controller_ref["instance"] is not None else None,
-        get_device_name=lambda: controller_ref["instance"].device_name
-        if controller_ref["instance"] is not None else "",
+        get_identity=lambda: controller.device_identity if controller is not None else None,
+        get_device_name=lambda: controller.device_name if controller is not None else "",
         app_version=APP_VERSION,
     )
     application_shutdown.register("catalog sync", catalog_sync.stop)
@@ -176,21 +162,20 @@ async def main(page: ft.Page):
     # Initialize Bluetooth Controller
     # ─────────────────────────────────────────────────────────────────────────
     def on_connection_event(event):
-        publish({"type": "connection_event", "event": event})
+        publish({"type": PubSubTopic.CONNECTION_EVENT.value, "event": event})
         catalog_sync.identity_changed(None)
-        current = controller_ref["instance"]
-        if event == "connected" and current is not None:
-            threading.Thread(target=current.request_device_identity, kwargs={"reconnect": False}, daemon=True).start()
+        if event == "connected" and controller is not None:
+            threading.Thread(target=controller.request_device_identity, kwargs={"reconnect": False}, daemon=True).start()
 
     def on_identity(identity):
         catalog_sync.identity_changed(identity)
-        publish({"type": "firmware_info", "identity": identity})
+        publish({"type": PubSubTopic.FIRMWARE_INFO.value, "identity": identity})
 
     controller = BTController(
         error_callback=reports.capture,
         identity_callback=on_identity,
         connection_state_callback=lambda state, reason: publish(
-            {"type": "connection_state", "state": state, "reason": reason}
+            {"type": PubSubTopic.CONNECTION_STATE.value, "state": state, "reason": reason}
         ),
         status_callback=device_connection.update_status,
         battery_callback=device_connection.update_battery,
@@ -198,12 +183,10 @@ async def main(page: ft.Page):
         connection_event_callback=on_connection_event,
     )
     
-    # Set controller reference for tray callbacks
-    controller_ref["instance"] = controller
     controller.config_callback = lambda session, records, eq: publish(
-        {"type": "config_notification", "session": session, "records": records, "eq": eq})
+        {"type": PubSubTopic.CONFIG_NOTIFICATION.value, "session": session, "records": records, "eq": eq})
     controller.device_candidates_callback = lambda devices: publish(
-        {"type": "device_candidates", "devices": [(item.name, item.address) for item in devices]})
+        {"type": PubSubTopic.DEVICE_CANDIDATES.value, "devices": [(item.name, item.address) for item in devices]})
     window_mgr.on_activity_change = controller.set_battery_polling_active
     controller.set_battery_polling_active(bool(
         page.window.visible and not page.window.minimized and getattr(page.window, "focused", False)
@@ -220,7 +203,7 @@ async def main(page: ft.Page):
         publish=publish,
         on_update=update_ui,
         on_language_change=lambda e: publish(
-            {"type": "language", "language": e.control.value}
+            {"type": PubSubTopic.LANGUAGE.value, "language": e.control.value}
         ),
     )
     settings_card = settings_controller.card
@@ -257,7 +240,6 @@ async def main(page: ft.Page):
         tray=tray,
         debug_console=debug_console,
         on_window_show=device_connection.reconnect_on_show,
-        get_game_monitor=lambda: controller_ref["game_monitor"],
         on_catalog_stop=catalog_sync.stop,
         get_capabilities=lambda: controller.capabilities,
         get_identity=lambda: controller.device_identity if controller.connected else None,
@@ -283,13 +265,13 @@ async def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     start_update_check(
         on_update_available=lambda version: publish(
-            {"type": "update_notification", "latest_ver": version}
+            {"type": PubSubTopic.UPDATE_NOTIFICATION.value, "latest_ver": version}
         )
     )
 
     def on_fullscreen_change(is_fullscreen: bool, app_id: str):
         publish(
-            {"type": "fullscreen_state", "is_fullscreen": is_fullscreen, "app_id": app_id}
+            {"type": PubSubTopic.FULLSCREEN_STATE.value, "is_fullscreen": is_fullscreen, "app_id": app_id}
         )
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -297,9 +279,8 @@ async def main(page: ft.Page):
     # ─────────────────────────────────────────────────────────────────────────
     game_monitor = FullscreenGameMonitor(
         on_fullscreen_change=on_fullscreen_change,
-        on_log=lambda msg: publish({"type": "status", "text": msg, "color": "orange"})
+        on_log=lambda msg: publish({"type": PubSubTopic.STATUS.value, "text": msg, "color": "orange"})
     )
-    controller_ref["game_monitor"] = game_monitor
     application_shutdown.register("game monitor", game_monitor.stop)
     game_monitor.start()
 

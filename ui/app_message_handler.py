@@ -7,7 +7,7 @@ from .app_events import AppEvents
 from .battery_notifications import BatteryNotifications
 from .device_events import DeviceEvents
 from .latency_events import LatencyEvents
-from .localization import refresh_translations
+from .page_updates import refresh_page
 from .tray_device import TrayDeviceEvents
 
 
@@ -16,7 +16,7 @@ class AppMessageHandler:
 
     def __init__(self, *, page, device_status_card, settings_card, window_manager,
                  latency, tray, debug_console, on_window_show: Callable,
-                 get_game_monitor: Callable, on_catalog_stop: Callable | None = None,
+                 on_catalog_stop: Callable | None = None,
                  get_capabilities: Callable | None = None, ui_lock=None,
                  get_identity: Callable | None = None, get_device_session: Callable | None = None,
                  is_connected: Callable | None = None, report_events=None):
@@ -70,11 +70,7 @@ class AppMessageHandler:
         self._page.pubsub.send_all(message)
 
     def _update_page(self) -> None:
-        self.sync_tray()
-        refresh_translations(self._page.controls)
-        refresh_translations(self._page.overlay)
-        self._page.update()
-        self._window_manager.request_content_fit()
+        refresh_page(self._page, self._window_manager, sync_tray=self.sync_tray)
 
     async def handle_on_ui_loop(self, message) -> None:
         """Apply PubSub messages alongside native Flet events without yielding."""
