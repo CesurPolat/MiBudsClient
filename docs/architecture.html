@@ -407,7 +407,7 @@
 </g>
 <g>
   <rect x="480" y="92" width="320" height="112" rx="8" class="node"/>
-  <text x="496" y="116" class="node-meta">utils/api/mibuds_api.py</text>
+  <text x="496" y="116" class="node-meta">utils/api/error_reporting.py</text>
   <text x="496" y="143" class="node-title">CatalogClient</text>
   <text x="496" y="168" class="node-copy">Katalog sürümü, veri ve görsel istekleri</text>
   <text x="496" y="186" class="node-copy">Doğrulama ve yerel görsel önbelleği</text>
@@ -462,7 +462,7 @@
     <figcaption class="notes">
       <div><h3>Katalog yayını</h3><p><code>CatalogSync</code> kurulu kataloğu günceller ve cihaz için gerekirse <code>capabilities_changed</code> ve <code>catalog_device</code> olaylarını yayınlar. Yetenekler seçili modelin <code>func_list</code> ve <code>extra_data</code> alanlarından gelir.</p><a href="../controllers/device/catalog_sync.py">Katalog işçisi</a> · <a href="../controllers/catalog/capabilities.py">Yetenek çözümü</a></div>
       <div><h3>Normal bağlantısızlık</h3><p>Keşifte uygun bağlı cihaz bulunmaması veya işletim sisteminin kesintiyi doğrulaması bağlantı durumu olarak gösterilir. Bu yollar yeni hata raporu üretmez.</p><a href="../controllers/bluetooth/link/session.py">Bağlantı ve hata ayrımı</a> · <a href="diagnostics.html">Ayrıntılı tanılama diyagramı</a></div>
-      <div><h3>Kalıcı gönderim</h3><p>Gönderimden önce deneme kayda yazılır. Geçici hatalar 1, 5, 30 ve 120 dakika sonra yeniden denenir. <code>Retry-After</code> beklemeyi uzatabilir. Kayıtlar en fazla yedi gün tutulur.</p><a href="../utils/diagnostics/error_reports.py">Rapor kuyruğu</a> · <a href="../utils/api/mibuds_api.py">HTTP istemcileri</a></div>
+      <div><h3>Kalıcı gönderim</h3><p>Gönderimden önce deneme kayda yazılır. Geçici hatalar 1, 5, 30 ve 120 dakika sonra yeniden denenir. <code>Retry-After</code> beklemeyi uzatabilir. Kayıtlar en fazla yedi gün tutulur.</p><a href="../utils/diagnostics/error_reports.py">Rapor kuyruğu</a> · <a href="../utils/api/error_reporting.py">HTTP istemcisi</a></div>
     </figcaption>
   </figure>
 </section>
@@ -495,7 +495,7 @@
     </article>
     <article>
       <div><span class="priority">API sözleşmesine bağlı</span><h3>Rapor tekrarlarını sunucuyla birlikte yönet</h3></div>
-      <div><p><strong>Bulgu.</strong> Kuyruk sabit bir yerel dosya adına sahip. HTTP istemcisi bu kimliği istekle göndermiyor. Sunucu raporu kabul edip yanıt istemciye ulaşmazsa, istemci aynı kaydı yeniden gönderebilir. Sunucu tarafındaki tekrar yönetimi bu istemci deposundan doğrulanamıyor.</p><p><strong>Öneri.</strong> Sunucu sözleşmesi destekliyorsa yerel rapor kimliğini her denemede aynı idempotency anahtarı olarak kullan. Önce mevcut API davranışını doğrula.</p><p><strong>Doğrulama.</strong> Başarılı yazımdan sonra HTTP yanıtı kaybolduğunda yeniden deneme ikinci rapor oluşturmadan tamamlanabilsin.</p><p class="refs"><a href="../utils/diagnostics/error_reports.py#L194">Kuyruk kaydı ve denemeler</a> · <a href="../utils/api/mibuds_api.py#L44">HTTP isteği</a></p></div>
+      <div><p><strong>Bulgu.</strong> Kuyruk sabit bir yerel dosya adına sahip. HTTP istemcisi bu kimliği istekle göndermiyor. Sunucu raporu kabul edip yanıt istemciye ulaşmazsa, istemci aynı kaydı yeniden gönderebilir. Sunucu tarafındaki tekrar yönetimi bu istemci deposundan doğrulanamıyor.</p><p><strong>Öneri.</strong> Sunucu sözleşmesi destekliyorsa yerel rapor kimliğini her denemede aynı idempotency anahtarı olarak kullan. Önce mevcut API davranışını doğrula.</p><p><strong>Doğrulama.</strong> Başarılı yazımdan sonra HTTP yanıtı kaybolduğunda yeniden deneme ikinci rapor oluşturmadan tamamlanabilsin.</p><p class="refs"><a href="../utils/diagnostics/error_reports.py#L194">Kuyruk kaydı ve denemeler</a> · <a href="../utils/api/error_reporting.py#L30">HTTP isteği</a></p></div>
     </article>
   </div>
   <p class="invariants">Refactor sırasında tam UUID ile servis çözümünü, servise göre auth seçimini, tek RFCOMM okuyucusunu, tek Flet UI aboneliğini ve katalog destekli kontrolleri koru. Özel EQ kapalı kalır.</p>
