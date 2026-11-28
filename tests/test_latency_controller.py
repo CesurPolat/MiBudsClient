@@ -21,15 +21,16 @@ class LatencyControllerTests(unittest.TestCase):
             "get_all_low_latency_includes": {"windows": [], "linux": []},
         }
         for name, value in defaults.items():
-            self.stack.enter_context(patch(f"controllers.latency.controller.{name}", return_value=value))
-        self.saves = {
-            name: self.stack.enter_context(patch(f"controllers.latency.controller.{name}"))
-            for name in (
-                "set_low_latency_mode", "set_low_latency_hold_until_app_close",
-                "set_low_latency_exceptions", "set_low_latency_includes",
-            )
-        }
-        self.stack.enter_context(patch("controllers.latency.controller.threading.Thread"))
+            owner = "rules" if name.startswith("get_all_") else "controller"
+            self.stack.enter_context(patch(f"controllers.latency.{owner}.{name}", return_value=value))
+        self.saves = {}
+        for owner, names in (
+            ("controller", ("set_low_latency_mode", "set_low_latency_hold_until_app_close")),
+            ("rules", ("set_low_latency_exceptions", "set_low_latency_includes")),
+        ):
+            for name in names:
+                self.saves[name] = self.stack.enter_context(patch(f"controllers.latency.{owner}.{name}"))
+        self.stack.enter_context(patch("threading.Thread"))
         self.device = Mock()
         self.device.latency_state = None
         self.device.send_command.return_value = (True, "OK")
@@ -243,7 +244,7 @@ class LatencyControllerTests(unittest.TestCase):
         c = self.controller
         c.state.update(selected_mode="auto", hold_until_app_close_enabled=True,
                        latency_hold_app_id="game.exe")
-        with patch("controllers.latency.controller.threading.Thread") as thread, patch.object(
+        with patch("controllers.latency.hold.threading.Thread") as thread, patch.object(
             c, "is_process_running", return_value=False,
         ):
             c.start_hold_watcher_if_needed()
@@ -259,8 +260,8 @@ class LatencyControllerTests(unittest.TestCase):
             ("win32", SimpleNamespace(stdout="game.exe 123", returncode=0), "tasklist"),
             ("linux", SimpleNamespace(stdout="123", returncode=0), "pgrep"),
         ):
-            with self.subTest(platform=platform), patch("controllers.latency.controller.sys.platform", platform), patch(
-                "controllers.latency.controller.subprocess.run", return_value=result,
+            with self.subTest(platform=platform), patch("controllers.latency.hold.sys.platform", platform), patch(
+                "controllers.latency.hold.subprocess.run", return_value=result,
             ) as run:
                 self.assertTrue(self.controller.is_process_running(" GAME.EXE "))
                 self.assertEqual(run.call_args.args[0][0], expected_command)

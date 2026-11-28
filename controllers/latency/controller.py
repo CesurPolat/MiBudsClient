@@ -1,24 +1,22 @@
-"""Low latency mode policy, app rules, and hold-until-close handling."""
+"""Coordinate device state, automatic policy and latency callbacks."""
 
-from utils.app.i18n import message as m, error_message
-
-import subprocess
 import sys
 import threading
-import time
-from typing import Callable
 from functools import wraps
+from typing import Callable
 
+from utils.app.i18n import message as m
 from utils.app.user_preferences import (
-    get_all_low_latency_exceptions,
-    get_all_low_latency_includes,
-    set_low_latency_exceptions,
-    set_low_latency_includes,
-    get_low_latency_mode,
-    set_low_latency_mode,
     get_low_latency_hold_until_app_close,
+    get_low_latency_mode,
     set_low_latency_hold_until_app_close,
+    set_low_latency_mode,
 )
+
+from .device import LatencyDevice
+from .hold import HoldWatcher, is_process_running
+from .policy import evaluate_policy
+from .rules import LatencyRules
 
 
 def _serialized(method):
@@ -40,13 +38,8 @@ class LatencyController:
                  on_ui_update: Callable):
         self._lock = threading.RLock()
         self._stopped = threading.Event()
-        self._last_error = None
         self._publish = publish
         self._get_controller = get_controller
-        self._device_capabilities = None
-        self._read_session = None
-        self._auto_activation_app = ""
-        self._activation_session = None
         self._get_tray = get_tray
         self._on_rules_change = on_rules_change
         self._on_ui_update = on_ui_update
@@ -59,67 +52,37 @@ class LatencyController:
             "last_monitor_state": {"is_fullscreen": False, "app_id": ""},
         }
         self.platform_key = "windows" if sys.platform.startswith("win") else "linux"
-        self.low_latency_exceptions_by_platform = get_all_low_latency_exceptions()
-        self.low_latency_includes_by_platform = get_all_low_latency_includes()
+        self._rules = LatencyRules()
+        self._device = LatencyDevice(get_controller, self._stopped, self.state)
+        self._hold = HoldWatcher(
+            state=self.state, lock=self._lock, stopped=self._stopped,
+            check_process=lambda app_id: self.is_process_running(app_id), publish=publish,
+        )
+
+    @property
+    def low_latency_exceptions_by_platform(self) -> dict[str, list[str]]:
+        return self._rules.exceptions_by_platform
+
+    @property
+    def low_latency_includes_by_platform(self) -> dict[str, list[str]]:
+        return self._rules.includes_by_platform
 
     @_serialized
     def set_device_capabilities(self, capabilities) -> None:
         """Forget the previous device's effective mode without sending packets."""
-        if capabilities == self._device_capabilities:
+        if not self._device.set_capabilities(capabilities):
             return
-        self._device_capabilities = capabilities
-        self._auto_activation_app = ""
-        self._activation_session = None
         self.clear_latency_hold()
-        self.state["effective_low_latency"] = None
-        self._last_error = None
         self._publish_latency("device")
         self.refresh_device_state()
 
     def refresh_device_state(self) -> None:
-        """Read once per ready session/capability change without blocking the UI."""
-        controller = self._get_controller()
-        if (controller is None or not controller.session_ready
-                or not controller.capabilities.supports("latency")):
-            return
-        session = controller.gesture_session
-        key = (controller, session, controller.capabilities)
-        if key == self._read_session:
-            return
-        self._read_session = key
-
-        def read():
-            try:
-                controller.request_latency_state(session=session)
-            except (OSError, ValueError):
-                pass  # An unreadable config remains unknown, never assumed off.
-            if (not self._stopped.is_set() and controller is self._get_controller()
-                    and session == controller.gesture_session):
-                self._publish_latency("device_read")
-
-        threading.Thread(target=read, daemon=True).start()
-
-    def _sync_device_state(self):
-        controller = self._get_controller()
-        self.state["effective_low_latency"] = (
-            controller.latency_state if controller is not None else None)
+        self._device.refresh(self._publish_latency)
 
     def get_display_state(self) -> dict:
-        """Return the current controller-owned state, rather than a queued message."""
+        """Return the latest state for Home and the tray."""
         with self._lock:
-            self._sync_device_state()
-            controller = self._get_controller()
-            activation_app = ""
-            if (controller is not None and self.state["selected_mode"] == "auto"
-                    and self.state["effective_low_latency"] is True and not self._last_error
-                    and self._activation_session == (controller, controller.gesture_session)):
-                activation_app = self._auto_activation_app
-            return {
-                "mode": self.state["selected_mode"],
-                "enabled": self.state["effective_low_latency"],
-                "error": self._last_error,
-                "activation_app": activation_app,
-            }
+            return self._device.display_state()
 
     def _publish_latency(self, source: str) -> None:
         self._publish({
@@ -149,7 +112,7 @@ class LatencyController:
 
     @_serialized
     def on_hold_released(self, app_id: str) -> None:
-        self._sync_device_state()
+        self._device.sync()
         released_app = (app_id or "").strip().lower()
         active_hold = self.state["latency_hold_app_id"]
         if self.state["selected_mode"] != "auto" or not active_hold:
@@ -168,90 +131,14 @@ class LatencyController:
         return set(self.low_latency_includes_by_platform.get(self.platform_key, []))
 
     def is_process_running(self, app_id: str) -> bool:
-        app_name = (app_id or "").strip().lower()
-        if not app_name:
-            return False
-
-        try:
-            if sys.platform.startswith("win"):
-                startupinfo = None
-                creationflags = 0
-                if hasattr(subprocess, "STARTUPINFO"):
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                    startupinfo.wShowWindow = subprocess.SW_HIDE
-                if hasattr(subprocess, "CREATE_NO_WINDOW"):
-                    creationflags |= subprocess.CREATE_NO_WINDOW
-
-                result = subprocess.run(
-                    ["tasklist", "/FI", f"IMAGENAME eq {app_name}"],
-                    capture_output=True,
-                    text=True,
-                    startupinfo=startupinfo,
-                    creationflags=creationflags,
-                    check=False,
-                )
-                output = (result.stdout or "").lower()
-                return app_name in output and "no tasks are running" not in output
-
-            if sys.platform.startswith("linux"):
-                result = subprocess.run(
-                    ["pgrep", "-f", app_name],
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-                return result.returncode == 0 and bool((result.stdout or "").strip())
-        except Exception:
-            return False
-
-        return False
+        return is_process_running(app_id)
 
     @_serialized
     def clear_latency_hold(self) -> None:
-        self.state["latency_hold_app_id"] = ""
+        self._hold.clear()
 
-    @_serialized
     def start_hold_watcher_if_needed(self) -> None:
-        if self.state["hold_watcher_running"]:
-            return
-
-        hold_app_id = self.state["latency_hold_app_id"]
-        if not hold_app_id:
-            return
-
-        if self.state["selected_mode"] != "auto":
-            return
-
-        if not self.state["hold_until_app_close_enabled"]:
-            return
-
-        self.state["hold_watcher_running"] = True
-
-        def _watcher() -> None:
-            try:
-                while not self._stopped.is_set():
-                    if self.state["selected_mode"] != "auto":
-                        return
-
-                    if not self.state["hold_until_app_close_enabled"]:
-                        return
-
-                    current_hold = self.state["latency_hold_app_id"]
-                    if not current_hold:
-                        return
-
-                    if not self.is_process_running(current_hold):
-                        self._publish({"type": "auto_hold_released", "app_id": current_hold})
-                        return
-
-                    if self._stopped.wait(2):
-                        return
-            finally:
-                with self._lock:
-                    self.state["hold_watcher_running"] = False
-
-        threading.Thread(target=_watcher, daemon=True).start()
+        self._hold.start()
 
     def stop(self) -> None:
         """Wake the hold watcher without changing saved latency preferences."""
@@ -259,112 +146,51 @@ class LatencyController:
 
     @_serialized
     def apply_monitor_latency_policy(self, is_fullscreen: bool, app_id: str, source: str = "monitor") -> None:
-        self._sync_device_state()
-        controller = self._get_controller()
+        controller = self._device.sync()
         if controller is not None and not controller.capabilities.supports("latency"):
             self.clear_latency_hold()
-            self.state["effective_low_latency"] = None
+            self._device.invalidate()
             return
-        normalized_app = (app_id or "").strip().lower()
-        selected_mode = self.state["selected_mode"]
-        hold_enabled = bool(self.state["hold_until_app_close_enabled"])
-        current_hold = self.state["latency_hold_app_id"]
+        decision = evaluate_policy(
+            mode=self.state["selected_mode"], is_fullscreen=is_fullscreen, app_id=app_id,
+            includes=self.active_low_latency_includes(), excludes=self.active_low_latency_exceptions(),
+            hold_enabled=bool(self.state["hold_until_app_close_enabled"]),
+            current_hold=self.state["latency_hold_app_id"], is_process_running=self.is_process_running,
+        )
+        if decision.hold_app is not None:
+            if decision.hold_app:
+                self.set_latency_hold(decision.hold_app)
+            else:
+                self.clear_latency_hold()
 
-        def enable_low_latency(message: str, color: str = "blue", activation_app: str = "") -> None:
+        if decision.enabled:
             if self.state["effective_low_latency"] is not True:
                 if not self.set_effective_latency_state(True, source=source):
                     return
-            app = activation_app if self.state["effective_low_latency"] is True else ""
-            session = (controller, controller.gesture_session) if app else None
-            if app != self._auto_activation_app or session != self._activation_session:
-                self._auto_activation_app = app
-                self._activation_session = session
+            if self._device.update_activation(decision.activation_app, controller):
                 self._publish_latency(source)
-            self._status(message, color)
-
-        def disable_low_latency(message: str = m("latency.standard_restored")) -> None:
-            had_activation = bool(self._auto_activation_app)
-            self._auto_activation_app = ""
-            self._activation_session = None
-            if had_activation:
+            self._status(decision.status, "blue")
+        else:
+            if self._device.update_activation(""):
                 self._publish_latency(source)
             if self.state["effective_low_latency"] is not False:
                 if not self.set_effective_latency_state(False, source=source):
                     return
-            self._status(message, "white")
-
-        if selected_mode == "on":
-            self.clear_latency_hold()
-            enable_low_latency(m("latency.enabled"), "blue")
-            return
-
-        if selected_mode == "off":
-            self.clear_latency_hold()
-            disable_low_latency()
-            return
-
-        if selected_mode == "auto":
-            included_apps = self.active_low_latency_includes()
-            excluded_apps = self.active_low_latency_exceptions()
-            include_match = bool(normalized_app and normalized_app in included_apps)
-            exclude_match = bool(normalized_app and normalized_app in excluded_apps)
-            fullscreen_match = bool(is_fullscreen and normalized_app and not exclude_match)
-            matches = include_match or fullscreen_match
-
-            if include_match:
-                enable_message = m("latency.included")
-            else:
-                enable_message = m("latency.fullscreen")
-
-            if exclude_match:
-                disable_message = m("latency.skipped", app=normalized_app)
-            elif include_match:
-                disable_message = m("latency.include_left")
-            else:
-                disable_message = m("latency.fullscreen_ended")
-
-            if matches:
-                if hold_enabled:
-                    self.set_latency_hold(normalized_app)
-                else:
-                    self.clear_latency_hold()
-                enable_low_latency(enable_message, "blue", normalized_app)
-                return
-
-            if hold_enabled and current_hold and self.is_process_running(current_hold):
-                enable_low_latency(m("latency.keeping", app=current_hold), "blue", current_hold)
-                return
-
-            self.clear_latency_hold()
-            disable_low_latency(disable_message)
-            return
-
-        self.clear_latency_hold()
-        disable_low_latency()
+            self._status(decision.status, "white")
 
     @_serialized
     def set_effective_latency_state(self, new_state: bool, source: str = "manual") -> bool:
         controller = self._get_controller()
         if controller is not None and not controller.capabilities.supports("latency"):
             self.clear_latency_hold()
-            self.state["effective_low_latency"] = None
+            self._device.invalidate()
             return False
-        try:
-            if controller is None:
-                success, message = False, m("latency.unavailable")
-            else:
-                success, message = controller.send_command("low" if new_state else "std")
-        except Exception as exc:
-            success, message = False, m("latency.failed", details=error_message(exc))
-
-        self._sync_device_state()
+        success, message = self._device.set_enabled(controller, new_state)
         if not success:
-            self._last_error = message
             self._status(message, "red")
             self._publish_latency(source)
             return False
 
-        self._last_error = None
         tray_inst = self._get_tray()
         if tray_inst:
             tray_inst.refresh_menu()
@@ -380,7 +206,7 @@ class LatencyController:
         self.state["selected_mode"] = normalized_mode
         set_low_latency_mode(normalized_mode)
 
-        self._last_error = None
+        self._device.clear_error()
         self._reapply_policy(source)
         self._publish_latency(source)
 
@@ -396,13 +222,7 @@ class LatencyController:
 
     @_serialized
     def set_latency_hold(self, app_id: str) -> None:
-        normalized = (app_id or "").strip().lower()
-        if not normalized:
-            return
-        if not self.state["hold_until_app_close_enabled"]:
-            return
-        self.state["latency_hold_app_id"] = normalized
-        self.start_hold_watcher_if_needed()
+        self._hold.set_app(app_id)
 
     def select_latency_mode_from_tray(self, mode: str) -> None:
         self.set_selected_latency_mode(mode, source="tray")
@@ -424,25 +244,10 @@ class LatencyController:
 
     @_serialized
     def _change_rule(self, platform: str, value: str, mode: str) -> None:
-        target_platform = (platform or "").strip().lower()
-        normalized = (value or "").strip().lower()
-        if target_platform not in {"windows", "linux"} or not normalized:
+        change = self._rules.change(platform, value, mode)
+        if change is None:
             return
-        if mode not in {"exclude", "include", "remove"}:
-            return
-        excluded = set(self.low_latency_exceptions_by_platform.get(target_platform, []))
-        included = set(self.low_latency_includes_by_platform.get(target_platform, []))
-        excluded.discard(normalized)
-        included.discard(normalized)
-        if mode == "exclude":
-            excluded.add(normalized)
-        elif mode == "include":
-            included.add(normalized)
-        excluded_sorted, included_sorted = sorted(excluded), sorted(included)
-        self.low_latency_exceptions_by_platform[target_platform] = excluded_sorted
-        self.low_latency_includes_by_platform[target_platform] = included_sorted
-        set_low_latency_exceptions(excluded_sorted, platform=target_platform)
-        set_low_latency_includes(included_sorted, platform=target_platform)
+        target_platform, normalized, excluded_sorted, included_sorted = change
         self._on_rules_change(target_platform, excluded_sorted, included_sorted)
         if target_platform == self.platform_key:
             if self.state["latency_hold_app_id"] == normalized and mode != "include":
