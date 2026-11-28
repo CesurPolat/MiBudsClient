@@ -31,9 +31,9 @@ class NoiseHomeTests(unittest.TestCase):
         controller._connection.connected = True
         controller._connection.session_ready = True
         controller._device_name = "Redmi Buds 5 Pro"
-        controller._noise = Mock()
-        controller.request_noise_settings(session=controller.gesture_session)
-        controller._noise.read.assert_called_once()
+        with patch.object(controller._noise, "read_aux"), patch.object(controller._noise, "read") as read:
+            controller.request_noise_settings(session=controller.gesture_session)
+        read.assert_called_once()
 
     def test_visibility_follows_connection_and_anc_capability(self):
         card = self.make_card()

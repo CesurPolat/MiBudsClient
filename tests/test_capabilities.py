@@ -153,7 +153,7 @@ class CapabilityTests(unittest.TestCase):
         self.assertFalse(controller.request_eq_settings().success)
         controller._connection.send.assert_not_called()
         with patch.object(controller, "request_battery") as battery, patch(
-            "controllers.bluetooth.controller.time.sleep",
+            "controllers.bluetooth.commands.time.sleep",
         ):
             controller.on_connect_setup()
         battery.assert_called_once_with(user_initiated=False)

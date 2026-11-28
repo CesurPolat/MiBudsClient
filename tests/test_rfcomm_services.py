@@ -67,7 +67,7 @@ class ServiceConnectionTests(unittest.TestCase):
         report = Mock(side_effect=capture)
         controller = BTController(error_callback=report)
         controller._connection = connection
-        with patch("controllers.bluetooth.controller.time.sleep",
+        with patch("controllers.bluetooth.link.session.time.sleep",
                    side_effect=lambda _: setattr(controller, "_running", False)):
             controller.listen()
         report.assert_called_once()

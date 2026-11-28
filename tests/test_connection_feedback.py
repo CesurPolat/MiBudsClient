@@ -81,7 +81,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         def sleep(_):
             if controller._reconnect_paused:
                 controller._running = False
-        with patch("controllers.bluetooth.controller.time.sleep", side_effect=sleep):
+        with patch("controllers.bluetooth.link.session.time.sleep", side_effect=sleep):
             controller.listen()
         retries = [call.args for call in feedback.call_args_list if call.args[0] == "retrying"]
         self.assertEqual(len(retries), 5)
@@ -135,7 +135,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
 
     def test_missing_device_reports_actionable_failure_after_connecting(self):
         controller, feedback = self.make_controller()
-        with patch("controllers.bluetooth.controller.BluetoothDiscovery.get_connected_devices", return_value=()):
+        with patch("controllers.bluetooth.link.session.BluetoothDiscovery.get_connected_devices", return_value=()):
             self.assertFalse(controller.connect())
         self.assertEqual(feedback.call_args_list[0].args, ("connecting", ""))
         state, reason = feedback.call_args.args
@@ -147,7 +147,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
         controller, feedback = self.make_controller()
         controller._bd_addr = "AA:BB:CC:DD:EE:FF"
         controller._connection.connect.side_effect = TimeoutError("timed out")
-        with patch("controllers.bluetooth.controller.BluetoothDiscovery.connection_state",
+        with patch("controllers.bluetooth.link.session.BluetoothDiscovery.connection_state",
                    return_value={"state": "unknown"}):
             self.assertFalse(controller.connect())
         self.assertEqual(feedback.call_args.args[0], "failed")
@@ -159,7 +159,7 @@ class ConnectionFeedbackTests(unittest.TestCase):
 
     def test_discovery_exception_reports_failure(self):
         controller, feedback = self.make_controller()
-        with patch("controllers.bluetooth.controller.BluetoothDiscovery.get_connected_devices", side_effect=PermissionError("denied")):
+        with patch("controllers.bluetooth.link.session.BluetoothDiscovery.get_connected_devices", side_effect=PermissionError("denied")):
             self.assertFalse(controller.connect())
         self.assertIn("access was denied", feedback.call_args.args[1])
 

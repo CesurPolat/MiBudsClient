@@ -52,7 +52,12 @@ class BatteryStreamTests(unittest.TestCase):
         callback.assert_called_once_with(60, 70, 80)
 
     def test_controller_resets_partial_battery_on_disconnect(self):
-        controller = BTController()
-        controller._battery_parser.feed(battery_frame([60, 70, 80])[:10])
-        controller._reset_identity_state("Disconnected")
-        self.assertEqual(controller._battery_parser.feed(bytes([70, 80])), [])
+        callback = Mock()
+        controller = BTController(battery_callback=callback)
+        record = battery_frame([60, 70, 80])
+        controller._connection.connected = True
+        controller._connection.receive = Mock(side_effect=[record[:10], record[10:]])
+        size = controller._process_data(0)
+        controller._reset_session_state("Disconnected")
+        controller._process_data(size)
+        callback.assert_not_called()

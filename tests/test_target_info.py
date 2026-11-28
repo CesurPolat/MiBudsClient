@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import Mock
 
 from controllers.bluetooth.controller import BTController
-from controllers.bluetooth.rcsp import build_identity_request, parse_identity_fields, decode_version
+from controllers.bluetooth.rcsp import RcspStreamParser, build_identity_request, parse_identity_fields, decode_version
 
 
 class TargetInfoTests(unittest.TestCase):
@@ -12,21 +12,25 @@ class TargetInfoTests(unittest.TestCase):
         controller = BTController()
         controller._ensure_connected = Mock(return_value=True)
         sent = []
+        parser = RcspStreamParser()
+
+        def feed(data):
+            controller._identity.feed_packets(parser.feed(data), address=None, device_name="")
 
         def respond(command):
             sent.append(command)
             payload = bytes([status, command[7]]) + fields
             frame = bytes.fromhex("fe dc ba 00 02") + len(payload).to_bytes(2, "big") + payload + b"\xef"
             # A stale response and a command echo must not finish the request.
-            controller._process_identity_data(command)
+            feed(command)
             stale = bytearray(frame)
             stale[8] = (command[7] - 1) & 255
-            controller._process_identity_data(bytes(stale))
+            feed(bytes(stale))
             if fragmented:
                 for byte in frame:
-                    controller._process_identity_data(bytes([byte]))
+                    feed(bytes([byte]))
             else:
-                controller._process_identity_data(frame)
+                feed(frame)
 
         controller._connection.send = respond
         results = [controller.request_device_identity(timeout=0.1) for _ in range(2)]
